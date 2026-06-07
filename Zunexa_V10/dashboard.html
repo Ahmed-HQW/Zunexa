@@ -18,7 +18,8 @@
 if (!localStorage.getItem('user_token')) {
     window.location.replace('index.html');
 }
-	</style>
+	</script>
+<style>
 /* --- CSS START --- */
 
 /* ─── 1. Design Tokens ───────────────────────────────────────── */
@@ -1560,6 +1561,8 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
 	}
 /* ─── CSS END ─── */
  </style>
+	</head>
+<body>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 const _SB = supabase.createClient(
