@@ -425,6 +425,28 @@ input:focus, textarea:focus, select:focus {
 }
 .profile-btn .parrow { font-size: 11px; color: var(--text-muted); }
 
+	/* ─── Blur Effect for Mobile Only ─── */
+@media (max-width: 860px) {
+  
+  /* تفعيل التمويه للعناصر المطلوبة */
+  .header, 
+  .sidebar, 
+  .profile-dropdown, 
+  .card, 
+  .generator-wrap, 
+  .zalij-preview-inner,
+  .greeting-banner {
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    /* تقليل الشفافية قليلاً لضمان ظهور تأثير التمويه بشكل أوضح */
+    background: rgba(20, 20, 20, 0.85) !important;
+  }
+
+  /* استثناء العناصر التي يجب أن تبقى خلفيتها واضحة */
+  .sidebar {
+    background: rgba(14, 14, 14, 0.85) !important;
+  }
+}
 /* Dropdown */
 .profile-dropdown {
   position: absolute;
