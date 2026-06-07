@@ -14,7 +14,9 @@
      Backend : No backend first html code 
      Design  : "Zalij Mode" — Premium Moroccan Geometric
 ============================================================ -->
+	<script>
 window.location.replace('index.html')
+	</script>
 <style>
 /* --- CSS START --- */
 
@@ -64,6 +66,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   font-size: 15px;
+  -webkit-font-smoothing: antialiased;
 }
 
 a { color: var(--gold); text-decoration: none; }
@@ -285,7 +288,8 @@ input:focus, textarea:focus, select:focus {
   top: 0; left: var(--sidebar-w); right: 0;
   height: var(--header-h);
   background: rgba(8,8,8,.92);
-  backdrop-filter: blur(16px);
+ backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   z-index: 100;
   display: flex;
@@ -304,7 +308,32 @@ input:focus, textarea:focus, select:focus {
     display: none;
   }
 }
+@media (max-width: 860px) {
+  .header {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(8, 8, 8, 0.98);
+  }
 
+  .profile-dropdown {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: #141414;
+  }
+
+  .sidebar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .greeting-banner,
+  .generator-wrap,
+  .card,
+  .zalij-preview-inner {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
 .header::after {
   content: '';
   position: absolute;
