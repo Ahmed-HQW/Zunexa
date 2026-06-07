@@ -288,8 +288,6 @@ input:focus, textarea:focus, select:focus {
   top: 0; left: var(--sidebar-w); right: 0;
   height: var(--header-h);
   background: rgba(8,8,8,.92);
- backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   z-index: 100;
   display: flex;
@@ -639,20 +637,10 @@ input:focus, textarea:focus, select:focus {
   color: var(--text-grey);
 }
 .btn-ghost:hover { border-color: var(--border-gold); color: var(--text-white); }
-.btn-glow {
-  background: linear-gradient(135deg, var(--gold) 0%, #b8922e 100%);
-  color: #000;
-  font-size: 15px;
-  padding: 14px 32px;
-  border-radius: var(--radius-md);
-  box-shadow: 0 0 30px rgba(212,175,55,.4), 0 4px 20px rgba(0,0,0,.4);
-  animation: pulse-glow 2.4s ease-in-out infinite;
-}
+ }
 .btn-glow:hover {
   box-shadow: 0 0 50px rgba(212,175,55,.6), 0 6px 28px rgba(0,0,0,.5);
-  transform: translateY(-2px);
-}
-@keyframes pulse-glow{0%,100%{opacity:.88}50%{opacity:1}}
+  }
 .btn-sm { padding: 6px 14px; font-size: 12px; }
 .btn-danger { background: rgba(255,77,109,.15); border: 1px solid rgba(255,77,109,.3); color: var(--red); }
 .btn-danger:hover { background: rgba(255,77,109,.25); }
@@ -3994,8 +3982,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <!-- ══ V10 INJECTION ORDER ══ -->
-    <script src="dev_guard.js"></script>
-    <script src="translator-bar.js"></script>
+        <script src="translator-bar.js"></script>
     <script src="jarvis-bar.js"></script>
     <script src="sidebar-injection.js"></script>
     
