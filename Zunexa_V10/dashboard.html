@@ -1358,7 +1358,9 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
 .cookie-banner-text strong{color:var(--gold);}
 .cookie-banner-actions{display:flex;gap:10px;flex-shrink:0;}
 
+
 /* ─── MUSIC BAR ────────────────────────────── */
+.music-bar{position:fixed;top:36px;left:var(--sidebar-w);right:0;height:40px;background:rgba(8,8,8,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(212,175,55,.15);z-index:999;display:flex;align-items:center;gap:12px;padding:0 16px;transition:left var(--trans);}
 .music-bar-hidden{display:none;}
 .music-bar-title{font-size:11px;color:var(--gold-dim);font-family:'Cinzel',serif;letter-spacing:.08em;flex-shrink:0;}
 .music-bar-name{font-size:12px;color:var(--text-white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;flex:1;}
