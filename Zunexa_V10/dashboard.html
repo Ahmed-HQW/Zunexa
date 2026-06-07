@@ -14,6 +14,10 @@
      Backend : No backend first html code 
      Design  : "Zalij Mode" — Premium Moroccan Geometric
 ============================================================ -->
+	// ضعه في أعلى الـ <script> الخاص بك
+if (!localStorage.getItem('user_token')) {
+    window.location.replace('index.html');
+}
 <style>
 /* --- CSS START --- */
 
@@ -53,6 +57,9 @@
 }
 
 /* ─── 2. Reset & Base ────────────────────────────────────────── */
+		.sidebar, .header, .zx-hub-tile {
+    will-change: transform;
+}
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
@@ -1545,6 +1552,12 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
 .zx-name-skel.zx-loaded{min-width:unset!important;height:unset!important;background:none!important;animation:none!important;}
 /* Active nav item pulse dot */
 .nav-item.active::after{content:'';position:absolute;right:16px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:var(--gold);animation:zxGoldPulse 2s infinite;}
+		@media (max-width: 860px) {
+  .header {
+    backdrop-filter: none !important; /* تعطيل الـ Blur في الموبايل */
+    background: rgba(8, 8, 8, 0.98); /* استعمل لون صلب بدلاً من شفافية Blur */
+  }
+	}
 /* ─── CSS END ─── */
  </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
