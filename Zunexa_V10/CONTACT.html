@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Zunexa SaaS — CONTACT</title> <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23080808'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%23D4AF37' stroke-width='.8' opacity='.6'/><text x='16' y='21' text-anchor='middle' font-size='17' font-family='Georgia,serif' fill='%23D4AF37' font-weight='bold'>Z</text></svg>">
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+<!-- ═══ PAGE: CONTACT ═══════════════════════════════════════════ -->
+<section class="page" id="page-contact">
+  <div class="page-heading">📞 Contact Us</div>
+  <div class="page-sub mb-3">تواصل معنا — We respond within 24 hours.</div>
+ 
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:24px">
+    <a href="mailto:mrahmed20101119@gmail.com" class="contact-card">
+      <div class="contact-icon-box" style="background:rgba(234,67,53,.12);color:#ea4335">✉</div>
+      <div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">Email Support</div>
+        <div style="font-size:12px;color:var(--text-muted)">mrahmed20101119@gmail.com</div>
+      </div>
+    </a>
+    <a href="https://t.me/+212777364251" target="_blank" class="contact-card">
+      <div class="contact-icon-box" style="background:rgba(0,136,204,.12);color:#08c">✈</div>
+      <div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">Telegram</div>
+        <div style="font-size:12px;color:var(--text-muted)">@zunexa_support</div>
+      </div>
+    </a>
+    <a href="https://wa.me/212777364251" target="_blank" class="contact-card">
+      <div class="contact-icon-box" style="background:rgba(37,211,102,.12);color:#25d366">💬</div>
+      <div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">WhatsApp</div>
+        <div style="font-size:12px;color:var(--text-muted)">+212 777 364 251</div>
+      </div>
+    </a>
+    <a href="https://www.instagram.com/zunexa_/" target="_blank" class="contact-card">
+      <div class="contact-icon-box" style="background:rgba(225,48,108,.12);color:#e1306c">◈</div>
+      <div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px">Instagram</div>
+        <div style="font-size:12px;color:var(--text-muted)">@zunexa_</div>
+      </div>
+    </a>
+  </div>
+ 
+  <div class="card">
+    <div class="section-title mt-0">Send a Message</div>
+    <div class="form-field">
+      <label>Your Name</label>
+      <input type="text" id="contactName" placeholder="Ahmed..."/>
+    </div>
+    <div class="form-field">
+      <label>Email</label>
+      <input type="email" id="contactEmail" placeholder="you@example.com"/>
+    </div>
+    <div class="form-field">
+      <label>Message</label>
+      <textarea id="contactMsg" rows="4" placeholder="Your message..." style="width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;color:var(--text-white);font-family:'Rajdhani',sans-serif;font-size:14px;resize:vertical;outline:none"></textarea>
+    </div>
+    <button class="btn btn-gold" style="margin-top:4px" onclick="submitContact()">➤ Send Message</button>
+  </div>
+  <footer class="app-footer">Zunexa SaaS — <span id="zx-footer-user">Zunexa Digital Brand</span></footer>
+</section>
+ 
+ 
