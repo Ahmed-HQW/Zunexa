@@ -306,32 +306,31 @@ input:focus, textarea:focus, select:focus {
     display: none;
   }
 }
+/* ─── ULTIMATE DEEP BLUR FOR MOBILE ONLY ─── */
 @media (max-width: 860px) {
-  .header {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: rgba(8, 8, 8, 0.98);
+  /* 1. تمويه عميق للعناصر العائمة (Header, Sidebar, Dropdown) */
+  .header, 
+  .sidebar, 
+  .profile-dropdown,
+  .music-bar,
+  .ai-bar-input-row {
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    background: rgba(12, 12, 12, 0.65) !important;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15) !important;
   }
 
-  .profile-dropdown {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: #141414;
-  }
-
-  .sidebar {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  .greeting-banner,
-  .generator-wrap,
-  .card,
+  /* 2. تمويه خفيف لبطاقات المحتوى الداخلي لعدم إرهاق معالج الهاتف */
+  .card, 
+  .generator-wrap, 
+  .greeting-banner, 
   .zalij-preview-inner {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    background: rgba(20, 20, 20, 0.75) !important;
   }
 }
+
 .header::after {
   content: '';
   position: absolute;
@@ -425,28 +424,7 @@ input:focus, textarea:focus, select:focus {
 }
 .profile-btn .parrow { font-size: 11px; color: var(--text-muted); }
 
-	/* ─── Blur Effect for Mobile Only ─── */
-@media (max-width: 860px) {
-  
-  /* تفعيل التمويه للعناصر المطلوبة */
-  .header, 
-  .sidebar, 
-  .profile-dropdown, 
-  .card, 
-  .generator-wrap, 
-  .zalij-preview-inner,
-  .greeting-banner {
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    /* تقليل الشفافية قليلاً لضمان ظهور تأثير التمويه بشكل أوضح */
-    background: rgba(20, 20, 20, 0.85) !important;
-  }
 
-  /* استثناء العناصر التي يجب أن تبقى خلفيتها واضحة */
-  .sidebar {
-    background: rgba(14, 14, 14, 0.85) !important;
-  }
-}
 /* Dropdown */
 .profile-dropdown {
   position: absolute;
