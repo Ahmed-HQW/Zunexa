@@ -14,42 +14,98 @@
      Backend : No backend first html code 
      Design  : "Zalij Mode" — Premium Moroccan Geometric
 ============================================================ -->
-<style>
-	 window.location.replace('index.html')
-</style>
-
         <style>
 			
-        :root {
-            --bg-void: #080808;
-            --gold: #D4AF37;
-            --gold-glow: rgba(212,175,55,0.15);
-            --text-main: #f5f5f0;
-            --text-muted: #9a9a8a;
-            --border-gold: rgba(212,175,55,0.2);
-        }
-
-        body {
-            background-color: var(--bg-void);
-            color: var(--text-main);
-            font-family: 'Rajdhani', sans-serif;
-            margin: 0;
-            display: flex;
-        }
+:root {
+    --bg-void: #080808;
+    --gold: #D4AF37;
+    --gold-light: #F5D76E;
+    --gold-dark: #8a6e1a;
+    --gold-glow: rgba(212,175,55,0.18);
+    --gold-glow2: rgba(212,175,55,0.07);
+    --text-main: #f5f5f0;
+    --text-muted: #9a9a8a;
+    --border-gold: rgba(212,175,55,0.22);
+    --bg-card: #0d0d0d;
+    --sidebar-w: 280px;
+    --header-h: 60px;
+    --radius: 14px;
+    --transition: 0.35s cubic-bezier(.4,0,.2,1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; } 
+ 
+ body {
+    background-color: var(--bg-void);
+    color: var(--text-main);
+    font-family: 'Rajdhani', sans-serif;
+    margin: 0;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
 
         /* ─── Zalij Background Pattern ─── */
-        .zalij-bg {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            background-color: var(--bg-void);
-            background-image: 
-                linear-gradient(45deg, #111 25%, transparent 25%), 
-                linear-gradient(-45deg, #111 25%, transparent 25%);
-            background-size: 60px 60px;
-            opacity: 0.3;
-        }
+ .zalij-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--bg-void);
+    background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212,175,55,0.08) 0%, transparent 70%),
+        linear-gradient(45deg, #111 25%, transparent 25%),
+        linear-gradient(-45deg, #111 25%, transparent 25%);
+    background-size: auto, 60px 60px, 60px 60px;
+    opacity: 1;
+    pointer-events: none;
+}
+.zalij-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 80%, rgba(212,175,55,0.04) 0%, transparent 60%);
+    pointer-events: none;
+}
+/* ─── 32. Mobile / Responsive ────────────────────────────────── */
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-grey);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 6px;
+}
 
+@media (max-width: 1100px) {
+    .team-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 860px) {
+    :root { --sidebar-w: 0px; }
+    .sidebar {
+        transform: translateX(-280px);
+        width: 260px;
+        z-index: 300;
+    }
+    .sidebar.open { transform: translateX(0); box-shadow: 8px 0 60px rgba(0,0,0,0.9); }
+    .main-content { margin-left: 0; width: 100%; padding: 80px 20px 40px; }
+    .sidebar-toggle { display: flex; align-items: center; justify-content: center; }
+}
+@media (max-width: 600px) {
+    .team-grid { grid-template-columns: 1fr; }
+    .premium-title { font-size: 1.8rem; }
+    .card-item { padding: 22px 18px; }
+}
+
+/* ─── 33. Sidebar mobile overlay ─────────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 190;
+}
+.sidebar-overlay.open { display: block; }
 /* ─── 3. Zalij SVG Pattern (background utility) ─────────────── */
 .zalij-bg {
   background-color: var(--bg-card);
@@ -57,48 +113,107 @@
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cg fill='none' stroke='%23D4AF3712' stroke-width='.8'%3E%3Cpolygon points='30,2 57,17 57,43 30,58 3,43 3,17'/%3E%3Cpolygon points='30,10 50,21 50,39 30,50 10,39 10,21'/%3E%3Cline x1='30' y1='2' x2='30' y2='10'/%3E%3Cline x1='57' y1='17' x2='50' y2='21'/%3E%3Cline x1='57' y1='43' x2='50' y2='39'/%3E%3Cline x1='30' y1='58' x2='30' y2='50'/%3E%3Cline x1='3' y1='43' x2='10' y2='39'/%3E%3Cline x1='3' y1='17' x2='10' y2='21'/%3E%3C/g%3E%3C/svg%3E");
 }
         /* ─── Sidebar Premium ─── */
-        .sidebar {
-            width: 280px;
-            height: 100vh;
-            background: #0d0d0d;
-            border-left: 1px solid var(--border-gold);
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            position: sticky;
-            top: 0;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
-        }
+  .sidebar {
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: linear-gradient(180deg, #0d0d0d 0%, #080808 100%);
+    border-right: 1px solid var(--border-gold);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 14px;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 200;
+    box-shadow: 4px 0 40px rgba(0,0,0,0.7), inset -1px 0 0 rgba(212,175,55,0.07);
+    transition: transform var(--transition);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 3px; }
 
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            padding: 10px;
-            border-bottom: 1px solid var(--border-gold);
-        }
+      .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 28px;
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border-gold);
+    position: relative;
+}
+.sidebar-logo::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
 
-        .logo-icon { font-size: 2rem; color: var(--gold); }
+       .logo-icon {
+    font-size: 2rem;
+    color: var(--gold);
+    filter: drop-shadow(0 0 8px rgba(212,175,55,0.5));
+    animation: pulse-gold 3s ease-in-out infinite;
+}
+@keyframes pulse-gold {
+    0%,100% { filter: drop-shadow(0 0 6px rgba(212,175,55,0.4)); }
+    50% { filter: drop-shadow(0 0 18px rgba(212,175,55,0.8)); }
+}
+.logo-text {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    letter-spacing: 3px;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.logo-sub { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
         .logo-text { font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: 2px; }
         .logo-sub { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
 
         .sidebar-nav { flex: 1; overflow-y: auto; }
 
         .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            padding: 12px 15px;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    padding: 11px 14px;
+    background: transparent;
+    border: none;
+    border-left: 2px solid transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition);
+    border-radius: 8px;
+    font-size: 0.97rem;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.04em;
+    text-align: right;
+    position: relative;
+    overflow: hidden;
+}
+.nav-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--gold-glow2), transparent);
+    opacity: 0;
+    transition: opacity var(--transition);
+    border-radius: 8px;
+}
+.nav-item:hover::before, .nav-item.active::before { opacity: 1; }
+.nav-item:hover, .nav-item.active {
+    background: var(--gold-glow);
+    color: var(--gold);
+    border-left-color: var(--gold);
+    transform: translateX(-3px);
+}
+.nav-item:hover { box-shadow: 0 2px 20px rgba(212,175,55,0.08); }
+.nav-item.active { box-shadow: 0 2px 20px rgba(212,175,55,0.15); }
+.nav-icon { font-size: 1.1rem; min-width: 20px; }
 
         .nav-item:hover, .nav-item.active {
             background: var(--gold-glow);
@@ -106,12 +221,14 @@
         }
 
         .nav-section {
-            font-size: 0.7rem;
-            color: var(--gold);
-            margin: 20px 0 10px;
-            letter-spacing: 2px;
-            opacity: 0.6;
-        }
+    font-size: 0.65rem;
+    color: var(--gold);
+    margin: 22px 0 8px 6px;
+    letter-spacing: 3px;
+    opacity: 0.5;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+}
 
         /* ─── Safety Bar & User Section ─── */
         .sidebar-bottom {
@@ -120,15 +237,26 @@
             border-top: 1px solid var(--border-gold);
         }
 
-        .user-card {
-            background: rgba(255,255,255,0.03);
-            padding: 15px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+       .user-card {
+    background: linear-gradient(135deg, rgba(212,175,55,0.05), rgba(0,0,0,0.5));
+    padding: 14px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-gold);
+    backdrop-filter: blur(4px);
+}
+.avatar-sm {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #000;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 0 12px rgba(212,175,55,0.3);
+}
 
         .avatar-sm { 
             width: 40px; height: 40px; border-radius: 50%; 
@@ -149,8 +277,20 @@
         .code-name { color: var(--gold); font-weight: 600; }
         /* Animation & Main Content Styles */
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+@keyframes floatY {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+}
+@keyframes borderGlow {
+    0%,100% { box-shadow: 0 0 10px rgba(212,175,55,0.1), inset 0 0 10px rgba(212,175,55,0.02); }
+    50%      { box-shadow: 0 0 30px rgba(212,175,55,0.25), inset 0 0 20px rgba(212,175,55,0.05); }
 }
 
 .main-content {
@@ -158,34 +298,91 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 80vh;
-    animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    min-height: 100vh;
+    margin-left: var(--sidebar-w);
+    padding: 80px 40px 40px;
+    animation: fadeInUp 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    width: calc(100% - var(--sidebar-w));
+    position: relative;
 }
 
-.hero-container { text-align: center; max-width: 700px; }
+.hero-container {
+    text-align: center;
+    max-width: 780px;
+    width: 100%;
+}
 
-.premium-title { 
-    color: var(--gold); 
-    font-family: 'Cinzel', serif; 
-    font-size: 3.5rem; 
-    margin-bottom: 15px; 
-    text-shadow: 0 0 20px rgba(212,175,55,0.3);
+.premium-title {
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 40%, var(--gold-dark) 60%, var(--gold) 80%, var(--gold-light) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin-bottom: 18px;
+    animation: shimmer 4s linear infinite, floatY 6s ease-in-out infinite;
+    letter-spacing: 3px;
+}
+.premium-subtitle {
+    color: var(--text-muted);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    margin-bottom: 14px;
+    letter-spacing: 0.05em;
+    line-height: 1.7;
 }
 
 .team-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
     margin-top: 50px;
 }
 
 .card-item {
-    padding: 25px;
+    padding: 30px 26px;
     border: 1px solid var(--border-gold);
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.02);
-    transition: all 0.4s ease;
-    cursor: pointer;
+    border-radius: var(--radius);
+    background: linear-gradient(145deg, rgba(20,18,10,0.95), rgba(10,9,5,0.98));
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 0 0 rgba(212,175,55,0);
+    transition: all var(--transition);
+    color: var(--text-main);
+    position: relative;
+    overflow: hidden;
+    animation: borderGlow 5s ease-in-out infinite;
+}
+.card-item::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.6;
+}
+.card-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(212,175,55,0.06) 0%, transparent 70%);
+    pointer-events: none;
+}
+.card-item:hover {
+    border-color: var(--gold);
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(212,175,55,0.15);
+}
+.card-item h3 {
+    color: var(--gold);
+    margin-bottom: 12px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+.card-item p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
 }
 
 .card-item:hover {
@@ -218,25 +415,93 @@
 
 .report-btn {
     display: inline-block;
-    padding: 12px 25px;
-    margin-top: 15px;
-    background-color: #D4AF37; /* لون الزر ذهبي */
-    color: #000000; /* نص الزر أسود للتباين */
+    padding: 13px 28px;
+    margin-top: 20px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: #000;
     text-decoration: none;
     border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
+    font-weight: 700;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
 }
+.report-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    opacity: 0;
+    transition: opacity var(--transition);
+    z-index: -1;
+}
+.report-btn:hover::before { opacity: 1; }
+.report-btn:hover {
+    transform: scale(1.06) translateY(-2px);
+    box-shadow: 0 8px 30px rgba(212,175,55,0.4);
+    color: #000;
+}
+.report-btn:active { transform: scale(0.98); }
 
 .report-btn:hover {
     background-color: #FFD700; /* لون ذهبي أفتح عند المرور */
     transform: scale(1.05); /* تكبير طفيف للزر */
 }
     </style>
+    <style>
+/* ── Topbar notification ── */
+#archon-changelog-bar { font-family: 'Cinzel', serif !important; }
+/* ── Particle canvas overlay ── */
+#particle-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.35; }
+/* ── Sidebar toggle btn ── */
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 50px;
+    left: 14px;
+    z-index: 400;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    border: none;
+    color: #000;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 8px 11px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(212,175,55,0.3);
+    transition: all var(--transition);
+}
+.sidebar-toggle:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(212,175,55,0.5); }
+/* ── Divider ── */
+.gold-divider {
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 18px auto;
+}
+/* ── Badge ── */
+.version-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    background: var(--gold-glow);
+    border: 1px solid var(--border-gold);
+    border-radius: 20px;
+    font-size: 0.72rem;
+    color: var(--gold);
+    letter-spacing: 2px;
+    font-family: 'Cinzel', serif;
+    margin-bottom: 18px;
+    animation: pulse-gold 3s infinite;
+}
+</style>
 </head>
 <body>
+	<canvas id="particle-canvas"></canvas>
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleMobileSidebar()">☰</button>
 
-       	<div id="archon-changelog-bar" style="background:linear-gradient(90deg,#0a0a0a,#111);color:#d4af37;text-align:center;padding:8px 16px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.06em;border-bottom:1px solid rgba(212,175,55,.3);z-index:10000;position:fixed;top:0;left:0;right:0;height:36px;display:flex;align-items:center;justify-content:center;gap:14px;">
+<div id="archon-changelog-bar" style="background:linear-gradient(90deg,#0a0a0a,#111);color:#d4af37;text-align:center;padding:8px 16px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.06em;border-bottom:1px solid rgba(212,175,55,.3);z-index:10000;position:fixed;top:0;left:0;right:0;height:36px;display:flex;align-items:center;justify-content:center;gap:14px;">
   <span style="font-weight:700">⚡ ZUNEXA V9 — Archon Protocol</span>
   <a href="changelog.html" style="color:#000;background:linear-gradient(135deg,#D4AF37,#8a7022);padding:3px 12px;text-decoration:none;font-weight:700;border-radius:3px;font-size:11px;letter-spacing:.08em">VIEW CHANGELOG</a>
   <button onclick="document.getElementById('archon-changelog-bar').style.display='none';document.querySelector('.music-bar').style.top='0';document.querySelector('.header').style.top='40px';document.querySelector('.main-content').style.paddingTop='calc(var(--header-h) + 40px)';" style="position:absolute;right:12px;background:none;border:none;color:rgba(212,175,55,.4);font-size:16px;cursor:pointer;line-height:1">✕</button>
@@ -248,7 +513,7 @@
   <div class="sidebar-logo">
     <div class="logo-icon">⬡</div>
     <div>
-      <div class="logo-text">ZUNEXA</div>
+       <div class="logo-text">ZUNEXA</div>
       <div class="logo-sub">SaaS Platform</div>
     </div>
   </div>
@@ -323,8 +588,10 @@
 	
 	<main class="main-content">
     <div class="hero-container">
-        <h1 class="premium-title">مرحباً بكم في Zunexa</h1>
-        <p style="color: var(--text-muted); font-size: 1.2rem;">نحن نعمل بجد في تطوير هذه النسخة لتكون الأفضل. شكراً لثقتكم الغالية بنا.</p>
+       <div class="version-badge">V9 — ARCHON PROTOCOL</div>
+<h1 class="premium-title">مرحباً بكم في Zunexa</h1>
+<div class="gold-divider"></div>
+<p class="premium-subtitle">نحن نعمل بجد في تطوير هذه النسخة لتكون الأفضل.<br>شكراً لثقتكم الغالية بنا.</p>
 
         <div class="team-grid">
            <div class="card-item">
@@ -345,31 +612,106 @@
         </main>
 
     <script>
-        // التفاعل مع الـ Sidebar
-        document.querySelectorAll('.nav-item').forEach(button => {
-            button.addEventListener('click', () => {
-                document.querySelector('.nav-item.active')?.classList.remove('active');
-                button.classList.add('active');
-            });
-        });
-        <!-- ─── AI CHAT BAR ─────────────────────────────────────────── -->
-<div class="ai-bar-wrap" id="aiBarWrap">
-  <div class="ai-chat-panel" id="aiChatPanel">
-    <div class="ai-chat-msgs" id="aiChatMsgs">
-      <div class="ai-msg bot">
-        <div class="ai-msg-avatar">Z</div>
-        <div class="ai-msg-bubble">مرحباً! أنا <strong style="color:var(--gold)">Zunexa AI</strong> — مساعدك الذكي. اسألني عن المنصة، الخطط، الأدوات، أو الـ API. 🔮</div>
-      </div>
-    </div>
-  </div>
-  <div class="ai-bar-input-row">
-    <div class="ai-bar-icon" onclick="toggleAiPanel()" title="Zunexa AI">✦</div>
-    <span class="ai-bar-label">ZUNEXA AI</span>
-    <input class="ai-bar-input" id="aiBarInput" type="text" placeholder="اسأل Zunexa AI..." autocomplete="off" onkeydown="if(event.key==='Enter')sendAiMsg()"/>
-    <button class="ai-bar-clear" onclick="clearAiChat()" title="Clear">✕</button>
-    <button class="ai-bar-send" id="aiBarSend" onclick="sendAiMsg()">➤</button>
-  </div>
-</div>
+     /* ── Nav active state ── */
+document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+});
+
+/* ── Mobile sidebar ── */
+function toggleMobileSidebar() {
+    const s = document.getElementById('sidebar');
+    const o = document.getElementById('sidebarOverlay');
+    s.classList.toggle('open');
+    o.classList.toggle('open');
+}
+function closeMobileSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+/* ── Gold particle system ── */
+(function(){
+    const canvas = document.getElementById('particle-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+    function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Particle {
+        constructor(){
+            this.x = Math.random()*W;
+            this.y = Math.random()*H;
+            this.r = Math.random()*1.5+0.3;
+            this.vx = (Math.random()-.5)*0.3;
+            this.vy = (Math.random()-.5)*0.3;
+            this.a = Math.random();
+            this.da = (Math.random()-.5)*0.005;
+        }
+        update(){
+            this.x+=this.vx; this.y+=this.vy;
+            this.a+=this.da;
+            if(this.a<0||this.a>1) this.da*=-1;
+            if(this.x<0||this.x>W) this.vx*=-1;
+            if(this.y<0||this.y>H) this.vy*=-1;
+        }
+        draw(){
+            ctx.beginPath();
+            ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+            ctx.fillStyle=`rgba(212,175,55,${this.a*0.7})`;
+            ctx.fill();
+        }
+    }
+
+    for(let i=0;i<90;i++) particles.push(new Particle());
+
+    /* draw connecting lines between nearby particles */
+    function drawLines(){
+        for(let i=0;i<particles.length;i++){
+            for(let j=i+1;j<particles.length;j++){
+                const dx=particles[i].x-particles[j].x;
+                const dy=particles[i].y-particles[j].y;
+                const dist=Math.sqrt(dx*dx+dy*dy);
+                if(dist<120){
+                    ctx.beginPath();
+                    ctx.strokeStyle=`rgba(212,175,55,${(1-dist/120)*0.12})`;
+                    ctx.lineWidth=0.5;
+                    ctx.moveTo(particles[i].x,particles[i].y);
+                    ctx.lineTo(particles[j].x,particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function loop(){
+        ctx.clearRect(0,0,W,H);
+        particles.forEach(p=>{ p.update(); p.draw(); });
+        drawLines();
+        requestAnimationFrame(loop);
+    }
+    loop();
+})();
+
+/* ── Staggered card entrance ── */
+document.querySelectorAll('.card-item').forEach((c,i)=>{
+    c.style.opacity='0';
+    c.style.transform='translateY(30px)';
+    c.style.transition=`opacity .6s ease ${i*0.15+0.4}s, transform .6s ease ${i*0.15+0.4}s, border-color .35s, box-shadow .35s`;
+    setTimeout(()=>{ c.style.opacity='1'; c.style.transform='translateY(0)'; }, 100);
+});
+
+/* ── Sidebar overlay close on archon bar close ── */
+const archonClose = document.querySelector('#archon-changelog-bar button');
+if(archonClose){
+    archonClose.addEventListener('click',()=>{
+        document.querySelector('.sidebar-toggle') && (document.querySelector('.sidebar-toggle').style.top='14px');
+    });
+}
 
     </script>
 </body>
