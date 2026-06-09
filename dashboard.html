@@ -496,6 +496,159 @@ html { scroll-behavior: smooth; }
     margin-bottom: 18px;
     animation: pulse-gold 3s infinite;
 }
+/* ─── AI Bar Premium Styles ─── */
+.ai-bar-container {
+    width: 100%;
+    max-width: 780px;
+    margin: 40px auto 0 auto;
+    background: linear-gradient(145deg, rgba(20,18,10,0.95), rgba(10,9,5,0.98));
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius);
+    padding: 25px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.03);
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-bar-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.8;
+}
+
+.ai-bar-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.ai-bar-header h3 {
+    font-family: 'Cinzel', serif;
+    color: var(--gold);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.ai-icon {
+    color: var(--gold-light);
+    font-size: 1.2rem;
+    animation: pulse-gold 2s infinite;
+}
+
+/* صندوق الإجابة مع تأثير الزجاج والتمرير */
+.ai-response-box {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+    min-height: 80px;
+    max-height: 250px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-main);
+    text-align: right;
+}
+
+.ai-response-box::-webkit-scrollbar {
+    width: 4px;
+}
+.ai-response-box::-webkit-scrollbar-thumb {
+    background: var(--border-gold);
+    border-radius: 4px;
+}
+
+.ai-placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* شريط الإدخال والزر */
+.ai-input-wrapper {
+    display: flex;
+    gap: 10px;
+    position: relative;
+}
+
+#aiInput {
+    flex: 1;
+    background: #050505;
+    border: 1px solid var(--border-gold);
+    border-radius: 8px;
+    padding: 12px 15px;
+    color: #ffffff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all var(--transition);
+}
+
+#aiInput:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 15px rgba(212,175,55,0.15);
+}
+
+#aiSubmitBtn {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 0 24px;
+    font-weight: 700;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#aiSubmitBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(212,175,55,0.3);
+}
+
+#aiSubmitBtn:active {
+    transform: scale(0.98);
+}
+
+/* تأثير الأنيميشن عند التحميل */
+.btn-loader {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #000;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: ai-spin 0.6s linear infinite;
+    position: absolute;
+}
+
+@keyframes ai-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* التوافق التام مع الهواتف الذكية */
+@media (max-width: 600px) {
+    .ai-bar-container {
+        padding: 15px;
+        margin-top: 25px;
+    }
+    .ai-input-wrapper {
+        flex-direction: column;
+    }
+    #aiSubmitBtn {
+        padding: 12px;
+    }
+}
 </style>
 </head>
 <body>
@@ -534,56 +687,11 @@ html { scroll-behavior: smooth; }
     </button>
 
     <div class="nav-section">Insights</div>
-    <button class="nav-item" onclick="window.location.href='analytics.html'">
-      <span class="nav-icon">▣</span> Analytics
+    <button class="nav-item" onclick="window.location.href='index.html'">
+      <span class="nav-icon">🔐</span> TO SIGN IN 
     </button>
             
-    <button class="nav-item" onclick="window.location.href='pro_accounts.html'">
-      <span class="nav-icon">💳</span> Billing
-    </button>
-    <button class="nav-item" onclick="window.location.href='affiliat.html'">
-      <span class="nav-icon">🏆</span> Affiliate
-    </button>
-    <button class="nav-item" onclick="window.location.href='appearance.html'">
-      <span class="nav-icon">✨</span> Appearance
-    </button>
-    <button class="nav-item" onclick="window.location.href='feedback.html'">
-      <span class="nav-icon">💬</span> Feedback
-    </button>
-    <button class="nav-item" onclick="window.location.href='CONTACT.html'">
-      <span class="nav-icon">📞</span> Contact
-    </button>
-    <button class="nav-item" onclick="window.location.href='help.html'">
-      <span class="nav-icon">🔔</span> Help
-    </button>
-   
-    <div class="nav-section">System Pages</div>
     
-    <button class="nav-item" onclick="window.location.href='info_3d.html'">
-      <span class="nav-icon">🌐</span> Info 3D
-    </button>
-    
-    <button class="nav-item" onclick="window.location.href='apps.html'">
-      <span class="nav-icon">📱</span> Apps
-    </button>
-    
-    <button class="nav-item" onclick="window.location.href='pro_accounts.html'">
-      <span class="nav-icon">👑</span> Pro Accounts
-    </button>
-    
-    <button class="nav-item" onclick="window.location.href='settings.html'">
-      <span class="nav-icon">⚙️</span> Settings
-    </button>
-    
-    <button class="nav-item" onclick="window.location.href='landing.html'">
-      <span class="nav-icon">🚀</span> Landing Page
-    </button>
-    
-     <button class="nav-item" onclick="window.location.href='xcraft.html'">
-      <span class="nav-icon">🎮</span> Game craft zunexa 
-    </button>
-  </nav>
-
   <div class="sidebar-bottom">
    </aside>
 	
@@ -607,6 +715,26 @@ html { scroll-behavior: smooth; }
           </div>
        </div>
     </div>
+
+<!-- ─── AI BAR CONTAINER (AUTOMATED & SUPABASE) ─── -->
+<div class="ai-bar-container">
+    <div class="ai-bar-header">
+        <span class="ai-icon">✦</span>
+        <h3>مساعد Zunexa التلقائي (الرد الفوري)</h3>
+    </div>
+    
+    <div class="ai-response-box" id="aiResponseBox">
+        <p class="ai-placeholder">مرحباً بك! أنا مساعد Zunexa الفوري، اسألني عن المنصة أو المطور أو الهوية وسأجيبك فوراً...</p>
+    </div>
+    
+    <div class="ai-input-wrapper">
+        <input type="text" id="aiInput" placeholder="اكتب كلمتك هنا (مثال: المطور، الألوان، زونيكسا)..." onkeypress="window.handleAiKeyPress(event)" />
+        <button id="aiSubmitBtn" onclick="window.askZunexaAutomate()">
+            <span class="btn-text">إرسال</span>
+            <span class="btn-loader"></span>
+        </button>
+    </div>
+</div>
 </main>
 	
     <main style="padding: 40px;">
@@ -713,7 +841,103 @@ if(archonClose){
         document.querySelector('.sidebar-toggle') && (document.querySelector('.sidebar-toggle').style.top='14px');
     });
 }
+/* ─── ZUNEXA BUILT-IN AI SYSTEM (NO API KEYS) ─── */
+/* ─── ZUNEXA CORE INTELLIGENCE SOURCE (V9) ─── */
+let zunexaDatabase = [];
 
+// 1. تحميل قاعدة بيانات الأسئلة والأجوبة تلقائياً من ملف الـ JSON
+async function loadZunexaDatabase() {
+    try {
+        // قراءة الملف المحلي
+        const response = await fetch('zunexa_qa.json');
+        zunexaDatabase = await response.json();
+        console.log(`[Archon Protocol]: تم تحميل ${zunexaDatabase.length} قاعدة معرفية بنجاح.`);
+    } catch (error) {
+        console.error("[Archon Error]: فشل في تحميل ملف zunexa_qa.json لم يتم العثور عليه أو الصيغة خاطئة:", error);
+    }
+}
+loadZunexaDatabase(); // تشغيل الدالة فوراً عند فتح الصفحة
+
+// إعدادات Supabase (تأكد من وضع روابطك الحقيقية هنا)
+const SUPABASE_URL = "https://xrldhfsytysznyyhwjlr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F";
+
+// 2. الدالة الرئيسية للرد الآلي وحفظ الرسائل
+window.askZunexaAutomate = async function() {
+    const inputEl = document.getElementById('aiInput');
+    const responseBox = document.getElementById('aiResponseBox');
+    const submitBtn = document.getElementById('aiSubmitBtn');
+    
+    if (!inputEl || !responseBox || !submitBtn) return;
+    
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoader = submitBtn.querySelector('.btn-loader');
+    const prompt = inputEl.value.trim();
+    
+    if (!prompt) return;
+
+    // تفعيل وضعية المعالجة البصرية
+    inputEl.disabled = true;
+    submitBtn.disabled = true;
+    if (btnText) btnText.style.opacity = '0';
+    if (btnLoader) btnLoader.style.display = 'block';
+    
+    responseBox.innerHTML = '<p style="color: var(--gold); animation: pulse-gold 1s infinite;">جاري فحص بروتوكول المعرفة الـمحلية...</p>';
+
+    // الرد الافتراضي الفخم في حال لم يطابق أي كلمة مفتاحية
+    let matchedReply = "شكرًا لرسالتك! هذا السؤال تم حفظه وإرساله إلى المطور **ahmed_dev_a**، وسيتم مراجعته وتحديث النظام للإجابة عليه تلقائيًا قريباً. ✨";
+    const lowerPrompt = prompt.toLowerCase();
+    
+    // البحث الذكي والمرن داخل مجموعات الـ JSON
+    for (const item of zunexaDatabase) {
+        const hasKeyword = item.keywords.some(keyword => lowerPrompt.includes(keyword.toLowerCase()));
+        if (hasKeyword) {
+            matchedReply = item.response;
+            break;
+        }
+    }
+
+    // تنسيق النجوم وتحويلها إلى ذهبي فاخر متناسق مع الـ Zalij Mode
+    let formattedReply = matchedReply.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--gold);">$1</strong>');
+
+    // عرض الرد بسرعة فائقة للمستخدم لإبهاره بسلاسة Vanilla JS
+    setTimeout(() => {
+        responseBox.innerHTML = `<div style="white-space: pre-line; direction: rtl; text-align: right;">${formattedReply}</div>`;
+    }, 200);
+
+    // 3. إرسال السؤال والرد إلى جدول Supabase في الخلفية لكي يصلك كل شيء
+    try {
+        await fetch(`${SUPABASE_URL}/rest/v1/zunexa_messages`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_KEY,
+                "Authorization": `Bearer ${SUPABASE_KEY}`
+            },
+            body: JSON.stringify({
+                user_prompt: prompt,
+                bot_response: matchedReply
+            })
+        });
+    } catch (error) {
+        console.error("[Supabase Sync Error]:", error);
+    } finally {
+        // إعادة الواجهة لطبيعتها
+        inputEl.disabled = false;
+        submitBtn.disabled = false;
+        if (btnText) btnText.style.opacity = '1';
+        if (btnLoader) btnLoader.style.display = 'none';
+        inputEl.value = '';
+        responseBox.scrollTop = responseBox.scrollHeight;
+    }
+};
+
+// ربط زر الـ Enter بالكيبورد
+window.handleAiKeyPress = function(event) {
+    if (event.key === 'Enter') {
+        window.askZunexaAutomate();
+    }
+};
     </script>
 </body>
 </html>
