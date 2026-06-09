@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Zunexa — Sign In</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23080808'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%23D4AF37' stroke-width='.8' opacity='.6'/><text x='16' y='21' text-anchor='middle' font-size='17' font-family='Georgia,serif' fill='%23D4AF37' font-weight='bold'>Z</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg-void:#080808;--bg-deep:#0e0e0e;--bg-card:#141414;--bg-input:#111111;--border:#242424;--border-gold:rgba(212,175,55,.35);--gold:#D4AF37;--gold-bright:#f0cc55;--gold-dim:#8a7022;--gold-glow:rgba(212,175,55,.18);--text-white:#f5f5f0;--text-grey:#9a9a8a;--text-muted:#555548;--green:#3ddc84;--red:#ff4d6d;--blue:#5b8dee;--purple:#a78bfa;--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--trans:.22s cubic-bezier(.4,0,.2,1);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--text-white);display:flex;align-items:center;justify-content:center;min-height:100vh;font-size:15px;position:relative;}
+.bg-layer{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,rgba(212,175,55,.04) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 85% 80%,rgba(212,175,55,.03) 0%,transparent 60%),var(--bg-void);}
+.zalij-bg-pattern{position:fixed;inset:0;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%23D4AF3709' stroke-width='.8'%3E%3Cpolygon points='40,3 76,22 76,58 40,77 4,58 4,22'/%3E%3Cpolygon points='40,14 65,28 65,52 40,66 15,52 15,28'/%3E%3Ccircle cx='40' cy='40' r='10'/%3E%3C/g%3E%3C/svg%3E");opacity:.6;}
+.floating-hex{position:fixed;z-index:0;pointer-events:none;animation:floatHex 20s ease-in-out infinite;opacity:.04;font-size:200px;color:var(--gold);font-family:'Cinzel',serif;line-height:1;}
+.floating-hex:nth-child(1){top:-60px;left:-40px;animation-delay:0s}
+.floating-hex:nth-child(2){bottom:-80px;right:-30px;animation-delay:-10s;font-size:160px}
+@keyframes floatHex{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-20px) rotate(5deg)}}
+.auth-shell{position:relative;z-index:10;width:100%;max-width:480px;padding:16px;}
+.auth-logo{text-align:center;margin-bottom:32px;}
+.logo-hex{width:64px;height:64px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:16px;display:inline-grid;place-items:center;font-size:32px;margin-bottom:14px;box-shadow:0 0 40px rgba(212,175,55,.3),0 8px 32px rgba(0,0,0,.5);animation:pulseLogo 3s ease-in-out infinite;}
+@keyframes pulseLogo{0%,100%{box-shadow:0 0 40px rgba(212,175,55,.3),0 8px 32px rgba(0,0,0,.5)}50%{box-shadow:0 0 60px rgba(212,175,55,.5),0 8px 32px rgba(0,0,0,.5)}}
+.logo-name{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--gold);letter-spacing:.06em;display:block;line-height:1;}
+.logo-tagline{font-size:11px;color:var(--text-muted);letter-spacing:.14em;text-transform:uppercase;margin-top:4px;display:block;}
+.auth-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;box-shadow:0 24px 80px rgba(0,0,0,.6),0 1px 0 rgba(212,175,55,.08) inset;position:relative;overflow:hidden;}
+.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.auth-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border-gold),transparent);opacity:.5;}
+.auth-tabs{display:flex;gap:0;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;margin-bottom:28px;}
+.tab-btn{flex:1;padding:9px;background:none;border:none;color:var(--text-muted);font-size:13px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all var(--trans);}
+.tab-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#000;box-shadow:0 2px 12px rgba(212,175,55,.3);}
+.avatar-upload-wrap{text-align:center;margin-bottom:24px;}
+.avatar-ring{position:relative;display:inline-block;cursor:pointer;}
+.avatar-ring input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;}
+.avatar-preview{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;color:#000;font-family:'Cinzel',serif;position:relative;overflow:hidden;border:3px solid var(--border-gold);box-shadow:0 0 30px rgba(212,175,55,.2);transition:all var(--trans);}
+.avatar-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.avatar-edit-badge{position:absolute;bottom:2px;right:2px;width:26px;height:26px;background:var(--gold);border-radius:50%;display:grid;place-items:center;font-size:13px;z-index:3;border:2px solid var(--bg-card);pointer-events:none;}
+.avatar-ring:hover .avatar-preview{border-color:var(--gold);box-shadow:0 0 40px rgba(212,175,55,.4)}
+.avatar-label{display:block;margin-top:8px;font-size:11px;color:var(--text-muted);letter-spacing:.08em;}
+.form-field{margin-bottom:16px;}
+.form-field label{display:block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px;}
+.field-wrap{position:relative;}
+.field-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text-muted);pointer-events:none;}
+.field-wrap input{width:100%;padding:11px 14px 11px 40px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:14px;font-family:'Rajdhani',sans-serif;outline:none;transition:border-color var(--trans),box-shadow var(--trans);}
+.field-wrap input:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px rgba(212,175,55,.12);}
+.field-wrap input::placeholder{color:var(--text-muted);}
+.code-field{background:var(--bg-input);border:1px solid var(--border-gold);border-radius:var(--radius-sm);padding:11px 14px 11px 40px;width:100%;font-size:14px;font-family:'Courier New',monospace;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;outline:none;transition:all var(--trans);}
+.code-field:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.15);}
+.code-field::placeholder{color:var(--text-muted);font-family:'Rajdhani',sans-serif;letter-spacing:normal;text-transform:none;}
+.plan-preview{margin-top:8px;padding:8px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px;transition:all var(--trans);min-height:36px;}
+.plan-preview.hidden{display:none}
+.plan-preview.free{background:rgba(155,155,155,.1);border:1px solid #444;color:#888}
+.plan-preview.plus{background:rgba(91,141,238,.1);border:1px solid rgba(91,141,238,.3);color:var(--blue)}
+.plan-preview.pro{background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.35);color:var(--gold)}
+.plan-preview.senior{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:var(--purple)}
+.plan-preview.owner{background:rgba(212,175,55,.2);border:1px solid var(--gold);color:var(--gold)}
+.free-notice{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(61,220,132,.06);border:1px solid rgba(61,220,132,.2);border-radius:var(--radius-sm);font-size:12px;color:var(--text-grey);margin-bottom:20px;}
+.free-notice .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+.or-divider{display:flex;align-items:center;gap:12px;margin:20px 0;font-size:11px;color:var(--text-muted);letter-spacing:.1em;}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border));}
+.or-divider::after{background:linear-gradient(90deg,var(--border),transparent)}
+.btn-auth{width:100%;padding:13px;background:linear-gradient(135deg,var(--gold) 0%,#b8922e 100%);border:none;border-radius:var(--radius-sm);color:#000;font-size:14px;font-weight:700;font-family:'Cinzel',serif;letter-spacing:.08em;cursor:pointer;transition:all var(--trans);box-shadow:0 4px 24px rgba(212,175,55,.35);display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;margin-top:4px;}
+.btn-auth::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,transparent 50%);}
+.btn-auth:hover{background:linear-gradient(135deg,var(--gold-bright) 0%,var(--gold) 100%);box-shadow:0 6px 32px rgba(212,175,55,.5);transform:translateY(-1px);}
+.btn-auth:active{transform:translateY(0)}
+.btn-auth .spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+.btn-auth.loading .spinner{display:block}
+.btn-auth.loading .btn-label{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.auth-footer-link{text-align:center;margin-top:20px;font-size:13px;color:var(--text-muted);}
+.auth-footer-link a{color:var(--gold);cursor:pointer}
+.auth-footer-link a:hover{color:var(--gold-bright)}
+.success-screen{display:none;text-align:center;padding:20px 0;}
+.success-icon{width:72px;height:72px;background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.3);border-radius:50%;display:inline-grid;place-items:center;font-size:32px;margin-bottom:16px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.success-title{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--text-white);margin-bottom:6px}
+.success-sub{font-size:13px;color:var(--text-grey);margin-bottom:8px}
+.success-plan-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:20px;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.shake{animation:shake .4s ease}
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg-card);border:1px solid var(--border-gold);border-radius:var(--radius-md);padding:12px 18px;font-size:13px;color:var(--text-white);display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;transform:translateX(40px);transition:all .3s ease;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(0)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg-deep)}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:99px}
+/* Owner badge special */
+.owner-badge-wrap{text-align:center;margin-bottom:16px;display:none;}
+.owner-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;background:linear-gradient(135deg,rgba(212,175,55,.2),rgba(212,175,55,.05));border:1px solid var(--gold);border-radius:99px;font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:.08em;}
+/* Error box */
+.err-box{background:rgba(255,77,109,.07);border:1px solid rgba(255,77,109,.25);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:#ff8096;display:none;align-items:center;gap:8px;margin-bottom:12px;}
+.err-box.show{display:flex;}
+@media(max-width:520px){.auth-card{padding:22px 16px}.auth-shell{padding:12px}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ── Supabase Init ──
+const _SB = supabase.createClient(
+  atob('aHR0cHM6Ly94cmxkaGZzeXR5c3pueXlod2psci5zdXBhYmFzZS5jbw=='),
+  atob('c2JfcHVibGlzaGFibGVfcXRaeXpMU1BWWWpIMHlCMEJKWTh5Z18ycjJjdDM1Rg==')
+);
+</script>
+<style id="zx-pwd-validator-styles">
+        #zx-pwd-strength { margin-top: 8px; display: none; flex-direction: column; gap: 4px; }
+        #zx-pwd-strength.visible { display: flex; }
+        .pwd-bar-wrap { height: 3px; background: #1a1a1a; border-radius: 99px; overflow: hidden; }
+        .pwd-bar-fill { height: 100%; width: 0%; border-radius: 99px; transition: width .35s ease, background .35s ease; }
+        .pwd-rules { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
+        .pwd-rule { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #333328; display: flex; align-items: center; gap: 6px; transition: color .2s; }
+        .pwd-rule.ok { color: #3ddc84; }
+        .pwd-rule.bad { color: #ff4d6d; }
+        .pwd-rule::before { content: '○'; }
+        .pwd-rule.ok::before { content: '●'; }
+        .pwd-rule.bad::before { content: '✕'; }
+        .pwd-label { font-family: 'Rajdhani', sans-serif; font-size: 10px; color: #555548; letter-spacing: .08em; }
+        </style>
+        </head>
+<body>
+<div class="bg-layer"></div>
+<div class="zalij-bg-pattern"></div>
+<div class="floating-hex">⬡</div>
+<div class="floating-hex">⬡</div>
+
+<div class="auth-shell">
+  <div class="auth-logo">
+    <div class="logo-hex">⬡</div>
+    <span class="logo-name">ZUNEXA</span>
+    <span class="logo-tagline">AI Content Generation Platform</span>
+  </div>
+
+  <div class="auth-card" id="authCard">
+    <div class="auth-tabs">
+      <button class="tab-btn active" onclick="switchTab('signin')" id="tab-signin">Sign In</button>
+      <button class="tab-btn" onclick="switchTab('signup')" id="tab-signup">Sign Up</button>
+    </div>
+
+    <!-- ERR BOX -->
+    <div class="err-box" id="errBox">
+      <span>⚠</span><span id="errMsg">Error</span>
+    </div>
+
+    <!-- OWNER BADGE -->
+    <div class="owner-badge-wrap" id="ownerBadgeWrap">
+      <div class="owner-badge">👑 OWNER MODE — Zunexa_</div>
+    </div>
+
+    <!-- SIGN IN -->
+    <div id="form-signin">
+      <div class="free-notice">
+        <span class="dot"></span>
+        <span>No code? Enter with <strong style="color:var(--green)">Free Plan</strong> — upgrade anytime.</span>
+      </div>
+      <div class="avatar-upload-wrap">
+        <div class="avatar-ring" title="Click to change photo">
+          <input type="file" accept="image/*" onchange="handleAvatarUpload(event,'signin')"/>
+          <div class="avatar-preview" id="avatar-signin">
+            <span id="avatar-initials-signin">A</span>
+            <img id="avatar-img-signin" src="" style="display:none"/>
+          </div>
+          <div class="avatar-edit-badge">✏</div>
+        </div>
+        <span class="avatar-label">Tap to change photo</span>
+      </div>
+      <div class="form-field">
+        <label>Username</label>
+        <div class="field-wrap">
+          <span class="field-icon">◎</span>
+          <input type="text" id="si-username" placeholder="Enter your username" autocomplete="username" oninput="checkOwnerMode()"/>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Password</label>
+        <div class="field-wrap">
+          <span class="field-icon">🔒</span>
+          <input type="password" id="si-password" placeholder="••••••••" autocomplete="current-password"/>
+        </div>
+      </div>
+      <div class="or-divider">Optional Plan Code</div>
+      <div class="form-field">
+        <label>🔑 Plan Activation Code</label>
+        <div class="field-wrap">
+          <span class="field-icon">◆</span>
+          <input class="code-field" type="text" id="si-code" placeholder="Leave empty for Free Plan" oninput="detectPlan(this.value,'si')" maxlength="24" autocomplete="off"/>
+        </div>
+        <div class="plan-preview hidden" id="si-plan-preview"></div>
+      </div>
+      <button class="btn-auth" onclick="handleSignIn()">
+        <div class="spinner"></div>
+        <span class="btn-label">✦ &nbsp; Enter Zunexa</span>
+      </button>
+      <div class="auth-footer-link">No account? <a onclick="switchTab('signup')">Create one →</a></div>
+    </div>
+
+    <!-- SIGN UP -->
+    <div id="form-signup" style="display:none">
+      <div class="avatar-upload-wrap">
+        <div class="avatar-ring" title="Upload profile photo">
+          <input type="file" accept="image/*" onchange="handleAvatarUpload(event,'signup')"/>
+          <div class="avatar-preview" id="avatar-signup">
+            <span id="avatar-initials-signup">?</span>
+            <img id="avatar-img-signup" src="" style="display:none"/>
+          </div>
+          <div class="avatar-edit-badge">📷</div>
+        </div>
+        <span class="avatar-label">Upload profile photo</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-field">
+          <label>First Name</label>
+          <div class="field-wrap"><span class="field-icon">◎</span>
+            <input type="text" id="su-fname" placeholder="Ahmed" oninput="updateInitials()"/>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Last Name</label>
+          <div class="field-wrap"><span class="field-icon">◎</span>
+            <input type="text" id="su-lname" placeholder="Dev"/>
+          </div>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Username</label>
+        <div class="field-wrap"><span class="field-icon">⬡</span>
+          <input type="text" id="su-username" placeholder="ahmed_dev"/>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Email</label>
+        <div class="field-wrap"><span class="field-icon">✉</span>
+          <input type="email" id="su-email" placeholder="ahmed@zunexa.io"/>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Password</label>
+        <div class="field-wrap"><span class="field-icon">🔒</span>
+          <input type="password" id="su-password" placeholder="Min 8 characters" autocomplete="new-password"/>
+          + <div id="zx-pwd-strength">
+   <div class="pwd-bar-wrap"><div class="pwd-bar-fill" id="pwd-bar"></div></div>
+   <span class="pwd-label" id="pwd-label">— Enter password</span>
+   <div class="pwd-rules">
+     <span class="pwd-rule" id="r-len">At least 8 characters</span>
+     <span class="pwd-rule" id="r-upp">Uppercase letter (A–Z)</span>
+     <span class="pwd-rule" id="r-num">Number (0–9)</span>
+     <span class="pwd-rule" id="r-sym">Special character (!@#…)</span>
+   </div>
+ </div>
+        </div>
+      </div>
+      <div class="or-divider">Plan Activation</div>
+      <div class="form-field">
+        <label>🔑 Plan Code <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:normal">(optional)</span></label>
+        <div class="field-wrap"><span class="field-icon">◆</span>
+          <input class="code-field" type="text" id="su-code" placeholder="ZX-PLUS-XXXX / ZX-PRO-XXXX / ZX-SENIOR-XXXX" oninput="detectPlan(this.value,'su')" maxlength="24" autocomplete="off"/>
+        </div>
+        <div class="plan-preview hidden" id="su-plan-preview"></div>
+      </div>
+      <button class="btn-auth" style="margin-top:16px" onclick="handleSignUp()">
+        <div class="spinner"></div>
+        <span class="btn-label">✦ &nbsp; Create Account</span>
+      </button>
+      <div class="auth-footer-link">Have an account? <a onclick="switchTab('signin')">Sign In →</a></div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Welcome to Zunexa!</div>
+      <div class="success-sub" id="success-name">مرحباً 👋</div>
+      <div class="success-plan-badge" id="success-plan-badge">✦ Pro Plan</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px">Redirecting to dashboard...</div>
+      <div style="width:100%;height:3px;background:var(--border);border-radius:99px;overflow:hidden">
+        <div id="progress-bar" style="height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));width:0%;transition:width 2.2s ease;border-radius:99px"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <span id="toast-icon">✔</span>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// ZUNEXA AUTH ENGINE v3.0 — ARCHON PROTOCOL
+// ══════════════════════════════════════════════════════
+
+// ── Plan Codes (expanded with owner + personal codes) ──
+const PLAN_CODES = {
+  'ZX-OWNER-2026':      { name:'Owner',  label:'👑 Owner Plan',   color:'owner',  tokens:9999999, role:'owner'  },
+  'ZX-PLUS-2026':       { name:'Plus',   label:'⭐ Plus Plan',    color:'plus',   tokens:3000,    role:'user'   },
+  'ZX-PLUS-2026-YS':    { name:'Plus',   label:'⭐ Plus Plan',    color:'plus',   tokens:3000,    role:'user'   },
+  'ZX-PLUS-2026-KR':    { name:'Plus',   label:'⭐ Plus Plan',    color:'plus',   tokens:3000,    role:'user'   },
+  'ZX-PRO-2026':        { name:'Pro',    label:'✦ Pro Plan',     color:'pro',    tokens:10000,   role:'user'   },
+  'ZX-PRO-2026-AL':     { name:'Pro',    label:'✦ Pro Plan',     color:'pro',    tokens:10000,   role:'user'   },
+  'ZX-SENIOR-2026':     { name:'Senior', label:'◆ Senior Plan',  color:'senior', tokens:999999,  role:'user'   },
+  'ZX-SENIOR-2026-HN':  { name:'Senior', label:'◆ Senior Plan',  color:'senior', tokens:999999,  role:'user'   },
+  'ZX-SENIOR-2026-MD':  { name:'Senior', label:'◆ Senior Plan',  color:'senior', tokens:999999,  role:'user'   },
+};
+const FREE_PLAN = { name:'Free', label:'○ Free Plan', color:'free', tokens:500, role:'user' };
+
+// ── Owner credentials (hashed check) ──
+const _OW = { u: btoa('Zunexa_'), p: btoa('owner') };
+
+const PLAN_COLORS = { free:'#888', plus:'#5b8dee', pro:'#D4AF37', senior:'#a78bfa', owner:'#D4AF37' };
+
+let currentTab = 'signin';
+
+  /* ── TRY BEFORE YOU BUY — Guest Mode ── */
+  const ZX_GUEST = {
+    KEY: 'zx_guest_used',
+    canGenerate() { return sessionStorage.getItem(this.KEY) !== '1'; },
+    markUsed()    { sessionStorage.setItem(this.KEY, '1'); },
+  };
+  let avatarDataURL = null;
+
+// ── Quotes bank (ibda3 = daka2 variations) ──
+const IBDA3_QUOTES = [
+  '"الإبداع هو الذكاء في حالة مرح" — أينشتاين',
+  '"الإبداع هو رؤية ما لا يراه الآخرون" — كريتيف',
+  '"كل إبداع يبدأ بفكرة جريئة واحدة" — زونيكسا',
+  '"الذكاء بلا إبداع كالنهر بلا منبع" — أرشون',
+  '"أبدع اليوم ليتذكرك الغد" — زونيكسا AI',
+  '"Innovation is seeing change as opportunity" — Steve Jobs',
+  '"Creativity is intelligence having fun" — Einstein',
+  '"لا حدود للإبداع إلا ما يضعه عقلك" — أرشون برتوكول',
+];
+
+// ── Random quote on load ──
+window.addEventListener('DOMContentLoaded', () => {
+  // Rotate greeting quote in auth page if visible
+  const qt = document.querySelector('.greeting-quote');
+  if(qt) qt.textContent = IBDA3_QUOTES[Math.floor(Math.random()*IBDA3_QUOTES.length)];
+
+  const saved = localStorage.getItem('zunexa_avatar');
+  if(saved){ applyAvatar(saved,'signin'); applyAvatar(saved,'signup'); avatarDataURL=saved; }
+  const su = localStorage.getItem('zunexa_user');
+  if(su){ try{ const u=JSON.parse(su); if(u.username) document.getElementById('si-username').value=u.username; }catch(e){} }
+
+  // Auto redirect if already logged in
+  _SB.auth.getSession().then(({data:{session}})=>{
+    if(session) window.location.replace('dashboard.html');
+  });
+});
+
+// ── Owner mode detect ──
+function checkOwnerMode(){
+  const u = document.getElementById('si-username').value.trim();
+  const ob = document.getElementById('ownerBadgeWrap');
+  if(ob) ob.style.display = (u === atob(_OW.u)) ? 'block' : 'none';
+}
+
+// ── Tab switch ──
+function switchTab(tab){
+  currentTab = tab;
+  document.getElementById('form-signin').style.display = tab==='signin'?'block':'none';
+  document.getElementById('form-signup').style.display = tab==='signup'?'block':'none';
+  document.getElementById('tab-signin').classList.toggle('active',tab==='signin');
+  document.getElementById('tab-signup').classList.toggle('active',tab==='signup');
+  document.getElementById('success-screen').style.display='none';
+  hideErr();
+}
+
+// ── Avatar ──
+function handleAvatarUpload(event,prefix){
+  const file=event.target.files[0]; if(!file) return;
+  if(file.size>2*1024*1024){showToast('⚠','Photo must be under 2MB');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    avatarDataURL=e.target.result;
+    localStorage.setItem('zunexa_avatar',avatarDataURL);
+    applyAvatar(avatarDataURL,'signin');
+    applyAvatar(avatarDataURL,'signup');
+    showToast('📷','Photo saved!');
+  };
+  reader.readAsDataURL(file);
+}
+function applyAvatar(dataURL,prefix){
+  const img=document.getElementById('avatar-img-'+prefix);
+  const ini=document.getElementById('avatar-initials-'+prefix);
+  if(img){img.src=dataURL;img.style.display='block';}
+  if(ini) ini.style.display='none';
+}
+function updateInitials(){
+  const fname=document.getElementById('su-fname').value.trim();
+  const el=document.getElementById('avatar-initials-signup');
+  if(el&&fname&&!avatarDataURL) el.textContent=fname[0].toUpperCase();
+}
+
+// ── Plan detect ──
+function detectPlan(val,prefix){
+  const code=val.trim().toUpperCase();
+  const previewEl=document.getElementById(prefix+'-plan-preview');
+  if(!previewEl) return;
+  if(!code){previewEl.className='plan-preview hidden';return;}
+  const plan=PLAN_CODES[code];
+  if(plan){
+    previewEl.className='plan-preview '+plan.color;
+    const icons={pro:'✦',senior:'◆',owner:'👑',plus:'⭐',free:'○'};
+    previewEl.innerHTML=`<span>${icons[plan.color]||'✦'}</span><strong>${plan.name} Plan activated!</strong><span style="margin-left:auto;opacity:.7">${plan.tokens>=999999?'∞ Unlimited':plan.tokens.toLocaleString()+' tokens'}</span>`;
+  } else {
+    previewEl.className='plan-preview';
+    previewEl.style.cssText='background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);color:#ff4d6d';
+    previewEl.innerHTML='<span>✕</span><span>Invalid code — Free Plan will be applied</span>';
+  }
+}
+
+function resolvePlan(codeVal){
+  const code=codeVal.trim().toUpperCase();
+  return PLAN_CODES[code]||FREE_PLAN;
+}
+
+// ── Error UI ──
+function showErr(msg){const b=document.getElementById('errBox');const m=document.getElementById('errMsg');if(b&&m){m.textContent=msg;b.classList.add('show');}}
+function hideErr(){const b=document.getElementById('errBox');if(b)b.classList.remove('show');}
+
+// ── Sign In ──
+async function handleSignIn(){
+  hideErr();
+  const username=document.getElementById('si-username').value.trim();
+  const password=document.getElementById('si-password').value.trim();
+  const codeVal=document.getElementById('si-code').value.trim();
+
+  if(!username){shakeField('si-username');showToast('✕','Enter a username');return;}
+  if(!password){shakeField('si-password');showToast('✕','Enter your password');return;}
+
+  const btn=document.querySelector('#form-signin .btn-auth');
+  btn.classList.add('loading');
+
+  // ── Owner bypass ──
+  if(username===atob(_OW.u)&&password===atob(_OW.p)){
+    btn.classList.remove('loading');
+    const ownerPlan={name:'Owner',label:'👑 Owner Plan',color:'owner',tokens:9999999,role:'owner'};
+    localStorage.setItem('zunexa_owner','1');
+    localStorage.setItem('zunexa_user',JSON.stringify({username:'Zunexa_',firstName:'Zunexa',plan:'Owner',tokens:9999999,role:'owner',isOwner:true}));
+    showSuccess('Zunexa_',ownerPlan);
+    setTimeout(()=>window.location.replace('dashboard.html'),1800);
+    return;
+  }
+
+  // ── Supabase sign in ──
+  const fakeEmail=username.toLowerCase().replace(/[^a-z0-9]/g,'')+'@zunexa.local';
+  const {data,error}=await _SB.auth.signInWithPassword({email:fakeEmail,password:password});
+  btn.classList.remove('loading');
+
+  if(error){
+    // Try with actual email if first fails
+    const {data:d2,error:e2}=await _SB.auth.signInWithPassword({email:username,password:password});
+    if(e2){
+      shakeField('si-password');
+      showErr('Invalid credentials. Check username/password.');
+      showToast('✕','Sign in failed');
+      return;
+    }
+    // Success with email
+    const plan=resolvePlan(codeVal);
+    if(codeVal.trim()&&d2.user){
+      await _SB.from('profiles').update({tokens_balance:plan.tokens,plan:plan.name}).eq('id',d2.user.id);
+    }
+    const storedUser = {
+  username: username,
+  plan: plan.name,          // 'Free' if no code entered
+  tokens: plan.tokens,      // 500 for Free
+  role: plan.role || 'user'
+};
+localStorage.setItem('zx_user', JSON.stringify(storedUser));
+showSuccess(username,plan);
+    setTimeout(()=>window.location.replace('dashboard.html'),1800);
+    return;
+  }
+
+  const plan=resolvePlan(codeVal);
+  if(codeVal.trim()&&data.user){
+    await _SB.from('profiles').update({tokens_balance:plan.tokens,plan:plan.name}).eq('id',data.user.id);
+  }
+  showSuccess(username,plan);
+  setTimeout(()=>window.location.replace('dashboard.html'),1800);
+}
+
+// ── Sign Up ──
+async function handleSignUp(){
+  hideErr();
+  const fname=document.getElementById('su-fname').value.trim();
+  const username=document.getElementById('su-username').value.trim();
+  const email=document.getElementById('su-email').value.trim();
+  const password=document.getElementById('su-password').value.trim();
+  const codeVal=document.getElementById('su-code').value.trim();
+
+  if(!fname){shakeField('su-fname');showToast('✕','Enter first name');return;}
+  if(!username){shakeField('su-username');showToast('✕','Choose a username');return;}
+  if(!email||!email.includes('@')){shakeField('su-email');showToast('✕','Valid email required');return;}
+  if(password.length<8){shakeField('su-password');showToast('✕','Min 8 characters');return;}
+
+  const btn=document.querySelector('#form-signup .btn-auth');
+  btn.classList.add('loading');
+
+  const plan=resolvePlan(codeVal);
+
+  const {data,error}=await _SB.auth.signUp({
+    email:email,
+    password:password,
+    options:{data:{username,first_name:fname,plan:plan.name}}
+  });
+  btn.classList.remove('loading');
+
+  if(error){
+    showErr(error.message);
+    showToast('✕',error.message);
+    return;
+  }
+
+  if(data.user){
+    await _SB.from('profiles').upsert({
+      id:data.user.id,
+      username,
+      first_name:fname,
+      email,
+      plan:plan.name,
+      tokens_balance:plan.tokens,
+      current_theme:'zalij-dark',
+      role:plan.role||'user',
+      avatar_url:avatarDataURL||null
+    });
+  }
+
+  if(data.session){
+    showSuccess(fname,plan);
+    setTimeout(()=>window.location.replace('dashboard.html'),1800);
+  } else {
+    ['form-signup'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+    const successScreen = document.getElementById('success-screen');
+    if(successScreen) successScreen.style.display='block';
+    const successName = document.getElementById('success-name');
+    if(successName) successName.style.textContent='تحقق من إيميلك لتفعيل الحساب 📧';
+    const progressBar = document.getElementById('progress-bar');
+    if(progressBar) progressBar.style.transition='none';
+  }
+}
+
+// ── Success screen ──
+function showSuccess(name,plan){
+  ['form-signin','form-signup'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  const tabs=document.querySelector('.auth-tabs');
+  if(tabs) tabs.style.display='none';
+  document.getElementById('success-screen').style.display='block';
+  document.getElementById('success-name').textContent=`مرحباً، ${name} 👋`;
+  const badge=document.getElementById('success-plan-badge');
+  badge.textContent=plan.label;
+  const rgb=planColorRGB(plan.color);
+  badge.style.cssText=`background:rgba(${rgb},.12);border:1px solid rgba(${rgb},.35);color:${PLAN_COLORS[plan.color]};display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:20px;`;
+  requestAnimationFrame(()=>{document.getElementById('progress-bar').style.width='100%';});
+}
+function planColorRGB(c){return{free:'155,155,155',plus:'91,141,238',pro:'212,175,55',senior:'167,139,250',owner:'212,175,55'}[c]||'212,175,55';}
+
+// ── Shake / Toast ──
+function shakeField(id){const el=document.getElementById(id);if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');el.style.borderColor='var(--red)';setTimeout(()=>{el.style.borderColor='';el.classList.remove('shake');},600);}
+let _tt;
+function showToast(icon,msg){const t=document.getElementById('toast');document.getElementById('toast-icon').textContent=icon;document.getElementById('toast-msg').textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);}
+// ── Password Strength Checker ──────────────────────────────
+document.getElementById('su-password').addEventListener('input', function(){
+  const v = this.value;
+  const rules = [
+    { id:'r-len', ok: v.length >= 8 },
+    { id:'r-upp', ok: /[A-Z]/.test(v) },
+    { id:'r-num', ok: /[0-9]/.test(v) },
+    { id:'r-sym', ok: /[^a-zA-Z0-9]/.test(v) },
+  ];
+  const score = rules.filter(r=>r.ok).length;
+  const bar   = document.getElementById('pwd-bar');
+  const label = document.getElementById('pwd-label');
+  const colors= ['','#ff4d6d','#f59e0b','#3ddc84','#D4AF37'];
+  const labels= ['','Weak','Fair','Strong','Perfect ✦'];
+  if(bar){
+    bar.style.width  = (score/4*100)+'%';
+    bar.style.background = colors[score]||'#888';
+  }
+  if(label){ label.textContent = v.length ? labels[score]||'' : '— Enter password'; label.style.color = colors[score]||'var(--text-muted)'; }
+  rules.forEach(r=>{
+    const el=document.getElementById(r.id);
+    if(el){ el.classList.toggle('ok',r.ok); el.classList.toggle('bad',v.length>0&&!r.ok); }
+  });
+  const wrap = document.getElementById('zx-pwd-strength');
+  if(wrap) wrap.classList.toggle('visible', v.length > 0);
+});
+</script>
+</body>
+</html>
