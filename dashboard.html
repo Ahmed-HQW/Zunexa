@@ -848,15 +848,21 @@ let zunexaDatabase = [];
 // 1. تحميل قاعدة بيانات الأسئلة والأجوبة تلقائياً من ملف الـ JSON
 async function loadZunexaDatabase() {
     try {
-        // قراءة الملف المحلي
-        const response = await fetch('zunexa_qa.json');
+        // استخدام الرابط النسبي مع تغيير القيمة العشوائية لكسر كاش Vercel Edge تماماً
+        const uniqueCacheBuster = Math.random().toString(36).substring(7);
+        const response = await fetch(`./zunexa_qa.json?nocache=${uniqueCacheBuster}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         zunexaDatabase = await response.json();
-        console.log(`[Archon Protocol]: تم تحميل ${zunexaDatabase.length} قاعدة معرفية بنجاح.`);
+        console.log(`[Archon Success]: تم الاتصال والتحميل بنجاح. العدد: ${zunexaDatabase.length}`);
     } catch (error) {
-        console.error("[Archon Error]: فشل في تحميل ملف zunexa_qa.json لم يتم العثور عليه أو الصيغة خاطئة:", error);
+        console.error("[Archon Critical Error]: فشل في تحميل ملف zunexa_qa.json لم يتم العثور عليه أو الصيغة خاطئة:", error);
     }
 }
-loadZunexaDatabase(); // تشغيل الدالة فوراً عند فتح الصفحة
+loadZunexaDatabase();	// تشغيل الدالة فوراً عند فتح الصفحة
 
 // إعدادات Supabase (تأكد من وضع روابطك الحقيقية هنا)
 const SUPABASE_URL = "https://xrldhfsytysznyyhwjlr.supabase.co";
