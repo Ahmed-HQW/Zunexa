@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Zunexa — مثبت التطبيقات</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="theme.css"/>
+<style>
+.app-hero{text-align:center;padding:48px 0 24px}
+.app-title{font-family:'Cinzel',serif;font-size:26px;color:var(--gold);margin-bottom:8px}
+.app-sub{font-size:14px;color:var(--text-grey);max-width:520px;margin:0 auto}
+.app-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:960px;margin:32px auto 0;padding:0 20px}
+.app-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center;transition:all .25s;position:relative}
+.app-card:hover{border-color:var(--gold-dim);transform:translateY(-4px)}
+.app-icon{font-size:42px;margin-bottom:14px}
+.app-name{font-family:'Cinzel',serif;font-size:16px;color:var(--text-white);margin-bottom:6px}
+.app-desc{font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:16px}
+.app-btn{display:inline-block;width:100%;padding:10px;background:var(--bg-input);border:1px solid var(--border);border-radius:6px;color:var(--gold);font-size:12px;font-weight:700;text-decoration:none;transition:all .2s;font-family:'Rajdhani',sans-serif;letter-spacing:.06em}
+.app-btn:hover{background:var(--gold);color:#000;border-color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="app-hero">
+  <div class="app-title">💻 تطبيقات Zunexa المخصصة</div>
+  <div class="app-sub">حمّل تطبيقات لوحة التحكم المخصصة لجميع أنظمتك للاستفادة من أقصى درجات الأداء والاستقرار.</div>
+</div>
+
+<div class="app-grid">
+  <div class="app-card">
+    <div class="app-icon">🤖</div>
+    <div class="app-name">Android App</div>
+    <div class="app-desc">ملف APK خفيف ومحسن خصيصاً لهواتف الأندرويد لسهولة التوليد السريع أثناء التنقل.</div>
+    <a href="#" class="app-btn">DOWNLOAD APK (v10.0.0)</a>
+  </div>
+  <div class="app-card">
+    <div class="app-icon">🐧</div>
+    <div class="app-name">Linux Client (Debian)</div>
+    <div class="app-desc">حزمة .deb مخصصة لتوزيعات دبيان والأنظمة ذات الواجهات الخفيفة مثل XFCE بأداء خارق للترمينال.</div>
+    <a href="#" class="app-btn">DOWNLOAD .DEB</a>
+  </div>
+  <div class="app-card">
+    <div class="app-icon">🪟</div>
+    <div class="app-name">Windows Desktop</div>
+    <div class="app-desc">تطبيق مخصص لبيئة ويندوز مع إشعارات سطح المكتب الفورية وسرعة استجابة مذهلة.</div>
+    <a href="#" class="app-btn">DOWNLOAD EXE</a>
+  </div>
+</div>
+
+<script src="sidebar-injection.js"></script>
+<script src="fab-injection.js"></script>
+<script src="translator-bar.js"></script>
+</body>
+</html>
