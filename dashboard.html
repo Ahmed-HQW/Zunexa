@@ -11,9 +11,10 @@
      ZUNEXA SAAS — MAIN DASHBOARD
      Author  : ahmed_dev_a
      Stack   : HTML5 · CSS3 · Vanilla JS
-     Backend : Supabase - vercel 
+     Backend : No backend first html code 
      Design  : "Zalij Mode" — Premium Moroccan Geometric
 ============================================================ -->
+window.location.replace('index.html')
 <style>
 /* --- CSS START --- */
 
@@ -1832,7 +1833,11 @@ const ZUNEXA_SYSTEM = `You are Zunexa AI, a premium multilingual content assista
     <button class="nav-item" onclick="window.location.href='apps.html'">
       <span class="nav-icon">📱</span> Apps
     </button>
-  
+    
+    <button class="nav-item" onclick="window.location.href='pro_accounts.html'">
+      <span class="nav-icon">👑</span> Pro Accounts
+    </button>
+    
     <button class="nav-item" onclick="window.location.href='settings.html'">
       <span class="nav-icon">⚙️</span> Settings
     </button>
@@ -4232,26 +4237,29 @@ let localGenerator = null;
 async function initLocalAI() {
     if (!localGenerator) {
         console.log("[Zunexa AI] Initializing Local AI (WebGPU)...");
-        localGenerator = await pipeline('text-generation', 'Xenova/distilgpt2', { device: 'webgpu' });
+        localGenerator = await pipeline('text-generation', 'Xenova/Qwen1.5-0.5B-Chat', { device: 'webgpu' });
     }
 }
-
 window.generateLocalContent = async (prompt) => {
-    try {
-        await initLocalAI();
-        const output = await localGenerator(prompt, { 
-            max_new_tokens: 350,      
-            min_new_tokens: 60,       
-            temperature: 0.8,         
-            top_k: 50,                
-            repetition_penalty: 1.5,  
-            do_sample: true           
-        });
-        return output[0].generated_text;
-    } catch (err) {
-        console.error("Local AI Error:", err);
-        return getRandomTemplate(); // الهروب الأخير: إعطاء قالب جاهز
+  // حاول WebGPU أولا
+  try {
+    await initLocalAI();
+    const output = await localGenerator(prompt, { 
+      max_new_tokens: 200,
+      temperature: 0.85,
+      repetition_penalty: 1.4,
+      do_sample: true
+    });
+    const result = output[0].generated_text;
+    // إذا الناتج قصير أو مش مزيان، استعمل Smart Engine
+    if (result.length < 50 || !result.includes('#')) {
+      return window.generateSmartContent();
     }
+    return result;
+  } catch (err) {
+    // Fallback مباشر للـ Smart Engine
+    return window.generateSmartContent();
+  }
 };
 
 // 4. قاعدة البيانات الجاهزة للـ Content (40 قالب احترافي)
@@ -4297,7 +4305,51 @@ const zunexaTemplates = [
     "🌟 المشاركة كتضاعف الفرحة والمعرفة! ✨ بارطاجي داكشي اللي كتعرف. #عطاء #zunexa",
     "🌟 النهاية الزوينة كتحتاج بداية قوية! ✨ توكل على الله وبدأ. #توكل #zunexa"
 ];
+// زيد هاد الدالة فوق window.getRandomTemplate
+window.generateSmartContent = (topic = '') => {
+  const openers = [
+    "🌟", "💡", "🔥", "✨", "⚡", "🎯", "💪", "🚀"
+  ];
+  
+  const hooks = [
+    "السر اللي ما كيعرفوش الكثيرين",
+    "حقيقة كتغير كل شي",
+    "داكشي اللي فرق معايا",
+    "اللي علمتني إياه التجربة",
+    "الفرق بين الناجح والفاشل"
+  ];
 
+  const bodies = [
+    "ما تتسناش الفرصة المثالية، الفرصة المثالية هي دابا",
+    "كل يوم كتبدأ فيه هو يوم أحسن من اللي ما بديتيش",
+    "الفرق بين الحلم والهدف هو الخطة والعمل",
+    "اللي كيتعلم ما كيوقفش، واللي كيوقف ما كيتعلمش",
+    "النجاح ماشي محظوظية، هو عادة كتبنيها كل يوم",
+    "ما تخليش رأي الآخرين يحدد قيمتك الحقيقية",
+    "التغيير الكبير كيبدا من قرار صغير واحد"
+  ];
+
+  const closers = [
+    "ابدأ دابا! 💫 #zunexa",
+    "أنت قادر! 🏆 #zunexa",  
+    "وقتك دابا! ⏰ #zunexa",
+    "دير الفرق! 🌍 #zunexa",
+    "لا تتوقف! 🔥 #zunexa"
+  ];
+
+  const hashtags = [
+    "#تطوير_الذات", "#نجاح", "#مغرب", "#طموح",
+    "#إصرار", "#شغف", "#يومياتي", "#تحفيز"
+  ];
+
+  // اختيار عشوائي + تركيب
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const tag1 = pick(hashtags);
+  let tag2 = pick(hashtags);
+  while (tag2 === tag1) tag2 = pick(hashtags); // تجنب التكرار
+
+  return `${pick(openers)} ${pick(hooks)}!\n\n✨ ${pick(bodies)}.\n\n${pick(closers)} ${tag1} ${tag2}`;
+};
 // دالة لاختيار محتوى عشوائي من القاعدة
 window.getRandomTemplate = () => {
     const randomIndex = Math.floor(Math.random() * zunexaTemplates.length);
