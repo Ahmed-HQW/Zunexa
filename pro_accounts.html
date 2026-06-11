@@ -192,7 +192,7 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
 
     <div class="notice-box">
       <span class="ni">🔒</span>
-      <div>Your request goes directly to <strong>ahmed (Zunexa Admin)</strong>. Once reviewed, you'll receive a unique activation code (e.g. <strong>ZX-PRO-2026</strong>) to your email. Enter it on the Sign In page to activate your plan instantly.</div>
+      <div>Your request goes directly to <strong>ahmed (Zunexa Admin)</strong>. Once reviewed, you'll receive a unique activation code (e.g. <strong>ZX-**-****</strong>) to your email. Enter it on the Sign In page to activate your plan instantly.</div>
     </div>
 
     <!-- Plan selector chips -->
@@ -308,12 +308,15 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);mi
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-/* Plan card selection */
+/* ─── Supabase config ─── */
+const SUPA_URL = 'https://xrldhfsytysznyyhwjlr.supabase.co';
+const SUPA_KEY = 'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F';
+
+/* ─── Plan card selection ─── */
 function selectPlan(name, card) {
   document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
   card.classList.add('selected');
   document.getElementById('selectedPlan').value = name;
-  // sync chips
   document.querySelectorAll('.plan-chip').forEach(c => {
     c.classList.toggle('active', c.dataset.plan === name);
   });
@@ -324,179 +327,106 @@ function selectPlanChip(chip) {
   chip.classList.add('active');
   const plan = chip.dataset.plan;
   document.getElementById('selectedPlan').value = plan;
-  // sync cards
   document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
   const cards = { Plus:0, Pro:1, Senior:2 };
   const target = document.querySelectorAll('.plan-card')[cards[plan]];
   if (target) target.classList.add('selected');
 }
 
-/* Submit via Formspree */
+/* ─── Submit ─── */
 async function submitRequest() {
-  const fname    = document.getElementById('f-fname').value.trim();
-  const lname    = document.getElementById('f-lname').value.trim();
-  const email    = document.getElementById('f-email').value.trim();
-  const username = document.getElementById('f-username').value.trim();
-  const phone    = document.getElementById('f-phone').value.trim();
-  const country  = document.getElementById('f-country').value;
-  const usecase  = document.getElementById('f-usecase').value.trim();
-  const payment  = document.getElementById('f-payment').value;
-  const plan     = document.getElementById('selectedPlan').value;
+  const btn = document.querySelector('.btn-submit');   // ✅ FIX: no id needed
 
-  if (!fname) { shake('f-fname'); toast('error','Enter your first name'); return; }
-  if (!email || !email.includes('@')) { shake('f-email'); toast('error','Valid email required'); return; }
-  if (!usecase) { shake('f-usecase'); toast('error','Describe your use case'); return; }
+  // ✅ FIX: IDs match the HTML (f-fname, f-lname, etc.)
+  const fname   = document.getElementById('f-fname').value.trim();
+  const lname   = document.getElementById('f-lname').value.trim();
+  const email   = document.getElementById('f-email').value.trim();
+  const username= document.getElementById('f-username').value.trim();
+  const phone   = document.getElementById('f-phone').value.trim();
+  const country = document.getElementById('f-country').value;
+  const payment = document.getElementById('f-payment').value;
+  const usecase = document.getElementById('f-usecase').value.trim();
+  const plan    = document.querySelector('.plan-chip.active')?.dataset.plan || 'Pro';
 
-  const btn = document.querySelector('.btn-submit');
+  // Validation
+  if (!fname) { shakeEl('f-fname'); toast('error','First name required'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    shakeEl('f-email'); toast('error','Valid email required'); return;
+  }
+  if (!country) { shakeEl('f-country'); toast('error','Select your country'); return; }
+
   btn.classList.add('loading');
 
-  // Build FormData for Formspree
-  const fd = new FormData();
-  fd.append('_subject', `[Zunexa] ${plan} Plan Request from ${fname} ${lname}`);
-  fd.append('Plan Requested', plan);
-  fd.append('Full Name', `${fname} ${lname}`);
-  fd.append('Email', email);
-  fd.append('Username', username || 'N/A');
-  fd.append('Phone', phone || 'N/A');
-  fd.append('Country', country || 'N/A');
-  fd.append('Payment Preference', payment || 'N/A');
-  fd.append('Use Case', usecase);
-  fd.append('_replyto', email);
-
   try {
-    const res = await fetch('https://formspree.io/f/xdkknqoj', {
+    const res = await fetch(`${SUPA_URL}/rest/v1/billing_requests`, {
       method: 'POST',
-      body: fd,
-      headers: { 'Accept': 'application/json' }
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPA_KEY,
+        'Authorization': `Bearer ${SUPA_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        first_name:   fname,
+        last_name:    lname,
+        email:        email,
+        username:     username || null,
+        phone:        phone    || null,
+        country:      country,
+        plan:         plan,
+        payment_pref: payment  || null,
+        use_case:     usecase  || null
+      })
     });
 
     btn.classList.remove('loading');
 
     if (res.ok) {
-      document.getElementById('requestForm').style.display = 'none';
-      btn.style.display = 'none';
-      document.querySelector('.notice-box').style.display = 'none';
-      document.querySelector('.plan-selector').style.display = 'none';
-      document.querySelector('[style*="section-label"]') && null;
-      document.querySelectorAll('.section-label').forEach(e => e.style.display = 'none');
-      document.querySelector('.form-title').textContent = '';
-      document.querySelector('.form-sub').textContent = '';
-      document.querySelector('.divider').style.display = 'none';
-      document.querySelector('[for]') && null;
-      document.getElementById('successScreen').style.display = 'block';
+      // ✅ Show success
+      document.getElementById('requestForm').style.display  = 'none';
+      btn.style.display                                      = 'none';
+      document.querySelector('.notice-box').style.display   = 'none';
+      document.querySelector('.plan-selector').style.display= 'none';
+      document.querySelector('.divider').style.display      = 'none';
+      document.querySelectorAll('.section-label').forEach(e => e.style.display='none');
+      document.querySelector('.form-title').textContent     = '';
+      document.querySelector('.form-sub').textContent       = '';
+      document.getElementById('successScreen').style.display= 'block';
+      toast('success', 'Request sent! We will contact you soon.');
     } else {
-      // Fallback: mailto
-      fallbackMailto(fname, lname, email, username, phone, country, usecase, payment, plan);
+      const err = await res.json();
+      console.error('Supabase error:', err);
+      toast('error', 'Something went wrong, try again.');
     }
   } catch(e) {
     btn.classList.remove('loading');
-    fallbackMailto(fname, lname, email, username, phone, country, usecase, payment, plan);
+    console.error(e);
+    toast('error', 'Network error, check your connection.');
   }
 }
 
-function fallbackMailto(fname, lname, email, username, phone, country, usecase, payment, plan) {
-  const body = encodeURIComponent(
-    `Plan: ${plan}\nName: ${fname} ${lname}\nEmail: ${email}\nUsername: ${username}\nPhone: ${phone}\nCountry: ${country}\nPayment: ${payment}\n\nUse Case:\n${usecase}`
-  );
-  const subject = encodeURIComponent(`[Zunexa] ${plan} Plan Request from ${fname}`);
-  window.location.href = `mailto:mrahmed20101119@gmail.com?subject=${subject}&body=${body}`;
-}
-
-function shake(id) {
+/* ─── Helpers ─── */
+function shakeEl(id) {
   const el = document.getElementById(id);
   if (!el) return;
   el.style.borderColor = 'var(--red)';
-  el.style.animation = 'shake .4s ease';
+  el.style.animation   = 'shake .4s ease';
   setTimeout(() => { el.style.animation = ''; el.style.borderColor = ''; }, 600);
 }
 
 function toast(type, msg) {
   const wrap = document.getElementById('toastWrap');
-  const t = document.createElement('div');
-  t.className = 'toast ' + type;
-  t.innerHTML = `<span>${type==='success'?'✔':'✕'}</span><span>${msg}</span>`;
+  const t    = document.createElement('div');
+  t.className  = 'toast ' + type;
+  t.innerHTML  = `<span>${type==='success'?'✔':'✕'}</span><span>${msg}</span>`;
   wrap.appendChild(t);
   setTimeout(() => { t.style.opacity='0'; t.style.transition='.3s'; setTimeout(()=>t.remove(),300); }, 3500);
 }
 
-// Inject shake keyframe
+// Shake keyframe
 const sty = document.createElement('style');
 sty.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}';
 document.head.appendChild(sty);
-</script>
-<script src="sidebar-injection.js"></script>
-<script src="fab-injection.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    'use strict';
-
-    // حماية: إذا كانت الصفحة هي صفحة تسجيل الدخول، حبس الكود فوراً ومتقيس والو
-    const currentPage = location.pathname.split('/').pop() || 'index.html';
-    if (currentPage === 'index.html') return; 
-
-    // أ. التأكد من تهيئة القائمة الجانبية بنجاح
-    if (typeof ZX_SB === 'undefined') {
-        console.warn('[Zunexa Core] Sidebar system not initialized yet.');
-    }
-
-    // ب. تفعيل الروابط النشطة (فقط الروابط الحقيقية للقائمة وليس أزرار العمليات)
-    document.querySelectorAll('.zx-nav-item').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href && href === currentPage) {
-            link.classList.add('nav-active');
-        }
-    });
-
-    // ج. تفعيل تأثير النقر الذهبي الاحترافي (Ripple Effect) لجميع الأزرار المستهدفة
-    document.querySelectorAll('.btn, .zx-fab-btn').forEach(btn => {
-        if (btn.dataset.rippleInstalled) return;
-        btn.dataset.rippleInstalled = "true";
-
-        btn.addEventListener('click', function(e) {
-            // إذا كان الزر خاص بـ Supabase (مثلا فيه submit أو خاص بالـ Auth)، خليه يدوز عادي
-            if (this.getAttribute('type') === 'submit' || this.classList.contains('auth-trigger')) {
-                // نترك العملية تمر لـ Supabase دون مقاطعة
-            }
-
-            let ripple = document.createElement('span');
-            let rect = this.getBoundingClientRect();
-            let size = Math.max(rect.width, rect.height);
-            let x = e.clientX - rect.left - size / 2;
-            let y = e.clientY - rect.top - size / 2;
-
-            ripple.style.width = ripple.style.height = `${size}px`;
-            ripple.style.left = `${x}px`;
-            ripple.style.top = `${y}px`;
-            ripple.style.position = 'absolute';
-            ripple.style.background = 'rgba(212, 175, 55, 0.3)'; 
-            ripple.style.borderRadius = '50%';
-            ripple.style.transform = 'scale(0)';
-            ripple.style.animation = 'ripple-anim 0.6s linear';
-            ripple.style.pointerEvents = 'none';
-
-            if (window.getComputedStyle(this).position === 'static') {
-                this.style.position = 'relative';
-                this.style.overflow = 'hidden';
-            }
-
-            this.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 600);
-        });
-    });
-
-    // د. حقن ستايل الأنيميشن في رأس الصفحة تلقائياً
-    if (!document.getElementById('zx-ripple-style')) {
-        const style = document.createElement('style');
-        style.id = 'zx-ripple-style';
-        style.innerHTML = `
-            @keyframes ripple-anim {
-                to { transform: scale(4); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-});
 </script>
 </body>
 </html>
