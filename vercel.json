@@ -1,6 +1,33 @@
 {
+  "version": 2,
+  "name": "zunexa-archon",
   "cleanUrls": true,
   "trailingSlash": false,
+
+  "builds": [
+    { "src": "*.html", "use": "@vercel/static" },
+    { "src": "*.json", "use": "@vercel/static" },
+    { "src": "*.css",  "use": "@vercel/static" }
+  ],
+
+  "routes": [
+    { "src": "/",           "dest": "/dashboard.html" },
+    { "src": "/ai",         "dest": "/ai.html" },
+    { "src": "/downloads",  "dest": "/downloads.html" },
+    { "src": "/upgrade",    "dest": "/upgrade.html" }
+  ],
+
+  "rewrites": [
+    { "source": "/app",       "destination": "/dashboard.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/home",      "destination": "/landing.html" }
+  ],
+
+  "redirects": [
+    { "source": "/admin",     "destination": "/owner_admin", "permanent": false },
+    { "source": "/contact",   "destination": "/CONTACT",     "permanent": true  },
+    { "source": "/affiliate", "destination": "/affiliat",    "permanent": true  }
+  ],
 
   "headers": [
     {
@@ -21,7 +48,6 @@
         }
       ]
     },
-
     {
       "source": "/(.*)\\.html",
       "headers": [
@@ -30,7 +56,6 @@
         { "key": "Expires", "value": "0" }
       ]
     },
-
     {
       "source": "/theme.css",
       "headers": [
@@ -43,7 +68,6 @@
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
-
     {
       "source": "/sidebar-injection.js",
       "headers": [
@@ -80,24 +104,11 @@
         { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=3600" }
       ]
     },
-
     {
       "source": "/zunexa_qa.json",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=600" }
       ]
     }
-  ],
-
-  "rewrites": [
-    { "source": "/app",       "destination": "/dashboard.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" },
-    { "source": "/home",      "destination": "/landing.html" }
-  ],
-
-  "redirects": [
-    { "source": "/admin",    "destination": "/owner_admin", "permanent": false },
-    { "source": "/contact",  "destination": "/CONTACT",     "permanent": true  },
-    { "source": "/affiliate","destination": "/affiliat",    "permanent": true  }
   ]
 }
