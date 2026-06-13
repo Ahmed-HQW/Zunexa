@@ -4,20 +4,11 @@
   "cleanUrls": true,
   "trailingSlash": false,
 
-  "builds": [
-    { "src": "*.html", "use": "@vercel/static" },
-    { "src": "*.json", "use": "@vercel/static" },
-    { "src": "*.css",  "use": "@vercel/static" }
-  ],
-
-  "routes": [
-    { "src": "/",           "dest": "/dashboard.html" },
-    { "src": "/ai",         "dest": "/ai.html" },
-    { "src": "/downloads",  "dest": "/downloads.html" },
-    { "src": "/upgrade",    "dest": "/upgrade.html" }
-  ],
-
   "rewrites": [
+    { "source": "/",          "destination": "/dashboard.html" },
+    { "source": "/ai",        "destination": "/ai.html" },
+    { "source": "/downloads", "destination": "/downloads.html" },
+    { "source": "/upgrade",   "destination": "/upgrade.html" },
     { "source": "/app",       "destination": "/dashboard.html" },
     { "source": "/dashboard", "destination": "/dashboard.html" },
     { "source": "/home",      "destination": "/landing.html" }
@@ -40,7 +31,7 @@
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=()" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-ancestors 'none';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-ancestors 'none';"
         },
         {
           "key": "Strict-Transport-Security",
@@ -54,6 +45,12 @@
         { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
         { "key": "Pragma", "value": "no-cache" },
         { "key": "Expires", "value": "0" }
+      ]
+    },
+    {
+      "source": "/(.*)\\.js",
+      "headers": [
+        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
       ]
     },
     {
