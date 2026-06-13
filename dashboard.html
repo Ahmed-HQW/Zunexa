@@ -2799,24 +2799,78 @@ function setHubPlatformStyle(style) {
   _hubStyleNote = map[style] || '';
 }
 
-/* ─── Zunexa AI Content Engine (local, no external API) ───────── */
+/* ─── Zunexa AI Content Engine (cloud proxy + local fallback) ─── */
 async function generateContentWithZunexaAI(prompt, config) {
   if (zxIsNSFW(prompt)) {
     showToast('error','⚠ المحتوى المطلوب مخالف لسياسة Zunexa');
     return '__NSFW__';
   }
 
-  // Small artificial delay so the loading UI reads naturally
-  await new Promise(r => setTimeout(r, 600 + Math.random() * 500));
+  const platformHint = ZX_PLATFORM_HINTS_2[config.contentType] || '';
+  const toneHint     = ZX_TONE_HINTS_2[config.tone] || '';
+  const styleNote    = _hubStyleNote ? `\nStyle note: ${_hubStyleNote}` : '';
+  const langHint     = ZX_LANG_HINTS[config.language] || config.language;
 
+  const system = `You are Zunexa AI, a premium content generation engine for the MENA & Moroccan market.
+Platform: ${config.contentType}. ${platformHint}
+Tone: ${config.tone}. ${toneHint}${styleNote}
+Write in ${langHint}.
+Respond ONLY with the final content, no preamble or explanation. Never generate sexual, violent, or hateful content.`;
+
+  // Try the secure cloud proxy first
+  try {
+    const res = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, system }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.text) {
+        const text = data.text;
+        if (zxIsNSFW(text)) return '⚠ تم حجب المحتوى — لا يتوافق مع سياسة Zunexa.';
+        return text + ZX_WATERMARK;
+      }
+    }
+  } catch (e) {
+    // network error / proxy unreachable — fall through to local engine
+  }
+
+  // Local fallback engine (always available, no external API)
+  await new Promise(r => setTimeout(r, 600 + Math.random() * 500));
   let text = getDummyContent(config.language, config.contentType, config.tone, prompt);
   if (_hubStyleNote && config.contentType === 'twitter') {
     text = `🧵1/ ${_hubStyleNote}\n\n` + text;
   }
-
   if (zxIsNSFW(text)) { return '⚠ تم حجب المحتوى — لا يتوافق مع سياسة Zunexa.'; }
   return text + ZX_WATERMARK;
 }
+
+const ZX_PLATFORM_HINTS_2 = {
+  instagram: 'Write a visually compelling caption with 5-8 relevant hashtags.',
+  tiktok:    'Write a TikTok script: Hook (0-3s), Body, CTA. Max 150 words.',
+  linkedin:  'Write a professional post: insight or story, then a CTA. No spam hashtags.',
+  youtube:   'Write a video description: hook, bullet points of value, [00:00] timestamps placeholder, subscribe CTA, 10 SEO keywords.',
+  seo:       'Write an SEO article intro (~300 words), main keyword used naturally 3 times, H2 structure.',
+  twitter:   'Write a thread: tweet 1 = hook, 2-4 = value, 5 = CTA. Mark each "🧵1/" "2/" etc, each under 280 chars.',
+};
+const ZX_TONE_HINTS_2 = {
+  professional:  'Formal, authoritative, polished.',
+  funny:         'Humor, wordplay, a surprising twist.',
+  engaging:      'Power words, curiosity gaps, scroll-stopping phrasing.',
+  formal:        'Structured, objective, no slang.',
+  inspirational: 'Vivid emotional language, metaphors, motivational CTA.',
+  storytelling:  'Open with a micro-story before the message.',
+  controversial: 'Bold, slightly contrarian, but respectful.',
+};
+const ZX_LANG_HINTS = {
+  darija: 'authentic Moroccan Darija (Arabic script)',
+  franco: 'Franco-Arabe (French + Darija mix)',
+  gulf:   'Gulf Arabic dialect',
+  english: 'English',
+  french:  'French',
+  spanish: 'Spanish',
+};
 
 /* ─── Get Dummy Content Fallback ─────────────────────────────── */
 function getDummyContent(language, contentType, tone, prompt) {
@@ -3603,10 +3657,28 @@ async function sendAiMsg() {
   if(send) send.disabled=true;
   aiIsTyping=true; showAiTyping();
 
-  // Small natural delay
-  await new Promise(r=>setTimeout(r, 400 + Math.random()*400));
+  // Try cloud AI proxy first; fall back to local engine
+  let reply = null;
+  try {
+    const res = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: text,
+        system: 'You are Zunexa AI, a helpful multilingual assistant for the Zunexa platform (content generation, plans, tokens, features). Respond concisely in the user\'s language (Darija/Arabic/French/English). Never mention other AI companies or models.',
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.text) reply = data.text;
+    }
+  } catch (e) { /* fall through to local */ }
 
-  const reply = zxLocalAiReply(text);
+  if (!reply) {
+    await new Promise(r=>setTimeout(r, 400 + Math.random()*400));
+    reply = zxLocalAiReply(text);
+  }
+
   hideAiTyping();
   aiHistory.push({role:'model',parts:[{text:reply}]});
   if(aiHistory.length>20) aiHistory=aiHistory.slice(-20);
