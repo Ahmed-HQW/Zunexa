@@ -2838,7 +2838,7 @@ Respond ONLY with the final content, no preamble or explanation. Never generate 
 
   // Local fallback engine (always available, no external API)
   await new Promise(r => setTimeout(r, 600 + Math.random() * 500));
-  let text = getDummyContent(config.language, config.contentType, config.tone, prompt);
+  let text = composeLocalContent(config.language, config.contentType, config.tone, prompt);
   if (_hubStyleNote && config.contentType === 'twitter') {
     text = `🧵1/ ${_hubStyleNote}\n\n` + text;
   }
@@ -2880,6 +2880,166 @@ function getDummyContent(language, contentType, tone, prompt) {
   const type = typeMap[contentType] || 'instagram';
   const contentBank = dummyContent[lang] || dummyContent.english;
   return contentBank[type] || contentBank.instagram || `✨ Generated ${contentType} content for: "${prompt || 'your concept'}"\n\nThis is your ${tone} ${contentType} in ${language}. Powered by Zunexa AI. 🚀\n\n#Zunexa #AIContent`;
+}
+
+/* ─── Dynamic Local Content Composer ──────────────────────────
+   Generates varied, prompt-aware content offline by randomly
+   combining language-specific phrase banks. Produces a different
+   result on every call, and actually uses the user's topic.    */
+const ZX_LANG_BANK = {
+  darija: {
+    hooks: [
+      'واش باغي تبدل {topic}؟ هاد الخدعة غادي تعجبك 🔥',
+      'الناس كاع ما كيعرفوش هاد الحاجة على {topic} 👀',
+      'إلا كنتي مهتم بـ {topic}، هاد المنشور ليك بالضبط ✨',
+      'السر اللي خلاني نتطور فـ {topic} هو هادشي 💡',
+    ],
+    bodies: [
+      'كل يوم هو فرصة جديدة باش تطور {topic}. ما تخليش الفرصة تفوت!\n\n✅ خطوة 1: حدد الهدف\n✅ خطوة 2: ابدا بشي حاجة صغيرة\n✅ خطوة 3: استمر بلا ما توقف',
+      '{topic} ماشي صعيب كيف كيبان — غير خاصك الطريقة الصحيحة والصبر.\n\nجرب اليوم، وشوف الفرق بعد أسبوع واحد فقط.',
+      'بزاف من الناس كيبداو فـ {topic} ويوقفو بسرعة. الفرق بين اللي كينجح واللي لا، هو الاستمرارية.\n\nخطوة صغيرة كل نهار = نتيجة كبيرة بعد شهر.',
+    ],
+    ctas: [
+      '💬 قولي فالكومانتير: شنو تجربتك مع {topic}؟',
+      '🔔 تابعنا باش توصلك حيل أخرى على {topic}',
+      '📌 سجل هاد البوست باش ترجع ليه ملي تحتاجو',
+    ],
+    hashtags: ['#zunexa', '#مغاربة', '#نجاح', '#تطوير_الذات', '#محتوى', '#تحفيز'],
+  },
+  english: {
+    hooks: [
+      'Want to level up your {topic}? Here\'s what nobody tells you 🔥',
+      'Most people get {topic} completely wrong — here\'s the fix 👀',
+      'If {topic} is on your mind right now, read this ✨',
+      'The one thing that changed how I approach {topic} 💡',
+    ],
+    bodies: [
+      'Every day is a new chance to improve your {topic}. Don\'t let it slip by!\n\n✅ Step 1: Set a clear goal\n✅ Step 2: Start small\n✅ Step 3: Stay consistent',
+      '{topic} isn\'t as hard as it looks — you just need the right approach and a bit of patience.\n\nTry it today and notice the difference in a week.',
+      'Most people quit {topic} too early. The real difference between success and failure is consistency.\n\nOne small step a day = a big result a month from now.',
+    ],
+    ctas: [
+      '💬 Drop a comment: what\'s your experience with {topic}?',
+      '🔔 Follow for more tips on {topic}',
+      '📌 Save this post for when you need it',
+    ],
+    hashtags: ['#Zunexa', '#ContentCreator', '#Growth', '#Marketing', '#AIContent', '#Tips'],
+  },
+  french: {
+    hooks: [
+      'Tu veux progresser sur {topic} ? Voici ce que personne ne te dit 🔥',
+      'La plupart des gens se trompent sur {topic} — voici la solution 👀',
+      'Si {topic} te préoccupe en ce moment, lis ça ✨',
+      'Ce qui a changé ma façon de voir {topic} 💡',
+    ],
+    bodies: [
+      'Chaque jour est une nouvelle chance d\'améliorer {topic}. Ne laisse pas passer l\'occasion !\n\n✅ Étape 1 : Fixe un objectif clair\n✅ Étape 2 : Commence petit\n✅ Étape 3 : Reste constant',
+      '{topic} n\'est pas aussi compliqué qu\'il paraît — il faut juste la bonne méthode et un peu de patience.\n\nEssaie aujourd\'hui et observe la différence dans une semaine.',
+      'Beaucoup abandonnent {topic} trop tôt. La vraie différence, c\'est la régularité.\n\nUn petit pas chaque jour = un grand résultat dans un mois.',
+    ],
+    ctas: [
+      '💬 Dis-nous en commentaire : ton expérience avec {topic} ?',
+      '🔔 Abonne-toi pour plus de conseils sur {topic}',
+      '📌 Enregistre ce post pour plus tard',
+    ],
+    hashtags: ['#Zunexa', '#CréationDeContenu', '#Croissance', '#Marketing', '#IA', '#Conseils'],
+  },
+  franco: {
+    hooks: [
+      'Bghiti ttwer f {topic}? Chouf had l-3aql 🔥',
+      'Bzaf dyal nas ghaltin f {topic} — hado les bonnes infos 👀',
+      'Ila {topic} f rasek daba, lazem tقري had l-post ✨',
+      'Hadchi li bddel kifach kanchouf {topic} 💡',
+    ],
+    bodies: [
+      'Kol nhar houwa une chance jdida bach ttwer {topic}. Matkhellich l-occasion tfout!\n\n✅ Étape 1: Hdd l-objectif\n✅ Étape 2: Bda b chi 7aja sghira\n✅ Étape 3: Restey consistent',
+      '{topic} machi sa3ib bzaf kima kayban — ghir khasek la bonne méthode w chwiya dyal sabr.\n\nJareb lyoum w chouf le résultat men b3d simana.',
+      'Bzaf dyal nas kay abandonew {topic} bkri bzaf. Le vrai déférence houwa la constance.\n\nUn petit pas kol nhar = résultat kbir men b3d chhar.',
+    ],
+    ctas: [
+      '💬 Goul lina f commentaire: chno tjarbatek m3a {topic}؟',
+      '🔔 Followi-na pour plus dyal conseils 3la {topic}',
+      '📌 Sauvegarde had post bach trj3 lih',
+    ],
+    hashtags: ['#zunexa', '#Maroc', '#content', '#tips', '#growth', '#motivation'],
+  },
+  gulf: {
+    hooks: [
+      'تبا تطور {topic}؟ هذا اللي ما يقولونه لك 🔥',
+      'أغلب الناس غلطانين في {topic} — وهذا هو الحل 👀',
+      'إذا كان {topic} في بالك الحين، اقرا هذا ✨',
+      'الشي اللي غيّر نظرتي لـ {topic} 💡',
+    ],
+    bodies: [
+      'كل يوم فرصة جديدة لتطوير {topic}. لا تفوتها!\n\n✅ الخطوة 1: حدد هدف واضح\n✅ الخطوة 2: ابدأ بشيء صغير\n✅ الخطوة 3: استمر',
+      '{topic} مو معقد كما يبدو — تحتاج فقط الطريقة الصحيحة وشوي صبر.\n\nجرب اليوم وشوف الفرق بعد أسبوع.',
+      'أغلب الناس يتركون {topic} بسرعة. الفرق الحقيقي هو الاستمرارية.\n\nخطوة صغيرة كل يوم = نتيجة كبيرة بعد شهر.',
+    ],
+    ctas: [
+      '💬 خبرنا بالتعليقات: شنو تجربتك مع {topic}؟',
+      '🔔 تابعنا لمزيد من النصائح حول {topic}',
+      '📌 حفظ هذا المنشور للرجوع إليه',
+    ],
+    hashtags: ['#زونيكسا', '#الخليج', '#نجاح', '#تطوير', '#تحفيز', '#محتوى'],
+  },
+  spanish: {
+    hooks: [
+      '¿Quieres mejorar tu {topic}? Esto es lo que nadie te dice 🔥',
+      'La mayoría se equivoca con {topic} — aquí está la solución 👀',
+      'Si {topic} está en tu mente ahora, lee esto ✨',
+      'Lo que cambió mi forma de ver {topic} 💡',
+    ],
+    bodies: [
+      'Cada día es una nueva oportunidad para mejorar tu {topic}. ¡No la dejes pasar!\n\n✅ Paso 1: Define un objetivo claro\n✅ Paso 2: Empieza pequeño\n✅ Paso 3: Sé constante',
+      '{topic} no es tan difícil como parece — solo necesitas el enfoque correcto y algo de paciencia.\n\nPruébalo hoy y nota la diferencia en una semana.',
+      'Muchos abandonan {topic} demasiado pronto. La verdadera diferencia es la constancia.\n\nUn pequeño paso al día = un gran resultado en un mes.',
+    ],
+    ctas: [
+      '💬 Cuéntanos: ¿cuál es tu experiencia con {topic}?',
+      '🔔 Síguenos para más consejos sobre {topic}',
+      '📌 Guarda este post para más tarde',
+    ],
+    hashtags: ['#Zunexa', '#Contenido', '#Crecimiento', '#Marketing', '#IA', '#Consejos'],
+  },
+};
+
+function zxPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function zxShuffleHashtags(tags, n) {
+  const copy = [...tags];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy.slice(0, n).join(' ');
+}
+
+function composeLocalContent(language, contentType, tone, prompt) {
+  const langMap = { darija: 'darija', gulf: 'gulf', franco: 'franco', english: 'english', french: 'french', spanish: 'spanish' };
+  const lang = langMap[language] || 'english';
+  const bank = ZX_LANG_BANK[lang] || ZX_LANG_BANK.english;
+  const topic = (prompt || '').trim() || (lang === 'english' ? 'your project' : lang === 'french' ? 'votre projet' : 'مشروعك');
+
+  const fill = s => s.replace(/\{topic\}/g, topic);
+  const hook = fill(zxPick(bank.hooks));
+  const body = fill(zxPick(bank.bodies));
+  const cta  = fill(zxPick(bank.ctas));
+  const tags = zxShuffleHashtags(bank.hashtags, 4);
+
+  switch (contentType) {
+    case 'tiktok':
+      return `[HOOK - 0:00-0:03]\n${hook}\n\n[BODY - 0:03-0:45]\n${body}\n\n[CTA - 0:45-0:60]\n${cta}\n\n${tags}`;
+    case 'linkedin':
+      return `${hook}\n\n${body}\n\n${cta}`;
+    case 'youtube':
+      return `${hook}\n\n📋 What you'll learn:\n${body}\n\n⏱ Chapters:\n[00:00] Intro\n[00:30] Main content\n[02:00] Wrap up\n\n${cta}\n\n${tags}`;
+    case 'seo':
+      return `${hook}\n\n${body}\n\n${cta}\n\n${tags}`;
+    case 'twitter':
+      return `🧵1/ ${hook}\n\n2/ ${body}\n\n3/ ${cta}\n\n${tags}`;
+    default: // instagram
+      return `${hook}\n\n${body}\n\n${cta}\n\n${tags}`;
+  }
 }
 
 /* ─── Handle Generate ────────────────────────────────────────── */
@@ -2932,7 +3092,7 @@ async function handleGenerate(event, prefix) {
   if (!generatedText) {
     // Simulate delay for fallback
     await new Promise(r => setTimeout(r, 1200));
-    generatedText = getDummyContent(langEl.value, typeEl.value, toneEl.value, promptEl.value);
+    generatedText = composeLocalContent(langEl.value, typeEl.value, toneEl.value, promptEl.value);
   }
 
   // Deduct tokens
