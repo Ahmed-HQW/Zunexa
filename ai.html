@@ -2,7 +2,6 @@
 <!--
   ╔══════════════════════════════════════════════════════════════════╗
   ║  ZUNEXA — ARCHON AI                                             ║
-  ║  Author  : ahmed_dev_a                                           ║
   ║  Stack   : HTML5 · CSS3 · Vanilla JS                            ║
   ║  Design  : Zalij Mode — Premium Moroccan Noir & Gold            ║
   ║  Engine  : TF-IDF + Cosine Similarity + Supabase Learning       ║
@@ -806,7 +805,7 @@ img{max-width:100%;display:block}
       <div class="quick-chips">
         <div class="qchip" onclick="go('ما هي منصة Zunexa؟')">ما هي Zunexa؟</div>
         <div class="qchip" onclick="go('التصميم Zalij Mode')">Zalij Mode</div>
-        <div class="qchip" onclick="go('من المطور ahmed_dev_a؟')">المطور</div>
+        <div class="qchip" onclick="go('من المطور؟')">المطور</div>
         <div class="qchip" onclick="go('أداة SEO كيف تعمل؟')">SEO Tool</div>
         <div class="qchip" onclick="go('Generator Hub شرح')">Generator Hub</div>
         <div class="qchip" onclick="go('ما هي تقنيات المنصة؟')">التقنيات</div>
@@ -829,7 +828,7 @@ img{max-width:100%;display:block}
       </button>
     </div>
     <div class="input-foot">
-      <div class="input-hint">Archon AI · <b>ahmed_dev_a</b> · Zalij Mode</div>
+      <div class="input-hint">Archon AI · Zalij Mode</div>
       <div class="char-count" id="charCount"></div>
     </div>
   </div>
@@ -846,7 +845,7 @@ img{max-width:100%;display:block}
     <label class="field-label">Supabase User ID</label>
     <input class="field-input" type="text" id="fUserId" placeholder="00000000-0000-...">
     <label class="field-label">اسم المستخدم (يُعرض في الـ sidebar)</label>
-    <input class="field-input" type="text" id="fName" placeholder="ahmed_dev_a">
+    <input class="field-input" type="text" id="fName" placeholder="اسمك">
     <label class="field-label">الخطة</label>
     <input class="field-input" type="text" id="fPlan" placeholder="Premium">
     <button class="modal-save" onclick="saveSettings()">✓ حفظ</button>
@@ -856,7 +855,6 @@ img{max-width:100%;display:block}
 <script>
 /* ════════════════════════════════════════════════════════════
    ZUNEXA ARCHON AI ENGINE
-   Author  : ahmed_dev_a
    Stack   : HTML5 · CSS3 · Vanilla JS
    Engine  : TF-IDF + Cosine Similarity + Supabase Learning
    No external AI API required
@@ -1128,7 +1126,7 @@ function buildCtxQ(q) {
 
 const UNKNOWNS = [
   m=>`لم أجد إجابة دقيقة على: **"${m.slice(0,50)}"**\n\n✦ تم حفظ سؤالك في نظام التعلم — سيُضاف للـ knowledge base في التحديث القادم.\n\nجرّب سؤالاً متعلقاً بـ **Zunexa · الأدوات · التقنيات · التصميم**.`,
-  m=>`هذا خارج معرفتي الحالية.\n\n✦ **سؤالك محفوظ** في Supabase لمراجعته من **ahmed_dev_a** وإضافة الإجابة.\n\nاسألني عن: المنصة · SEO Tool · Generator Hub · Zalij Mode · التقنيات المستخدمة.`,
+  m=>`هذا خارج معرفتي الحالية.\n\n✦ **سؤالك محفوظ** في Supabase لمراجعتها من فريق Zunexa وإضافة الإجابة.\n\nاسألني عن: المنصة · SEO Tool · Generator Hub · Zalij Mode · التقنيات المستخدمة.`,
   m=>`معلوماتي محدودة عن هذا الموضوع حالياً.\n\n✦ **تم التسجيل** — سأتعلم منه قريباً.\n\nيمكنني مساعدتك في أي موضوع يخص **Zunexa SaaS** أو تقنيات الويب.`
 ];
 function buildUnknown(q){ return UNKNOWNS[Math.floor(Math.random()*UNKNOWNS.length)](q); }
@@ -1388,7 +1386,7 @@ function newChat() {
       <div class="quick-chips">
         <div class="qchip" onclick="go('ما هي منصة Zunexa؟')">ما هي Zunexa؟</div>
         <div class="qchip" onclick="go('التصميم Zalij Mode')">Zalij Mode</div>
-        <div class="qchip" onclick="go('من المطور ahmed_dev_a؟')">المطور</div>
+        <div class="qchip" onclick="go('من المطور؟')">المطور</div>
         <div class="qchip" onclick="go('أداة SEO كيف تعمل؟')">SEO Tool</div>
         <div class="qchip" onclick="go('Generator Hub شرح')">Generator Hub</div>
         <div class="qchip" onclick="go('ما هي تقنيات المنصة؟')">التقنيات</div>
