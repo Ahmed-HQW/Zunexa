@@ -2482,7 +2482,6 @@ const historyData = [
 
 const faqData = [
   { q: 'What are Tokens?', a: 'Tokens are Zunexa\'s generation credits. Each piece of content costs a certain number of tokens depending on length and type.' },
-  { q: 'How do I get more Tokens?', a: 'You can buy token packs in the Billing section, upgrade your plan, watch short ads (+5 tokens each), or earn tokens via the affiliate program.' },
   { q: 'Is my API key secure?', a: 'Never embed your API key in frontend JavaScript. Always call the Zunexa API from your server (PHP, Node.js, Python) where the key cannot be exposed.' },
   { q: 'Which languages/dialects are supported?', a: 'Currently: Moroccan Darija, Gulf Arabic, Franco-Arabe, English, French, and Spanish. More dialects are coming soon.' },
   { q: 'How do I post directly to social media?', a: 'Connect your accounts in "My Accounts" section, then use the "Post Directly" dropdown in the preview area after generating content.' },
@@ -3744,74 +3743,10 @@ window.logZunexaAIAction = ZunexaCloud.logAIAction;
 window.rewardAdTokens = ZunexaCloud.rewardAdTokens;
 
 /* ─── JS END ─── */
-(async function initSession() {
-  const { data: { session } } = await _SB.auth.getSession();
-
-  if (!session) {
-  enterFreeMode();
-  return;
-}
-
-  const uid = session.user.id;
-
-  // Fetch profile row
-  const { data: profile } = await _SB.from('profiles')
-    .select('username, first_name, tokens_balance, current_theme, plan, avatar_url')
-    .eq('id', uid)
-    .single();
-
-  if (!profile) {
-    window.location.href = 'index.html';
-    return;
-  }
-
-  const n = profile.first_name || profile.username || 'Ahmed';
-  const planLabel = {
-    Free: '○ Free Plan', Plus: '⭐ Plus Plan',
-    Pro: '✦ Pro Plan',   Senior: '◆ Senior Plan'
-  }[profile.plan] || '○ Free Plan';
-
-  // Inject into DOM (matches existing variables)
-  const _udEl = document.getElementById('username-display');
-  if (_udEl) { _udEl.textContent = n; _udEl.classList.remove('zx-name-skel'); _udEl.classList.add('zx-loaded'); }
-
-  const _snEl = document.querySelector('.sidebar-user-name');
-  if (_snEl) _snEl.textContent = n;
-
-  const _spEl = document.querySelector('.sidebar-user-plan');
-  if (_spEl) _spEl.textContent = planLabel;
-
-  const _pnEl = document.querySelector('.profile-btn .pname');
-  if (_pnEl) { _pnEl.textContent = n.split(' ')[0]; _pnEl.classList.remove('zx-name-skel'); _pnEl.classList.add('zx-loaded'); }
-
-  // Avatar
-  if (profile.avatar_url) {
-    document.querySelectorAll('.avatar,.avatar-sm').forEach(el => {
-      el.innerHTML = `<img src="${profile.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
-    });
-  } else {
-    const init = n[0].toUpperCase();
-    document.querySelectorAll('.avatar,.avatar-sm').forEach(el => {
-      el.textContent = init;
-    });
-  }
-
-  // Tokens
-  if (profile.tokens_balance != null) {
-    tokenBalance = profile.tokens_balance;
-    updateAllTokenDisplays();
-  }
-
-  // Theme
-  if (profile.current_theme && profile.current_theme !== 'zalij-dark') {
-    document.documentElement.setAttribute('data-theme', profile.current_theme);
-    const tc = document.querySelector(`.theme-card[data-theme="${profile.current_theme}"]`);
-    if (tc) {
-      document.querySelectorAll('.theme-card').forEach(x => x.classList.remove('active'));
-      tc.classList.add('active');
-    }
-  }
-})();
+/* initSession (legacy duplicate) removed — profile loading is handled
+   exclusively by _loadUserProfile() in the DOMContentLoaded init above,
+   which writes to #username-display, #sb-user-name, #hdr-pname,
+   sidebar avatar, tokens, plan card, referral link, and theme. */
 </script>
 
 </script>
