@@ -160,12 +160,7 @@ const _SB = supabase.createClient(
     <div class="err-box" id="errBox">
       <span>⚠</span><span id="errMsg">Error</span>
     </div>
-
-    <!-- OWNER BADGE -->
-    <div class="owner-badge-wrap" id="ownerBadgeWrap">
-      <div class="owner-badge">👑 OWNER MODE — Zunexa_</div>
-    </div>
-
+    
     <!-- SIGN IN -->
     <div id="form-signin">
       <div class="free-notice">
@@ -313,7 +308,7 @@ const _SB = supabase.createClient(
         <label>Password</label>
         <div class="field-wrap"><span class="field-icon">🔒</span>
           <input type="password" id="su-password" placeholder="Min 8 characters" autocomplete="new-password"/>
-          + <div id="zx-pwd-strength">
+           <div id="zx-pwd-strength">
    <div class="pwd-bar-wrap"><div class="pwd-bar-fill" id="pwd-bar"></div></div>
    <span class="pwd-label" id="pwd-label">— Enter password</span>
    <div class="pwd-rules">
@@ -436,9 +431,6 @@ const PLAN_CODES = {
 };
 const FREE_PLAN = { name:'Free', label:'○ Free Plan', color:'free', tokens:500, role:'user' };
 
-// ── Owner credentials (hashed check) ──
-const _OW = { u: btoa('Zunexa_'), p: btoa('owner') };
-
 const PLAN_COLORS = { free:'#888', plus:'#5b8dee', pro:'#D4AF37', senior:'#a78bfa', owner:'#D4AF37' };
 
 let currentTab = 'signin';
@@ -480,11 +472,10 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// ── Owner mode detect ──
+// ── Owner mode detect (disabled: role is determined server-side via Supabase 'profiles.role', never client-side) ──
 function checkOwnerMode(){
-  const u = document.getElementById('si-username').value.trim();
   const ob = document.getElementById('ownerBadgeWrap');
-  if(ob) ob.style.display = (u === atob(_OW.u)) ? 'block' : 'none';
+  if(ob) ob.style.display = 'none';
 }
 
 // ── Tab switch ──
@@ -563,17 +554,6 @@ async function handleSignIn(){
 
   const btn=document.querySelector('#form-signin .btn-auth');
   btn.classList.add('loading');
-
-  // ── Owner bypass ──
-  if(username===atob(_OW.u)&&password===atob(_OW.p)){
-    btn.classList.remove('loading');
-    const ownerPlan={name:'Owner',label:'👑 Owner Plan',color:'owner',tokens:9999999,role:'owner'};
-    localStorage.setItem('zunexa_owner','1');
-    localStorage.setItem('zunexa_user',JSON.stringify({username:'Zunexa_',firstName:'Zunexa',plan:'Owner',tokens:9999999,role:'owner',isOwner:true}));
-    showSuccess('Zunexa_',ownerPlan);
-    setTimeout(()=>window.location.replace('dashboard.html'),1800);
-    return;
-  }
 
   // ── Supabase sign in ──
   const fakeEmail=username.toLowerCase().replace(/[^a-z0-9]/g,'')+'@zunexa.local';
