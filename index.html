@@ -278,24 +278,16 @@ const _SB = supabase.createClient(
         </div>
         <span class="avatar-label">Upload profile photo</span>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div class="form-field">
-          <label>First Name</label>
-          <div class="field-wrap"><span class="field-icon">◎</span>
-            <input type="text" id="su-fname" placeholder="Yassine" oninput="updateInitials()"/>
-          </div>
-        </div>
-        <div class="form-field">
-          <label>Last Name</label>
-          <div class="field-wrap"><span class="field-icon">◎</span>
-            <input type="text" id="su-lname" placeholder="Dev"/>
-          </div>
+      <div class="form-field">
+        <label>Name</label>
+        <div class="field-wrap"><span class="field-icon">◎</span>
+          <input type="text" id="su-fname" placeholder="Your name" oninput="updateInitials()"/>
         </div>
       </div>
       <div class="form-field">
         <label>Username</label>
         <div class="field-wrap"><span class="field-icon">⬡</span>
-          <input type="text" id="su-username" placeholder="yassine_pro"/>
+          <input type="text" id="su-username" placeholder="username"/>
         </div>
       </div>
       <div class="form-field">
@@ -320,9 +312,11 @@ const _SB = supabase.createClient(
  </div>
         </div>
       </div>
-      <div class="or-divider">Plan Activation</div>
-      <div class="form-field">
-        <label>🔑 Plan Code <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:normal">(optional)</span></label>
+      <div class="auth-footer-link" style="margin-top:8px;margin-bottom:4px">
+        <a onclick="togglePlanCode('su')" id="su-code-toggle">Have a plan code? →</a>
+      </div>
+      <div class="form-field" id="su-code-wrap" style="display:none">
+        <label>🔑 Plan Code</label>
         <div class="field-wrap"><span class="field-icon">◆</span>
           <input class="code-field" type="text" id="su-code" placeholder="ZX-PLUS-XXXX / ZX-PRO-XXXX / ZX-SENIOR-XXXX" oninput="detectPlan(this.value,'su')" maxlength="24" autocomplete="off"/>
         </div>
@@ -398,8 +392,8 @@ const _SB = supabase.createClient(
       <div class="success-title">Welcome to Zunexa!</div>
       <div class="success-sub" id="success-name">مرحباً 👋</div>
       <div class="success-plan-badge" id="success-plan-badge">✦ Pro Plan</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px">Redirecting to dashboard...</div>
-      <div style="width:100%;height:3px;background:var(--border);border-radius:99px;overflow:hidden">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px" id="redirect-msg">Redirecting to dashboard...</div>
+      <div id="progress-wrap" style="width:100%;height:3px;background:var(--border);border-radius:99px;overflow:hidden">
         <div id="progress-bar" style="height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));width:0%;transition:width 2.2s ease;border-radius:99px"></div>
       </div>
     </div>
@@ -515,6 +509,16 @@ function updateInitials(){
   if(el&&fname&&!avatarDataURL) el.textContent=fname[0].toUpperCase();
 }
 
+// ── Toggle optional plan code field ──
+function togglePlanCode(prefix){
+  const wrap=document.getElementById(prefix+'-code-wrap');
+  const toggle=document.getElementById(prefix+'-code-toggle');
+  if(!wrap) return;
+  const show = wrap.style.display==='none';
+  wrap.style.display = show ? '' : 'none';
+  if(toggle) toggle.textContent = show ? '← Hide plan code' : 'Have a plan code? →';
+}
+
 // ── Plan detect ──
 function detectPlan(val,prefix){
   const code=val.trim().toUpperCase();
@@ -598,13 +602,18 @@ showSuccess(username,plan);
 async function handleSignUp(){
   hideErr();
   const fname=document.getElementById('su-fname').value.trim();
-  const username=document.getElementById('su-username').value.trim();
+  const username=document.getElementById('su-username').value.trim().toLowerCase().replace(/\s+/g,'_');
+  document.getElementById('su-username').value=username;
   const email=document.getElementById('su-email').value.trim();
   const password=document.getElementById('su-password').value.trim();
-  const codeVal=document.getElementById('su-code').value.trim();
+  const codeWrap=document.getElementById('su-code-wrap');
+  const codeVal=(codeWrap&&codeWrap.style.display!=='none')
+    ? (document.getElementById('su-code').value||'').trim()
+    : '';
 
   if(!fname){shakeField('su-fname');showToast('✕','Enter first name');return;}
-  if(!username){shakeField('su-username');showToast('✕','Choose a username');return;}
+  if(!username||username.length<3){shakeField('su-username');showToast('✕','Username min 3 characters');return;}
+  if(!/^[a-z0-9_]+$/.test(username)){shakeField('su-username');showToast('✕','Username: letters, numbers, _ only');return;}
   if(!email||!email.includes('@')){shakeField('su-email');showToast('✕','Valid email required');return;}
   if(password.length<8){shakeField('su-password');showToast('✕','Min 8 characters');return;}
 
@@ -644,14 +653,36 @@ async function handleSignUp(){
     showSuccess(fname,plan);
     setTimeout(()=>window.location.replace('dashboard.html'),1800);
   } else {
-    ['form-signup'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-    const successScreen = document.getElementById('success-screen');
-    if(successScreen) successScreen.style.display='block';
-    const successName = document.getElementById('success-name');
-    if(successName) successName.style.textContent='تحقق من إيميلك لتفعيل الحساب 📧';
-    const progressBar = document.getElementById('progress-bar');
-    if(progressBar) progressBar.style.transition='none';
+    showEmailConfirmation(fname,email);
   }
+}
+
+// ── Email confirmation screen ──
+function showEmailConfirmation(name,email){
+  ['form-signin','form-signup'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  const tabs=document.querySelector('.auth-tabs');
+  if(tabs) tabs.style.display='none';
+
+  const screen=document.getElementById('success-screen');
+  if(screen) screen.style.display='block';
+
+  const icon=document.querySelector('#success-screen .success-icon');
+  if(icon) icon.textContent='✉';
+
+  const title=document.querySelector('#success-screen .success-title');
+  if(title) title.textContent='Almost there!';
+
+  const nameEl=document.getElementById('success-name');
+  if(nameEl) nameEl.innerHTML = `مرحباً ${name} 👋<br><span style="color:var(--text-muted);font-size:13px;font-weight:400">تحققنا من بريدك — أرسلنا رابط التفعيل إلى<br><b style="color:var(--gold)">${email}</b></span>`;
+
+  const badge=document.getElementById('success-plan-badge');
+  if(badge) badge.style.display='none';
+
+  const redirectMsg=document.getElementById('redirect-msg');
+  if(redirectMsg) redirectMsg.textContent='افتح بريدك الإلكتروني واضغط على رابط التفعيل لتسجيل الدخول ✦';
+
+  const progressWrap=document.getElementById('progress-wrap');
+  if(progressWrap) progressWrap.style.display='none';
 }
 
 // ── Success screen ──
@@ -660,8 +691,21 @@ function showSuccess(name,plan){
   const tabs=document.querySelector('.auth-tabs');
   if(tabs) tabs.style.display='none';
   document.getElementById('success-screen').style.display='block';
+
+  const icon=document.querySelector('#success-screen .success-icon');
+  if(icon) icon.textContent='✓';
+  const title=document.querySelector('#success-screen .success-title');
+  if(title) title.textContent='Welcome to Zunexa!';
+  const redirectMsg=document.getElementById('redirect-msg');
+  if(redirectMsg) redirectMsg.textContent='Redirecting to dashboard...';
+  const progressWrap=document.getElementById('progress-wrap');
+  if(progressWrap) progressWrap.style.display='';
+  const progressBar=document.getElementById('progress-bar');
+  if(progressBar){ progressBar.style.transition='width 2.2s ease'; progressBar.style.width='0%'; }
+
   document.getElementById('success-name').textContent=`مرحباً، ${name} 👋`;
   const badge=document.getElementById('success-plan-badge');
+  badge.style.display='';
   badge.textContent=plan.label;
   const rgb=planColorRGB(plan.color);
   badge.style.cssText=`background:rgba(${rgb},.12);border:1px solid rgba(${rgb},.35);color:${PLAN_COLORS[plan.color]};display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:20px;`;
