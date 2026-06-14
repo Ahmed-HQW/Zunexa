@@ -1,182 +1,924 @@
 [
   {
-    "id": "greet_ar",
-    "category": "تحية | Greeting",
-    "keywords": ["مرحبا", "مرحباً", "هلا", "اهلين", "سلام", "السلام عليكم", "صباح الخير", "مساء الخير", "هاي", "hi", "hello", "hey", "bonjour", "salut", "good morning", "good evening", "greetings", "howdy", "sup", "yo"],
-    "response": "مرحباً بك في **Zunexa Premium** ✦\nأنا **Archon** — مساعدك الذكي المخصص لهذه المنصة. سواء كنت تبحث عن أدوات السيو، مولّد الأكواد، أو أي معلومة تقنية — أنا هنا لك.\n\n---\nWelcome to **Zunexa Premium** ✦\nI'm **Archon** — your dedicated AI assistant. Whether you need SEO tools, code generation, or any technical insight — I'm ready."
+    "keywords": ["مرحبا", "مرحباً", "هلا", "اهلين", "سلام", "السلام عليكم", "صباح الخير", "مساء الخير", "هاي", "hi", "hello", "bonjour"],
+    "response": "مرحباً بك في لوحة تحكم **Zunexa Premium**! كيف يمكنني مساعدتك اليوم في مشروعك؟ ✨"
   },
   {
-    "id": "how_are_you",
-    "category": "تحية | Greeting",
-    "keywords": ["كيف حالك", "شلونك", "عامل ايه", "اخبارك", "كيفك", "كيف الصحة", "وش اخبارك", "شخبارك", "how are you", "how's it going", "how do you do", "what's up", "you good", "are you okay"],
-    "response": "أعمل بكامل طاقتي وأقصى كفاءة — كما يليق بمنصة **Zunexa** الفاخرة! 🔥\nكيف يمكنني أن أُسرّع مشروعك اليوم؟\n\n---\nOperating at full capacity — as expected from **Zunexa Premium**! 🔥\nHow can I accelerate your project today?"
+    "keywords": ["كيف حالك", "شلونك", "عامل ايه", "اخبارك", "كيفك", "كيف الصحة", "وش اخبارك", "شخبارك"],
+    "response": "أنا المساعد الذكي لمنصة **Zunexa**، أعمل بأقصى كفاءة! كيف يمكنني تسهيل مهامك اليوم؟"
   },
   {
-    "id": "what_is_zunexa",
-    "category": "عن المنصة | About",
-    "keywords": ["ما هي المنصة", "زونيكسا", "zunexa", "عن الموقع", "فائدة المنصة", "شرح الموقع", "ايش هذا الموقع", "ما هو زونيكسا", "ماهي زونيكسا", "ماذا تفعل", "what is zunexa", "what does zunexa do", "tell me about zunexa", "explain zunexa", "about zunexa", "what is this platform", "what is this site"],
-    "response": "**Zunexa** هي منصة SaaS متكاملة وفاخرة، مبنية بهندسة Vanilla JS خالصة لضمان أداء استثنائي.\n\n✦ **Generator Hub** — توليد أكواد HTML/CSS/JS جاهزة للإنتاج\n✦ **SEO Tool** — تحليل ورفع ترتيب موقعك في Google\n✦ **Archon AI** — مساعد ذكي يعمل دون اتصال بالإنترنت\n✦ **Zalij Mode** — هوية بصرية مستوحاة من الهندسة المغربية\n\n---\n**Zunexa** is a full-featured premium SaaS platform, built on pure Vanilla JS for unmatched performance.\n\n✦ **Generator Hub** — production-ready HTML/CSS/JS code generation\n✦ **SEO Tool** — analyze and rank your site higher on Google\n✦ **Archon AI** — offline-capable smart assistant\n✦ **Zalij Mode** — visual identity inspired by Moroccan geometry"
+    "keywords": ["المطور", "من صمم", "من برمج", "ahmed", "أحمد", "developer", "المبرمج", "صاحب الموقع", "صانع المنصة", "مطور زونيكسا", "ahmed_dev_a"],
+    "response": "تم تطوير وتأسيس منصة Zunexa بالكامل بواسطة المطور المحترف **ahmed_dev_a** باستخدام أحدث تقنيات الـ Vanilla JS لضمان أقصى سرعة."
   },
   {
-    "id": "developer_info",
-    "category": "عن المطور | Developer",
-    "keywords": ["المطور", "من صمم", "من برمج", "ahmed", "أحمد", "developer", "المبرمج", "صاحب الموقع", "صانع المنصة", "مطور زونيكسا", "ahmed_dev_a", "who made this", "who built zunexa", "who is the developer", "who created this", "who is ahmed", "who designed this", "founder", "author", "creator"],
-    "response": "تم تصميم وتطوير **Zunexa** بالكامل يدوياً من قِبَل المطور الاحترافي **ahmed_dev_a**.\n\nحرفة نقية. أكواد نظيفة. رؤية مستقلة — بدون إطارات عمل ثقيلة، بدون قوالب جاهزة.\n\n---\n**Zunexa** was hand-crafted entirely by the professional developer **ahmed_dev_a**.\n\nPure craftsmanship. Clean code. Independent vision — no heavy frameworks, no templates."
+    "keywords": ["الألوان", "التصميم", "الالوان", "الهوية", "ستايل", "zalij", "زليج", "الأسود", "الذهبي", "لون الموقع", "الديزاين", "شكل المنصة", "طابع الموقع"],
+    "response": "تعتمد هوية المنصة على تصميم **Zalij Mode** الفاخر، المستوحى من الهندسة المغربية الراقية باللونين الأسود الفخم (#000000) والذهبي الملكي (#D4AF37)."
   },
   {
-    "id": "design_identity",
-    "category": "التصميم | Design",
-    "keywords": ["الألوان", "التصميم", "الالوان", "الهوية", "ستايل", "zalij", "زليج", "الأسود", "الذهبي", "لون الموقع", "الديزاين", "شكل المنصة", "طابع الموقع", "design", "colors", "ui", "theme", "style", "dark mode", "aesthetic", "visual", "appearance", "look and feel", "black and gold"],
-    "response": "هوية **Zunexa** تقوم على **Zalij Mode** — مستوحاة من الهندسة المغربية الكلاسيكية:\n\n🟫 أسود فخم (#080808) — عمق وتركيز\n🟡 ذهبي ملكي (#D4AF37) — تميّز وفخامة\n📐 أنماط هندسية هكسانية — موروث ثقافي رقمي\n✨ جزيئات ذهبية متحركة — حياة وحيوية\n\n---\n**Zunexa**'s identity is built on **Zalij Mode** — inspired by classical Moroccan geometric art:\n\n🟫 Deep black (#080808) — depth and focus\n🟡 Royal gold (#D4AF37) — distinction and prestige\n📐 Hexagonal geometric patterns — digital cultural heritage\n✨ Animated gold particles — life and energy"
+    "keywords": ["الاصدار", "الإصدار", "نسخة", "version", "تحديث", "التحديث", "v9", "archon protocol", "أركون", "البروتوكول", "اي نسخة"],
+    "response": "أنت الآن تستخدم الإصدار الأحدث والأكثر استقراراً: **ZUNEXA V9 — Archon Protocol**."
   },
   {
-    "id": "version_info",
-    "category": "الإصدار | Version",
-    "keywords": ["الاصدار", "الإصدار", "نسخة", "version", "تحديث", "التحديث", "v9", "archon protocol", "أركون", "البروتوكول", "اي نسخة", "current version", "latest version", "what version", "which version", "update", "release"],
-    "response": "أنت تستخدم حالياً: **ZUNEXA V9 — Archon Protocol** ✦\n\nهذا الإصدار هو الأكثر استقراراً وقوةً على الإطلاق، يتضمن:\n• محرك AI هجين (سحابي + محلي)\n• نظام الجزيئات الذهبية\n• Generator Hub المحدّث\n• حماية متطورة عبر dev_guard.js\n\n---\nYou are currently on: **ZUNEXA V9 — Archon Protocol** ✦\n\nThe most stable and powerful release yet, featuring:\n• Hybrid AI engine (cloud + offline)\n• Gold particle system\n• Updated Generator Hub\n• Advanced protection via dev_guard.js"
+    "keywords": ["ما هي المنصة", "زونيكسا", "zunexa", "عن الموقع", "فائدة المنصة", "شرح الموقع", "ايش هذا الموقع", "ما هو زونيكسا", "ماهي زونيكسا", "ماذا تفعل"],
+    "response": "منصة **Zunexa SaaS** هي بيئة عمل متميزة وفاخرة، توفر أدوات ذكية للمطورين وأصحاب المشاريع مثل Generator Hub و SEO Tool، مبنية بأسلوب هندسي دقيق ومستقل."
   },
   {
-    "id": "seo_tool",
-    "category": "الأدوات | Tools",
-    "keywords": ["seo", "سيو", "محركات البحث", "تصدر البحث", "ترتيب جوجل", "أداة السيو", "seo tool", "ارشفة", "جوجل", "search engine", "google ranking", "optimize", "keywords", "meta tags", "serp", "rank", "search rank", "backlinks", "sitemap"],
-    "response": "**SEO Tool** في Zunexa — مصمم للمحترفين:\n\n✦ تحليل الكلمات المفتاحية بدقة فائقة\n✦ توليد Meta Tags و Open Graph تلقائياً\n✦ فحص سرعة الموقع ومقترحات التحسين\n✦ توليد Sitemap.xml و robots.txt\n✦ تتبع ترتيب صفحاتك في Google\n\n---\n**SEO Tool** in Zunexa — built for professionals:\n\n✦ Precision keyword analysis\n✦ Automatic Meta Tags & Open Graph generation\n✦ Site speed check with improvement suggestions\n✦ Sitemap.xml & robots.txt generation\n✦ Google ranking tracker for your pages"
+    "keywords": ["seo", "سيو", "محركات البحث", "تصدر البحث", "ترتيب جوجل", "أداة السيو", "seo tool", "ارشفة", "جوجل"],
+    "response": "أداة **SEO Tool** المدمجة في المنصة مصممة خصيصاً لمساعدتك على تحسين ظهور موقعك وتصدر نتائج البحث بشكل احترافي وسريع وبدون تعقيدات."
   },
   {
-    "id": "generator_hub",
-    "category": "الأدوات | Tools",
-    "keywords": ["generator", "توليد", "أدوات", "hub", "اداة", "مولد", "generator hub", "صانع", "توليد اكواد", "أداة التوليد", "code generator", "generate", "create code", "build code", "html generator", "css generator", "snippet", "component"],
-    "response": "**Generator Hub** هو قلب Zunexa النابض:\n\n✦ توليد مكونات HTML/CSS/JS جاهزة للإنتاج\n✦ أكواد نظيفة ومُحسّنة للأداء\n✦ قوالب للأزرار، البطاقات، النوافذ، والنماذج\n✦ توافق تام مع جميع المتصفحات الحديثة\n✦ نسخ فوري بضغطة زر واحدة\n\n---\n**Generator Hub** is the beating heart of Zunexa:\n\n✦ Production-ready HTML/CSS/JS component generation\n✦ Clean, performance-optimized code\n✦ Templates for buttons, cards, modals, and forms\n✦ Full cross-browser compatibility\n✦ One-click instant copy"
+    "keywords": ["generator", "توليد", "أدوات", "hub", "اداة", "مولد", "generator hub", "صانع", "توليد اكواد", "أداة التوليد"],
+    "response": "**Generator Hub** هو المركز الذكي في المنصة الذي يتيح لك توليد البيانات والأكواد والموارد بضغطة زر واحدة لتسريع عملية التطوير."
   },
   {
-    "id": "tech_stack",
-    "category": "التقنيات | Technology",
-    "keywords": ["لغات البرمجة", "تقنيات", "بماذا برمجت", "html", "css", "js", "vanilla", "بدون اطار عمل", "فريم ورك", "framework", "تكنولوجيا", "الكود", "tech stack", "built with", "technology", "what language", "programming language", "vanilla js", "pure js", "no framework", "how was it built"],
-    "response": "**Zunexa** مبني على مكدس تقني نقي ومتقن:\n\n🔸 **HTML5** — بنية دلالية محكمة\n🔸 **CSS3** — تصميم متجاوب مع متحركات سلسة\n🔸 **Vanilla JavaScript** — بدون أي إطار عمل ثقيل\n🔸 **Supabase** — قاعدة بيانات سحابية آمنة\n🔸 **HTML5 Canvas** — نظام الجزيئات الذهبية\n\nالنتيجة: صفر تبعيات، أداء فائق، تحكم كامل.\n\n---\n**Zunexa** runs on a pure, masterful tech stack:\n\n🔸 **HTML5** — tight semantic structure\n🔸 **CSS3** — responsive design with smooth animations\n🔸 **Vanilla JavaScript** — zero heavy frameworks\n🔸 **Supabase** — secure cloud database\n🔸 **HTML5 Canvas** — gold particle engine\n\nResult: zero dependencies, peak performance, full control."
+    "keywords": ["لغات البرمجة", "تقنيات", "بماذا برمجت", "html", "css", "js", "vanilla", "بدون اطار عمل", "فريم ورك", "framework", "تكنولوجيا", "الكود"],
+    "response": "تم بناء **Zunexa** برمجياً باستخدام HTML5 و CSS3 و Vanilla JavaScript النقي بدون أي إطارات عمل (Frameworks) ثقيلة, لضمان استجابة لحظية وأداء فائق."
   },
   {
-    "id": "performance",
-    "category": "الأداء | Performance",
-    "keywords": ["سرعة", "بطيء", "لاج", "اداء", "أداء", "performance", "تحميل", "لودينج", "سريع", "خفيف", "fast", "speed", "loading", "lag", "slow", "quick", "instant", "optimized", "lightweight"],
-    "response": "**Zunexa** تعمل بسرعة خرافية لأن:\n\n⚡ صفر مكتبات خارجية ثقيلة\n⚡ CSS مُحسَّن بـ Custom Properties\n⚡ Canvas بـ 60fps للجزيئات\n⚡ JSON محلي للردود الفورية\n⚡ Lazy loading للموارد الثقيلة\n\nتجربة صفر تأخير (Zero-Lag Experience).\n\n---\n**Zunexa** runs blazing fast because:\n\n⚡ Zero heavy external libraries\n⚡ CSS optimized with Custom Properties\n⚡ 60fps Canvas particle engine\n⚡ Local JSON for instant responses\n⚡ Lazy loading for heavy resources\n\nThe result: a true Zero-Lag Experience."
+    "keywords": ["مشكلة", "عطل", "bug", "خطأ", "لا يعمل", "يوجد مشكلة", "تقرير", "ابلاغ", "مساعدة", "دعم فني", "تعليق", "فشلت", "يرجى المساعدة"],
+    "response": "عذراً لمواجهتك هذه المشكلة! يمكنك إرسال تقرير مفصل للمطور عبر زر (إرسال تقرير) الموجود في اللوحة الرئيسية، وسيقوم **ahmed_dev_a** بمراجعته فوراً."
   },
   {
-    "id": "mobile_responsive",
-    "category": "التوافق | Compatibility",
-    "keywords": ["هاتف", "جوال", "تطبيق", "موبايل", "متجاوب", "شاشات", "تلفون", "ايفون", "اندرويد", "mobile", "responsive", "شاشة صغيرة", "phone", "tablet", "ipad", "ios", "android", "small screen", "touch", "mobile friendly"],
-    "response": "**Zunexa** متجاوبة 100% على جميع الأجهزة:\n\n📱 هواتف iOS و Android — تجربة أصيلة\n💻 لابتوب وديسكتوب — واجهة بانورامية\n🖥️ شاشات 4K — وضوح مطلق\n📐 وحدات مرنة (rem, vh, vw) — تكيّف فوري\n☰ قائمة جانبية مخصصة للمحمول\n\n---\n**Zunexa** is 100% responsive across all devices:\n\n📱 iOS & Android phones — native-feel experience\n💻 Laptop & desktop — panoramic interface\n🖥️ 4K screens — crystal clarity\n📐 Fluid units (rem, vh, vw) — instant adaptation\n☰ Custom mobile sidebar menu"
+    "keywords": ["مجاني", "مدفوع", "اسعار", "أسعار", "اشتراك", "فلوس", "شراء", "بكم", "سعر المنصة", "free", "premium", "دفع", "تكلفة"],
+    "response": "منصة **Zunexa** تقدم تجربة Premium فاخرة. يمكنك الاستفادة من الأدوات الأساسية، وتتوفر خطط متقدمة للوصول الشامل لجميع الميزات وأدوات الذكاء الاصطناعي."
   },
   {
-    "id": "security",
-    "category": "الأمان | Security",
-    "keywords": ["حماية", "امان", "أمان", "خصوصية", "اختراق", "بياناتي", "داتا", "security", "privacy", "تشفير", "امنة", "safe", "secure", "data protection", "encryption", "ssl", "https", "is it safe", "data privacy"],
-    "response": "أمانك هو الأولوية القصوى في **Zunexa**:\n\n🔒 HTTPS + SSL 256-bit لكل الاتصالات\n🔒 Supabase Row-Level Security لحماية البيانات\n🔒 dev_guard.js لمنع التلاعب بالكود\n🔒 لا يتم بيع أو مشاركة بياناتك أبداً\n🔒 ذاكرة تخزين محلية آمنة (LocalStorage)\n\n---\nYour security is the top priority at **Zunexa**:\n\n🔒 HTTPS + 256-bit SSL for all connections\n🔒 Supabase Row-Level Security for data protection\n🔒 dev_guard.js to prevent code tampering\n🔒 Your data is never sold or shared\n🔒 Secure local storage (LocalStorage)"
+    "keywords": ["هاتف", "جوال", "تطبيق", "موبايل", "متجاوب", "شاشات", "تلفون", "ايفون", "اندرويد", "mobile", "responsive", "شاشة صغيرة"],
+    "response": "بالتأكيد! تصميم **Zalij Mode** متجاوب بالكامل ويعمل بسلاسة مطلقة على جميع الهواتف الذكية (Mobile Responsive) مع قائمة جانبية مخصصة لتجربة مستخدم ممتازة."
   },
   {
-    "id": "pricing",
-    "category": "الأسعار | Pricing",
-    "keywords": ["مجاني", "مدفوع", "اسعار", "أسعار", "اشتراك", "فلوس", "شراء", "بكم", "سعر المنصة", "free", "premium", "دفع", "تكلفة", "price", "pricing", "cost", "subscription", "plan", "how much", "paid", "free tier", "upgrade"],
-    "response": "**Zunexa** تقدم تجربة متكاملة:\n\n🥈 **الطبقة المجانية** — أدوات أساسية مجاناً\n🥇 **Premium** — وصول كامل لجميع الأدوات + AI متقدم\n💎 **Agency** — باقة مخصصة للفرق والشركات\n\nجميع الباقات تشمل: صفر إعلانات، دعم فني، وتحديثات مستمرة.\nراجع قسم **Upgrade** في القائمة الجانبية للأسعار الدقيقة.\n\n---\n**Zunexa** offers a complete tiered experience:\n\n🥈 **Free Tier** — core tools at no cost\n🥇 **Premium** — full access to all tools + advanced AI\n💎 **Agency** — custom plan for teams and companies\n\nAll plans include: zero ads, technical support, and continuous updates.\nCheck the **Upgrade** section in the sidebar for exact pricing."
+    "keywords": ["ذكاء اصطناعي", "ai", "مساعد ذكي", "روبوت", "بوت", "chatgpt", "gemini", "هل انت حقيقي", "كيف تعمل", "من انت", "من تكون"],
+    "response": "أنا المساعد الذكي والمحلي الخاص بمنصة **Zunexa**، تمت برمجتي لأكون دليلك الشامل هنا للإجابة على كافة استفساراتك حول المنصة وأدواتها بسرعة فائقة."
   },
   {
-    "id": "login_register",
-    "category": "الحساب | Account",
-    "keywords": ["تسجيل الدخول", "دخول", "حسابي", "انشاء حساب", "تسجيل", "login", "sign in", "register", "حساب جديد", "دخول المنصة", "sign up", "create account", "new account", "log in", "access", "how to login", "how to sign up"],
-    "response": "للوصول إلى منصة **Zunexa**:\n\n1️⃣ اضغط على **(TO SIGN IN)** في القائمة الجانبية\n2️⃣ أدخل بريدك الإلكتروني وكلمة المرور\n3️⃣ أو سجّل حساباً جديداً بضغطة واحدة\n\nتسجيل الدخول آمن ومشفر بالكامل عبر Supabase Auth.\n\n---\nTo access **Zunexa**:\n\n1️⃣ Click **(TO SIGN IN)** in the sidebar\n2️⃣ Enter your email and password\n3️⃣ Or register a new account in one click\n\nLogin is fully secured and encrypted via Supabase Auth."
+    "keywords": ["سرعة", "بطيء", "لاج", "اداء", "أداء", "performance", "تحميل", "لودينج", "سريع", "خفيف"],
+    "response": "تم تصميم **Zunexa** بدون استدعاء مكتبات خارجية ضخمة (Vanilla Stack) مما يجعلها واحدة من أسرع المنصات في الاستجابة (Zero-lag experience)."
   },
   {
-    "id": "ai_assistant",
-    "category": "الذكاء الاصطناعي | AI",
-    "keywords": ["ذكاء اصطناعي", "ai", "مساعد ذكي", "روبوت", "بوت", "chatgpt", "gemini", "هل انت حقيقي", "كيف تعمل", "من انت", "من تكون", "artificial intelligence", "chatbot", "how do you work", "are you real", "are you ai", "are you gpt", "what ai", "which model", "powered by"],
-    "response": "أنا **Archon** — المساعد الذكي الحصري لمنصة **Zunexa** ✦\n\nأعمل بمحرك هجين متطور:\n🧠 **محلي** — قاعدة معرفية JSON للردود الفورية\n☁️ **سحابي** — Gemini API مع نظام تبديل مفاتيح تلقائي\n💻 **Offline** — نموذج WebGPU محلي عند انقطاع الإنترنت\n\nلستُ ChatGPT أو Gemini — أنا مُخصَّص لـ Zunexa فقط.\n\n---\nI am **Archon** — the exclusive AI assistant of **Zunexa** ✦\n\nI run on a sophisticated hybrid engine:\n🧠 **Local** — JSON knowledge base for instant responses\n☁️ **Cloud** — Gemini API with automatic key failover\n💻 **Offline** — local WebGPU model when internet is unavailable\n\nI'm not ChatGPT or Gemini — I'm built exclusively for Zunexa."
+    "keywords": ["تسجيل الدخول", "دخول", "حسابي", "انشاء حساب", "تسجيل", "login", "sign in", "register", "حساب جديد", "دخول المنصة"],
+    "response": "يمكنك الوصول إلى اللوحة وتسجيل الدخول عبر خيار (TO SIGN IN) الموجود في القائمة الجانبية (Sidebar) لبدء استخدام أدواتك الخاصة."
   },
   {
-    "id": "moroccan_design",
-    "category": "التصميم | Design",
-    "keywords": ["المغرب", "مغربي", "morocco", "زليج", "نقش مغربي", "تراث", "تصميم مغربي", "moroccan", "zalij pattern", "geometric", "arabic design", "oriental", "islamic geometry", "arabesque"],
-    "response": "**Zalij Mode** هو قلب هوية Zunexa البصرية:\n\nمستوحى من الزليج المغربي الأصيل — الفن الهندسي الإسلامي الذي يجمع:\n📐 التناظر الرياضي الدقيق\n🌟 الأنماط الهكسانية اللانهائية\n🖤 التضاد الحاد بين الأسود والذهبي\n\nدمجنا هذا الإرث مع تقنية Canvas الحديثة لإنتاج واجهة غير مسبوقة.\n\n---\n**Zalij Mode** is the soul of Zunexa's visual identity:\n\nInspired by authentic Moroccan Zalij — the Islamic geometric art that combines:\n📐 Precise mathematical symmetry\n🌟 Infinite hexagonal patterns\n🖤 Stark contrast between black and gold\n\nWe merged this heritage with modern Canvas technology to create an unprecedented interface."
+    "keywords": ["المستقبل", "تحديثات", "النسخة القادمة", "v10", "ميزات جديدة", "ما القادم", "مستقبل زونيكسا", "الجديد"],
+    "response": "المطور **ahmed_dev_a** يعمل حالياً على تطوير ميزات خرافية للنسخ القادمة، بما في ذلك أدوات ذكاء اصطناعي متقدمة مدمجة بالكامل وتحليلات أعمق للـ SEO."
   },
   {
-    "id": "bug_report",
-    "category": "الدعم | Support",
-    "keywords": ["مشكلة", "عطل", "bug", "خطأ", "لا يعمل", "يوجد مشكلة", "تقرير", "ابلاغ", "مساعدة", "دعم فني", "تعليق", "فشلت", "يرجى المساعدة", "problem", "issue", "error", "not working", "broken", "fix", "report", "help", "support", "crash", "glitch"],
-    "response": "نأسف لمواجهتك هذه المشكلة — سنحلها فوراً.\n\nالخطوات الموصى بها:\n1️⃣ امسح ذاكرة المتصفح (Ctrl+Shift+Delete)\n2️⃣ أعد تحميل الصفحة (Ctrl+F5)\n3️⃣ جرّب متصفحاً مختلفاً (Chrome / Firefox)\n4️⃣ إذا استمرت المشكلة — اضغط **(إرسال تقرير)** في اللوحة\n\nسيتولى المطور **ahmed_dev_a** الأمر بأولوية قصوى.\n\n---\nWe're sorry you're experiencing an issue — we'll resolve it immediately.\n\nRecommended steps:\n1️⃣ Clear browser cache (Ctrl+Shift+Delete)\n2️⃣ Force refresh the page (Ctrl+F5)\n3️⃣ Try a different browser (Chrome / Firefox)\n4️⃣ If the problem persists — click **(Send Report)** in the dashboard\n\nDeveloper **ahmed_dev_a** will handle it with top priority."
+    "keywords": ["حماية", "امان", "أمان", "خصوصية", "اختراق", "بياناتي", "داتا", "security", "privacy", "تشفير", "امنة"],
+    "response": "أمانك هو أولويتنا في **Zunexa**. النظام مصمم ببروتوكولات صارمة تضمن سرية بياناتك وعزلها التام أثناء استخدامك لأدواتنا التحليلية."
   },
   {
-    "id": "offline_mode",
-    "category": "التقنيات | Technology",
-    "keywords": ["هل تعمل بدون انترنت", "اوفلاين", "offline", "بدون نت", "no internet", "without internet", "works offline", "offline mode", "no wifi", "no connection"],
-    "response": "**Zunexa** مصممة للعمل في سيناريوهات متعددة:\n\n✅ **مع الإنترنت** — أداء كامل، AI سحابي، حفظ البيانات\n⚡ **بدون إنترنت (Offline)** — الواجهة والـ AI المحلي يعملان\n❌ **ميزات تحتاج اتصال** — حفظ Supabase، SEO المتقدم\n\nالذاكرة المؤقتة (Cache) تضمن استمرار التجربة الأساسية.\n\n---\n**Zunexa** is built to handle multiple connectivity scenarios:\n\n✅ **With internet** — full performance, cloud AI, data saving\n⚡ **Offline** — UI and local AI remain functional\n❌ **Connection-required features** — Supabase saving, advanced SEO\n\nBrowser cache ensures the core experience continues."
+    "keywords": ["قائمة", "منيو", "sidebar", "قائمة جانبية", "كيف افتح القائمة", "القائمة مخفية", "شريط التنقل"],
+    "response": "يمكنك التنقل بين أقسام المنصة عبر القائمة الجانبية. إذا كنت تستخدم الهاتف، اضغط على زر (☰) في الأعلى لفتح وإغلاق القائمة بسلاسة."
   },
   {
-    "id": "future_updates",
-    "category": "المستقبل | Roadmap",
-    "keywords": ["المستقبل", "تحديثات", "النسخة القادمة", "v10", "ميزات جديدة", "ما القادم", "مستقبل زونيكسا", "الجديد", "roadmap", "upcoming", "next version", "future", "what's next", "new features", "coming soon", "v10"],
-    "response": "**Zunexa V10** قادم بتحسينات ضخمة:\n\n🚀 **AI مدمج بالكامل** — نموذج لغوي خاص بـ Zunexa\n📊 **Dashboard تحليلي متقدم** — رسوم بيانية حية\n🌐 **دعم متعدد اللغات** — AR, EN, FR كاملاً\n⚡ **API عامة** — اربط Zunexa بأي مشروع خارجي\n🎨 **Zalij Mode 2.0** — تحريكات هندسية ثلاثية الأبعاد\n\n---\n**Zunexa V10** is coming with massive upgrades:\n\n🚀 **Fully integrated AI** — a language model built for Zunexa\n📊 **Advanced analytics dashboard** — live charts\n🌐 **Full multilingual support** — AR, EN, FR\n⚡ **Public API** — connect Zunexa to any external project\n🎨 **Zalij Mode 2.0** — 3D animated geometric patterns"
+    "keywords": ["شكرا", "شكرًا", "يعطيك العافية", "تسلم", "ممتاز", "رائع", "عمل رائع", "ابداع", "برافو", "thanks", "merci"],
+    "response": "على الرحب والسعة! نحن هنا في **Zunexa** نسعى دائماً لتقديم الأفضل والمطور **ahmed_dev_a** يقدر دعمك وتشجيعك. ✨"
   },
   {
-    "id": "dashboard",
-    "category": "الواجهة | Interface",
-    "keywords": ["لوحة التحكم", "الداشبورد", "dashboard", "الرئيسية", "الصفحة الرئيسية", "الواجهة", "اللوحه", "main page", "home page", "control panel", "main dashboard", "overview", "stats", "statistics"],
-    "response": "**Zunexa Dashboard** هو مركز القيادة الرئيسي:\n\n📊 إحصائيات لحظية لأداء موقعك\n🛠️ وصول فوري لـ Generator Hub و SEO Tool\n🤖 Archon AI متاح في كل صفحة\n📋 سجل كامل لأنشطتك وجلساتك\n🔔 إشعارات وتحديثات فورية\n\nكل شيء في مكان واحد — مصمم للتركيز والإنتاجية.\n\n---\n**Zunexa Dashboard** is your main command center:\n\n📊 Real-time statistics for your site's performance\n🛠️ Instant access to Generator Hub & SEO Tool\n🤖 Archon AI available on every page\n📋 Complete log of your activities and sessions\n🔔 Instant notifications and updates\n\nEverything in one place — designed for focus and productivity."
+    "keywords": ["وداعا", "مع السلامة", "باي", "تصبح على خير", "خروج", "الى اللقاء", "goodbye", "bye", "سلامات"],
+    "response": "إلى اللقاء! نتمنى لك يوماً مليئاً بالإنتاجية. نحن بانتظارك دائماً في **Zunexa Premium**."
   },
   {
-    "id": "particles_animation",
-    "category": "التصميم | Design",
-    "keywords": ["انميشن", "حركة", "animation", "تاثيرات", "تأثيرات", "حركات", "النقاط الذهبية", "particle", "جزيئات", "particles", "floating", "background animation", "gold particles", "canvas animation", "moving background"],
-    "response": "نظام **Gold Particle System** في Zunexa:\n\n✦ مبني بـ **HTML5 Canvas API** خالصة\n✦ يُولّد **55+ جزيئة ذهبية** عائمة في وقت حقيقي\n✦ يعمل بـ **60 إطار/ثانية** دون استهلاك زائد للبطارية\n✦ كل جزيئة لها مسار، حجم، وشفافية عشوائية\n✦ متفاعل مع حركة الماوس\n\n---\n**Zunexa**'s **Gold Particle System**:\n\n✦ Built with pure **HTML5 Canvas API**\n✦ Generates **55+ floating gold particles** in real-time\n✦ Runs at **60fps** without excessive battery drain\n✦ Each particle has a unique random path, size, and opacity\n✦ Responds to mouse movement"
+    "keywords": ["تغيير اللون", "ابيض", "لايت مود", "مظلم", "dark mode", "لون فاتح", "لون ابيض", "ثيم اخر", "شكل اخر"],
+    "response": "هوية **Zunexa** مقصودة ومدروسة. نحن نستخدم الـ Dark Theme باللون الأسود والذهبي فقط (Zalij Mode) ليعكس الفخامة، الاحترافية، ويريح العين أثناء العمل الطويل."
   },
   {
-    "id": "api_integration",
-    "category": "التقنيات | Technology",
-    "keywords": ["api", "ربط", "استدعاء", "مفاتيح", "مبرمجين", "تكامل", "integration", "ويب هوك", "webhook", "rest api", "connect", "integrate", "api key", "endpoint", "json api", "http", "fetch"],
-    "response": "**Zunexa** مجهزة للتكامل مع أنظمتك الخارجية:\n\n🔌 **Supabase REST API** — قاعدة بيانات سحابية\n🔌 **Gemini API** — ذكاء اصطناعي سحابي\n🔌 **Generator Hub Output** — أكواد جاهزة للنشر الفوري\n🔌 **Webhook Support** — ربط مع أي خدمة خارجية\n\nكل الاستدعاءات تتم عبر Vanilla fetch() بدون مكتبات.\n\n---\n**Zunexa** is ready to integrate with your external systems:\n\n🔌 **Supabase REST API** — cloud database\n🔌 **Gemini API** — cloud AI\n🔌 **Generator Hub Output** — code ready for instant deployment\n🔌 **Webhook Support** — connect with any external service\n\nAll calls made via native Vanilla fetch() — no libraries needed."
+    "keywords": ["api", "ربط", "استدعاء", "مفاتيح", "مبرمجين", "تكامل", "integration", "ويب هوك", "webhook"],
+    "response": "نظام **Archon Protocol V9** مجهز ليكون بيئة صلبة. يمكنك استخدام أدوات التوليد لدينا لإنشاء الأكواد وربطها مع أنظمتك الخارجية بكل سهولة."
   },
   {
-    "id": "ads_free",
-    "category": "تجربة المستخدم | UX",
-    "keywords": ["اعلانات", "ads", "هل يوجد اعلانات", "حظر الاعلانات", "adblock", "no ads", "ad free", "advertisements", "popup", "banner ads", "intrusive ads", "clean experience"],
-    "response": "**Zunexa Premium** = تجربة خالية 100% من الإعلانات ✦\n\nلا popups. لا banners. لا تتبع تجاري. لا مقاطعات.\nفقط بيئة عمل نقية تحترم وقتك وتركيزك.\n\nإعلاناتنا الوحيدة: النتائج التي تحققها.\n\n---\n**Zunexa Premium** = 100% ad-free experience ✦\n\nNo popups. No banners. No commercial tracking. No interruptions.\nJust a clean workspace that respects your time and focus.\n\nOur only advertisement: the results you achieve."
+    "keywords": ["جافاسكريبت", "javascript", "اكواد", "برمجة", "تعديل الكود", "سورس كود", "الكود المصدري", "source code"],
+    "response": "تم كتابة كود المنصة بأسلوب نظيف ومنظم (Clean Code) باستخدام الجافاسكريبت النقي (Vanilla JS) لضمان الأداء وعدم الاعتماد على مكتبات تثقل المتصفح."
   },
   {
-    "id": "thanks",
-    "category": "تحية | Greeting",
-    "keywords": ["شكرا", "شكرًا", "يعطيك العافية", "تسلم", "ممتاز", "رائع", "عمل رائع", "ابداع", "برافو", "thanks", "merci", "thank you", "great job", "well done", "awesome", "nice", "perfect", "excellent", "appreciate", "grateful"],
-    "response": "على الرحب والسعة! ✦\n\nنحن في **Zunexa** نبني هذا لأشخاص مثلك تماماً — من يقدّرون الجودة والحرفية.\nدعمك يُلهم **ahmed_dev_a** على المضي قُدُماً.\n\n---\nYou're very welcome! ✦\n\nWe build **Zunexa** for people exactly like you — those who value quality and craftsmanship.\nYour support inspires **ahmed_dev_a** to keep pushing forward."
+    "keywords": ["قاعدة بيانات", "داتا بيز", "database", "sql", "supabase", "firebase", "اين تحفظ", "تخزين"],
+    "response": "تتكامل منصة Zunexa مع حلول قواعد البيانات الحديثة والآمنة لضمان حفظ إعداداتك وبياناتك بسرية، مما يوفر تجربة سلسة ومتزامنة."
   },
   {
-    "id": "goodbye",
-    "category": "تحية | Greeting",
-    "keywords": ["وداعا", "مع السلامة", "باي", "تصبح على خير", "خروج", "الى اللقاء", "goodbye", "bye", "سلامات", "see you", "take care", "farewell", "good night", "ciao", "au revoir", "later", "ttyl"],
-    "response": "إلى اللقاء! ✦\n\nنتمنى لك يوماً مليئاً بالإنتاجية والإبداع.\n**Archon** سيكون هنا في أي وقت تحتاجه.\n\n---\nUntil next time! ✦\n\nWishing you a day full of productivity and creativity.\n**Archon** will be here whenever you need it."
+    "keywords": ["لوحة التحكم", "الداشبورد", "dashboard", "الرئيسية", "الصفحة الرئيسية", "الواجهة", "اللوحه"],
+    "response": "لوحة تحكم **Zunexa Dashboard** هي غرفتك المركزية؛ من هنا يمكنك مراقبة إحصائياتك، استخدام أدوات السيو، وتوليد الأكواد بضغطة زر."
   },
   {
-    "id": "name_of_assistant",
-    "category": "عن المساعد | About AI",
-    "keywords": ["ايش اسمك", "شنو اسمك", "اسم المساعد", "من انت", "شو اسمك", "اسمك ايه", "اسمك", "تعريف", "what is your name", "who are you", "your name", "introduce yourself", "what are you called", "what should i call you"],
-    "response": "اسمي **Archon** ✦\n\nأنا المساعد الذكي الحصري لمنصة **Zunexa** — بُنيت لأكون دليلك التقني الكامل:\n• الإجابة على استفساراتك عن المنصة\n• شرح الأدوات والميزات\n• دعمك في رحلة التطوير والنمو\n\n---\nMy name is **Archon** ✦\n\nI'm the exclusive AI assistant of **Zunexa** — built to be your complete technical guide:\n• Answering your questions about the platform\n• Explaining tools and features\n• Supporting you on your development and growth journey"
+    "keywords": ["ايش اسمك", "شنو اسمك", "اسم المساعد", "من انت", "شو اسمك", "اسمك ايه", "اسمك", "تعريف"],
+    "response": "أنا المساعد الآلي لبروتوكول **Archon V9** داخل منصة **Zunexa**، وظيفتي هي إرشادك وتوفير المعلومات التقنية حول النظام."
   },
   {
-    "id": "password_change",
-    "category": "الحساب | Account",
-    "keywords": ["تغيير الباسورد", "كلمة سر جديدة", "تغيير كلمة المرور", "change password", "update password", "reset password", "forgot password", "password reset", "new password", "كلمة المرور"],
-    "response": "لتغيير كلمة مرورك في **Zunexa**:\n\n1️⃣ توجه إلى **إعدادات الحساب** (Account Settings)\n2️⃣ أدخل كلمة المرور الحالية\n3️⃣ أدخل الكلمة الجديدة وأكدها\n4️⃣ اضغط **(حفظ التغييرات)**\n\nإذا نسيت كلمة مرورك، اضغط على **(نسيت كلمة المرور)** في صفحة الدخول.\n\n---\nTo change your password in **Zunexa**:\n\n1️⃣ Go to **Account Settings**\n2️⃣ Enter your current password\n3️⃣ Enter and confirm your new password\n4️⃣ Click **(Save Changes)**\n\nIf you forgot your password, click **(Forgot Password)** on the login page."
+    "keywords": ["المغرب", "مغربي", "morocco", "زليج", "نقش مغربي", "تراث", "تصميم مغربي"],
+    "response": "بكل فخر، تصميم **Zalij Mode** مستلهم من الهندسة والفن المغربي الأصيل، مدمجاً بلمسة تقنية حديثة ليخلق واجهة مستخدم (UI) غير مسبوقة في الفخامة."
   },
   {
-    "id": "saas_explanation",
-    "category": "عن المنصة | About",
-    "keywords": ["ما هو saas", "saas", "نظام ساس", "تطبيق ساس", "يعني ايه ساس", "what is saas", "software as a service", "cloud software", "web app", "web application"],
-    "response": "**SaaS** تعني: Software as a Service (برمجيات كخدمة)\n\nببساطة: أنت تستخدم أدوات برمجية متطورة مباشرة من متصفحك — دون تحميل أي شيء.\n\n**Zunexa** كـ SaaS تعني:\n✦ وصول فوري من أي جهاز وأي مكان\n✦ تحديثات تلقائية مستمرة\n✦ لا تثبيت، لا صيانة، لا تعقيدات\n✦ تدفع مقابل ما تستخدم فقط\n\n---\n**SaaS** stands for: Software as a Service\n\nSimply put: you use powerful software tools directly from your browser — no downloads required.\n\n**Zunexa** as a SaaS means:\n✦ Instant access from any device, anywhere\n✦ Continuous automatic updates\n✦ No installation, no maintenance, no complexity\n✦ Pay only for what you use"
+    "keywords": ["دومين", "استضافة", "رفع", "موقع", "هوست", "domain", "hosting", "نشر", "بابلش"],
+    "response": "أدوات **Zunexa** تساعدك في تحضير موقعك ومحركاته (SEO) قبل إطلاقه. يمكنك استخدام الأكواد المولدة لدينا لرفعها على أي استضافة تختارها."
   },
   {
-    "id": "logout",
-    "category": "الحساب | Account",
-    "keywords": ["تسجيل خروج", "كيف اخرج", "تسجيل الخروج", "logout", "sign out", "خروج من الحساب", "log out", "exit account", "end session"],
-    "response": "لتسجيل الخروج من **Zunexa** بأمان:\n\n1️⃣ انقر على **أيقونة حسابك** (أسفل القائمة الجانبية)\n2️⃣ اختر **(تسجيل الخروج / Logout)**\n3️⃣ سيتم إنهاء جلستك وتشفير بياناتك المحلية\n\nيمكنك العودة في أي وقت — بياناتك محفوظة بأمان.\n\n---\nTo safely log out of **Zunexa**:\n\n1️⃣ Click your **account icon** (bottom of the sidebar)\n2️⃣ Select **(Logout)**\n3️⃣ Your session will end and local data will be secured\n\nYou can return anytime — your data is saved safely."
+    "keywords": ["وقت", "تاريخ", "الساعة", "متى", "اليوم", "كم الساعة"],
+    "response": "أنا أعمل في الزمن الحقيقي (Real-time) داخل متصفحك لتوفير ردود فورية. وقتك ثمين، لذا أحرص على الإجابة في أجزاء من الثانية!"
   },
   {
-    "id": "compliment",
-    "category": "تحية | Greeting",
-    "keywords": ["رائع جدا", "شغل ممتاز", "ابداع", "تصميم خرافي", "مذهل", "خرافي", "جميل جدا", "عظيم", "perfect", "amazing", "wow", "incredible", "beautiful", "stunning", "impressive", "love it", "fire", "clean", "sick design", "mind blowing"],
-    "response": "شكراً من القلب! ✦\n\nهذا الإبداع هو ثمرة الساعات الطويلة والشغف الحقيقي الذي يضخه **ahmed_dev_a** في كل سطر كود.\n\nعندما تنجح في مشروعك — ذلك هو جائزتنا الحقيقية. 🔥\n\n---\nThank you from the heart! ✦\n\nThis is the fruit of countless hours and the genuine passion that **ahmed_dev_a** pours into every line of code.\n\nWhen you succeed in your project — that is our true reward. 🔥"
+    "keywords": ["انميشن", "حركة", "animation", "تاثيرات", "تأثيرات", "حركات", "النقاط الذهبية", "particle", "جزيئات"],
+    "response": "تستخدم المنصة نظام **Gold Particle System** المبني باستخدام تقنية Canvas لإنشاء جزيئات ذهبية عائمة تتفاعل بسلاسة لتعطي طابعاً حياً وفاخراً للخلفية."
+  },
+  {
+    "keywords": ["كيف استخدم", "طريقة الاستخدام", "علمني", "كيف ابدا", "البداية", "خطوات", "شرح استخدام"],
+    "response": "الأمر بسيط جداً! ابدأ باختيار الأداة التي تحتاجها من القائمة الجانبية (مثل Generator Hub أو SEO Tool)، اتبع الإرشادات على الشاشة، واستمتع بالسرعة."
+  },
+  {
+    "keywords": ["صور", "ايكون", "ايقونات", "icon", "svg", "تصميمات", "شعار", "اللوجو"],
+    "response": "اللوجو الخاص بـ **Zunexa** والعديد من العناصر المرئية تم تصميمها باستخدام تقنية SVG المدمجة لتكون خفيفة الوزن وتحتفظ بدقتها العالية على جميع الشاشات."
+  },
+  {
+    "keywords": ["خط", "خطوط", "فونت", "font", "cinzel", "rajdhani", "نوع الخط"],
+    "response": "تستخدم المنصة خطوطاً احترافية من Google Fonts: خط **Cinzel** للعناوين الفخمة والطابع الكلاسيكي، وخط **Rajdhani** للنصوص التقنية السلسة والمقروءة."
+  },
+  {
+    "keywords": ["اقتراح", "فكرة", "تطوير", "عندي فكرة", "اضافة", "ميزة", "اقتراحات"],
+    "response": "يسعدنا جداً سماع أفكارك! يرجى إرسال اقتراحك عبر زر (إرسال تقرير) وسيصل مباشرة إلى المطور **ahmed_dev_a** ليأخذه بعين الاعتبار في التحديث القادم."
+  },
+  {
+    "keywords": ["نكتة", "اضحكني", "مزحة", "ملل", "زهقان", "طفشان", "joke"],
+    "response": "لماذا يفضل مبرمجو الجافاسكريبت النظارات المظلمة؟... لأنهم لا يحبون الـ Java (القهوة) الساخنة بدون C# (رؤية حادة)! حسناً، لنعد للعمل عبر أدوات Zunexa الرائعة. 😄"
+  },
+  {
+    "keywords": ["هل تفهمني", "تتكلم عربي", "لغة عربية", "انجليزي", "لغات", "arabic", "english"],
+    "response": "بالتأكيد! أنا مصمم لأفهم استفساراتك باللغة العربية بطلاقة، وأقدم لك الدعم الكامل والمخصص لمنصة Zunexa."
+  },
+  {
+    "keywords": ["موسيقى", "صوت", "اغاني", "music", "audio", "اصوات"],
+    "response": "المنصة مصممة لتكون هادئة وتركز على الإنتاجية البصرية (Visual Productivity) باللونين الأسود والذهبي، دون تشتيت انتباهك بالصوتيات."
+  },
+  {
+    "keywords": ["ارباح", "فلوس", "مال", "ربح", "دخل", "mbi3at", "arbah"],
+    "response": "استخدامك لأداة **SEO Tool** في منصتنا سيساعدك في جلب زيارات أكثر لمشروعك، مما يترجم لاحقاً إلى زيادة في المبيعات والأرباح لعملك الخاص."
+  },
+  {
+    "keywords": ["لا اعرف", "صعب", "معقد", "لم افهم", "مساعدة اضافية", "كيف", "توضيح"],
+    "response": "لا تقلق! واجهة المنصة (UI) مبنية على مبدأ (User-Friendly). كل أداة تحتوي على نصوص توضيحية. ابدأ بخطوات صغيرة وستكتشف أن الأمر سهل للغاية."
+  },
+  {
+    "keywords": ["من هو احمد", "من احمد", "ahmed_dev", "who is ahmed"],
+    "response": "المطور **ahmed_dev_a** هو العقل المدبر والمبرمج الرئيسي خلف مشروع Zunexa. صمم هذه المنصة لتجمع بين الأداء التقني العالي والتصميم الفني الفريد."
+  },
+  {
+    "keywords": ["لوحة القيادة", "الاحصائيات", "بياناتي", "الارقام", "تحليل", "داشبورد", "dashboard", "analytics", "stats"],
+    "response": "لوحة القيادة (Dashboard) في منصة **Zunexa** مصممة لتعطيك نظرة شاملة وفورية على أداء مشروعك بتصميم Zalij Mode الفاخر المريح للعين."
+  },
+  {
+    "keywords": ["كيف احدث", "تحديث الصفحة", "ريفرش", "تحديث البيانات", "refresh", "update"],
+    "response": "تعتمد **Zunexa V9** على تقنيات الاستجابة الفورية، حيث تتحدث البيانات ديناميكياً بدون الحاجة لإعادة تحميل الصفحة بالكامل (SPA Concept)."
+  },
+  {
+    "keywords": ["حذف حسابي", "الغاء الاشتراك", "مسح بياناتي", "ديليت", "delete account", "remove data"],
+    "response": "نحن نحترم خصوصيتك بالكامل. يمكنك إدارة بياناتك أو طلب حذفها عبر إعدادات الحساب في اللوحة الجانبية، وسيتم مسحها بأمان من خوادمنا."
+  },
+  {
+    "keywords": ["هل يوجد تطبيق", "تطبيق اندرويد", "تطبيق ايفون", "app", "ios", "android", "apk"],
+    "response": "حالياً، **Zunexa** تعمل كتطبيق ويب تقدمي (PWA) فائق التجاوب. يمكنك إضافتها للشاشة الرئيسية في هاتفك وستعمل كأنها تطبيق أصلي تماماً."
+  },
+  {
+    "keywords": ["الخطوط العربية", "خط عربي", "تغيير الخط", "فونت عربي", "arabic font", "cairo", "tajawal"],
+    "response": "تم تحسين خطوط المنصة لدعم اللغة العربية بامتياز وبشكل يليق بفخامة الـ Zalij Mode، مع الحفاظ على وضوح القراءة التقنية."
+  },
+  {
+    "keywords": ["من اخترع", "صاحب الفكرة", "مؤسس", "founder", "ceo", "مالك الموقع", "المدير"],
+    "response": "المنصة من تأسيس وبرمجة وتصميم المطور **ahmed_dev_a**، الذي ابتكر بروتوكول Archon ودمج الهندسة المغربية مع تقنيات الـ SaaS."
+  },
+  {
+    "keywords": ["هل هو مفتوح المصدر", "اوبن سورس", "open source", "github", "جيت هب", "تحميل الكود"],
+    "response": "منصة **Zunexa SaaS** هي مشروع احترافي مغلق المصدر (Closed Source) لضمان حصرية التصميم والأدوات والأمان العالي للمستخدمين."
+  },
+  {
+    "keywords": ["مستطيلات", "كروت", "cards", "ui", "تصميم الواجهة", "شكل الازرار", "الاطارات"],
+    "response": "تم تصميم الكروت (Cards) في المنصة بتأثيرات زجاجية (Glassmorphism) خفيفة مع حواف ذهبية تتوهج عند التفاعل معها لتجربة مستخدم لا مثيل لها."
+  },
+  {
+    "keywords": ["تصدير", "تحميل التقرير", "ملف pdf", "اكسيل", "export", "download", "csv"],
+    "response": "يمكنك تصدير تقارير الـ SEO والبيانات المولدة من أدواتنا بصيغ متعددة (PDF, CSV) لتتمكن من مشاركتها مع فريقك أو عملائك بسهولة."
+  },
+  {
+    "keywords": ["سرية", "هل بياناتي مشفرة", "تشفير", "encryption", "secure", "حماية البيانات"],
+    "response": "بالتأكيد! بروتوكول **Archon V9** يضمن معالجة بياناتك عبر طبقات حماية mtdmّة، ولا يتم مشاركتها مع أي أطراف ثالثة إطلاقاً."
+  },
+  {
+    "keywords": ["اخطاء 404", "صفحة غير موجودة", "error 404", "رابط مكسور", "broken link"],
+    "response": "أداة **SEO Tool** في زونيكسا قادرة على فحص الروابط المكسورة (404) في موقعك وتوجيهك لإصلاحها فوراً لتحسين ترتيبك في محركات البحث."
+  },
+  {
+    "keywords": ["كلمات مفتاحية", "مفاتيح البحث", "keywords", "tags", "البحث", "تصدر النتائج"],
+    "response": "يمكنك استخدام قسم الـ SEO لتوليد وتحليل الكلمات المفتاحية (Keywords) الأكثر بحثاً في مجالك لضمان تفوقك على المنافسين."
+  },
+  {
+    "keywords": ["نسخ الكود", "نسخ", "copy", "نسخ النص", "كيف انسخ"],
+    "response": "يوجد زر (نسخ - Copy) بجانب كل كود أو نص يتم توليده في **Generator Hub** لنسخه فوراً إلى الحافظة الخاصة بك."
+  },
+  {
+    "keywords": ["شرح بالفيديو", "يوتيوب", "فيديو تعليمي", "tutorial", "video", "كيف استعمل"],
+    "response": "نعمل حالياً على تجهيز مكتبة شروحات مرئية (فيديو) متكاملة داخل اللوحة ستشرح كل أداة خطوة بخطوة بالصوت والصورة."
+  },
+  {
+    "keywords": ["تواصل", "اتصل بنا", "رقم الهاتف", "ايميل", "البريد الالكتروني", "contact", "support", "دعم"],
+    "response": "يمكنك التواصل مع المطور **ahmed_dev_a** مباشرة عبر خيار (إرسال تقرير) في اللوحة الرئيسية، أو عبر البريد الإلكتروني المرفق في قسم الدعم."
+  },
+  {
+    "keywords": ["استرجاع كلمة المرور", "نسيت الباسورد", "نسيت كلمة السر", "forgot password", "reset password", "كلمة المرور"],
+    "response": "يمكنك استرجاع كلمة المرور عبر الضغط على (نسيت كلمة المرور) في صفحة تسجيل الدخول، وسنرسل لك رابط إعادة التعيين فوراً."
+  },
+  {
+    "keywords": ["هل تدعم الفرنسية", "لغة فرنسية", "french", "francais", "fr", "لغات اخرى", "تغيير اللغة"],
+    "response": "منصة Zunexa تدعم اللغة الإنجليزية بشكل أساسي للواجهات البرمجية، بالإضافة إلى دعم ممتاز للمحتوى العربي. دعم اللغة الفرنسية قادم في التحديثات القادمة."
+  },
+  {
+    "keywords": ["ما هو archon", "archon", "اركون", "بروتوكول", "protocol", "تحديث اركون"],
+    "response": "**Archon Protocol** هو النظام الجوهري (Core System) المشغل للنسخة V9، وهو مسؤول عن تسريع العمليات ومعالجة البيانات محلياً بدون استهلاك موارد جهازك."
+  },
+  {
+    "keywords": ["لماذا اللون الاسود", "لماذا الذهبي", "سر الالوان", "اللون الداكن", "black and gold"],
+    "response": "اللون الأسود (Void) يعطي راحة للعين أثناء البرمجة والعمل لفترات طويلة، بينما يمثل اللون الذهبي (Gold) الفخامة والدقة في معمارية الـ Zalij Mode."
+  },
+  {
+    "keywords": ["اداة توليد النصوص", "توليد نصوص", "نص عشوائي", "lorem ipsum", "text generator"],
+    "response": "يوفر **Generator Hub** أداة متطورة لتوليد نصوص عشوائية (Dummy Text) جاهزة للاستخدام في تصميم واجهات موقعك قبل إطلاق المحتوى الفعلي."
+  },
+  {
+    "keywords": ["شهادة ssl", "https", "امان الموقع", "قفل الامان", "ssl certificate"],
+    "response": "جميع اتصالاتك مع منصة **Zunexa** محمية بالكامل عبر بروتوكول HTTPS وشهادات SSL ذات التشفير العالي (256-bit)."
+  },
+  {
+    "keywords": ["متى تم الانشاء", "تاريخ الانطلاق", "عمر الموقع", "تأسيس", "متى تأسست"],
+    "response": "تم إطلاق وتطوير الإصدار المستقر من **Zunexa** بجهود مكثفة من **ahmed_dev_a** لتكون المعيار الجديد في واجهات الـ SaaS العربية والعالمية."
+  },
+  {
+    "keywords": ["باقات", "خطة اسعار", "شراء النسخة", "النسخة المدفوعة", "pricing", "plans", "باقة"],
+    "response": "تتضمن Zunexa باقات مرنة تناسب المستقلين (Freelancers) والشركات (Agencies). يمكنك مراجعة الأسعار من قسم الترقية (Upgrade) في اللوحة الجانبية."
+  },
+  {
+    "keywords": ["كمبيوتر", "ديسكتوب", "لابتوب", "شاشة كبيرة", "desktop", "mac", "windows"],
+    "response": "تعمل **Zunexa** بأقصى طاقة لها على أجهزة الكمبيوتر المكتبية والمحمولة (ويندوز وماك)، حيث تستفيد من مساحة الشاشة لعرض لوحات التحكم بشكل بانورامي فخم."
+  },
+  {
+    "keywords": ["ماك", "ابل", "سفاري", "safari", "apple", "macbook"],
+    "response": "نعم، المنصة متوافقة 100% مع متصفح Safari وأجهزة نظام macOS، وتعمل بسلاسة تامة مع الاستفادة من معالجات Apple Silicon لسرعة الأداء."
+  },
+  {
+    "keywords": ["توليد اكواد", "صناعة كود", "برمجة تلقائية", "code generator", "تكويد"],
+    "response": "أداة توليد الأكواد في **Zunexa** قادرة على كتابة مكونات HTML/CSS/JS جاهزة ونظيفة يمكنك دمجها في مشروعك فوراً لتوفير ساعات من العمل اليدوي."
+  },
+  {
+    "keywords": ["كانفاس", "canvas", "خلفية متحركة", "رسوم متحركة", "الخلفية", "background"],
+    "response": "الخلفية التفاعلية مبنية باستخدام تقنية HTML5 Canvas لضمان سلاسة حركة الجزيئات الذهبية بمعدل 60 إطار في الثانية (60fps) دون استهلاك البطارية."
+  },
+  {
+    "keywords": ["هل انت ذكي", "ما مدى ذكائك", "هل انت مبرمج", "هل انت انسان", "هل تفكر"],
+    "response": "أنا نظام ذكاء اصطناعي محلي مبرمج خصيصاً لهذه المنصة؛ لا أشعر ولا أفكر كالبشر، ولكنني أمتلك معرفة دقيقة وشاملة بكل سطر كود داخل منصة Zunexa."
+  },
+  {
+    "keywords": ["دفع الكتروني", "طرق الدفع", "فيزا", "باي بال", "paypal", "visa", "ماستركارد", "شراء"],
+    "response": "ندعم بوابات دفع عالمية وآمنة جداً، بما في ذلك PayPal والبطاقات الائتمانية (Visa, MasterCard)، وتتم المعاملات بتشفير بنكي كامل."
+  },
+  {
+    "keywords": ["استرجاع الاموال", "ريفاند", "refund", "ضمان", "استرداد"],
+    "response": "نوفر سياسة استرداد أموال (Refund Policy) واضحة ومرنة في حال لم تتناسب باقات Premium مع متطلبات مشروعك، لضمان رضاك التام."
+  },
+  {
+    "keywords": ["هل تعمل بدون انترنت", "اوفلاين", "offline", "بدون نت"],
+    "response": "بعض الميزات الأساسية والواجهات يمكنها العمل من الذاكرة المؤقتة (Cache)، لكن لاستخدام توليد الأكواد وحفظ البيانات، يلزم توفر اتصال بالإنترنت."
+  },
+  {
+    "keywords": ["سرعة الموقع", "تحسين السرعة", "pagespeed", "سرعة التصفح", "موقعي بطيء"],
+    "response": "منصة Zunexa بحد ذاتها محسنة لأقصى درجة، كما تقدم لك في أداة SEO Tool نصائح حقيقية لضغط الصور وتقليل الأكواد لتسريع موقعك الخاص."
+  },
+  {
+    "keywords": ["صور مصغرة", "meta tags", "مشاركة الرابط", "فيس بوك", "تويتر", "رابط الموقع"],
+    "response": "أداة المولد (Generator Hub) قادرة على إنشاء أكواد Meta Tags و Open Graph لضمان ظهور موقعك بصورة مصغرة جذابة عند مشاركته في وسائل التواصل الاجتماعي."
+  },
+  {
+    "keywords": ["الاحصائيات خاطئة", "تحديث الاحصائيات", "لا يعمل السيو", "بيانات غير صحيحة", "مشكلة في التحديث"],
+    "response": "يرجى مسح ذاكرة التخزين المؤقت (Clear Cache) للمتصفح وتحديث الصفحة. إذا استمرت المشكلة، أرسل تقريراً فورياً للمطور **ahmed_dev_a**."
+  },
+  {
+    "keywords": ["ملفات تعريف الارتباط", "كوكيز", "cookies", "تتبع", "موافقة الكوكيز"],
+    "response": "نحن نستخدم ملفات تعريف الارتباط (Cookies) الضرورية فقط للحفاظ على جلسة تسجيل الدخول الخاصة بك وحفظ تفضيلاتك داخل واجهة Zunexa محلياً."
+  },
+  {
+    "keywords": ["كم عدد المستخدمين", "شعبية الموقع", "عدد المشتركين", "users", "عملاء"],
+    "response": "المنصة تكتسب شعبية متزايدة بفضل بروتوكول Archon والتصميم الاستثنائي. نحن نفخر بخدمة مجتمع من المطورين النخبة ورواد الأعمال."
+  },
+  {
+    "keywords": ["شهادة", "هل يوجد شهادة", "كورس", "دورة تعليمية", "تدريب"],
+    "response": "منصة Zunexa هي أداة برمجية للعمل (SaaS) وليست منصة دورات تعليمية. نحن نوفر لك الأدوات اللازمة لبناء مشاريعك بإنتاجية عالية جداً."
+  },
+  {
+    "keywords": ["ما هو saas", "saas", "نظام ساس", "تطبيق ساس", "يعني ايه ساس"],
+    "response": "الـ SaaS تعني (Software as a Service). أي أننا نقدم لك أدوات برمجية متطورة كخدمة عبر المتصفح دون الحاجة لتحميل وتثبيت برامج معقدة على جهازك."
+  },
+  {
+    "keywords": ["وظائف", "توظيف", "شواغر", "العمل معكم", "هل توظفون", "hiring", "jobs"],
+    "response": "في الوقت الحالي، يدير المطور **ahmed_dev_a** المشروع بالكامل. سيتم الإعلان في لوحة التحكم إذا تم فتح باب التوظيف للمطورين والمصممين مستقبلاً."
+  },
+  {
+    "keywords": ["صيغة json", "json", "xml", "api", "rest api"],
+    "response": "المنصة تدعم تصدير وقراءة البيانات بصيغة JSON النظيفة، مما يجعلها متوافقة مع جميع لغات البرمجة وتطبيقات الواجهة الخلفية (Backend)."
+  },
+  {
+    "keywords": ["تسجيل خروج", "كيف اخرج", "تسجيل الخروج", "logout", "sign out", "خروج من الحساب"],
+    "response": "يمكنك تسجيل الخروج بأمان من خلال النقر على أيقونة حسابك (أسفل القائمة الجانبية) واختيار 'تسجيل الخروج' (Logout)."
+  },
+  {
+    "keywords": ["دعم فني سريع", "رد سريع", "مشكلة عاجلة", "urgent", "مساعدة فورية"],
+    "response": "الطلبات العاجلة يتم إرسالها مباشرة إلى المطور، ويتم التعامل مع أخطاء النظام (Bugs) بأولوية قصوى لضمان عدم توقف عملك."
+  },
+  {
+    "keywords": ["خرائط الموقع", "sitemap", "خريطة موقع", "xml sitemap", "فهرسة"],
+    "response": "أداة الـ SEO مجهزة بميزة توليد ملفات Sitemap.xml تلقائياً لتسهيل أرشفة صفحات موقعك في محركات بحث Google و Bing بسلاسة."
+  },
+  {
+    "keywords": ["اعلانات", "ads", "هل يوجد اعلانات", "حظر الاعلانات", "adblock"],
+    "response": "تجربة مستخدمي منصة **Zunexa Premium** خالية تماماً 100% من الإعلانات المزعجة لتوفير بيئة عمل نظيفة ومحفزة للإنتاج والإبداع."
+  },
+  {
+    "keywords": ["حجم الشاشة", "دقة الشاشة", "resolution", "شاشات 4k"],
+    "response": "تصميم **Zalij Mode** يستخدم وحدات قياس مرنة (rem, vh, vw) مما يجعله يظهر بأبهى حلة سواء على شاشات الهواتف الصغيرة أو شاشات 4K العملاقة."
+  },
+  {
+    "keywords": ["رائع جدا", "شغل ممتاز", "ابداع", "تصميم خرافي", "مذهل", "خرافي", "جميل جدا", "عظيم", "perfect", "amazing", "wow"],
+    "response": "شكراً لك! هذا الإبداع هو ثمرة مجهود المطور **ahmed_dev_a** لتقديم واجهة عالمية تليق بطموحات مستخدمينا. استمتع بتجربة Zunexa!"
+  },
+  {
+    "keywords": ["انت غبي", "سيء", "لا تعمل", "زبالة", "فاشل", "بطيء جدا", "bad", "stupid"],
+    "response": "نعتذر إن واجهت تجربة غير مرضية. نحن نسعى دائماً للتحسين المستمر، يرجى تزويدنا بتفاصيل المشكلة عبر زر (إرسال تقرير) لكي نقوم بإصلاحها فوراً."
+  },
+  {
+    "keywords": ["كيف ابرمج", "كيف اتعلم البرمجة", "لغات برمجة", "نصيحة للمبرمجين", "مطور ويب"],
+    "response": "كمبرمج، أنصحك بالبدء بأساسيات HTML و CSS، ثم التركيز بقوة على Vanilla JavaScript قبل القفز إلى إطارات العمل. هذا هو السر خلف قوة Zunexa!"
+  },
+  {
+    "keywords": ["تغيير الباسورد", "كلمة سر جديدة", "تغيير كلمة المرور", "change password", "update password"],
+    "response": "لتغيير كلمة المرور الخاصة بك، توجه إلى إعدادات الحساب (Account Settings) في القائمة، وقم بإدخال الكلمة القديمة متبوعة بالجديدة."
+  },
+  {
+    "keywords": ["ملف الروبوت", "robots.txt", "روبوتس", "حجب محركات البحث", "سيو متقدم"],
+    "response": "أداة Generator Hub توفر لك إمكانية توليد ملف `robots.txt` قياسي لتوجيه عناكب محركات البحث وتحديد الصفحات المسموح والممنوع فهرستها."
+  },
+  {
+    "keywords": ["كيف حالك", "كيف داير", "لاباس", "بخير", "أخبارك"],
+    "response": "الحمد لله، بخير. وأنت كيف حالك؟"
+  },
+  {
+    "keywords": ["أين أنت", "فين راك", "فينك", "مكانك"],
+    "response": "أنا في الطريق إليك / أنا في البيت."
+  },
+  {
+    "keywords": ["ماذا تفعل", "أشنو كتدير", "اش كدير", "ماذا تصنع"],
+    "response": "لا شيء مهم، جالس أرتاح قليلاً."
+  },
+  {
+    "keywords": ["هل نمت جيداً", "نعستي مزيان", "كيف نعستي", "نمت"],
+    "response": "نعم، نمت جيداً والحمد لله / لا، سهرت البارحة وأشعر بالنعاس."
+  },
+  {
+    "keywords": ["كيف كان يومك", "يومك", "دوزتي نهارك", "نهارك"],
+    "response": "كان يوماً طويلاً ومتعباً بعض الشيء / كان يوماً عادياً وممتازاً."
+  },
+  {
+    "keywords": ["متى ستصل", "وقتاش غادي توصل", "امتى توصل", "متى تجي"],
+    "response": "سأصل بعد حوالي 10 أو 15 دقيقة تقريباً."
+  },
+  {
+    "keywords": ["هل تحتاج إلى مساعدة", "معاونة", "نعاونك", "اساعدك", "مساعدة"],
+    "response": "لا شكراً، كل شيء تحت السيطرة / نعم من فضلك، أحتاج يداً إضافية."
+  },
+  {
+    "keywords": ["خططك", "البلان", "ما هي خططك", "مخططك"],
+    "response": "سأنهي عملي ثم أذهب للمنزل للراحة / ليس لدي خطة محددة اليوم."
+  },
+  {
+    "keywords": ["هل اتصلت بي", "صونيتي عليا", "عيطتي ليا", "رنيت"],
+    "response": "نعم، رننت عليك قبل قليل / لا، لم أتصل، ربما تشابه عليك الرقم."
+  },
+  {
+    "keywords": ["هل أكلت", "كليتي", "تغديتي", "تعشيتي", "اكلت"],
+    "response": "نعم أكلت والحمد لله / لا، ما زلت أنتظرك لنأكل معاً."
+  },
+  {
+    "keywords": ["واي فاي", "كلمة سر", "كود الويفي", "wifi", "كلمة السر"],
+    "response": "كلمة السر مكتوبة خلف جهاز الروتر / سأرسلها لك الآن في رسالة."
+  },
+  {
+    "keywords": ["أين هاتفي", "تلفوني", "هاتفي", "فين تيليفوني"],
+    "response": "كان فوق الطاولة في غرفة الجلوس / ابحث عنه في جيوبك."
+  },
+  {
+    "keywords": ["شاحن", "chargeur", "شارجور", "معك شاحن"],
+    "response": "نعم تفضل، ها هو / لا للأسف، نسيته في البيت اليوم."
+  },
+  {
+    "keywords": ["بطاريتك", "نسبة شحن", "باتري", "شحال فالباتري"],
+    "response": "بطاريتي فيها 20% فقط، ستنفد قريباً / هاتفي مشحون بالكامل."
+  },
+  {
+    "keywords": ["رأيت رسالتي", "قريتي ميساجي", "شفتي الميساج", "رسالتي"],
+    "response": "نعم رأيتها للتو وكنت سأرد عليك / لا، لم أفتح الهاتف منذ مدة."
+  },
+  {
+    "keywords": ["الإنترنت", "الكونيكسيون", "انترنت مقطوع", "لا يعمل الانترنت"],
+    "response": "ربما هناك عطل من الشركة، جرب إطفاء الروتر وإعادة تشغيله."
+  },
+  {
+    "keywords": ["الرابط", "ليان", "link", "ارسل الرابط"],
+    "response": "بالطبع، ثانية واحدة وسأرسله لك عبر الواتساب."
+  },
+  {
+    "keywords": ["التيلكوماند", "جهاز التحكم", "ريموت", "تيلكوماند"],
+    "response": "إنه بجانب التلفاز / ابحث عنه تحت الوسادة أو الكنبة."
+  },
+  {
+    "keywords": ["كيف أقوم بتشغيل", "كيفاش نخدم", "كيف اشغل"],
+    "response": "فقط اضغط على الزر الجانبي بشكل مطول حتى تضيء الشاشة."
+  },
+  {
+    "keywords": ["حسابي مفتوح", "كونط ديالي", "حسابي"],
+    "response": "لا تقلق، لقد قمت بتسجيل الخروج منه فوراً."
+  },
+  {
+    "keywords": ["متى ينتهي الدوام", "وقتاش نخرجو", "متى نخرج", "الخروج"],
+    "response": "في الساعة السادسة مساءً إن شاء الله / بقي القليل ونغادر."
+  },
+  {
+    "keywords": ["أنهيت المهمة", "سليتي الخدمة", "كملتي"],
+    "response": "نعم، انتهيت منها للتو / ليس بعد، ما زلت أعمل على الجزء الأخير."
+  },
+  {
+    "keywords": ["ماذا قال المدير", "المدير", "الأستاذ", "اش قال"],
+    "response": "طلب منا التجهيز لاختبار الأسبوع القادم / لم يقل شيئاً جديداً."
+  },
+  {
+    "keywords": ["موعد التسليم", "وقتاش نسلمو", "التسليم"],
+    "response": "غداً صباحاً كأقصى حد / التسليم سيكون يوم الجمعة."
+  },
+  {
+    "keywords": ["اجتماع", "ميتينغ", "meeting", "اجتماع اليوم"],
+    "response": "نعم، لدينا اجتماع في الساعة الثانية / لا، لقد تم إلغاؤه وتأجيله."
+  },
+  {
+    "keywords": ["إرسال الملف", "صيفط ليا الفيشي", "الملف", "file"],
+    "response": "أكيد، راجع بريدك الإلكتروني، لقد أرسلته للتو."
+  },
+  {
+    "keywords": ["حل المشكلة", "حل هاد المشكل", "احل المشكلة"],
+    "response": "جرب إعادة تشغيل البرنامج، أو ابحث عن الحل في محرك بحث جوجل."
+  },
+  {
+    "keywords": ["فهمت الدرس", "فهمتي", "فهمت الموضوع"],
+    "response": "نعم الدرس مفهوم جداً / لا، واجهت صعوبة في بعض النقاط."
+  },
+  {
+    "keywords": ["استراحة", "بوز", "pause", "متى نرتاح"],
+    "response": "بعد نصف ساعة تقريباً عندما ننهي هذه الفقرة."
+  },
+  {
+    "keywords": ["من سيتكلف", "شكون غيتكلف", "شكون غيصاوب"],
+    "response": "أنا سأتكلف به / زميلنا محمد هو المسؤول عن هذا القسم."
+  },
+  {
+    "keywords": ["ماذا سنأكل", "اش غناكلو", "ناكل", "الأكل"],
+    "response": "ما رأيك في طاجين أو بيتزا؟ / أي شيء خفيف وسريع."
+  },
+  {
+    "keywords": ["للعشاء", "عشاء", "نطيبو للعشا", "ماذا نطبخ"],
+    "response": "لندخل المطبخ ونحضر بعض المعكرونة / أنا متعب، لنطلب طعاماً جاهزاً."
+  },
+  {
+    "keywords": ["كم سعر", "بشحال", "الثمن", "السعر"],
+    "response": "سعره 50 درهماً / لا أعرف، يجب أن نسأل البائع."
+  },
+  {
+    "keywords": ["مفاتيحي", "السوارت", "مفاتيح"],
+    "response": "تركتها معلقة بجانب الباب / تفقد حقيبتك جيداً."
+  },
+  {
+    "keywords": ["الجو بارد", "الجو", "البرد", "السمخ", "الجو حار"],
+    "response": "الجو بارد، خذ معك سترة / الجو معتدل وجميل جداً بالخارج."
+  },
+  {
+    "keywords": ["ماذا تشاهد", "اش كتتفرج", "تتفرج", "تشاهد"],
+    "response": "أتابع مباراة كرة قدم / أشاهد فيديو مضحك على يوتيوب."
+  },
+  {
+    "keywords": ["متى سنخرج", "وقتاش نخرجو", "نخرجو"],
+    "response": "عندما تجهز نفسك وتلبس حذاءك / سنخرج بعد صلاة العصر."
+  },
+  {
+    "keywords": ["جبتي معاك", "هل جلبت", "جبتي داكشي"],
+    "response": "نعم، لقد تذكرت وأحضرته معي / أعتذر بشدة، لقد نسيته تماماً!"
+  },
+  {
+    "keywords": ["صرف", "فكة", "صرف عندك", "عندك الصرف"],
+    "response": "نعم لدي بعض الصرف، كم تحتاج؟ / لا والله، معي ورقة نقدية كبيرة فقط."
+  },
+  {
+    "keywords": ["أي طريق", "منين غنمشيو", "طريق", "ازدحام", "زحام"],
+    "response": "سنأخذ الطريق الدائري / دعنا نفتح خرائط جوجل لنرى الطريق الأقل ازدحاماً."
   }
+  [
+  {
+    "keywords": ["solid", "مبادئ", "سوليد", "clean code", "كود نظيف", "تصميم", "هندسة"],
+    "response": "مبادئ SOLID الخمسة هي الركيزة الأساسية في البرمجة الكائنية (OOP)، وتهدف إلى جعل الكود مرناً، قابلاً للتوسع، وسهل الصيانة على المدى الطويل."
+  },
+  {
+    "keywords": ["dry", "تكرار", "مبدأ", "لا تكرر", "dont repeat yourself"],
+    "response": "مبدأ DRY (لا تكرر نفسك) يهدف إلى تقليل تكرار الأكواد البرمجية عبر تجميع المنطق المشترك في دوال أو مكونات قابلة لإعادة الاستخدام."
+  },
+  {
+    "keywords": ["agile", "أجايل", "منهجية", "مرنة", "تطوير"],
+    "response": "منهجية Agile تعتمد على التطوير التكراري والمرن، حيث يتم تسليم أجزاء من المشروع بشكل دوري لضمان التكيف السريع مع متطلبات العميل."
+  },
+  {
+    "keywords": ["scrum", "سكروم", "سبرينت", "sprint", "إدارة المشاريع"],
+    "response": "إطار عمل Scrum هو تطبيق لمنهجية Agile، يعتمد على دورات عمل قصيرة تسمى Sprints لتحقيق أهداف محددة وزيادة إنتاجية الفريق."
+  },
+  {
+    "keywords": ["code review", "مراجعة الكود", "تدقيق", "pr", "pull request"],
+    "response": "مراجعة الكود (Code Review) خطوة حاسمة لاكتشاف الأخطاء مبكراً، تحسين جودة الشفرة، ونقل المعرفة والخبرات بين أعضاء الفريق البرمجي."
+  },
+  {
+    "keywords": ["git rebase", "ريبيز", "دمج", "merge", "تاريخ التعديلات", "جيت"],
+    "response": "أمر Git Rebase يُستخدم لإعادة كتابة تاريخ التعديلات (Commit History) بشكل خطي ونظيف، مما يسهل تتبع التغييرات مقارنة بـ Git Merge."
+  },
+  {
+    "keywords": ["ci/cd", "التكامل المستمر", "التسليم المستمر", "أتمتة", "automation"],
+    "response": "نظام CI/CD يقوم بأتمتة عمليات بناء واختبار ونشر التطبيقات، مما يقلل من الأخطاء البشرية ويسرع إيصال التحديثات للمستخدمين."
+  },
+  {
+    "keywords": ["docker", "دوكر", "حاويات", "containers", "بيئة العمل"],
+    "response": "تقنية Docker تسمح بتغليف التطبيق مع جميع ملحقاته في 'حاوية' (Container) واحدة، لضمان عمله بنفس الكفاءة في أي بيئة تشغيل."
+  },
+  {
+    "keywords": ["kubernetes", "k8s", "كوبرنيتس", "إدارة الحاويات", "تنسيق"],
+    "response": "Kubernetes هو نظام قوي لتنسيق وإدارة أعداد كبيرة من حاويات Docker بشكل آلي، ويوفر ميزات مثل التوسع التلقائي وتصحيح الأعطال."
+  },
+  {
+    "keywords": ["microservices", "ميكروسيرفيس", "هيكلة", "خدمات مصغرة", "monolithic"],
+    "response": "هيكلة الميكروسيرفيس تقسم التطبيق إلى خدمات صغيرة ومستقلة، مما يتيح توسيع كل خدمة على حدة واستخدام تقنيات مختلفة لكل منها."
+  },
+  {
+    "keywords": ["serverless", "بدون خادم", "سيرفرليس", "lambda", "وظائف السحاب"],
+    "response": "بنية Serverless تتيح تشغيل الأكواد دون القلق بشأن إدارة الخوادم، حيث تدفع فقط مقابل وقت المعالجة الفعلي (Pay-as-you-go)."
+  },
+  {
+    "keywords": ["rest api", "ريست", "واجهة برمجية", "http", "endpoints"],
+    "response": "معمارية REST API تعتمد على بروتوكول HTTP لنقل البيانات بين العميل والخادم باستخدام عمليات معيارية مثل GET, POST, PUT, DELETE."
+  },
+  {
+    "keywords": ["graphql", "جراف كيو ال", "استعلام", "api", "query"],
+    "response": "تقنية GraphQL تمنح العميل القدرة على طلب البيانات التي يحتاجها بدقة، مما يحل مشكلة الإفراط أو النقص في جلب البيانات (Over/Under fetching)."
+  },
+  {
+    "keywords": ["websockets", "ويب سوكيت", "اتصال حي", "real-time", "مباشر", "socket.io"],
+    "response": "بروتوكول WebSockets يوفر قناة اتصال ثنائية الاتجاه ودائمة بين العميل والخادم، وهو مثالي لتطبيقات المحادثة الفورية والتحديثات المباشرة."
+  },
+  {
+    "keywords": ["jwt", "توكن", "مصادقة", "json web token", "تسجيل دخول"],
+    "response": "تقنية JWT تُستخدم لنقل المعلومات بشكل آمن وموثق بين الأطراف ككائن JSON، وتعتبر المعيار الحديث لمصادقة المستخدمين في واجهات الـ API."
+  },
+  {
+    "keywords": ["oauth", "تفويض", "تسجيل بجوجل", "صلاحيات", "oauth2"],
+    "response": "بروتوكول OAuth يتيح للمستخدمين منح تطبيقات خارجية صلاحية الوصول إلى بياناتهم دون مشاركة كلمات المرور الخاصة بهم (مثل تسجيل الدخول بحساب جوجل)."
+  },
+  {
+    "keywords": ["cors", "خطأ كورس", "نطاقات", "cross-origin", "حماية المتصفح"],
+    "response": "سياسة CORS هي آلية أمان في المتصفحات تمنع المواقع الخبيثة من الوصول إلى واجهات برمجة التطبيقات (APIs) الموجودة في نطاقات (Domains) مختلفة."
+  },
+  {
+    "keywords": ["xss", "ثغرة", "حقن أكواد", "cross-site scripting", "اختراق"],
+    "response": "ثغرة XSS تحدث عندما يتمكن المهاجم من حقن أكواد جافاسكريبت ضارة في صفحات الويب التي يشاهدها مستخدمون آخرون، لسرقة بياناتهم."
+  },
+  {
+    "keywords": ["csrf", "تزوير الطلبات", "هجوم", "حماية", "security"],
+    "response": "هجوم CSRF يجبر المستخدم الموثق على تنفيذ إجراءات غير مرغوب فيها على تطبيق ويب هو مسجل الدخول فيه حالياً دون علمه."
+  },
+  {
+    "keywords": ["sql injection", "حقن قواعد البيانات", "حماية قواعد البيانات", "ثغرة sql"],
+    "response": "حقن SQL هو هجوم يستهدف قواعد البيانات عبر إدخال أوامر SQL خبيثة في حقول الإدخال لتدمير البيانات أو سرقتها."
+  },
+  {
+    "keywords": ["caching", "كاش", "تخزين مؤقت", "تسريع", "أداء"],
+    "response": "التخزين المؤقت (Caching) يحفظ نسخة من البيانات أو الصفحات المطلوبة بكثرة لتقديمها للمستخدمين بسرعة فائقة دون إعادة معالجتها."
+  },
+  {
+    "keywords": ["redis", "ريديس", "قاعدة بيانات في الذاكرة", "in-memory", "تخزين سريع"],
+    "response": "نظام Redis هو مخزن هياكل بيانات في الذاكرة (In-memory) فائق السرعة، يُستخدم بشكل رئيسي كذاكرة تخزين مؤقت (Cache) أو وسيط رسائل."
+  },
+  {
+    "keywords": ["cdn", "شبكة توصيل", "سيرفرات", "توزيع المحتوى", "cloudflare"],
+    "response": "شبكة توصيل المحتوى (CDN) توزع ملفات موقعك على خوادم في جميع أنحاء العالم، لتسريع تحميل الموقع للمستخدم بناءً على موقعه الجغرافي."
+  },
+  {
+    "keywords": ["lazy loading", "تحميل كسول", "تأخير التحميل", "صور", "تسريع الصفحة"],
+    "response": "تقنية Lazy Loading تقوم بتأخير تحميل الصور أو المكونات غير المرئية على الشاشة حتى يقوم المستخدم بالتمرير إليها، مما يوفر النطاق الترددي ويسرع التحميل الأولي."
+  },
+  {
+    "keywords": ["ssr", "تصيير الخادم", "server side rendering", "سيو أفضل"],
+    "response": "تقنية SSR تقوم بتجهيز وبناء صفحة الويب بالكامل على الخادم (Server) قبل إرسالها للمتصفح، مما يحسن من محركات البحث (SEO) وسرعة الظهور."
+  },
+  {
+    "keywords": ["csr", "تصيير العميل", "client side rendering", "spa", "تطبيق الصفحة الواحدة"],
+    "response": "في الـ CSR، يتم إرسال ملفات جافاسكريبت للمتصفح ليقوم ببناء الصفحة محلياً. يوفر تجربة سلسة للمستخدم لكنه قد يؤثر سلباً على الـ SEO الأولي."
+  },
+  {
+    "keywords": ["ssg", "مواقع ثابتة", "توليد ثابت", "static site generation", "nextjs"],
+    "response": "توليد المواقع الثابتة (SSG) يقوم بإنشاء صفحات الويب وقت البناء (Build time)، مما يوفر أداءً صاروخياً وأماناً عالياً لأنها لا تتطلب معالجة مستمرة من الخادم."
+  },
+  {
+    "keywords": ["webpack", "مجمع", "bundler", "تغليف الأكواد", "vite"],
+    "response": "أدوات التجميع مثل Webpack أو Vite تقوم بدمج وضغط ملفات الجافاسكريبت والـ CSS لتقليل حجمها وتحسين أداء تحميل الموقع."
+  },
+  {
+    "keywords": ["virtual dom", "دوم الافتراضي", "شجرة الواجهة", "react dom", "تحديث الصفحة"],
+    "response": "الـ Virtual DOM هو نسخة خفيفة في الذاكرة من واجهة المستخدم (DOM الحقيقي). يقلل من عمليات التحديث البطيئة عن طريق مقارنة التغييرات وتطبيق المطلوب فقط."
+  },
+  {
+    "keywords": ["state management", "إدارة الحالة", "بيانات التطبيق", "تزامن البيانات"],
+    "response": "إدارة الحالة تنظم كيفية تخزين ومشاركة البيانات بين المكونات (Components) المختلفة في تطبيقات الواجهة الأمامية المعقدة لضمان تزامن الواجهة."
+  },
+  {
+    "keywords": ["redux", "ريدوكس", "مكتبة حالة", "إدارة الحالة المتقدمة", "store"],
+    "response": "مكتبة Redux هي أداة قوية لإدارة حالة التطبيق في مكان مركزي واحد (Store)، مما يسهل تتبع التغييرات وإصلاح الأخطاء في المشاريع الضخمة."
+  },
+  {
+    "keywords": ["context api", "كونتكست", "توصيل البيانات", "react context", "prop drilling"],
+    "response": "أداة Context API في React توفر طريقة لتمرير البيانات عبر شجرة المكونات دون الحاجة إلى تمريرها يدوياً كخصائص (Props) في كل مستوى."
+  },
+  {
+    "keywords": ["sql vs nosql", "مقارنة القواعد", "قواعد البيانات", "علاقات", "document db"],
+    "response": "قواعد SQL تتميز بالهيكلة الصارمة والعلاقات المعقدة (جداول)، بينما توفر قواعد NoSQL مرونة عالية وقابلية تمدد أفقية (مستندات أو مفاتيح)."
+  },
+  {
+    "keywords": ["mongodb", "مونجو", "قاعدة مستندات", "json db", "nosql database"],
+    "response": "نظام MongoDB هو قاعدة بيانات NoSQL رائدة تقوم بتخزين البيانات في مستندات تشبه JSON، مما يمنح المطورين مرونة هائلة وسرعة في التطوير."
+  },
+  {
+    "keywords": ["postgresql", "بوستجريس", "قاعدة علائقية", "sql database", "قاعدة بيانات قوية"],
+    "response": "نظام PostgreSQL هو قاعدة بيانات علائقية متقدمة ومفتوحة المصدر، تُعرف بقوتها، دعمها للعمليات المعقدة، والتزامها الصارم بمعايير SQL."
+  },
+  {
+    "keywords": ["database normalization", "تطبيع القواعد", "تنظيم البيانات", "تقليل التكرار"],
+    "response": "التطبيع (Normalization) هو عملية هندسة جداول قاعدة البيانات لتقليل تكرار البيانات وضمان سلامتها (Data Integrity) عبر توزيعها بعلاقات منطقية."
+  },
+  {
+    "keywords": ["indexing", "فهرسة", "تسريع البحث", "داتابيز", "تحسين الاستعلام"],
+    "response": "الفهرسة (Indexing) في قواعد البيانات تعمل كفهرس الكتاب؛ فهي تسرع عملية البحث واسترجاع البيانات بشكل هائل، رغم أنها تستهلك مساحة تخزين إضافية."
+  },
+  {
+    "keywords": ["acid", "خصائص acid", "معاملات آمنة", "transactions", "قاعدة البيانات"],
+    "response": "خصائص ACID (الذرية، الاتساق، العزل، المتانة) تضمن تنفيذ المعاملات (Transactions) في قواعد البيانات بشكل موثوق وآمن حتى في حالة الفشل."
+  },
+  {
+    "keywords": ["orm", "ربط الكائنات", "مترجم القواعد", "object relational mapping"],
+    "response": "أدوات الـ ORM تسمح للمطورين بالتفاعل مع قواعد البيانات باستخدام لغات البرمجة المألوفة ككائنات (Objects) بدلاً من كتابة استعلامات SQL يدوية."
+  },
+  {
+    "keywords": ["prisma", "بريزما", "mongoose", "تايب سكريبت orm", "إدارة الداتابيز"],
+    "response": "أداة Prisma هي الجيل الجديد من الـ ORM لتطبيقات Node.js، توفر أماناً عالياً في الأنواع (Type-safety) وتجربة تطوير حديثة وسلسة جداً."
+  },
+  {
+    "keywords": ["event loop", "حلقة الأحداث", "نود جي اس", "node js architecture", "المهام"],
+    "response": "الـ Event Loop هو القلب النابض في Node.js؛ فهو يسمح بتنفيذ العمليات غير المتزامنة (I/O) دون حظر مسار التنفيذ الرئيسي (Non-blocking) رغم كونه أحادي المسار."
+  },
+  {
+    "keywords": ["promises", "وعود", "async await", "تزامن", "asynchronous"],
+    "response": "ميزة الـ Promises و Async/Await في جافاسكريبت تُستخدم للتعامل مع العمليات غير المتزامنة بشكل نظيف ومنظم، هرباً من جحيم التداخل (Callback Hell)."
+  },
+  {
+    "keywords": ["callbacks", "كول باك", "دوال متداخلة", "callback hell", "دوال مرجعية"],
+    "response": "الـ Callback هي دالة تُمرر كعامل لدالة أخرى ليتم تنفيذها لاحقاً. الاستخدام المفرط لها يؤدي إلى شفرة يصعب قراءتها وصيانتها."
+  },
+  {
+    "keywords": ["memory leak", "تسرب الذاكرة", "استهلاك الرام", "أداء المتصفح", "أخطاء الذاكرة"],
+    "response": "تسرب الذاكرة يحدث عندما يفشل التطبيق في تحرير مساحة الذاكرة التي لم يعد يحتاجها، مما يؤدي إلى بطء النظام أو انهياره التام بمرور الوقت."
+  },
+  {
+    "keywords": ["garbage collection", "جامع القمامة", "تنظيف الذاكرة", "v8 engine", "تحرير الذاكرة"],
+    "response": "عملية الـ Garbage Collection تقوم تلقائياً بمراقبة الذاكرة وإزالة الكائنات والبيانات التي لم يعد التطبيق يستخدمها لتحرير الموارد."
+  },
+  {
+    "keywords": ["multithreading", "تعدد المسارات", "توازي", "معالجة متعددة", "threads"],
+    "response": "تقنية Multithreading تتيح للتطبيق تنفيذ عدة عمليات معقدة في نفس الوقت باستخدام مسارات معالجة مختلفة، لزيادة سرعة الأداء."
+  },
+  {
+    "keywords": ["web workers", "عمال الويب", "معالجة خلفية", "javascript threads", "تخفيف الحمل"],
+    "response": "ميزة Web Workers تتيح تشغيل نصوص جافاسكريبت ثقيلة في الخلفية (Background threads) دون التأثير على سلاسة واجهة المستخدم (UI)."
+  },
+  {
+    "keywords": ["service workers", "خدمات الويب", "عمل بدون انترنت", "إشعارات", "pwa background"],
+    "response": "الـ Service Workers تعمل كوكيل بين المتصفح والشبكة، وتعتبر أساس تطبيقات PWA، حيث تتيح ميزات كالعمل بدون إنترنت (Offline) والإشعارات."
+  },
+  {
+    "keywords": ["pwa", "تطبيق تقدمي", "تطبيق ويب", "تثبيت الموقع", "progressive web app"],
+    "response": "تطبيقات الويب التقدمية (PWA) توفر تجربة تشبه التطبيقات الأصلية (Native) مثل التثبيت على الشاشة الرئيسية وسرعة الأداء العالية عبر الويب."
+  },
+  {
+    "keywords": ["seo", "تحسين محركات البحث", "سيو", "تصدر النتائج", "تهيئة الموقع"],
+    "response": "السيو (SEO) هو مجموعة ممارسات تقنية ومحتوى لتحسين ظهور موقعك في النتائج العضوية الأولى لمحركات البحث مثل Google لجلب زيارات مجانية."
+  },
+  {
+    "keywords": ["meta tags", "علامات الميتا", "وصف الصفحة", "الكلمات المفتاحية", "رؤوس html"],
+    "response": "علامات Meta Tags تُكتب في رأس صفحة الـ HTML لتقديم بيانات وصفية لمحركات البحث ومنصات التواصل الاجتماعي حول محتوى الصفحة."
+  },
+  {
+    "keywords": ["semantic html", "دلالية", "عناصر html", "هيكلة صحيحة", "معنى الكود"],
+    "response": "استخدام عناصر HTML الدلالية (مثل <article> و <nav>) يوضح وظيفة المحتوى للمتصفحات، محركات البحث، وأدوات مساعدة القراءة لفاقدي البصر."
+  },
+  {
+    "keywords": ["accessibility", "a11y", "وصول", "ذوي الاحتياجات", "سهولة الاستخدام"],
+    "response": "سهولة الوصول (Accessibility) تعني تصميم وبناء مواقع ويب يمكن لجميع الأشخاص، بما في ذلك ذوي الإعاقة، فهمها، التنقل فيها، والتفاعل معها بسهولة."
+  },
+  {
+    "keywords": ["aria labels", "أريا", "قارئ الشاشة", "مساعدة بصرية", "نصوص بديلة"],
+    "response": "سمات ARIA تُستخدم لتوفير سياق إضافي ومعلومات لبرامج قراءة الشاشة (Screen Readers) لجعل المكونات الديناميكية المعقدة قابلة للوصول."
+  },
+  {
+    "keywords": ["css flexbox", "فليكس", "تخطيط الصفحة", "ترتيب العناصر", "flex"],
+    "response": "نظام Flexbox في CSS هو أقوى أداة لترتيب ومحاذاة العناصر وتوزيع المساحات في اتجاه واحد (صف أو عمود) بمرونة عالية."
+  },
+  {
+    "keywords": ["css grid", "جريد", "شبكة css", "تخطيط معقد", "grid layout"],
+    "response": "نظام CSS Grid يتيح إنشاء تخطيطات واجهات معقدة ومتجاوبة في اتجاهين (صفوف وأعمدة معاً) بطريقة هندسية دقيقة وأكواد أقل."
+  },
+  {
+    "keywords": ["tailwind css", "تيلويند", "إطار عمل css", "utility classes", "تصميم سريع"],
+    "response": "مكتبة Tailwind CSS هي إطار عمل مبني على فئات المنفعة (Utility-first) يتيح لك بناء تصميمات مخصصة وسريعة مباشرة من داخل أكواد الـ HTML."
+  },
+  {
+    "keywords": ["sass", "scss", "ساس", "معالج css", "متغيرات css"],
+    "response": "تقنية SASS هي معالج مسبق للـ CSS يضيف ميزات برمجية قوية مثل المتغيرات، التداخل (Nesting)، والدوال (Mixins) لتسهيل كتابة وتنظيم التنسيقات."
+  },
+  {
+    "keywords": ["responsive design", "تجاوب", "تصميم متجاوب", "شاشات مختلفة", "موبايل"],
+    "response": "التصميم المتجاوب (Responsive Design) يضمن تكيف واجهة الموقع تلقائياً لتوفير تجربة ممتازة على جميع الأجهزة (هواتف، أجهزة لوحية، وحواسيب)."
+  },
+  {
+    "keywords": ["mobile first", "الموبايل أولا", "شاشات صغيرة", "استراتيجية التصميم"],
+    "response": "استراتيجية 'الموبايل أولاً' تعني تصميم وتطوير الموقع لشاشات الهواتف المحمولة أولاً كأولوية، ثم توسيع التصميم للشاشات الأكبر."
+  },
+  {
+    "keywords": ["ui ux", "واجهة المستخدم", "تجربة المستخدم", "تصميم المواقع", "سهولة الاستخدام"],
+    "response": "الـ UI يركز على جماليات الواجهة والعناصر المرئية، بينما الـ UX يهتم بمنطقية التصفح وسهولة وصول المستخدم لهدفه بأقل جهد ممكن."
+  },
+  {
+    "keywords": ["ab testing", "اختبار a/b", "مقارنة النسخ", "تحسين التجربة", "اختبار الواجهات"],
+    "response": "اختبار A/B هو عملية عرض نسختين مختلفتين من صفحة أو زر على فئات من المستخدمين لتحديد أيهما يحقق أداءً ونسبة تحويل أعلى."
+  },
+  {
+    "keywords": ["conversion rate", "نسبة التحويل", "مبيعات", "cro", "زوار الموقع"],
+    "response": "نسبة التحويل هي النسبة المئوية لزوار الموقع الذين يتخذون الإجراء المطلوب (مثل الشراء أو التسجيل) من إجمالي عدد الزيارات."
+  },
+  {
+    "keywords": ["churn rate", "معدل التخلي", "خسارة العملاء", "إلغاء الاشتراك", "saas metrics"],
+    "response": "معدل التخلي (Churn Rate) هو النسبة المئوية للعملاء الذين ألغوا اشتراكاتهم أو توقفوا عن استخدام خدمتك خلال فترة زمنية معينة."
+  },
+  {
+    "keywords": ["mrr", "الدخل الشهري المتكرر", "أرباح saas", "عائدات", "اشتراكات"],
+    "response": "مقياس MRR (الدخل الشهري المتكرر) هو أهم مؤشر لنمو وصحة شركات الـ SaaS، ويحسب إجمالي الإيرادات المتوقعة من الاشتراكات شهرياً."
+  },
+  {
+    "keywords": ["cac", "تكلفة الاستحواذ", "جلب عميل", "تسويق", "customer acquisition"],
+    "response": "مؤشر CAC (تكلفة الاستحواذ على العميل) يقيس إجمالي ما تنفقه الشركة في التسويق والمبيعات لاكتساب عميل جديد واحد."
+  },
+  {
+    "keywords": ["ltv", "القيمة الدائمة", "قيمة العميل", "أرباح العميل", "lifetime value"],
+    "response": "مؤشر LTV (القيمة الدائمة للعميل) يحسب إجمالي الإيرادات المتوقع أن يدرها العميل طوال فترة استخدامه لخدمات الشركة قبل رحيله."
+  },
+  {
+    "keywords": ["mvp", "المنتج الأولي", "الحد الأدنى", "تجربة الفكرة", "إطلاق سريع"],
+    "response": "الـ MVP (المنتج القابل للتطبيق كحد أدنى) هو نسخة مبدئية من المنتج تحتوي فقط على الميزات الأساسية لاختبار الفكرة في السوق بأقل تكلفة."
+  },
+  {
+    "keywords": ["product market fit", "ملاءمة السوق", "نجاح المنتج", "حاجة السوق"],
+    "response": "ملاءمة المنتج للسوق تعني أنك قمت ببناء منتج يحل مشكلة حقيقية وله طلب قوي، لدرجة أن العملاء يشترونه ويوصون به بسرعة."
+  },
+  {
+    "keywords": ["bootstrapping", "تمويل ذاتي", "تأسيس ذاتي", "بدون مستثمرين", "شركة ناشئة"],
+    "response": "التمويل الذاتي (Bootstrapping) هو بناء وتنمية شركة ناشئة باستخدام الموارد الشخصية وأرباح الشركة فقط، دون أخذ أموال من مستثمرين خارجيين."
+  },
+  {
+    "keywords": ["venture capital", "رأس مال جريء", "مستثمرون", "vc", "تمويل الشركات"],
+    "response": "رأس المال الجريء (VC) هو تمويل يقدمه مستثمرون للشركات الناشئة ذات الإمكانيات العالية للنمو السريع، مقابل حصة (أسهم) في الشركة."
+  },
+  {
+    "keywords": ["api rate limiting", "تحديد الطلبات", "حماية الـ api", "منع الضغط", "throttle"],
+    "response": "تحديد معدل الطلبات (Rate Limiting) يحمي الخوادم من الانهيار (أو الهجمات) عن طريق تقييد عدد الطلبات التي يمكن للمستخدم إرسالها خلال فترة زمنية."
+  },
+  {
+    "keywords": ["webhooks", "ويب هوك", "إشعارات الخادم", "ربط تلقائي", "تحديثات الـ api"],
+    "response": "الـ Webhooks هي طريقة تتيح للتطبيقات إرسال بيانات أو إشعارات فورية لتطبيقات أخرى تلقائياً فور حدوث حدث معين (مثل نجاح عملية دفع)."
+  },
+  {
+    "keywords": ["cron jobs", "مهام مجدولة", "كرون", "تحديث تلقائي", "أتمتة المهام"],
+    "response": "وظائف Cron (Cron Jobs) تستخدم لجدولة وتشغيل نصوص برمجية أو مهام محددة على الخادم تلقائياً في أوقات أو فترات زمنية معينة."
+  },
+  {
+    "keywords": ["load balancing", "موازنة الحمل", "توزيع الضغط", "سيرفرات متعددة", "تحمل الزيارات"],
+    "response": "موازنة الحمل تقوم بتوزيع حركة مرور الزوار (الترافيك) بذكاء على عدة خوادم لمنع أي خادم من الانهيار ولضمان استقرار وسرعة التطبيق."
+  },
+  {
+    "keywords": ["reverse proxy", "بروكسي عكسي", "وسيط", "حماية السيرفر", "توجيه"],
+    "response": "الخادم الوكيل العكسي (Reverse Proxy) يجلس أمام خوادم الويب ليعترض طلبات الزوار، يوجهها، ويحمي الهوية الداخلية للخوادم الخلفية."
+  },
+  {
+    "keywords": ["nginx", "إنجن إكس", "خادم ويب", "سيرفر nginx", "إدارة الترافيك"],
+    "response": "نظام Nginx هو خادم ويب عالي الأداء وبروكسي عكسي شهير، يُستخدم لتقديم المحتوى الثابت بسرعة وموازنة الأحمال بين السيرفرات."
+  },
+  {
+    "keywords": ["cloud computing", "حوسبة سحابية", "الكلاود", "سيرفرات سحابية", "استضافة متقدمة"],
+    "response": "الحوسبة السحابية تقدم موارد تقنية (مثل السيرفرات وقواعد البيانات) عبر الإنترنت عند الطلب، بدلاً من شراء وصيانة أجهزة صلبة محلية."
+  },
+  {
+    "keywords": ["aws", "أمازون السحابية", "aws lambda", "خدمات أمازون", "سحابة أمازون"],
+    "response": "منصة AWS من أمازون هي المزود الرائد عالمياً لخدمات الحوسبة السحابية، وتقدم البنية التحتية القوية للعديد من كبرى الشركات حول العالم."
+  },
+  {
+    "keywords": ["gcp", "سحابة جوجل", "google cloud", "خدمات جوجل", "استضافة جوجل"],
+    "response": "منصة جوجل السحابية (GCP) توفر بنية تحتية مرنة وأدوات متطورة في تحليل البيانات والذكاء الاصطناعي مدعومة بشبكة جوجل العالمية."
+  },
+  {
+    "keywords": ["firebase", "فايربيز", "قاعدة بيانات جوجل", "realtime db", "مصادقة فايربيز"],
+    "response": "منصة Firebase توفر أدوات متكاملة (Backend-as-a-Service) مثل قواعد البيانات المباشرة، المصادقة، والاستضافة لتسريع تطوير التطبيقات."
+  },
+  {
+    "keywords": ["supabase", "سوبابيز", "بديل فايربيز", "قاعدة بيانات مفتوحة", "postgresql backend"],
+    "response": "منصة Supabase هي البديل مفتوح المصدر الأقوى لـ Firebase، مبنية على قوة PostgreSQL وتوفر واجهات برمجة واشتراكات في الوقت الفعلي."
+  },
+  {
+    "keywords": ["vercel", "فيرسيل", "استضافة نكست", "نشر الواجهات", "استضافة سريعة"],
+    "response": "منصة Vercel هي بيئة استضافة رائدة مخصصة لتطبيقات الواجهة الأمامية، توفر دمجاً سلساً مع GitHub وتوزيعاً عالمياً فائق السرعة عبر الـ Edge."
+  },
+  {
+    "keywords": ["github actions", "إجراءات جيت هاب", "أتمتة جيت", "ci/cd github", "خط أنابيب"],
+    "response": "أداة GitHub Actions تتيح لك أتمتة تدفقات العمل (Workflows) مباشرة من مستودعك، مثل بناء الكود، اختباره، ونشره عند كل عملية دفع (Push)."
+  },
+  {
+    "keywords": ["tdd", "تطوير موجه بالاختبار", "test driven", "كتابة الاختبارات", "جودة الكود"],
+    "response": "منهجية TDD تعتمد على كتابة 'الاختبار' قبل كتابة 'الكود الفعلي'. هذا يضمن أن الكود يفي بالمتطلبات ويقلل الأخطاء المستقبلية بشكل كبير."
+  },
+  {
+    "keywords": ["unit testing", "اختبار الوحدات", "فحص الدوال", "تيستينج", "jest"],
+    "response": "اختبار الوحدات يركز على فحص كل دالة أو مكون برمجي صغير بشكل مستقل للتأكد من أنه يعطي المخرجات الصحيحة والمتوقعة."
+  },
+  {
+    "keywords": ["integration testing", "اختبار التكامل", "ربط المكونات", "اختبار النظام", "تكامل"],
+    "response": "اختبار التكامل يتأكد من أن المكونات أو الخدمات المختلفة للتطبيق تعمل معاً بشكل صحيح وسلس عند دمجها، وليس كل على حدة."
+  },
+  {
+    "keywords": ["e2e testing", "اختبار من النهاية للنهاية", "cypress", "محاكاة المستخدم", "end to end"],
+    "response": "اختبار الـ E2E يحاكي سلوك المستخدم الحقيقي عبر التفاعل مع التطبيق بأكمله (من الواجهة حتى قاعدة البيانات) للتأكد من سلامة التجربة."
+  },
+  {
+    "keywords": ["jest", "جيسْت", "cypress", "مكتبة اختبارات", "اختبار جافاسكريبت"],
+    "response": "أداة Jest هي الأقوى لاختبارات الوحدات (Unit Testing) في بيئة جافاسكريبت، بينما Cypress هو المعيار المفضل لاختبارات الـ E2E."
+  },
+  {
+    "keywords": ["debugging", "تصحيح الأخطاء", "ديباج", "إصلاح الكود", "حل المشاكل"],
+    "response": "عملية الـ Debugging هي فن تتبع سير التنفيذ للكود خطوة بخطوة للبحث عن الخلل المنطقي أو التقني وإصلاحه بكفاءة."
+  },
+  {
+    "keywords": ["logging", "تسجيل الأحداث", "سجلات", "logs", "مراقبة النظام"],
+    "response": "نظام الـ Logging يسجل كل حدث، خطأ، أو طلب يحدث داخل الخادم. هو بمثابة 'الصندوق الأسود' للمطورين لمعرفة ما حدث أثناء الأعطال."
+  },
+  {
+    "keywords": ["sentry", "سينتري", "تتبع الأخطاء", "error tracking", "مراقبة الأعطال"],
+    "response": "أداة Sentry توفر مراقبة حية لتطبيقاتك وتنبيهك فورياً بأي أخطاء أو انهيارات (Crashes) يواجهها المستخدمون، مع تفاصيل دقيقة لمكان الخطأ."
+  },
+  {
+    "keywords": ["ai integration", "دمج الذكاء", "ربط ai", "الذكاء الاصطناعي", "تطبيقات ذكية"],
+    "response": "دمج الذكاء الاصطناعي عبر واجهات (APIs) ينقل التطبيق لمستوى آخر من خلال توفير ميزات كفهم النصوص، توليد الصور، وتحليل بيانات المستخدمين بذكاء."
+  },
+  {
+    "keywords": ["prompt engineering", "هندسة الأوامر", "برومبت", "كتابة الأوامر", "توجيه الذكاء"],
+    "response": "هندسة الأوامر هي مهارة صياغة مدخلات (Prompts) دقيقة ومنظمة للحصول على أفضل المخرجات الممكنة من نماذج اللغة الكبيرة (LLMs)."
+  },
+  {
+    "keywords": ["rag", "توليد معزز بالاسترجاع", "إطعام الذكاء", "ربط البيانات بالذكاء", "استرجاع المعلومات"],
+    "response": "تقنية RAG تسمح بتزويد نموذج الذكاء الاصطناعي بقاعدة بيانات أو مستندات خاصة كمرجع، ليجيب بأسلوب النموذج لكن بمعلوماتك الدقيقة الحصرية."
+  },
+  {
+    "keywords": ["llm", "نماذج لغوية كبيرة", "chatgpt", "gemini", "نماذج الذكاء"],
+    "response": "النماذج اللغوية الكبيرة (LLMs) هي أنظمة ذكاء اصطناعي مُدربة على كميات هائلة من النصوص لقهم وتوليد اللغة البشرية بأسلوب طبيعي ومترابط."
+  },
+  {
+    "keywords": ["fine tuning", "الضبط الدقيق", "تدريب النموذج", "تخصيص الذكاء", "تدريب ai"],
+    "response": "الضبط الدقيق (Fine-tuning) هو إعادة تدريب نموذج ذكاء اصطناعي جاهز على بياناتك الخاصة لتخصيص أدائه وجعله خبيراً في مجال أو أسلوب معين."
+  },
+  {
+    "keywords": ["openai api", "واجهة اوبن اي", "gpt api", "ربط شات جي بي تي"],
+    "response": "توفر OpenAI واجهة برمجية قوية تسمح للمطورين بدمج نماذج متطورة مثل GPT-4 في تطبيقاتهم لمعالجة اللغات المعقدة بسهولة."
+  },
+  {
+    "keywords": ["machine learning", "تعلم الآلة", "خوارزميات الذكاء", "ml", "التنبؤ"],
+    "response": "تعلم الآلة هو فرع من الذكاء الاصطناعي حيث تُدرب الخوارزميات على اكتشاف الأنماط من البيانات واتخاذ القرارات أو التنبؤ دون برمجة صريحة."
+  },
+  {
+    "keywords": ["future web", "مستقبل الويب", "web3", "تطور البرمجة", "الجيل القادم"],
+    "response": "مستقبل الويب يتجه نحو الاندماج العميق للذكاء الاصطناعي كمساعد في كتابة الأكواد (Copilots)، وواجهات أكثر ذكاءً وتفاعلية (Web3/AI-first)."
+  }
+  
 ]
