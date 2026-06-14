@@ -35,56 +35,6 @@
     </div>
   </div>
 
-  <!-- Payout / Withdraw -->
-  <div class="section-title">Withdraw Earnings — سحب الأرباح</div>
-  <div class="card">
-   <form id="withdraw-form" onsubmit="return handleWithdraw(event)">
-      <div class="form-row">
-        <div class="form-field">
-          <label>Withdrawal Method</label>
-          <select name="withdraw_method" onchange="toggleWithdrawFields(this.value)">
-            <option value="paypal">PayPal</option>
-            <option value="bank">Bank Transfer</option>
-            <option value="crypto">Crypto (USDT)</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label>Amount (USD)</label>
-          <input type="number" name="withdraw_amount" placeholder="Minimum $20" min="20" />
-        </div>
-      </div>
-      <div id="paypal-fields">
-        <div class="form-field">
-          <label>PayPal Email</label>
-          <input type="email" name="paypal_email" placeholder="your@paypal.com" />
-        </div>
-      </div>
-      <div id="bank-fields" style="display:none">
-        <div class="form-row">
-          <div class="form-field">
-            <label>Bank Name</label>
-            <input type="text" name="bank_name" placeholder="Attijariwafa Bank" />
-          </div>
-          <div class="form-field">
-            <label>IBAN / Account Number</label>
-            <input type="text" name="bank_iban" placeholder="MA64 0000 0000 0000 0000 0000" />
-          </div>
-        </div>
-        <div class="form-field">
-          <label>SWIFT / BIC Code</label>
-          <input type="text" name="swift" placeholder="ATTIJOMA" />
-        </div>
-      </div>
-      <div id="crypto-fields" style="display:none">
-        <div class="form-field">
-          <label>USDT Wallet Address (TRC20)</label>
-          <input type="text" name="crypto_wallet" placeholder="TXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
-        </div>
-      </div>
-      <button type="submit" class="btn btn-gold">💸 Request Withdrawal</button>
-    </form>
-  </div>
-
   <footer class="app-footer">Zunexa SaaS — <span id="zx-footer-user">Zunexa Digital Brand</span></footer>
 </section>
 
