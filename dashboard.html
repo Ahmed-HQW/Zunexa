@@ -2107,25 +2107,25 @@ const ZX_RATE = (function(){
     </div>
   </div>
 
- <!-- ✦ Watch Ad — Earn Tokens Button ── -->
+ <!-- ✦ Daily Bonus Button ── -->
 <div class="zx-ad-earn-wrap" style="margin:16px 0">
   <button id="zx-watch-ad-btn" onclick="ZX_AD.watch()" class="zx-ad-btn">
-    <span class="zad-icon">▶</span>
-    <span class="zad-label">شاهد إعلاناً واكسب <strong>+5 Tokens</strong></span>
+    <span class="zad-icon">🎁</span>
+    <span class="zad-label">المكافأة اليومية — احصل على <strong>+5 Tokens</strong></span>
     <span class="zad-badge">مجاني</span>
   </button>
 </div>
 
-<!-- ✦ Ad Modal ── -->
+<!-- ✦ Daily Bonus Modal ── -->
 <div id="zx-ad-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:99999; align-items:center; justify-content:center;">
   <div style="background:#111; border:1px solid rgba(212,175,55,0.35); border-radius:16px; padding:32px 28px; max-width:380px; width:90%; text-align:center; position:relative; box-shadow:0 20px 80px rgba(0,0,0,0.9);">
-    <div style="font-family:'Cinzel',serif; color:#D4AF37; font-size:16px; margin-bottom:8px;">✦ دعم Zunexa</div>
+    <div style="font-family:'Cinzel',serif; color:#D4AF37; font-size:16px; margin-bottom:8px;">✦ مكافأة Zunexa اليومية</div>
     <div style="width:100%; height:160px; background:linear-gradient(135deg,#0e0e0e,#141414); border-radius:10px; display:flex; align-items:center; justify-content:center; border:1px solid #242424; margin-bottom:20px; overflow:hidden; position:relative;">
-      <div id="zx-ad-content" style="color:#555548; font-size:13px; font-family:'Rajdhani',sans-serif; letter-spacing:.06em;">ZUNEXA PREMIUM — نظام ذكاء اصطناعي للمحتوى العربي</div>
+      <div id="zx-ad-content" style="color:#555548; font-size:13px; font-family:'Rajdhani',sans-serif; letter-spacing:.06em;">Zunexa AI — منصة توليد المحتوى</div>
       <div id="zx-ad-shimmer" style="position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(212,175,55,0.04),transparent);animation:zx-gold-shimmer 2s linear infinite;background-size:200% auto;"></div>
     </div>
     <div style="margin-bottom:16px;">
-      <div style="font-size:12px; color:#9a9a8a; margin-bottom:8px;">سيتم إضافة التوكنز خلال</div>
+      <div style="font-size:12px; color:#9a9a8a; margin-bottom:8px;">ستحصل على التوكنز خلال</div>
       <div id="zx-ad-timer-ring" style="width:64px;height:64px;margin:0 auto;position:relative;">
         <svg width="64" height="64" viewBox="0 0 64 64" style="transform:rotate(-90deg)">
           <circle cx="32" cy="32" r="26" fill="none" stroke="#1a1a1a" stroke-width="5"/>
@@ -2162,8 +2162,17 @@ const ZX_RATE = (function(){
  * ═══════════════════════════════════════════════ */
 window.ZX_AD = {
   _timer: null, _secs: 5,
+  COOLDOWN_MS: 24 * 60 * 60 * 1000,
 
   watch() {
+    const last = parseInt(localStorage.getItem('zx_bonus_last') || '0', 10);
+    const remaining = this.COOLDOWN_MS - (Date.now() - last);
+    if (remaining > 0) {
+      const hrs = Math.ceil(remaining / 3600000);
+      showToast('error', `⏳ المكافأة التالية بعد ~${hrs} ساعة`);
+      return;
+    }
+
     const modal = document.getElementById('zx-ad-modal');
     if (!modal) return;
     this._secs = 5;
@@ -2190,24 +2199,46 @@ window.ZX_AD = {
     }, 1000);
   },
 
-  _reward() {
-    /* ── أضف +5 tokens بدون reload ── */
-    let user = {};
-    try { user = JSON.parse(localStorage.getItem('zx_user') || '{}'); } catch {}
-    const prev   = parseInt(user.tokens) || 0;
-    user.tokens  = prev + 5;
-    localStorage.setItem('zx_user', JSON.stringify(user));
+  async _reward() {
+    const _u = JSON.parse(localStorage.getItem('zunexa_user') || '{}');
+    let newBalance = null;
 
-    /* ── تحديث فوري لكل عناصر الـ UI ── */
-    document.querySelectorAll('.zx-sb-tokens, #zx-token-count, [data-zx-tokens]').forEach(el => {
-      el.textContent = `⬡ ${user.tokens}`;
-    });
+    if (_u.role === 'guest') {
+      // Guests: local-only bonus (client-side cooldown already checked in watch())
+      tokenBalance = (parseInt(tokenBalance) || 0) + 5;
+      _u.tokens = tokenBalance;
+      localStorage.setItem('zunexa_user', JSON.stringify(_u));
+      localStorage.setItem('zx_bonus_last', String(Date.now()));
+      newBalance = tokenBalance;
+      if (typeof updateAllTokenDisplays === 'function') updateAllTokenDisplays();
+    } else {
+      try {
+        const { data, error } = await _SB.rpc('claim_daily_bonus');
+        if (error) {
+          if (error.message?.includes('cooldown_active')) {
+            showToast('error', '⏳ المكافأة اليومية مستلمة من قبل — حاول بعد 24 ساعة');
+          } else {
+            showToast('error', '✕ ' + error.message);
+          }
+          this.close();
+          return;
+        }
+        newBalance = data;
+        tokenBalance = newBalance;
+        localStorage.setItem('zx_bonus_last', String(Date.now()));
+        if (typeof updateAllTokenDisplays === 'function') updateAllTokenDisplays();
+      } catch (e) {
+        showToast('error', '✕ خطأ في الشبكة');
+        this.close();
+        return;
+      }
+    }
 
     /* ── غيّر محتوى الـ modal لـ success state ── */
     document.getElementById('zx-ad-content').innerHTML =
       `<div style="color:#3ddc84;font-size:28px;margin-bottom:8px">✓</div>
        <div style="color:#f5f5f0;font-family:'Cinzel',serif;font-size:14px">تمت الإضافة!</div>
-       <div style="color:#9a9a8a;font-size:12px;margin-top:4px">+5 Tokens → رصيدك: ${user.tokens}</div>`;
+       <div style="color:#9a9a8a;font-size:12px;margin-top:4px">+5 Tokens → رصيدك: ${newBalance}</div>`;
     document.getElementById('zx-ad-skip').style.display = 'inline-block';
     document.getElementById('zx-ad-skip').textContent = 'إغلاق';
 
@@ -2221,7 +2252,7 @@ window.ZX_AD = {
     if (modal) modal.style.display = 'none';
     /* إعادة ضبط محتوى الـ modal للمرة القادمة */
     const content = document.getElementById('zx-ad-content');
-    if (content) content.innerHTML = 'ZUNEXA PREMIUM — نظام ذكاء اصطناعي للمحتوى العربي';
+    if (content) content.innerHTML = 'Zunexa AI — منصة توليد المحتوى';
   }
 };
 </script>
@@ -2353,15 +2384,14 @@ window.ZX_AD = {
 
 
  
-<!-- ─── COOKIE BANNER ────────────────────────────────────────────── -->
+<!-- ─── LOCAL STORAGE NOTICE ─────────────────────────────────────── -->
 <div class="cookie-banner" id="cookieBanner">
   <div class="cookie-banner-text">
-    🍪 نستخدم الكوكيز لتحسين تجربتك — We use cookies to enhance your experience on <strong>Zunexa</strong>.
-    <a href="#" onclick="showPage('appearance',null);closeCookieBanner(false)" style="color:var(--gold);margin-left:6px">Manage Preferences</a>
+    💾 يستخدم Zunexa التخزين المحلي (localStorage) على متصفحك لحفظ تفضيلاتك (الثيم، اللغة، إلخ) — لا توجد ملفات تتبع ولا تحليلات طرف ثالث.
+    <a href="#" onclick="showPage('appearance',null);closeCookieBanner(true)" style="color:var(--gold);margin-left:6px">إعدادات المظهر</a>
   </div>
   <div class="cookie-banner-actions">
-    <button class="btn btn-ghost btn-sm" onclick="closeCookieBanner(false)">Decline</button>
-    <button class="btn btn-gold btn-sm" onclick="closeCookieBanner(true)">Accept All ✓</button>
+    <button class="btn btn-gold btn-sm" onclick="closeCookieBanner(true)">حسناً، فهمت ✓</button>
   </div>
 </div>
 
@@ -2395,18 +2425,16 @@ window.ZX_AD = {
       <button class="modal-close" onclick="closeModal('upgradeModal')">✕</button>
     </div>
     <div class="modal-body">
-      <p style="color:var(--text-grey);font-size:14px;margin-bottom:16px">You're about to upgrade to the <strong class="text-gold">Senior Plan</strong> at <strong class="text-white">$79/month</strong>. Confirm payment method below.</p>
+      <p style="color:var(--text-grey);font-size:14px;margin-bottom:10px">الدفع المباشر غير متاح حالياً — نظام الفوترة قيد التجهيز.</p>
+      <p style="color:var(--text-grey);font-size:13px;margin-bottom:16px">سجّل بريدك وسنخبرك فور توفر خطة <strong class="text-gold">Senior</strong> ($79/شهر)، أو استخدم رمز تفعيل خطة إن كان متوفراً لديك.</p>
       <div class="form-field">
-        <label>Select Card</label>
-        <select name="upgrade_card">
-          <option>Visa •••• 4242 (Saved)</option>
-          <option>Add new card...</option>
-        </select>
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="upgrade-waitlist-email" placeholder="name@example.com"/>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('upgradeModal')">Cancel</button>
-      <button class="btn btn-gold" onclick="processUpgrade()">✦ Confirm Upgrade — $79/mo</button>
+      <button class="btn btn-ghost" onclick="closeModal('upgradeModal')">إلغاء</button>
+      <button class="btn btn-gold" onclick="joinUpgradeWaitlist()">🔔 أشعرني عند التوفر</button>
     </div>
   </div>
 </div>
@@ -2587,17 +2615,35 @@ document.addEventListener('DOMContentLoaded', () => {
    // ── ARCHON: Auth Guard ──────────────────────────────────────
    _SB.auth.getSession().then(({ data: { session } }) => {
      if (!session) { enterFreeMode(); return; }
+     _redeemPendingPlanCode();
      _loadUserProfile(session.user);
    });
 
+   // Redeem a plan code entered at signup, if email confirmation
+   // delayed it (no session existed yet at signup time).
+   async function _redeemPendingPlanCode() {
+     const pending = localStorage.getItem('zx_pending_plan_code');
+     if (!pending) return;
+     localStorage.removeItem('zx_pending_plan_code');
+     try {
+       const { data, error } = await _SB.rpc('redeem_plan_code', { p_code: pending.trim().toUpperCase() });
+       if (!error && data) {
+         showToast('success', `✓ تم تفعيل خطة ${data.plan}!`);
+       }
+     } catch (e) { /* silent — code may already be invalid/used */ }
+   }
+
    function _loadUserProfile(supaUser) {
-     // أولوية: Supabase profile → localStorage → defaults
-     _SB.from('profiles').select('*').eq('id', supaUser.id).single()
-       .then(({ data: p }) => {
+     // أولوية: Supabase profile/tokens/plan tables → localStorage → defaults
+     Promise.all([
+       _SB.from('profiles').select('*').eq('id', supaUser.id).single(),
+       _SB.from('user_tokens').select('balance').eq('user_id', supaUser.id).single(),
+       _SB.from('user_plans').select('plan').eq('user_id', supaUser.id).single(),
+     ]).then(([{ data: p }, { data: t }, { data: pl }]) => {
          const _local = JSON.parse(localStorage.getItem('zunexa_user') || '{}');
          const _uName   = p?.first_name || p?.username || _local.firstName || _local.username || supaUser.email?.split('@')[0] || 'User';
-         const _uPlan   = p?.plan   || _local.plan   || 'Free';
-         const _uTokens = p?.tokens_balance ?? _local.tokens ?? 500;
+         const _uPlan   = pl?.plan ?? _local.plan ?? 'Free';
+         const _uTokens = t?.balance ?? _local.tokens ?? 100;
          const _uAvatar = p?.avatar_url || _local.avatar_url || localStorage.getItem('zunexa_avatar') || null;
          const _initial = _uName[0]?.toUpperCase() || 'U';
 
@@ -2749,6 +2795,47 @@ function setGreetingDate() {
 }
 
 /* ─── Token Management ───────────────────────────────────────── */
+/* ─── Shared token spend helper ───────────────────────────────
+   Returns { ok: true } on success (tokenBalance already updated +
+   displays refreshed), or { ok: false, message } on failure.
+   Logged-in users: server-validated via spend_tokens_and_log RPC
+   (also writes to content_history for real Analytics/History).
+   Guests: local-only deduction (honest, since guest mode has no
+   server-side account at all).                                  */
+async function zxSpendTokens({ cost, contentType, language, tone, prompt, text, source }) {
+  const _u = JSON.parse(localStorage.getItem('zunexa_user') || '{}');
+
+  if (_u.role === 'guest') {
+    if (tokenBalance < cost) return { ok: false, message: '✕ Insufficient tokens. Buy more in Billing.' };
+    tokenBalance -= cost;
+    updateAllTokenDisplays();
+    return { ok: true };
+  }
+
+  try {
+    const { data: newBalance, error } = await _SB.rpc('spend_tokens_and_log', {
+      p_cost: cost,
+      p_content_type: contentType,
+      p_language: language,
+      p_tone: tone,
+      p_prompt: prompt,
+      p_generated_text: text,
+      p_source: source || 'local',
+    });
+    if (error) {
+      if (error.message?.includes('insufficient_tokens')) {
+        return { ok: false, message: '✕ Insufficient tokens. Buy more in Billing.' };
+      }
+      return { ok: false, message: '✕ ' + error.message };
+    }
+    tokenBalance = newBalance;
+    updateAllTokenDisplays();
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, message: '✕ Network error — try again' };
+  }
+}
+
 function updateAllTokenDisplays() {
   const els = ['token-display','home-rem-tokens','hub-rem-tokens'];
   els.forEach(id => {
@@ -2801,6 +2888,7 @@ function setHubPlatformStyle(style) {
 
 /* ─── Zunexa AI Content Engine (cloud proxy + local fallback) ─── */
 async function generateContentWithZunexaAI(prompt, config) {
+  window._zxLastSource = 'local';
   if (zxIsNSFW(prompt)) {
     showToast('error','⚠ المحتوى المطلوب مخالف لسياسة Zunexa');
     return '__NSFW__';
@@ -2829,6 +2917,7 @@ Respond ONLY with the final content, no preamble or explanation. Never generate 
       if (data?.text) {
         const text = data.text;
         if (zxIsNSFW(text)) return '⚠ تم حجب المحتوى — لا يتوافق مع سياسة Zunexa.';
+        window._zxLastSource = data.source || 'cloud';
         return text + ZX_WATERMARK;
       }
     }
@@ -2893,16 +2982,21 @@ const ZX_LANG_BANK = {
       'الناس كاع ما كيعرفوش هاد الحاجة على {topic} 👀',
       'إلا كنتي مهتم بـ {topic}، هاد المنشور ليك بالضبط ✨',
       'السر اللي خلاني نتطور فـ {topic} هو هادشي 💡',
+      'توقف 2 ثواني! هاد المعلومة على {topic} غادي تبدل نظرتك 🛑',
+      'كنت كنخدم غلط فـ {topic} حتى عرفت هاد الحاجة 😅',
     ],
     bodies: [
       'كل يوم هو فرصة جديدة باش تطور {topic}. ما تخليش الفرصة تفوت!\n\n✅ خطوة 1: حدد الهدف\n✅ خطوة 2: ابدا بشي حاجة صغيرة\n✅ خطوة 3: استمر بلا ما توقف',
       '{topic} ماشي صعيب كيف كيبان — غير خاصك الطريقة الصحيحة والصبر.\n\nجرب اليوم، وشوف الفرق بعد أسبوع واحد فقط.',
       'بزاف من الناس كيبداو فـ {topic} ويوقفو بسرعة. الفرق بين اللي كينجح واللي لا، هو الاستمرارية.\n\nخطوة صغيرة كل نهار = نتيجة كبيرة بعد شهر.',
+      'غالبا كتسمع بزاف ديال النصائح على {topic}، ولكن القليل منها فعلا كتخدم.\n\nالأهم هو تجرب وتشوف شنو يناسبك، ماشي تقلد بلا تفكير.',
+      'فـ {topic}، الناس اللي كيتفوقو ماشي هما اللي عندهم أكبر إمكانيات — هما اللي ماكيستسلموش.\n\nخصك تبدا، حتى لو ماشي مزيان من الأول.',
     ],
     ctas: [
       '💬 قولي فالكومانتير: شنو تجربتك مع {topic}؟',
       '🔔 تابعنا باش توصلك حيل أخرى على {topic}',
       '📌 سجل هاد البوست باش ترجع ليه ملي تحتاجو',
+      '↗️ شارك هاد المنشور مع شي حد محتاجو على {topic}',
     ],
     hashtags: ['#zunexa', '#مغاربة', '#نجاح', '#تطوير_الذات', '#محتوى', '#تحفيز'],
   },
@@ -2912,16 +3006,21 @@ const ZX_LANG_BANK = {
       'Most people get {topic} completely wrong — here\'s the fix 👀',
       'If {topic} is on your mind right now, read this ✨',
       'The one thing that changed how I approach {topic} 💡',
+      'Stop scrolling — this {topic} tip will save you hours 🛑',
+      'I used to struggle with {topic} until I found this 😅',
     ],
     bodies: [
       'Every day is a new chance to improve your {topic}. Don\'t let it slip by!\n\n✅ Step 1: Set a clear goal\n✅ Step 2: Start small\n✅ Step 3: Stay consistent',
       '{topic} isn\'t as hard as it looks — you just need the right approach and a bit of patience.\n\nTry it today and notice the difference in a week.',
       'Most people quit {topic} too early. The real difference between success and failure is consistency.\n\nOne small step a day = a big result a month from now.',
+      'There\'s a lot of advice out there about {topic}, but very little of it actually works.\n\nThe key is testing what fits you, not blindly copying others.',
+      'The people who succeed at {topic} aren\'t the most talented — they\'re the ones who didn\'t give up.\n\nYou just need to start, even if it\'s not perfect.',
     ],
     ctas: [
       '💬 Drop a comment: what\'s your experience with {topic}?',
       '🔔 Follow for more tips on {topic}',
       '📌 Save this post for when you need it',
+      '↗️ Share this with someone working on {topic}',
     ],
     hashtags: ['#Zunexa', '#ContentCreator', '#Growth', '#Marketing', '#AIContent', '#Tips'],
   },
@@ -2931,16 +3030,21 @@ const ZX_LANG_BANK = {
       'La plupart des gens se trompent sur {topic} — voici la solution 👀',
       'Si {topic} te préoccupe en ce moment, lis ça ✨',
       'Ce qui a changé ma façon de voir {topic} 💡',
+      'Arrête de scroller — cette astuce sur {topic} va t\'aider 🛑',
+      'J\'avais du mal avec {topic} jusqu\'à ce que je découvre ça 😅',
     ],
     bodies: [
       'Chaque jour est une nouvelle chance d\'améliorer {topic}. Ne laisse pas passer l\'occasion !\n\n✅ Étape 1 : Fixe un objectif clair\n✅ Étape 2 : Commence petit\n✅ Étape 3 : Reste constant',
       '{topic} n\'est pas aussi compliqué qu\'il paraît — il faut juste la bonne méthode et un peu de patience.\n\nEssaie aujourd\'hui et observe la différence dans une semaine.',
       'Beaucoup abandonnent {topic} trop tôt. La vraie différence, c\'est la régularité.\n\nUn petit pas chaque jour = un grand résultat dans un mois.',
+      'Il existe énormément de conseils sur {topic}, mais très peu fonctionnent vraiment.\n\nL\'essentiel est de tester ce qui te convient, pas de copier sans réfléchir.',
+      'Ceux qui réussissent en {topic} ne sont pas les plus talentueux — ce sont ceux qui n\'ont pas abandonné.\n\nIl suffit de commencer, même imparfaitement.',
     ],
     ctas: [
       '💬 Dis-nous en commentaire : ton expérience avec {topic} ?',
       '🔔 Abonne-toi pour plus de conseils sur {topic}',
       '📌 Enregistre ce post pour plus tard',
+      '↗️ Partage avec quelqu\'un qui travaille sur {topic}',
     ],
     hashtags: ['#Zunexa', '#CréationDeContenu', '#Croissance', '#Marketing', '#IA', '#Conseils'],
   },
@@ -2950,16 +3054,21 @@ const ZX_LANG_BANK = {
       'Bzaf dyal nas ghaltin f {topic} — hado les bonnes infos 👀',
       'Ila {topic} f rasek daba, lazem tقري had l-post ✨',
       'Hadchi li bddel kifach kanchouf {topic} 💡',
+      'Wa9ef! Had l-info 3la {topic} ghadi tfidek bzaf 🛑',
+      'Kant nkhdem ghalt f {topic} 7ta l9it hadchi 😅',
     ],
     bodies: [
       'Kol nhar houwa une chance jdida bach ttwer {topic}. Matkhellich l-occasion tfout!\n\n✅ Étape 1: Hdd l-objectif\n✅ Étape 2: Bda b chi 7aja sghira\n✅ Étape 3: Restey consistent',
       '{topic} machi sa3ib bzaf kima kayban — ghir khasek la bonne méthode w chwiya dyal sabr.\n\nJareb lyoum w chouf le résultat men b3d simana.',
       'Bzaf dyal nas kay abandonew {topic} bkri bzaf. Le vrai déférence houwa la constance.\n\nUn petit pas kol nhar = résultat kbir men b3d chhar.',
+      'Kayn bzaf dyal conseils 3la {topic}, walakin chwiya minhom li kay khdmou b9ach.\n\nL-muhim houwa tjarreb chno li khasek, machi tqalled bla ma tfekker.',
+      'Nas li kay réussissent f {topic} machi homa les plus talentueux — homa li ma stslmou.\n\nGhir bda, hata ila machi parfait.',
     ],
     ctas: [
       '💬 Goul lina f commentaire: chno tjarbatek m3a {topic}؟',
       '🔔 Followi-na pour plus dyal conseils 3la {topic}',
       '📌 Sauvegarde had post bach trj3 lih',
+      '↗️ Partagi m3a chi 7ad khdam 3la {topic}',
     ],
     hashtags: ['#zunexa', '#Maroc', '#content', '#tips', '#growth', '#motivation'],
   },
@@ -2969,16 +3078,21 @@ const ZX_LANG_BANK = {
       'أغلب الناس غلطانين في {topic} — وهذا هو الحل 👀',
       'إذا كان {topic} في بالك الحين، اقرا هذا ✨',
       'الشي اللي غيّر نظرتي لـ {topic} 💡',
+      'وقف! هذي المعلومة عن {topic} بتفيدك وايد 🛑',
+      'كنت أعاني مع {topic} لين لقيت هذا 😅',
     ],
     bodies: [
       'كل يوم فرصة جديدة لتطوير {topic}. لا تفوتها!\n\n✅ الخطوة 1: حدد هدف واضح\n✅ الخطوة 2: ابدأ بشيء صغير\n✅ الخطوة 3: استمر',
       '{topic} مو معقد كما يبدو — تحتاج فقط الطريقة الصحيحة وشوي صبر.\n\nجرب اليوم وشوف الفرق بعد أسبوع.',
       'أغلب الناس يتركون {topic} بسرعة. الفرق الحقيقي هو الاستمرارية.\n\nخطوة صغيرة كل يوم = نتيجة كبيرة بعد شهر.',
+      'فيه نصائح كثيرة عن {topic}، بس القليل منها يشتغل فعلاً.\n\nالمهم تجرب وتشوف اللي يناسبك، مو تقلد بلا تفكير.',
+      'اللي ينجحون في {topic} ما هم الأذكى — هم اللي ما يستسلمون.\n\nبس ابدأ، حتى لو مو مثالي.',
     ],
     ctas: [
       '💬 خبرنا بالتعليقات: شنو تجربتك مع {topic}؟',
       '🔔 تابعنا لمزيد من النصائح حول {topic}',
       '📌 حفظ هذا المنشور للرجوع إليه',
+      '↗️ شاركه مع شخص يهتم بـ {topic}',
     ],
     hashtags: ['#زونيكسا', '#الخليج', '#نجاح', '#تطوير', '#تحفيز', '#محتوى'],
   },
@@ -2988,16 +3102,21 @@ const ZX_LANG_BANK = {
       'La mayoría se equivoca con {topic} — aquí está la solución 👀',
       'Si {topic} está en tu mente ahora, lee esto ✨',
       'Lo que cambió mi forma de ver {topic} 💡',
+      'Para de scrollear — este tip sobre {topic} te va a ayudar 🛑',
+      'Yo tenía problemas con {topic} hasta que descubrí esto 😅',
     ],
     bodies: [
       'Cada día es una nueva oportunidad para mejorar tu {topic}. ¡No la dejes pasar!\n\n✅ Paso 1: Define un objetivo claro\n✅ Paso 2: Empieza pequeño\n✅ Paso 3: Sé constante',
       '{topic} no es tan difícil como parece — solo necesitas el enfoque correcto y algo de paciencia.\n\nPruébalo hoy y nota la diferencia en una semana.',
       'Muchos abandonan {topic} demasiado pronto. La verdadera diferencia es la constancia.\n\nUn pequeño paso al día = un gran resultado en un mes.',
+      'Hay muchos consejos sobre {topic}, pero pocos funcionan de verdad.\n\nLo importante es probar lo que te funciona, no copiar sin pensar.',
+      'Quienes triunfan en {topic} no son los más talentosos — son los que no se rindieron.\n\nSolo hace falta empezar, aunque no sea perfecto.',
     ],
     ctas: [
       '💬 Cuéntanos: ¿cuál es tu experiencia con {topic}?',
       '🔔 Síguenos para más consejos sobre {topic}',
       '📌 Guarda este post para más tarde',
+      '↗️ Comparte con alguien que trabaje en {topic}',
     ],
     hashtags: ['#Zunexa', '#Contenido', '#Crecimiento', '#Marketing', '#IA', '#Consejos'],
   },
@@ -3014,6 +3133,52 @@ function zxShuffleHashtags(tags, n) {
   return copy.slice(0, n).join(' ');
 }
 
+// Tone → emoji pools (swapped into hooks/CTAs to reflect the chosen tone)
+const ZX_TONE_EMOJI = {
+  professional:  ['💼', '📊', '✅', '🎯'],
+  funny:         ['😂', '🤣', '😅', '🔥'],
+  engaging:      ['🔥', '👀', '✨', '⚡'],
+  formal:        ['📌', '✅', '📋', '🔹'],
+  inspirational: ['✨', '💪', '🌟', '🚀'],
+  storytelling:  ['📖', '💭', '✨', '🎬'],
+  controversial: ['⚠️', '👀', '🔥', '💬'],
+};
+
+// Replace any emoji at the end of a string with one matching the chosen tone
+function zxApplyTone(str, tone) {
+  const pool = ZX_TONE_EMOJI[tone];
+  if (!pool) return str;
+  const emojiRegex = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}]/gu;
+  const matches = str.match(emojiRegex);
+  if (!matches) return str;
+  let i = 0;
+  return str.replace(emojiRegex, () => pool[i++ % pool.length]);
+}
+
+// Extract simple keyword-based hashtags from the user's own prompt
+const ZX_STOPWORDS = new Set([
+  'the','a','an','for','and','or','of','to','in','on','with','about','my','your','our',
+  'le','la','les','un','une','des','de','du','et','pour','sur','avec','mon','ma','mes',
+  'في','من','على','إلى','عن','مع','هو','هي','و','أو','هذا','هذه','لل','ال'
+]);
+function zxExtractTopicHashtags(prompt, max = 2) {
+  if (!prompt) return [];
+  const words = prompt
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .split(/\s+/)
+    .filter(w => w.length >= 3 && !ZX_STOPWORDS.has(w.toLowerCase()));
+  const seen = new Set();
+  const tags = [];
+  for (const w of words) {
+    const tag = '#' + w.charAt(0).toUpperCase() + w.slice(1);
+    if (!seen.has(tag.toLowerCase()) && tags.length < max) {
+      seen.add(tag.toLowerCase());
+      tags.push(tag);
+    }
+  }
+  return tags;
+}
+
 function composeLocalContent(language, contentType, tone, prompt) {
   const langMap = { darija: 'darija', gulf: 'gulf', franco: 'franco', english: 'english', french: 'french', spanish: 'spanish' };
   const lang = langMap[language] || 'english';
@@ -3021,10 +3186,23 @@ function composeLocalContent(language, contentType, tone, prompt) {
   const topic = (prompt || '').trim() || (lang === 'english' ? 'your project' : lang === 'french' ? 'votre projet' : 'مشروعك');
 
   const fill = s => s.replace(/\{topic\}/g, topic);
-  const hook = fill(zxPick(bank.hooks));
-  const body = fill(zxPick(bank.bodies));
-  const cta  = fill(zxPick(bank.ctas));
-  const tags = zxShuffleHashtags(bank.hashtags, 4);
+
+  let hook = zxApplyTone(fill(zxPick(bank.hooks)), tone);
+  let cta  = zxApplyTone(fill(zxPick(bank.ctas)), tone);
+
+  // Combine 1 or 2 body paragraphs for more variation/length control
+  const bodyIdx1 = Math.floor(Math.random() * bank.bodies.length);
+  let body = fill(bank.bodies[bodyIdx1]);
+  if (Math.random() < 0.45 && bank.bodies.length > 1) {
+    let bodyIdx2 = Math.floor(Math.random() * bank.bodies.length);
+    if (bodyIdx2 === bodyIdx1) bodyIdx2 = (bodyIdx2 + 1) % bank.bodies.length;
+    body += '\n\n' + fill(bank.bodies[bodyIdx2]);
+  }
+
+  // Mix prompt-derived hashtags with the language hashtag bank
+  const topicTags = zxExtractTopicHashtags(prompt, 2);
+  const bankTags = zxShuffleHashtags(bank.hashtags, 3);
+  const tags = [...topicTags, ...bankTags.split(' ')].slice(0, 5).join(' ');
 
   switch (contentType) {
     case 'tiktok':
@@ -3095,9 +3273,23 @@ async function handleGenerate(event, prefix) {
     generatedText = composeLocalContent(langEl.value, typeEl.value, toneEl.value, promptEl.value);
   }
 
-  // Deduct tokens
-  tokenBalance -= cost;
-  updateAllTokenDisplays();
+  // Deduct tokens — server-validated for logged-in users, local for guests
+  const spend = await zxSpendTokens({
+    cost,
+    contentType: typeEl.value,
+    language: langEl.value,
+    tone: toneEl.value,
+    prompt: promptEl.value,
+    text: generatedText,
+    source: window._zxLastSource,
+  });
+  if (!spend.ok) {
+    showToast('error', spend.message);
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    outputEl.innerHTML = '';
+    return false;
+  }
 
   // Populate output with typewriter effect
   outputEl.textContent = '';
@@ -3134,7 +3326,7 @@ async function handleGenerate(event, prefix) {
   btn.disabled = false;
 
   showToast('success', `✨ Content generated! ${cost} tokens used.`);
-syncTokens(); // fire-and-forget
+// tokens already persisted server-side by spend_tokens_and_log RPC
   return false;
 }
 
@@ -3175,8 +3367,21 @@ SEO in Morocco is a long game, but the rewards are substantial for those who inv
   output.innerHTML = `<div style="white-space:pre-wrap;font-size:14px;line-height:1.8;color:var(--text-grey)">${seoArticle}</div>`;
   document.getElementById('seo-actions').style.display = 'flex';
 
-  tokenBalance -= 50;
-  updateAllTokenDisplays();
+  const spend = await zxSpendTokens({
+    cost: 50,
+    contentType: 'seo',
+    language: 'english',
+    tone: 'professional',
+    prompt: 'SEO article (Morocco)',
+    text: seoArticle,
+    source: 'local',
+  });
+  if (!spend.ok) {
+    showToast('error', spend.message);
+    btn.textContent = '⚡ Generate SEO Article';
+    btn.disabled = false;
+    return false;
+  }
   btn.textContent = '⚡ Generate SEO Article';
   btn.disabled = false;
   showToast('success', '✔ SEO Article generated! 50 tokens used.');
@@ -3317,19 +3522,25 @@ function togglePostDropdown() {
 }
 function postTo(platform) {
   document.getElementById('postDropdown').style.display = 'none';
-  showToast('success', `🚀 Posting to ${platform}...`);
+  const outputEl = document.getElementById('hub-output');
+  const text = outputEl ? outputEl.textContent.trim() : '';
+  const urls = {
+    Instagram: 'https://www.instagram.com/',
+    TikTok: 'https://www.tiktok.com/upload',
+    YouTube: 'https://studio.youtube.com/',
+    LinkedIn: 'https://www.linkedin.com/feed/',
+  };
+  if (text) {
+    navigator.clipboard?.writeText(text).catch(() => {});
+    showToast('success', `📋 تم نسخ المحتوى — افتح ${platform} وألصقه (النشر المباشر غير متاح حالياً)`);
+  } else {
+    showToast('error', '✕ لا يوجد محتوى لنسخه — قم بإنشاء محتوى أولاً');
+    return;
+  }
+  if (urls[platform]) window.open(urls[platform], '_blank');
 }
 
-/* ─── Watch Ad ───────────────────────────────────────────────── */
-function watchAd() {
-  showToast('success', '📺 Ad starting... +5 tokens will be credited in 30 seconds');
-  setTimeout(() => {
-    tokenBalance += 5;
-    updateAllTokenDisplays();
-    showToast('success', '🎉 +5 Tokens credited! Keep watching to earn more.');
-    syncTokens();
-  }, 3000); // Fast simulation
-}
+/* (legacy watchAd() removed — see ZX_AD.watch() for the real daily-bonus implementation) */
 
 /* ─── Edit Modal Save ────────────────────────────────────────── */
 function saveEdit() {
@@ -3344,11 +3555,25 @@ function saveEdit() {
   showToast('success', '✔ Changes saved!');
 }
 
-/* ─── Upgrade Modal ──────────────────────────────────────────── */
-function processUpgrade() {
+/* ─── Upgrade Waitlist (no real billing yet — never grants plans client-side) ─── */
+function joinUpgradeWaitlist() {
+  const emailEl = document.getElementById('upgrade-waitlist-email');
+  const email = emailEl ? emailEl.value.trim() : '';
+  if (!email || !email.includes('@')) {
+    showToast('error', '✕ أدخل بريداً صحيحاً');
+    return;
+  }
+  const f = document.createElement('form');
+  f.action = 'https://formsubmit.co/mrahmed20101119@gmail.com';
+  f.method = 'POST';
+  f.target = '_blank';
+  f.style.display = 'none';
+  [['_subject','[Zunexa] Senior Plan Waitlist'],['_captcha','false'],['email',email]]
+    .forEach(([k,v]) => { const i = document.createElement('input'); i.name = k; i.value = v; f.appendChild(i); });
+  document.body.appendChild(f);
+  f.submit();
   closeModal('upgradeModal');
-  showToast('success', '⭐ Upgrade successful! Welcome to Senior Plan!');
-  setTimeout(() => location.reload(), 2000);
+  showToast('success', '✓ سجلنا بريدك — سنخبرك فور توفر الدفع');
 }
 
 /* ─── Withdraw Fields Toggle ─────────────────────────────────── */
@@ -3755,7 +3980,7 @@ const AI_FALLBACK = [
   'الـ SEO Tool متخصص في توليد مقالات SEO للسوق المغربي والعربي.',
   'Webhook available لاستقبال أحداث real-time من المنصة.',
   'الـ Token balance يتجدد شهرياً حسب خطتك.',
-  'يمكن تصدير بياناتك كاملة من Appearance → Export My Data.',
+  'يمكن تصدير بيانات هذا المتصفح (التفضيلات والسجل المحلي) من Appearance → Export Local Data.',
   'دعم العملاء: mrahmed20101119@gmail.com أو WhatsApp: +212777364251.',
   'الـ Analytics تتتبع استخدام tokens، توزيع المحتوى، والأداء الأسبوعي.',
   'يمكن تغيير المظهر من 4 themes: Zalij Dark، Zalij Light، Neon Purple، Ocean Dark.',
@@ -3861,12 +4086,8 @@ document.addEventListener('DOMContentLoaded', function initPrefs() {
   // Music bar hidden
   if(localStorage.getItem('zx_music_bar')==='0'){ toggleMusicBar(false); const mb=document.getElementById('musicBarToggle'); if(mb) mb.checked=false; }
   
-  // Cookie banner
-  if(!localStorage.getItem('zx_cookie_consent')){ setTimeout(()=>{ const b=document.getElementById('cookieBanner'); if(b) b.classList.add('show'); },1800); }
-  
-  // Cookie prefs restore
-  const cp=localStorage.getItem('zx_cookie');
-  if(cp){ try{ const p=JSON.parse(cp); const ca=document.getElementById('cookieAnalytics'); const cm=document.getElementById('cookieMarketing'); if(ca) ca.checked=p.analytics; if(cm) cm.checked=p.marketing; }catch(e){} }
+  // Local storage notice
+  if(!localStorage.getItem('zx_notice_seen')){ setTimeout(()=>{ const b=document.getElementById('cookieBanner'); if(b) b.classList.add('show'); },1800); }
 });
 </script><script>
 /* ─── ZUNEXA V10: ULTIMATE SUPABASE AUTOMATION KERNEL ─── */
@@ -3891,38 +4112,12 @@ const ZunexaCloud = {
       await _SB.from('profiles').update({ current_theme: theme }).eq('id', session.user.id);
     }
   },
-  logAIAction: async (contentType, language, preview, tokensUsed) => {
-    const { data: { session } } = await _SB.auth.getSession();
-    if (!session) return;
-    if (typeof tokenBalance !== 'undefined') {
-      tokenBalance -= tokensUsed;
-      if (typeof updateAllTokenDisplays === 'function') updateAllTokenDisplays();
-    }
-    try {
-      await _SB.from('profiles').update({ tokens_balance: tokenBalance }).eq('id', session.user.id);
-      await _SB.from('content_history').insert([{
-        user_id: session.user.id,
-        content_type: contentType,
-        language: language,
-        preview: preview,
-        tokens_used: tokensUsed
-      }]);
-    } catch (err) { console.error("Cloud Sync Error:", err); }
-  },
-  rewardAdTokens: async (amount = 5) => {
-    const { data: { session } } = await _SB.auth.getSession();
-    if (!session) return;
-    if (typeof tokenBalance !== 'undefined') {
-      tokenBalance += amount;
-      if (typeof updateAllTokenDisplays === 'function') updateAllTokenDisplays();
-    }
-    await _SB.from('profiles').update({ tokens_balance: tokenBalance }).eq('id', session.user.id);
-  }
+  /* logAIAction / rewardAdTokens removed — superseded by the
+     spend_tokens_and_log and claim_daily_bonus RPCs, which validate
+     server-side instead of trusting a client-supplied tokenBalance. */
 };
 window.signOut = ZunexaCloud.signOut;
 window.applyTheme = ZunexaCloud.applyTheme;
-window.logZunexaAIAction = ZunexaCloud.logAIAction;
-window.rewardAdTokens = ZunexaCloud.rewardAdTokens;
 
 /* ─── JS END ─── */
 /* initSession (legacy duplicate) removed — profile loading is handled
@@ -3978,11 +4173,12 @@ document.addEventListener('DOMContentLoaded', function() {
  </style>
 <script>
 /* ─── ZUNEXA PATCH v2.4.1 ─── */
-async function syncTokens(){try{const{data:{session}}=await _SB.auth.getSession();if(!session)return;await _SB.from('profiles').update({tokens_balance:tokenBalance}).eq('id',session.user.id);}catch(e){}}
+/* syncTokens() removed — tokens are now persisted exclusively via the
+   spend_tokens_and_log / claim_daily_bonus RPC functions (server-side
+   validated), not via direct profiles.tokens_balance writes. */
 function toggleCompactSidebar(e){const s=document.getElementById('sidebar');if(!s)return;if(e){s.style.width='64px';s.querySelectorAll('.nav-item span:not(.nav-icon):not(.nav-badge)').forEach(x=>x.style.display='none');document.documentElement.style.setProperty('--sidebar-w','64px');}else{s.style.width='';s.querySelectorAll('.nav-item span').forEach(x=>x.style.display='');document.documentElement.style.setProperty('--sidebar-w','240px');}localStorage.setItem('zx_compact',e?'1':'0');}
-function exportUserData(){const d={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);d[k]=localStorage.getItem(k);}d.history=historyData;const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='zunexa_export.json';a.click();URL.revokeObjectURL(u);showToast('success','📥 Data exported!');}
-function saveCookiePrefs(){const a=document.getElementById('cookieAnalytics')?.checked??true;const m=document.getElementById('cookieMarketing')?.checked??false;localStorage.setItem('zx_cookie',JSON.stringify({analytics:a,marketing:m}));}
-function closeCookieBanner(accepted){const b=document.getElementById('cookieBanner');if(b){b.classList.remove('show');b.style.display='none';}localStorage.setItem('zx_cookie_consent',accepted?'all':'declined');if(accepted)saveCookiePrefs();}
+function exportUserData(){const d={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);d[k]=localStorage.getItem(k);}d.history=historyData;d._note='This file contains data stored locally on this device/browser only (preferences, cached history). It is not a full account data export from Zunexa servers.';const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='zunexa_local_data.json';a.click();URL.revokeObjectURL(u);showToast('success','📥 Local device data exported');}
+function closeCookieBanner(){const b=document.getElementById('cookieBanner');if(b){b.classList.remove('show');b.style.display='none';}localStorage.setItem('zx_notice_seen','1');}
 function submitFeedback(){const s=document.getElementById('feedbackSubject')?.value.trim();const m=document.getElementById('feedbackMsg')?.value.trim();const t=document.querySelector('.feedback-type-btn.active')?.textContent.trim()||'General';if(!m){showToast('error','✕ Write feedback first');return;}const f=document.createElement('form');f.action='https://formsubmit.co/mrahmed20101119@gmail.com';f.method='POST';f.style.display='none';[['_subject',`[Zunexa Feedback] ${t}`],['_captcha','false'],['_next',window.location.href],['type',t],['message',m]].forEach(([k,v])=>{const i=document.createElement('input');i.name=k;i.value=v;f.appendChild(i);});document.body.appendChild(f);f.submit();}
 function submitContact(){const n=document.getElementById('contactName')?.value.trim();const e=document.getElementById('contactEmail')?.value.trim();const m=document.getElementById('contactMsg')?.value.trim();if(!n||!e||!m){showToast('error','✕ Fill all fields');return;}const f=document.createElement('form');f.action='https://formsubmit.co/mrahmed20101119@gmail.com';f.method='POST';f.style.display='none';[['_subject',`[Zunexa Contact] ${n}`],['_captcha','false'],['_next',window.location.href],['name',n],['email',e],['message',m]].forEach(([k,v])=>{const i=document.createElement('input');i.name=k;i.value=v;f.appendChild(i);});document.body.appendChild(f);f.submit();}
 /* ─── Utilities ───────────────────────────────────────────── */
@@ -4092,7 +4288,6 @@ function toggleMusicBar(show){const b=document.getElementById('musicBar');const 
 let _rating=0;
 function setRating(n){_rating=n;const L=['','Terrible 😞','Bad 😕','Okay 😐','Good 😊','Excellent! 🌟'];document.querySelectorAll('.star-btn').forEach((b,i)=>{b.classList.toggle('active',i<n);b.setAttribute('data-rating',i+1);});const l=document.getElementById('ratingLabel');if(l)l.textContent=L[n]||'';}
 function selectFeedbackType(btn,t){document.querySelectorAll('.feedback-type-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
-(function(){const c=localStorage.getItem('zx_cookie_consent');const b=document.getElementById('cookieBanner');if(!b)return;if(c){b.style.display='none';}else{setTimeout(()=>b.classList.add('show'),1800);}})()
 </script>
 </script>
 
@@ -4274,10 +4469,10 @@ document.addEventListener('DOMContentLoaded', () => {
  * ═══════════════════════════════════════════════ */
 (function ZX_USER_INIT() {
   const user = (() => {
-    try { return JSON.parse(localStorage.getItem('zx_user') || '{}'); }
+    try { return JSON.parse(localStorage.getItem('zunexa_user') || '{}'); }
     catch { return {}; }
   })();
-  const slug = (user.username || user.first_name || 'user').toLowerCase().replace(/\s+/g,'_');
+  const slug = (user.username || user.firstName || 'user').toLowerCase().replace(/\s+/g,'_');
 
   /* Footer credits */
   document.querySelectorAll('#zx-footer-user').forEach(el => {
