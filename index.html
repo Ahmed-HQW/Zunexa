@@ -411,19 +411,16 @@ const _SB = supabase.createClient(
 // ZUNEXA AUTH ENGINE v3.0 — ARCHON PROTOCOL
 // ══════════════════════════════════════════════════════
 
-// ── Plan Codes (expanded with owner + personal codes) ──
-const PLAN_CODES = {
-  'ZX-OWNER-2026':      { name:'Owner',  label:'👑 Owner Plan',   color:'owner',  tokens:9999999, role:'owner'  },
-  'ZX-PLUS-2026':       { name:'Plus',   label:'⭐ Plus Plan',    color:'plus',   tokens:3000,    role:'user'   },
-  'ZX-PLUS-2026-YS':    { name:'Plus',   label:'⭐ Plus Plan',    color:'plus',   tokens:3000,    role:'user'   },
-  'ZX-PLUS-2026-KR':    { name:'Plus',   label:'⭐ Plus Plan',    color:'plus',   tokens:3000,    role:'user'   },
-  'ZX-PRO-2026':        { name:'Pro',    label:'✦ Pro Plan',     color:'pro',    tokens:10000,   role:'user'   },
-  'ZX-PRO-2026-AL':     { name:'Pro',    label:'✦ Pro Plan',     color:'pro',    tokens:10000,   role:'user'   },
-  'ZX-SENIOR-2026':     { name:'Senior', label:'◆ Senior Plan',  color:'senior', tokens:999999,  role:'user'   },
-  'ZX-SENIOR-2026-HN':  { name:'Senior', label:'◆ Senior Plan',  color:'senior', tokens:999999,  role:'user'   },
-  'ZX-SENIOR-2026-MD':  { name:'Senior', label:'◆ Senior Plan',  color:'senior', tokens:999999,  role:'user'   },
+// ── Plan display labels (cosmetic only — actual plan/tokens/role are
+//    determined server-side via the redeem_plan_code RPC + user_plans /
+//    user_tokens tables, never written directly from the client) ──
+const PLAN_DISPLAY = {
+  Free:   { label:'○ Free Plan',   color:'free'   },
+  Plus:   { label:'⭐ Plus Plan',   color:'plus'   },
+  Pro:    { label:'✦ Pro Plan',    color:'pro'    },
+  Senior: { label:'◆ Senior Plan', color:'senior' },
 };
-const FREE_PLAN = { name:'Free', label:'○ Free Plan', color:'free', tokens:500, role:'user' };
+const FREE_PLAN = PLAN_DISPLAY.Free;
 
 const PLAN_COLORS = { free:'#888', plus:'#5b8dee', pro:'#D4AF37', senior:'#a78bfa', owner:'#D4AF37' };
 
@@ -519,27 +516,40 @@ function togglePlanCode(prefix){
   if(toggle) toggle.textContent = show ? '← Hide plan code' : 'Have a plan code? →';
 }
 
-// ── Plan detect ──
+// ── Plan code format check (cosmetic only — real validation is server-side) ──
 function detectPlan(val,prefix){
   const code=val.trim().toUpperCase();
   const previewEl=document.getElementById(prefix+'-plan-preview');
   if(!previewEl) return;
   if(!code){previewEl.className='plan-preview hidden';return;}
-  const plan=PLAN_CODES[code];
-  if(plan){
-    previewEl.className='plan-preview '+plan.color;
-    const icons={pro:'✦',senior:'◆',owner:'👑',plus:'⭐',free:'○'};
-    previewEl.innerHTML=`<span>${icons[plan.color]||'✦'}</span><strong>${plan.name} Plan activated!</strong><span style="margin-left:auto;opacity:.7">${plan.tokens>=999999?'∞ Unlimited':plan.tokens.toLocaleString()+' tokens'}</span>`;
+  if(/^ZX-[A-Z0-9-]{3,20}$/.test(code)){
+    previewEl.className='plan-preview plus';
+    previewEl.innerHTML=`<span>✓</span><span>سيتم التحقق من الكود بعد إنشاء الحساب</span>`;
   } else {
     previewEl.className='plan-preview';
     previewEl.style.cssText='background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);color:#ff4d6d';
-    previewEl.innerHTML='<span>✕</span><span>Invalid code — Free Plan will be applied</span>';
+    previewEl.innerHTML='<span>✕</span><span>صيغة الكود غير صحيحة (مثال: ZX-PLUS-XXXX)</span>';
   }
 }
 
-function resolvePlan(codeVal){
-  const code=codeVal.trim().toUpperCase();
-  return PLAN_CODES[code]||FREE_PLAN;
+// ── Redeem a plan code via secure server-side RPC (call only when a session exists) ──
+async function redeemPlanCodeIfAny(codeVal){
+  if(!codeVal || !codeVal.trim()) return null;
+  try{
+    const {data,error}=await _SB.rpc('redeem_plan_code',{p_code:codeVal.trim().toUpperCase()});
+    if(error){
+      const messages={
+        invalid_code:'الكود غير صحيح',
+        code_inactive:'الكود غير مفعّل',
+        code_expired:'الكود منتهي الصلاحية',
+        code_exhausted:'تم استهلاك هذا الكود بالكامل',
+        already_redeemed:'لقد استخدمت هذا الكود من قبل',
+      };
+      showToast('✕', messages[error.message] || 'تعذر تفعيل الكود');
+      return null;
+    }
+    return data; // { plan, tokens_bonus }
+  }catch(e){ return null; }
 }
 
 // ── Error UI ──
@@ -574,26 +584,17 @@ async function handleSignIn(){
       return;
     }
     // Success with email
-    const plan=resolvePlan(codeVal);
-    if(codeVal.trim()&&d2.user){
-      await _SB.from('profiles').update({tokens_balance:plan.tokens,plan:plan.name}).eq('id',d2.user.id);
-    }
-    const storedUser = {
-  username: username,
-  plan: plan.name,          // 'Free' if no code entered
-  tokens: plan.tokens,      // 500 for Free
-  role: plan.role || 'user'
-};
-localStorage.setItem('zx_user', JSON.stringify(storedUser));
-showSuccess(username,plan);
+    let redeemed=null;
+    if(codeVal.trim()&&d2.user) redeemed=await redeemPlanCodeIfAny(codeVal);
+    const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan]||FREE_PLAN) : FREE_PLAN;
+    showSuccess(username,plan);
     setTimeout(()=>window.location.replace('dashboard.html'),1800);
     return;
   }
 
-  const plan=resolvePlan(codeVal);
-  if(codeVal.trim()&&data.user){
-    await _SB.from('profiles').update({tokens_balance:plan.tokens,plan:plan.name}).eq('id',data.user.id);
-  }
+  let redeemed=null;
+  if(codeVal.trim()&&data.user) redeemed=await redeemPlanCodeIfAny(codeVal);
+  const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan]||FREE_PLAN) : FREE_PLAN;
   showSuccess(username,plan);
   setTimeout(()=>window.location.replace('dashboard.html'),1800);
 }
@@ -620,12 +621,10 @@ async function handleSignUp(){
   const btn=document.querySelector('#form-signup .btn-auth');
   btn.classList.add('loading');
 
-  const plan=resolvePlan(codeVal);
-
   const {data,error}=await _SB.auth.signUp({
     email:email,
     password:password,
-    options:{data:{username,first_name:fname,plan:plan.name}}
+    options:{data:{username,first_name:fname}}
   });
   btn.classList.remove('loading');
 
@@ -636,23 +635,30 @@ async function handleSignUp(){
   }
 
   if(data.user){
+    // Safe defaults only — plan/tokens/role are managed server-side
+    // (handle_new_user_tokens trigger + user_plans/user_tokens tables)
     await _SB.from('profiles').upsert({
       id:data.user.id,
       username,
       first_name:fname,
       email,
-      plan:plan.name,
-      tokens_balance:plan.tokens,
       current_theme:'zalij-dark',
-      role:plan.role||'user',
       avatar_url:avatarDataURL||null
     });
   }
 
+  let plan = FREE_PLAN;
   if(data.session){
+    if(codeVal){
+      const redeemed = await redeemPlanCodeIfAny(codeVal);
+      if(redeemed) plan = PLAN_DISPLAY[redeemed.plan] || FREE_PLAN;
+    }
     showSuccess(fname,plan);
     setTimeout(()=>window.location.replace('dashboard.html'),1800);
   } else {
+    // Email confirmation required — redeem the code on first dashboard
+    // load instead (no session yet to call the RPC with).
+    if(codeVal) localStorage.setItem('zx_pending_plan_code', codeVal);
     showEmailConfirmation(fname,email);
   }
 }
