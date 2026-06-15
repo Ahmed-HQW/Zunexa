@@ -1338,12 +1338,6 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
 .toggle-switch input:checked+.toggle-slider{background:var(--gold);}
 .toggle-switch input:checked+.toggle-slider::before{transform:translateX(20px);}
 
-/* ─── COOKIE BANNER ───────────────────────── */
-.cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:8000;background:var(--bg-card);border-top:1px solid var(--border-gold);padding:16px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);box-shadow:0 -8px 32px rgba(0,0,0,.5);}
-.cookie-banner.show{transform:translateY(0);}
-.cookie-banner-text{flex:1;font-size:13px;color:var(--text-grey);min-width:240px;}
-.cookie-banner-text strong{color:var(--gold);}
-.cookie-banner-actions{display:flex;gap:10px;flex-shrink:0;}
 
 /* ─── MUSIC BAR ────────────────────────────── */
 .music-bar{position:fixed;top:36px;left:var(--sidebar-w);right:0;height:40px;background:rgba(8,8,8,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(212,175,55,.15);z-index:999;display:flex;align-items:center;gap:12px;padding:0 16px;transition:left var(--trans);}
@@ -1426,12 +1420,6 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
 .toggle-slider::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:var(--trans);}
 .toggle-switch input:checked+.toggle-slider{background:var(--gold);}
 .toggle-switch input:checked+.toggle-slider::before{transform:translateX(20px);}
-/* ─── COOKIE BANNER ──────────────────────────────────────────── */
-.cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:8000;background:var(--bg-card);border-top:1px solid var(--border-gold);padding:16px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);box-shadow:0 -8px 32px rgba(0,0,0,.5);}
-.cookie-banner.show{transform:translateY(0);}
-.cookie-banner-text{flex:1;font-size:13px;color:var(--text-grey);min-width:240px;}
-.cookie-banner-text strong{color:var(--gold);}
-.cookie-banner-actions{display:flex;gap:10px;flex-shrink:0;}
 /* ─── CONTACT ────────────────────────────────────────────────── */
 .contact-card{display:flex;align-items:center;gap:16px;padding:18px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);transition:all var(--trans);text-decoration:none;color:var(--text-white);}
 .contact-card:hover{border-color:var(--border-gold);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
@@ -1786,70 +1774,50 @@ const ZX_RATE = (function(){
 
   <nav class="sidebar-nav">
     <button class="nav-item active">
-      <span class="nav-icon">⌂</span>Dashboard
-    </button>
-    
+      <span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard
     </button>
     <button class="nav-item active">
-      <span class="nav-icon">✦</span> Generator Hub
-     </button>
-    
+      <span class="nav-icon"><i data-lucide="sparkles"></i></span> Generator Hub
+    </button>
     <button class="nav-item active">
-      <span class="nav-icon">◎</span> SEO Tool
+      <span class="nav-icon"><i data-lucide="search-check"></i></span> SEO Tool
     </button>
 
     <div class="nav-section">Insights</div>
     <button class="nav-item" onclick="window.location.href='analytics.html'">
-      <span class="nav-icon">▣</span> Analytics
+      <span class="nav-icon"><i data-lucide="bar-chart-3"></i></span> Analytics
     </button>
-            
     <button class="nav-item" onclick="window.location.href='pro_accounts.html'">
-      <span class="nav-icon">💳</span> Billing
+      <span class="nav-icon"><i data-lucide="credit-card"></i></span> Billing
     </button>
     <button class="nav-item" onclick="window.location.href='affiliat.html'">
-      <span class="nav-icon">🏆</span> Affiliate
+      <span class="nav-icon"><i data-lucide="award"></i></span> Affiliate
     </button>
     <button class="nav-item" onclick="window.location.href='appearance.html'">
-      <span class="nav-icon">✨</span> Appearance
+      <span class="nav-icon"><i data-lucide="palette"></i></span> Appearance
     </button>
     <button class="nav-item" onclick="window.location.href='feedback.html'">
-      <span class="nav-icon">💬</span> Feedback
+      <span class="nav-icon"><i data-lucide="message-square-text"></i></span> Feedback
     </button>
     <button class="nav-item" onclick="window.location.href='CONTACT.html'">
-      <span class="nav-icon">📞</span> Contact
+      <span class="nav-icon"><i data-lucide="phone"></i></span> Contact
     </button>
     <button class="nav-item" onclick="window.location.href='help.html'">
-      <span class="nav-icon">🔔</span> Help
+      <span class="nav-icon"><i data-lucide="life-buoy"></i></span> Help
     </button>
-   
+
     <div class="nav-section">System Pages</div>
-    
-    <button class="nav-item" onclick="window.location.href='info_3d.html'">
-      <span class="nav-icon">🌐</span> Info 3D
-    </button>
-    
     <button class="nav-item" onclick="window.location.href='apps.html'">
-      <span class="nav-icon">📱</span> Apps
+      <span class="nav-icon"><i data-lucide="layout-grid"></i></span> Apps
     </button>
-    
-    <button class="nav-item" onclick="window.location.href='pro_accounts.html'">
-      <span class="nav-icon">👑</span> Pro Accounts
-    </button>
-    
     <button class="nav-item" onclick="window.location.href='settings.html'">
-      <span class="nav-icon">⚙️</span> Settings
+      <span class="nav-icon"><i data-lucide="settings"></i></span> Settings
     </button>
-    
     <button class="nav-item" onclick="window.location.href='landing.html'">
-      <span class="nav-icon">🚀</span> Landing Page
+      <span class="nav-icon"><i data-lucide="rocket"></i></span> Landing Page
     </button>
-    
-     <button class="nav-item" onclick="window.location.href='xcraft.html'">
-      <span class="nav-icon">🎮</span> Game craft zunexa 
-    </button>
-    
-     <button class="nav-item" onclick="window.location.href='ai.html'">
-      <span class="nav-icon">📌</span> Ai zunexa
+    <button class="nav-item" onclick="window.location.href='ai.html'">
+      <span class="nav-icon"><i data-lucide="bot"></i></span> Ai Zunexa
     </button>
    </nav>
 
@@ -2071,15 +2039,6 @@ const ZX_RATE = (function(){
           <button class="btn btn-gold btn-sm" onclick="copyOutput('home-output')">📋 Copy</button>
           <button class="btn btn-ghost btn-sm" onclick="openModal('editModal')">✏️ Edit</button>
           <button class="btn btn-outline btn-sm" onclick="showToast('success','✔ Saved to Projects')">💾 Save</button>
-          <div style="position:relative;">
-            <button class="btn btn-ghost btn-sm" onclick="togglePostDropdown()">🚀 Post Directly ▾</button>
-            <div id="postDropdown" style="display:none;position:absolute;top:100%;left:0;z-index:50;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:4px 0;min-width:160px;margin-top:4px;">
-              <a style="display:block;padding:8px 14px;color:var(--text-grey);font-size:13px;cursor:pointer;" onmouseenter="this.style.background='rgba(212,175,55,.06)'" onmouseleave="this.style.background=''" onclick="postTo('Instagram')">📸 Instagram</a>
-              <a style="display:block;padding:8px 14px;color:var(--text-grey);font-size:13px;cursor:pointer;" onmouseenter="this.style.background='rgba(212,175,55,.06)'" onmouseleave="this.style.background=''" onclick="postTo('TikTok')">🎵 TikTok</a>
-              <a style="display:block;padding:8px 14px;color:var(--text-grey);font-size:13px;cursor:pointer;" onmouseenter="this.style.background='rgba(212,175,55,.06)'" onmouseleave="this.style.background=''" onclick="postTo('YouTube')">▶ YouTube</a>
-              <a style="display:block;padding:8px 14px;color:var(--text-grey);font-size:13px;cursor:pointer;" onmouseenter="this.style.background='rgba(212,175,55,.06)'" onmouseleave="this.style.background=''" onclick="postTo('LinkedIn')">💼 LinkedIn</a>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -2107,124 +2066,6 @@ const ZX_RATE = (function(){
     </div>
   </div>
 
- <!-- ✦ Watch Ad — Earn Tokens Button ── -->
-<div class="zx-ad-earn-wrap" style="margin:16px 0">
-  <button id="zx-watch-ad-btn" onclick="ZX_AD.watch()" class="zx-ad-btn">
-    <span class="zad-icon">▶</span>
-    <span class="zad-label">شاهد إعلاناً واكسب <strong>+5 Tokens</strong></span>
-    <span class="zad-badge">مجاني</span>
-  </button>
-</div>
-
-<!-- ✦ Ad Modal ── -->
-<div id="zx-ad-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:99999; align-items:center; justify-content:center;">
-  <div style="background:#111; border:1px solid rgba(212,175,55,0.35); border-radius:16px; padding:32px 28px; max-width:380px; width:90%; text-align:center; position:relative; box-shadow:0 20px 80px rgba(0,0,0,0.9);">
-    <div style="font-family:'Cinzel',serif; color:#D4AF37; font-size:16px; margin-bottom:8px;">✦ دعم Zunexa</div>
-    <div style="width:100%; height:160px; background:linear-gradient(135deg,#0e0e0e,#141414); border-radius:10px; display:flex; align-items:center; justify-content:center; border:1px solid #242424; margin-bottom:20px; overflow:hidden; position:relative;">
-      <div id="zx-ad-content" style="color:#555548; font-size:13px; font-family:'Rajdhani',sans-serif; letter-spacing:.06em;">ZUNEXA PREMIUM — نظام ذكاء اصطناعي للمحتوى العربي</div>
-      <div id="zx-ad-shimmer" style="position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(212,175,55,0.04),transparent);animation:zx-gold-shimmer 2s linear infinite;background-size:200% auto;"></div>
-    </div>
-    <div style="margin-bottom:16px;">
-      <div style="font-size:12px; color:#9a9a8a; margin-bottom:8px;">سيتم إضافة التوكنز خلال</div>
-      <div id="zx-ad-timer-ring" style="width:64px;height:64px;margin:0 auto;position:relative;">
-        <svg width="64" height="64" viewBox="0 0 64 64" style="transform:rotate(-90deg)">
-          <circle cx="32" cy="32" r="26" fill="none" stroke="#1a1a1a" stroke-width="5"/>
-          <circle id="zx-ad-ring" cx="32" cy="32" r="26" fill="none" stroke="#D4AF37" stroke-width="5"
-            stroke-dasharray="163.36" stroke-dashoffset="0"
-            style="transition:stroke-dashoffset 1s linear; filter:drop-shadow(0 0 6px rgba(212,175,55,0.5))"/>
-        </svg>
-        <div id="zx-ad-countdown" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:#D4AF37;">5</div>
-      </div>
-    </div>
-    <button id="zx-ad-skip" onclick="ZX_AD.close()" style="background:none;border:1px solid #242424;color:#555548;padding:8px 20px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'Rajdhani',sans-serif;display:none;">تخطي</button>
-  </div>
-</div>
-
-<style>
-.zx-ad-btn {
-  display:flex; align-items:center; gap:10px;
-  width:100%; padding:12px 18px;
-  background: linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.04));
-  border: 1px solid rgba(212,175,55,0.25);
-  border-radius:10px; color:#D4AF37; cursor:pointer;
-  font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600;
-  transition:all .22s; text-align:right;
-}
-.zx-ad-btn:hover { border-color:rgba(212,175,55,0.5); background:rgba(212,175,55,0.12); transform:translateY(-1px); }
-.zad-icon { font-size:18px; flex-shrink:0; }
-.zad-label { flex:1; }
-.zad-badge { font-size:10px; background:rgba(61,220,132,0.12); color:#3ddc84; border:1px solid rgba(61,220,132,0.3); border-radius:99px; padding:3px 8px; letter-spacing:.06em; }
-</style>
-
-<script>
-/* ═══════════════════════════════════════════════
- * ZX AD ENGINE — Watch Ad → +5 Tokens (No refresh)
- * ═══════════════════════════════════════════════ */
-window.ZX_AD = {
-  _timer: null, _secs: 5,
-
-  watch() {
-    const modal = document.getElementById('zx-ad-modal');
-    if (!modal) return;
-    this._secs = 5;
-    modal.style.display = 'flex';
-    document.getElementById('zx-ad-countdown').textContent = 5;
-    document.getElementById('zx-ad-ring').style.strokeDashoffset = '0';
-    document.getElementById('zx-ad-skip').style.display = 'none';
-
-    const ring = document.getElementById('zx-ad-ring');
-    const countdown = document.getElementById('zx-ad-countdown');
-    const CIRC = 163.36;
-
-    this._timer = setInterval(() => {
-      this._secs--;
-      countdown.textContent = this._secs;
-      ring.style.strokeDashoffset = ((5 - this._secs) / 5) * CIRC;
-
-      if (this._secs <= 0) {
-        clearInterval(this._timer);
-        this._reward();
-      } else if (this._secs <= 2) {
-        document.getElementById('zx-ad-skip').style.display = 'inline-block';
-      }
-    }, 1000);
-  },
-
-  _reward() {
-    /* ── أضف +5 tokens بدون reload ── */
-    let user = {};
-    try { user = JSON.parse(localStorage.getItem('zx_user') || '{}'); } catch {}
-    const prev   = parseInt(user.tokens) || 0;
-    user.tokens  = prev + 5;
-    localStorage.setItem('zx_user', JSON.stringify(user));
-
-    /* ── تحديث فوري لكل عناصر الـ UI ── */
-    document.querySelectorAll('.zx-sb-tokens, #zx-token-count, [data-zx-tokens]').forEach(el => {
-      el.textContent = `⬡ ${user.tokens}`;
-    });
-
-    /* ── غيّر محتوى الـ modal لـ success state ── */
-    document.getElementById('zx-ad-content').innerHTML =
-      `<div style="color:#3ddc84;font-size:28px;margin-bottom:8px">✓</div>
-       <div style="color:#f5f5f0;font-family:'Cinzel',serif;font-size:14px">تمت الإضافة!</div>
-       <div style="color:#9a9a8a;font-size:12px;margin-top:4px">+5 Tokens → رصيدك: ${user.tokens}</div>`;
-    document.getElementById('zx-ad-skip').style.display = 'inline-block';
-    document.getElementById('zx-ad-skip').textContent = 'إغلاق';
-
-    /* ── أخفِ الـ modal تلقائياً بعد 2 ثانية ── */
-    setTimeout(() => this.close(), 2000);
-  },
-
-  close() {
-    clearInterval(this._timer);
-    const modal = document.getElementById('zx-ad-modal');
-    if (modal) modal.style.display = 'none';
-    /* إعادة ضبط محتوى الـ modal للمرة القادمة */
-    const content = document.getElementById('zx-ad-content');
-    if (content) content.innerHTML = 'ZUNEXA PREMIUM — نظام ذكاء اصطناعي للمحتوى العربي';
-  }
-};
-</script>
 <!-- ═══════════════════════════════════════════
      PAGE: GENERATOR HUB (dedicated)
 ═══════════════════════════════════════════ -->
@@ -2352,19 +2193,6 @@ window.ZX_AD = {
 </section>
 
 
- 
-<!-- ─── COOKIE BANNER ────────────────────────────────────────────── -->
-<div class="cookie-banner" id="cookieBanner">
-  <div class="cookie-banner-text">
-    🍪 نستخدم الكوكيز لتحسين تجربتك — We use cookies to enhance your experience on <strong>Zunexa</strong>.
-    <a href="#" onclick="showPage('appearance',null);closeCookieBanner(false)" style="color:var(--gold);margin-left:6px">Manage Preferences</a>
-  </div>
-  <div class="cookie-banner-actions">
-    <button class="btn btn-ghost btn-sm" onclick="closeCookieBanner(false)">Decline</button>
-    <button class="btn btn-gold btn-sm" onclick="closeCookieBanner(true)">Accept All ✓</button>
-  </div>
-</div>
-
 <!-- ─── MODALS ──────────────────────────────────────────────────── -->
 
 <!-- Edit Modal -->
@@ -2462,22 +2290,13 @@ const REAL_API_KEY = 'zx_live_a7d3f9e2b0c14a88d91f3e6c780b2d5f'; // demo key
 
 // Zunexa AI Content Engine — fully local, no external API
 
-/* ─── Dummy data ──────────────────────────────────────────────── */
-const historyData = [
-  { id: 1, type: 'Instagram Post', lang: 'Darija', preview: 'واش تبغي تعرف سر النجاح? هاكذا كنت كنخدم...', date: '2025-11-28', tokens: 20 },
-  { id: 2, type: 'TikTok Script', lang: 'English', preview: 'Stop scrolling! Here is the hack that changed my business forever...', date: '2025-11-27', tokens: 30 },
-  { id: 3, type: 'SEO Article', lang: 'French', preview: 'Les 10 meilleures techniques pour améliorer votre référencement...', date: '2025-11-26', tokens: 50 },
-  { id: 4, type: 'LinkedIn Article', lang: 'English', preview: 'Why most entrepreneurs fail in their first year — and how to avoid it...', date: '2025-11-25', tokens: 40 },
-  { id: 5, type: 'YouTube Desc', lang: 'Darija', preview: 'فيديو اليوم كنشرح كيفاش تدير محتوى بالذكاء الاصطناعي...', date: '2025-11-24', tokens: 25 },
-  { id: 6, type: 'Instagram Post', lang: 'Gulf Arabic', preview: 'الفرصة اللي ما تفوتش! اشترك الحين وخذ خصم 50%...', date: '2025-11-23', tokens: 20 },
-  { id: 7, type: 'TikTok Script', lang: 'Franco', preview: 'Wach konti t3ref belli... c\'est pas normal had l\'info!', date: '2025-11-22', tokens: 20 },
-];
+/* ─── Content History (live from Supabase content_history table) ──── */
+let historyData = [];
 
 const faqData = [
   { q: 'What are Tokens?', a: 'Tokens are Zunexa\'s generation credits. Each piece of content costs a certain number of tokens depending on length and type.' },
   { q: 'Is my API key secure?', a: 'Never embed your API key in frontend JavaScript. Always call the Zunexa API from your server (PHP, Node.js, Python) where the key cannot be exposed.' },
   { q: 'Which languages/dialects are supported?', a: 'Currently: Moroccan Darija, Gulf Arabic, Franco-Arabe, English, French, and Spanish. More dialects are coming soon.' },
-  { q: 'How do I post directly to social media?', a: 'Connect your accounts in "My Accounts" section, then use the "Post Directly" dropdown in the preview area after generating content.' },
 ];
 
 /* Dialect-specific dummy content */
@@ -2586,8 +2405,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
    // ── ARCHON: Auth Guard ──────────────────────────────────────
    _SB.auth.getSession().then(({ data: { session } }) => {
-     if (!session) { enterFreeMode(); return; }
+     if (!session) { enterFreeMode(); renderHistoryTable('history-tbody', []); renderHistoryTable('history-full-tbody', []); return; }
      _loadUserProfile(session.user);
+     loadHistoryFromCloud();
    });
 
    function _loadUserProfile(supaUser) {
@@ -2732,10 +2552,6 @@ document.addEventListener('click', e => {
   const pd = document.getElementById('profileDropdown');
   if (!e.target.closest('.profile-btn') && !e.target.closest('.profile-dropdown')) {
     pd?.classList.remove('open');
-  }
-  if (!e.target.closest('[onclick="togglePostDropdown()"]')) {
-    const dd = document.getElementById('postDropdown');
-    if (dd) dd.style.display = 'none';
   }
 });
 
@@ -3005,6 +2821,31 @@ const ZX_LANG_BANK = {
 
 function zxPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+/* ─── Free-Mode Template Loader ──────────────────────────────────
+ * Fetches zunexa_free_templates.json and merges extra hooks/bodies/
+ * CTAs/hashtags into ZX_LANG_BANK so Free-plan users get more variety
+ * from the local content engine — no external AI call needed.
+ * Fails silently and keeps the built-in bank if the file is missing.
+ * ────────────────────────────────────────────────────────────── */
+(async function zxLoadFreeTemplates() {
+  try {
+    const res = await fetch('zunexa_free_templates.json', { cache: 'force-cache' });
+    if (!res.ok) return;
+    const data = await res.json();
+    const langs = data?.languages || {};
+    Object.keys(langs).forEach(key => {
+      if (!ZX_LANG_BANK[key]) return;
+      const extra = langs[key];
+      ['hooks','bodies','ctas'].forEach(field => {
+        if (Array.isArray(extra[field])) ZX_LANG_BANK[key][field].push(...extra[field]);
+      });
+      if (Array.isArray(extra.hashtags)) {
+        extra.hashtags.forEach(h => { if (!ZX_LANG_BANK[key].hashtags.includes(h)) ZX_LANG_BANK[key].hashtags.push(h); });
+      }
+    });
+  } catch (err) { console.warn('Zunexa: free templates not loaded, using built-in bank.', err); }
+})();
+
 function zxShuffleHashtags(tags, n) {
   const copy = [...tags];
   for (let i = copy.length - 1; i > 0; i--) {
@@ -3116,18 +2957,8 @@ async function handleGenerate(event, prefix) {
     }
   }, 12);
 
-  // Update history
-  const newEntry = {
-    id: historyData.length + 1,
-    type: typeEl.options[typeEl.selectedIndex].text,
-    lang: langEl.options[langEl.selectedIndex].text,
-    preview: generatedText.substring(0, 70) + '...',
-    date: new Date().toISOString().split('T')[0],
-    tokens: cost
-  };
-  historyData.unshift(newEntry);
-  renderHistoryTable('history-tbody', historyData.slice(0, 5));
-  renderHistoryTable('history-full-tbody', historyData);
+  // Save generation to Supabase (content_history + generated_content) and refresh tables with real data
+  recordGeneration(typeEl.value, typeEl.options[typeEl.selectedIndex].text, langEl.value, generatedText, cost);
 
   // End loading
   btn.classList.remove('loading');
@@ -3187,23 +3018,103 @@ SEO in Morocco is a long game, but the rewards are substantial for those who inv
 function renderHistoryTable(tbodyId, data) {
   const tbody = document.getElementById(tbodyId);
   if (!tbody) return;
+  if (!data || !data.length) {
+    const cols = tbodyId === 'history-full-tbody' ? 7 : 6;
+    tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;padding:28px 12px;color:var(--text-muted);font-size:13px">
+      <i data-lucide="inbox" style="width:20px;height:20px;display:inline-block;vertical-align:-4px;margin-right:6px;opacity:.5"></i>
+      No content generated yet — your activity will appear here.
+    </td></tr>`;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    return;
+  }
   tbody.innerHTML = data.map(row => `
     <tr>
       <td style="color:var(--gold-dim);font-family:'Cinzel',serif">${row.id}</td>
-      <td><span class="type-chip">📄 ${row.type}</span></td>
+      <td><span class="type-chip"><i data-lucide="file-text" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px"></i>${row.type}</span></td>
       ${row.lang ? `<td><span style="font-size:12px;color:var(--text-muted)">${row.lang}</span></td>` : ''}
       <td><span class="preview-text" title="${row.preview}">${row.preview}</span></td>
       <td style="white-space:nowrap;font-size:12px;color:var(--text-muted)">${row.date}</td>
       <td style="color:var(--gold);font-family:'Cinzel',serif">${row.tokens}</td>
       <td>
         <div class="table-actions">
-          <button class="tbl-btn" title="View" onclick="viewHistoryItem(${row.id})">👁</button>
-          <button class="tbl-btn" title="Copy" onclick="copyHistoryItem(${row.id})">📋</button>
-          <button class="tbl-btn danger" title="Delete" onclick="deleteHistoryItem(${row.id})">🗑</button>
+          <button class="tbl-btn" title="View" onclick="viewHistoryItem(${row.id})"><i data-lucide="eye" style="width:14px;height:14px"></i></button>
+          <button class="tbl-btn" title="Copy" onclick="copyHistoryItem(${row.id})"><i data-lucide="copy" style="width:14px;height:14px"></i></button>
+          <button class="tbl-btn danger" title="Delete" onclick="deleteHistoryItem(${row.id})"><i data-lucide="trash-2" style="width:14px;height:14px"></i></button>
         </div>
       </td>
     </tr>
   `).join('');
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+/* ─── Live Content History (Supabase) ───────────────────────────
+ * Reads real rows from public.content_history for the signed-in user
+ * and renders them into both the dashboard "Recent Activity" table
+ * and the full "Content History" page table.
+ * ────────────────────────────────────────────────────────────── */
+async function loadHistoryFromCloud() {
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) { historyData = []; renderHistoryTable('history-tbody', []); renderHistoryTable('history-full-tbody', []); return; }
+
+    const { data, error } = await _SB
+      .from('content_history')
+      .select('id, content_type, language, preview, tokens_used, created_at')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+
+    historyData = (data || []).map(row => ({
+      id: row.id,
+      type: row.content_type || 'Content',
+      lang: row.language || '',
+      preview: row.preview || '',
+      date: row.created_at ? row.created_at.split('T')[0] : '',
+      tokens: row.tokens_used || 0
+    }));
+  } catch (err) {
+    console.error('Zunexa: failed to load content history', err);
+    historyData = [];
+  }
+  renderHistoryTable('history-tbody', historyData.slice(0, 5));
+  renderHistoryTable('history-full-tbody', historyData);
+}
+
+/* ─── Save a generation to Supabase (content_history + generated_content) ── */
+async function recordGeneration(contentTypeValue, contentTypeLabel, languageValue, fullText, tokensUsed) {
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) return;
+
+    const preview = (fullText || '').substring(0, 120);
+
+    await _SB.from('content_history').insert([{
+      user_id: session.user.id,
+      content_type: contentTypeLabel,
+      language: languageValue,
+      preview: preview,
+      tokens_used: tokensUsed
+    }]);
+
+    const GC_TYPES = ['text','code','seo','blog','ad','email','social','other'];
+    const SOCIAL_TYPES = ['instagram','tiktok','linkedin','youtube','twitter'];
+    const gcType = GC_TYPES.includes(contentTypeValue) ? contentTypeValue
+      : (SOCIAL_TYPES.includes(contentTypeValue) ? 'social' : 'other');
+
+    await _SB.from('generated_content').insert([{
+      user_id: session.user.id,
+      tool: 'generator_hub',
+      content_type: gcType,
+      input_data: { original_type: contentTypeValue, language: languageValue },
+      output: fullText || '',
+      language: languageValue
+    }]);
+  } catch (err) {
+    console.error('Zunexa: failed to save generation', err);
+  }
+  loadHistoryFromCloud();
 }
 
 function viewHistoryItem(id) {
@@ -3217,14 +3128,19 @@ function copyHistoryItem(id) {
   const item = historyData.find(h => h.id === id);
   if (item) { navigator.clipboard?.writeText(item.preview); showToast('success','📋 Copied to clipboard!'); }
 }
-function deleteHistoryItem(id) {
+async function deleteHistoryItem(id) {
   const idx = historyData.findIndex(h => h.id === id);
-  if (idx > -1) {
-    historyData.splice(idx, 1);
-    renderHistoryTable('history-tbody', historyData.slice(0, 5));
-    renderHistoryTable('history-full-tbody', historyData);
+  if (idx === -1) return;
+  try {
+    const { error } = await _SB.from('content_history').delete().eq('id', id);
+    if (error) throw error;
     showToast('success', '🗑 Item deleted');
+  } catch (err) {
+    console.error('Zunexa: failed to delete history item', err);
+    showToast('error', '✕ Could not delete item');
+    return;
   }
+  await loadHistoryFromCloud();
 }
 
 /* ─── Bar Chart ──────────────────────────────────────────────── */
@@ -3308,27 +3224,6 @@ function toggleApiKey() {
 function regenApiKey() {
   closeModal('regen-modal');
   showToast('success', '🔑 New API key generated successfully!');
-}
-
-/* ─── Post To Social ─────────────────────────────────────────── */
-function togglePostDropdown() {
-  const dd = document.getElementById('postDropdown');
-  if (dd) dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
-}
-function postTo(platform) {
-  document.getElementById('postDropdown').style.display = 'none';
-  showToast('success', `🚀 Posting to ${platform}...`);
-}
-
-/* ─── Watch Ad ───────────────────────────────────────────────── */
-function watchAd() {
-  showToast('success', '📺 Ad starting... +5 tokens will be credited in 30 seconds');
-  setTimeout(() => {
-    tokenBalance += 5;
-    updateAllTokenDisplays();
-    showToast('success', '🎉 +5 Tokens credited! Keep watching to earn more.');
-    syncTokens();
-  }, 3000); // Fast simulation
 }
 
 /* ─── Edit Modal Save ────────────────────────────────────────── */
@@ -3860,13 +3755,6 @@ document.addEventListener('DOMContentLoaded', function initPrefs() {
   
   // Music bar hidden
   if(localStorage.getItem('zx_music_bar')==='0'){ toggleMusicBar(false); const mb=document.getElementById('musicBarToggle'); if(mb) mb.checked=false; }
-  
-  // Cookie banner
-  if(!localStorage.getItem('zx_cookie_consent')){ setTimeout(()=>{ const b=document.getElementById('cookieBanner'); if(b) b.classList.add('show'); },1800); }
-  
-  // Cookie prefs restore
-  const cp=localStorage.getItem('zx_cookie');
-  if(cp){ try{ const p=JSON.parse(cp); const ca=document.getElementById('cookieAnalytics'); const cm=document.getElementById('cookieMarketing'); if(ca) ca.checked=p.analytics; if(cm) cm.checked=p.marketing; }catch(e){} }
 });
 </script><script>
 /* ─── ZUNEXA V10: ULTIMATE SUPABASE AUTOMATION KERNEL ─── */
@@ -3908,21 +3796,11 @@ const ZunexaCloud = {
         tokens_used: tokensUsed
       }]);
     } catch (err) { console.error("Cloud Sync Error:", err); }
-  },
-  rewardAdTokens: async (amount = 5) => {
-    const { data: { session } } = await _SB.auth.getSession();
-    if (!session) return;
-    if (typeof tokenBalance !== 'undefined') {
-      tokenBalance += amount;
-      if (typeof updateAllTokenDisplays === 'function') updateAllTokenDisplays();
-    }
-    await _SB.from('profiles').update({ tokens_balance: tokenBalance }).eq('id', session.user.id);
   }
 };
 window.signOut = ZunexaCloud.signOut;
 window.applyTheme = ZunexaCloud.applyTheme;
 window.logZunexaAIAction = ZunexaCloud.logAIAction;
-window.rewardAdTokens = ZunexaCloud.rewardAdTokens;
 
 /* ─── JS END ─── */
 /* initSession (legacy duplicate) removed — profile loading is handled
@@ -3981,8 +3859,6 @@ document.addEventListener('DOMContentLoaded', function() {
 async function syncTokens(){try{const{data:{session}}=await _SB.auth.getSession();if(!session)return;await _SB.from('profiles').update({tokens_balance:tokenBalance}).eq('id',session.user.id);}catch(e){}}
 function toggleCompactSidebar(e){const s=document.getElementById('sidebar');if(!s)return;if(e){s.style.width='64px';s.querySelectorAll('.nav-item span:not(.nav-icon):not(.nav-badge)').forEach(x=>x.style.display='none');document.documentElement.style.setProperty('--sidebar-w','64px');}else{s.style.width='';s.querySelectorAll('.nav-item span').forEach(x=>x.style.display='');document.documentElement.style.setProperty('--sidebar-w','240px');}localStorage.setItem('zx_compact',e?'1':'0');}
 function exportUserData(){const d={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);d[k]=localStorage.getItem(k);}d.history=historyData;const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='zunexa_export.json';a.click();URL.revokeObjectURL(u);showToast('success','📥 Data exported!');}
-function saveCookiePrefs(){const a=document.getElementById('cookieAnalytics')?.checked??true;const m=document.getElementById('cookieMarketing')?.checked??false;localStorage.setItem('zx_cookie',JSON.stringify({analytics:a,marketing:m}));}
-function closeCookieBanner(accepted){const b=document.getElementById('cookieBanner');if(b){b.classList.remove('show');b.style.display='none';}localStorage.setItem('zx_cookie_consent',accepted?'all':'declined');if(accepted)saveCookiePrefs();}
 function submitFeedback(){const s=document.getElementById('feedbackSubject')?.value.trim();const m=document.getElementById('feedbackMsg')?.value.trim();const t=document.querySelector('.feedback-type-btn.active')?.textContent.trim()||'General';if(!m){showToast('error','✕ Write feedback first');return;}const f=document.createElement('form');f.action='https://formsubmit.co/mrahmed20101119@gmail.com';f.method='POST';f.style.display='none';[['_subject',`[Zunexa Feedback] ${t}`],['_captcha','false'],['_next',window.location.href],['type',t],['message',m]].forEach(([k,v])=>{const i=document.createElement('input');i.name=k;i.value=v;f.appendChild(i);});document.body.appendChild(f);f.submit();}
 function submitContact(){const n=document.getElementById('contactName')?.value.trim();const e=document.getElementById('contactEmail')?.value.trim();const m=document.getElementById('contactMsg')?.value.trim();if(!n||!e||!m){showToast('error','✕ Fill all fields');return;}const f=document.createElement('form');f.action='https://formsubmit.co/mrahmed20101119@gmail.com';f.method='POST';f.style.display='none';[['_subject',`[Zunexa Contact] ${n}`],['_captcha','false'],['_next',window.location.href],['name',n],['email',e],['message',m]].forEach(([k,v])=>{const i=document.createElement('input');i.name=k;i.value=v;f.appendChild(i);});document.body.appendChild(f);f.submit();}
 /* ─── Utilities ───────────────────────────────────────────── */
@@ -4092,7 +3968,7 @@ function toggleMusicBar(show){const b=document.getElementById('musicBar');const 
 let _rating=0;
 function setRating(n){_rating=n;const L=['','Terrible 😞','Bad 😕','Okay 😐','Good 😊','Excellent! 🌟'];document.querySelectorAll('.star-btn').forEach((b,i)=>{b.classList.toggle('active',i<n);b.setAttribute('data-rating',i+1);});const l=document.getElementById('ratingLabel');if(l)l.textContent=L[n]||'';}
 function selectFeedbackType(btn,t){document.querySelectorAll('.feedback-type-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
-(function(){const c=localStorage.getItem('zx_cookie_consent');const b=document.getElementById('cookieBanner');if(!b)return;if(c){b.style.display='none';}else{setTimeout(()=>b.classList.add('show'),1800);}})()
+
 </script>
 </script>
 
