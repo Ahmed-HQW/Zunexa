@@ -1,0 +1,102 @@
+{
+  "version": "1.0",
+  "description": "Zunexa Free-Mode content bank. Loaded at runtime to extend the built-in ZX_LANG_BANK with extra hooks/bodies/CTAs/hashtags per language, giving Free-plan users more variety without calling a paid AI provider.",
+  "languages": {
+    "darija": {
+      "hooks": [
+        "ماشي كاع الناس عندهم هاد المعلومة على {topic} 🤫",
+        "هاكا كنبدا نهاري م3 {topic} — جربها 👇",
+        "غادي تندم إلا ما قريتيش هادشي على {topic} ⏳"
+      ],
+      "bodies": [
+        "بزاف من الناس كيخافو يبداو فـ {topic} علاش كيبان ليهم معقد.\n\nالحقيقة: غير بدا بخطوة وحدة صغيرة، والباقي كيجي وحدو.",
+        "هادي 3 حوايج لي خاصك تعرفهم قبل ما تبدا فـ {topic}:\n\n1️⃣ حدد الهدف بالضبط\n2️⃣ تعلم من غلطات الآخرين\n3️⃣ كون صبور — النتائج كاتبان مع الوقت"
+      ],
+      "ctas": [
+        "❤️ دوز لايك إلا عجباك المعلومة على {topic}",
+        "📤 شارك هاد البوست مع شي صاحب يحتاجو"
+      ],
+      "hashtags": ["#زونيكسا", "#أعمال", "#تسويق", "#نصائح"]
+    },
+    "english": {
+      "hooks": [
+        "Nobody talks about this side of {topic} 🤫",
+        "Here's how I'd start {topic} if I began again today 👇",
+        "You'll wish you knew this about {topic} sooner ⏳"
+      ],
+      "bodies": [
+        "Most people overthink {topic} before they even start.\n\nThe truth: just take one small step — momentum builds from there.",
+        "3 things to know before diving into {topic}:\n\n1️⃣ Define the exact outcome you want\n2️⃣ Learn from others' mistakes\n3️⃣ Stay patient — results compound over time"
+      ],
+      "ctas": [
+        "❤️ Like this if {topic} is relevant to you",
+        "📤 Share this with someone who needs it"
+      ],
+      "hashtags": ["#Zunexa", "#Business", "#DigitalMarketing", "#ContentTips"]
+    },
+    "french": {
+      "hooks": [
+        "Personne ne parle de cet aspect de {topic} 🤫",
+        "Voici comment je recommencerais {topic} aujourd'hui 👇",
+        "Tu vas regretter de ne pas avoir su ça plus tôt sur {topic} ⏳"
+      ],
+      "bodies": [
+        "La plupart des gens réfléchissent trop avant de commencer {topic}.\n\nLa vérité : fais juste un petit pas — l'élan suit naturellement.",
+        "3 choses à savoir avant de te lancer dans {topic} :\n\n1️⃣ Définis précisément ton objectif\n2️⃣ Apprends des erreurs des autres\n3️⃣ Sois patient — les résultats s'accumulent avec le temps"
+      ],
+      "ctas": [
+        "❤️ Like si {topic} te concerne",
+        "📤 Partage ce post avec quelqu'un qui en a besoin"
+      ],
+      "hashtags": ["#Zunexa", "#Business", "#MarketingDigital", "#Conseils"]
+    },
+    "franco": {
+      "hooks": [
+        "Hadi 7aja ma kayqolhach 7ta wa7d 3la {topic} 🤫",
+        "Hakda ghadi nbda {topic} ila bdit lyoum men jdid 👇",
+        "Ghadi tnedem ila ma 3reftich hadchi 3la {topic} bekri ⏳"
+      ],
+      "bodies": [
+        "Bzaf dyal nas kay réfléchissent bzaf qbel ma yebdaw {topic}.\n\nLa vérité: ghir bda b pas sghir — le reste kayji wahdo.",
+        "3 hwayej khasek t3ref qbel matebda {topic}:\n\n1️⃣ Hdd l-objectif b dakka\n2️⃣ T3llem men ghalat l-okhrin\n3️⃣ Kun patient — les résultats kayjiw m3a lwe9t"
+      ],
+      "ctas": [
+        "❤️ Dwz like ila {topic} khassek",
+        "📤 Partagi had post m3a chi w7ed 3ndo besoin"
+      ],
+      "hashtags": ["#zunexa", "#Maroc", "#business", "#tips"]
+    },
+    "gulf": {
+      "hooks": [
+        "ما أحد يتكلم عن هذا الجانب من {topic} 🤫",
+        "هكذا بدأت {topic} ولو رجعت من جديد 👇",
+        "بتتمنى لو عرفت هذا عن {topic} من زمان ⏳"
+      ],
+      "bodies": [
+        "أغلب الناس يفكرون كثير قبل البدء في {topic}.\n\nالحقيقة: ابدأ بخطوة صغيرة وبعدها كل شي يكمل لحاله.",
+        "3 أشياء لازم تعرفها قبل {topic}:\n\n1️⃣ حدد هدفك بدقة\n2️⃣ استفد من أخطاء غيرك\n3️⃣ كن صبور — النتائج تتراكم مع الوقت"
+      ],
+      "ctas": [
+        "❤️ لايك إذا كان {topic} يهمك",
+        "📤 شارك هذا المنشور مع شخص يحتاجه"
+      ],
+      "hashtags": ["#زونيكسا", "#أعمال", "#تسويق_رقمي", "#نصائح"]
+    },
+    "spanish": {
+      "hooks": [
+        "Nadie habla de este lado de {topic} 🤫",
+        "Así empezaría {topic} si comenzara hoy de nuevo 👇",
+        "Te arrepentirás de no haber sabido esto sobre {topic} antes ⏳"
+      ],
+      "bodies": [
+        "La mayoría piensa demasiado antes de empezar con {topic}.\n\nLa verdad: da solo un pequeño paso — el impulso llega después.",
+        "3 cosas que debes saber antes de empezar con {topic}:\n\n1️⃣ Define exactamente tu objetivo\n2️⃣ Aprende de los errores de otros\n3️⃣ Sé paciente — los resultados se acumulan con el tiempo"
+      ],
+      "ctas": [
+        "❤️ Dale like si {topic} te interesa",
+        "📤 Comparte esto con alguien que lo necesite"
+      ],
+      "hashtags": ["#Zunexa", "#Negocios", "#MarketingDigital", "#Consejos"]
+    }
+  }
+}
