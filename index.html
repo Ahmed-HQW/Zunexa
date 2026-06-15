@@ -99,19 +99,6 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
 .btn-oauth.loading{opacity:.5;pointer-events:none;}
 .btn-oauth svg{width:20px;height:20px;flex-shrink:0;}
 .btn-oauth span{font-size:10px;color:var(--text-muted);}
-/* Phone auth panel */
-.phone-panel{display:none;margin-top:4px;}
-.phone-panel.show{display:block;}
-.phone-flag-wrap{display:flex;gap:8px;}
-.phone-flag-wrap select{width:90px;padding:10px 8px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;flex-shrink:0;cursor:pointer;}
-.phone-flag-wrap select:focus{border-color:var(--gold-dim);}
-.otp-grid{display:flex;gap:8px;justify-content:center;margin:16px 0;}
-.otp-box{width:44px;height:52px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);text-align:center;font-size:22px;font-weight:700;font-family:'Cinzel',serif;color:var(--gold);outline:none;transition:all var(--trans);caret-color:var(--gold);}
-.otp-box:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.15);}
-.otp-timer{text-align:center;font-size:11px;color:var(--text-muted);margin-bottom:12px;}
-.otp-timer span{color:var(--gold);font-weight:700;}
-.btn-resend{background:none;border:none;color:var(--gold);font-size:12px;font-family:'Rajdhani',sans-serif;cursor:pointer;text-decoration:underline;display:none;}
-.btn-resend.show{display:inline;}
   
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -206,7 +193,7 @@ const _SB = supabase.createClient(
         <span class="btn-label">✦ &nbsp; Enter Zunexa</span>
       </button>
       <div class="oauth-divider">or continue with</div>
-      <div class="oauth-row">
+      <div class="oauth-row" style="grid-template-columns:1fr 1fr">
         <button class="btn-oauth" onclick="handleOAuth('google')">
           <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
           <span>Google</span>
@@ -215,52 +202,6 @@ const _SB = supabase.createClient(
           <svg viewBox="0 0 24 24" fill="var(--text-white)"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
           <span>GitHub</span>
         </button>
-        <button class="btn-oauth" onclick="showPhonePanel('signin')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
-          <span>Phone</span>
-        </button>
-      </div>
-      <!-- PHONE PANEL SIGNIN -->
-      <div class="phone-panel" id="phone-panel-signin">
-        <div class="form-field" id="phone-input-step-signin">
-          <label>📱 Phone Number</label>
-          <div class="phone-flag-wrap">
-            <select id="phone-cc-signin">
-              <option value="+212">🇲🇦 +212</option>
-              <option value="+33">🇫🇷 +33</option>
-              <option value="+1">🇺🇸 +1</option>
-              <option value="+44">🇬🇧 +44</option>
-              <option value="+971">🇦🇪 +971</option>
-              <option value="+966">🇸🇦 +966</option>
-              <option value="+49">🇩🇪 +49</option>
-              <option value="+91">🇮🇳 +91</option>
-            </select>
-            <div class="field-wrap" style="flex:1">
-              <span class="field-icon">📱</span>
-              <input type="tel" id="phone-num-signin" placeholder="0612345678" inputmode="numeric"/>
-            </div>
-          </div>
-          <button class="btn-auth" style="margin-top:12px" onclick="sendOTP('signin')">
-            <div class="spinner"></div>
-            <span class="btn-label">Send Code →</span>
-          </button>
-        </div>
-        <div id="otp-step-signin" style="display:none">
-          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;text-align:center;">Enter 6-digit code</label>
-          <div class="otp-grid" id="otp-grid-signin">
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signin',0)"/>
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signin',1)"/>
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signin',2)"/>
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signin',3)"/>
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signin',4)"/>
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signin',5)"/>
-          </div>
-          <div class="otp-timer">Code expires in <span id="otp-timer-signin">60</span>s &nbsp;<button class="btn-resend" id="resend-signin" onclick="sendOTP('signin')">Resend</button></div>
-          <button class="btn-auth" onclick="verifyOTP('signin')">
-            <div class="spinner"></div>
-            <span class="btn-label">✦ Verify & Enter</span>
-          </button>
-        </div>
       </div>
       <div class="auth-footer-link" style="margin-top:16px">No account? <a onclick="switchTab('signup')">Create one →</a></div>
     </div>
@@ -327,7 +268,7 @@ const _SB = supabase.createClient(
         <span class="btn-label">✦ &nbsp; Create Account</span>
       </button>
       <div class="oauth-divider">or sign up with</div>
-      <div class="oauth-row">
+      <div class="oauth-row" style="grid-template-columns:1fr 1fr">
         <button class="btn-oauth" onclick="handleOAuth('google')">
           <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
           <span>Google</span>
@@ -336,52 +277,6 @@ const _SB = supabase.createClient(
           <svg viewBox="0 0 24 24" fill="var(--text-white)"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
           <span>GitHub</span>
         </button>
-        <button class="btn-oauth" onclick="showPhonePanel('signup')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
-          <span>Phone</span>
-        </button>
-      </div>
-      <!-- PHONE PANEL SIGNUP -->
-      <div class="phone-panel" id="phone-panel-signup">
-        <div class="form-field" id="phone-input-step-signup">
-          <label>📱 Phone Number</label>
-          <div class="phone-flag-wrap">
-            <select id="phone-cc-signup">
-              <option value="+212">🇲🇦 +212</option>
-              <option value="+33">🇫🇷 +33</option>
-              <option value="+1">🇺🇸 +1</option>
-              <option value="+44">🇬🇧 +44</option>
-              <option value="+971">🇦🇪 +971</option>
-              <option value="+966">🇸🇦 +966</option>
-              <option value="+49">🇩🇪 +49</option>
-              <option value="+91">🇮🇳 +91</option>
-            </select>
-            <div class="field-wrap" style="flex:1">
-              <span class="field-icon">📱</span>
-              <input type="tel" id="phone-num-signup" placeholder="0612345678" inputmode="numeric"/>
-            </div>
-          </div>
-          <button class="btn-auth" style="margin-top:12px" onclick="sendOTP('signup')">
-            <div class="spinner"></div>
-            <span class="btn-label">Send Code →</span>
-          </button>
-        </div>
-        <div id="otp-step-signup" style="display:none">
-          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;text-align:center;">Enter 6-digit code</label>
-          <div class="otp-grid" id="otp-grid-signup">
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signup',0)"/>
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signup',1)"/>
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signup',2)"/>
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signup',3)"/>
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signup',4)"/>
-            <input class="otp-box" maxlength="1" inputmode="numeric" oninput="otpNext(this,'signup',5)"/>
-          </div>
-          <div class="otp-timer">Code expires in <span id="otp-timer-signup">60</span>s &nbsp;<button class="btn-resend" id="resend-signup" onclick="sendOTP('signup')">Resend</button></div>
-          <button class="btn-auth" onclick="verifyOTP('signup')">
-            <div class="spinner"></div>
-            <span class="btn-label">✦ Verify & Create</span>
-          </button>
-        </div>
       </div>
       <div class="auth-footer-link" style="margin-top:16px">Have an account? <a onclick="switchTab('signin')">Sign In →</a></div>
     </div>
@@ -750,7 +645,7 @@ document.getElementById('su-password').addEventListener('input', function(){
   if(wrap) wrap.classList.toggle('visible', v.length > 0);
 });
   /* ══════════════════════════════════════════════════
-   ZUNEXA AUTH — OAuth + Phone OTP Engine
+   ZUNEXA AUTH — OAuth Engine
    © Zunexa / Archon Protocol — All rights reserved
 ══════════════════════════════════════════════════ */
 const ZX_PROD_URL = 'https://zunexa.vercel.app';
@@ -766,90 +661,6 @@ async function handleOAuth(provider) {
     document.querySelectorAll('.btn-oauth').forEach(b => b.classList.remove('loading'));
     showToast('✕', provider + ' error: ' + error.message);
   }
-}
-
-// ── Phone OTP — show panel ───────────────────────
-function showPhonePanel(form) {
-  const panel = document.getElementById('phone-panel-' + form);
-  if (!panel) return;
-  panel.classList.toggle('show');
-}
-
-// ── Phone OTP — send ─────────────────────────────
-let _otpTimers = {};
-async function sendOTP(form) {
-  const cc  = document.getElementById('phone-cc-' + form).value;
-  const num = document.getElementById('phone-num-' + form).value.trim().replace(/^0/, '');
-  const phone = cc + num;
-  if (num.length < 7) { showToast('✕', 'Enter a valid phone number'); return; }
-
-  const btn = document.querySelector(`#phone-input-step-${form} .btn-auth`);
-  btn.classList.add('loading');
-
-  const { error } = await _SB.auth.signInWithOtp({ phone });
-  btn.classList.remove('loading');
-
-  if (error) { showToast('✕', error.message); return; }
-
-  // Show OTP step
-  document.getElementById('phone-input-step-' + form).style.display = 'none';
-  document.getElementById('otp-step-' + form).style.display = 'block';
-  document.querySelector(`#otp-grid-${form} .otp-box`).focus();
-  showToast('📲', 'Code sent to ' + phone);
-
-  // Countdown timer
-  let t = 60;
-  clearInterval(_otpTimers[form]);
-  _otpTimers[form] = setInterval(() => {
-    t--;
-    const el = document.getElementById('otp-timer-' + form);
-    if (el) el.textContent = t;
-    if (t <= 0) {
-      clearInterval(_otpTimers[form]);
-      const resend = document.getElementById('resend-' + form);
-      if (resend) resend.classList.add('show');
-    }
-  }, 1000);
-}
-
-// ── OTP box auto-advance ──────────────────────────
-function otpNext(input, form, idx) {
-  input.value = input.value.replace(/\D/g, '');
-  const boxes = document.querySelectorAll(`#otp-grid-${form} .otp-box`);
-  if (input.value && idx < 5) boxes[idx + 1].focus();
-  if (idx === 5 && input.value) verifyOTP(form);
-}
-
-// ── OTP verify ───────────────────────────────────
-async function verifyOTP(form) {
-  const cc  = document.getElementById('phone-cc-' + form).value;
-  const num = document.getElementById('phone-num-' + form).value.trim().replace(/^0/, '');
-  const phone = cc + num;
-  const boxes = document.querySelectorAll(`#otp-grid-${form} .otp-box`);
-  const token = [...boxes].map(b => b.value).join('');
-  if (token.length < 6) { showToast('✕', 'Enter all 6 digits'); return; }
-
-  const verifyBtn = document.querySelector(`#otp-step-${form} .btn-auth`);
-  verifyBtn.classList.add('loading');
-
-  const { data, error } = await _SB.auth.verifyOtp({ phone, token, type: 'sms' });
-  verifyBtn.classList.remove('loading');
-
-  if (error) { showToast('✕', 'Invalid code — ' + error.message); return; }
-
-  // Upsert minimal profile for phone users
-  if (data.user) {
-    await _SB.from('profiles').upsert({
-      id: data.user.id,
-      phone,
-      plan: 'Free',
-      tokens_balance: 500,
-      role: 'user',
-      current_theme: 'zalij-dark'
-    }, { onConflict: 'id' });
-  }
-  showSuccess('User', FREE_PLAN);
-  setTimeout(() => window.location.replace('dashboard.html'), 1800);
 }
 
 // ── Fix localhost redirect (email confirm) ────────
