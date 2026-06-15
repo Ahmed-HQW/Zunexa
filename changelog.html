@@ -329,15 +329,11 @@ body {
   <span class="cl-subtitle">Platform Changelog — <span class="sub-hl">Aether-Kernel Protocol</span></span>
   <div class="zx-divider"></div>
   <div class="dev-bar">
-    <div class="dev-chip">👨‍💻 <span>ahmed_dev_a</span></div>
-    <div class="dev-sep"></div>
-    <div class="dev-chip">📍 <span>Bir Jdid, Morocco</span></div>
-    <div class="dev-sep"></div>
-    <div class="dev-chip">💻 <span>Debian 12 · XFCE · i3 4th · 12G ram </span></div>
-    <div class="dev-sep"></div>
     <div class="dev-chip">🔧 <span>HTML5 · CSS3 · Vanilla JS</span></div>
     <div class="dev-sep"></div>
-     <div class="dev-chip">📍<span>I LOVE HANAE</span></div>
+    <div class="dev-chip">☁ <span>Supabase Backend</span></div>
+    <div class="dev-sep"></div>
+    <div class="dev-chip">✦ <span>Zunexa AI Engine</span></div>
   </div>
 </div>
 
@@ -371,12 +367,34 @@ body {
   <!-- ══ TIMELINE FEED ══ -->
   <div class="timeline-feed">
 
+    <!-- ── V11 ── -->
+    <div class="tl-entry anim-fadeIn stagger-1">
+      <div class="tl-dot"></div>
+      <div class="version-card">
+        <div class="vc-head">
+          <span class="vc-badge badge-v10">V11 · LIVE</span>
+          <span class="vc-version">v11.0.0 — Clarity Protocol</span>
+          <span class="vc-date">2026-06-15</span>
+        </div>
+        <div class="vc-items">
+          <div class="vc-item"><div class="vc-dot dot-fix">REMOVED</div><div class="vc-text">"Post Directly" social dropdown (Instagram/TikTok/YouTube/LinkedIn) removed from the Generator preview — no real social API was connected.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">REMOVED</div><div class="vc-text">"Watch an ad, earn tokens" feature fully removed (UI block, styles, simulated reward script).</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">REMOVED</div><div class="vc-text">Cookie consent banner and related preference helpers removed from the dashboard.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">REMOVED</div><div class="vc-text">Sidebar cleanup — removed unused Info 3D, Pro Accounts (duplicate of Billing) and Game Craft entries.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">REMOVED</div><div class="vc-text">Phone number / SMS OTP sign-in &amp; sign-up flow removed from the auth page (Google &amp; GitHub OAuth remain).</div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Real Recent Activity &amp; Content History</strong> — both tables now read live from the <code>content_history</code> table via Supabase; every generation is also archived to <code>generated_content</code>.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Pro Icon Set</strong> — sidebar and table-action icons upgraded to a consistent line-icon set (Lucide) for a more premium feel.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-perf">OPT</div><div class="vc-text">Changelog scrubbed of internal developer details and AI-provider names ahead of a wider AI engine rebrand.</div></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── V10 ── -->
     <div class="tl-entry anim-fadeIn stagger-1">
       <div class="tl-dot"></div>
       <div class="version-card">
         <div class="vc-head">
-          <span class="vc-badge badge-v10">V10 · KERNEL</span>
+          <span class="vc-badge badge-latest">PREVIOUS</span>
           <span class="vc-version">v10.0.0 — Aether-Kernel Protocol</span>
           <span class="vc-date">2026-05-21</span>
         </div>
@@ -400,20 +418,19 @@ body {
       <div class="tl-dot"></div>
       <div class="version-card">
         <div class="vc-head">
-          <span class="vc-badge badge-latest">PREVIOUS</span>
+          <span class="vc-badge badge-latest">ARCHIVE</span>
           <span class="vc-version">v2.5.0 — Archon Protocol</span>
           <span class="vc-date">2026-05-14</span>
         </div>
         <div class="vc-items">
           <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Appearance System</strong> — 4 themes (Zalij Dark/Light, Neon Purple, Ocean Dark), font size slider, compact sidebar toggle</div></div>
           <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Music Player Bar</strong> — top bar with multi-track import, play/pause/seek, volume control, playlist support</div></div>
-          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Zunexa AI Bar</strong> — floating assistant with Gemini API + 30 offline fallback responses when server is down</div></div>
-          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Affiliate Invite Bar</strong> — redeem invite codes <code>ZX-AHMED-2026</code>, <code>ZUNEXA-2026</code> for +20 tokens bonus</div></div>
-          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Feedback Page</strong> — star rating + type selector + FormSubmit email delivery</div></div>
-          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Cookie Consent Banner</strong> — GDPR-style with analytics/marketing preferences saved to <code>localStorage</code></div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Zunexa AI Bar</strong> — floating assistant with smart engine + 30 offline fallback responses when server is down</div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Affiliate Invite Bar</strong> — redeem invite codes for +20 tokens bonus</div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Feedback Page</strong> — star rating + type selector + email delivery</div></div>
           <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Export My Data</strong> — download all <code>localStorage</code> data as timestamped JSON file</div></div>
           <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">Fixed nested button bug in sidebar nav (Help/Docs were broken)</div></div>
-          <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">Resolved duplicate JS variable conflicts — <code>aiPanelOpen</code>, <code>feedbackRating</code>, <code>GEMINI_AI_KEY</code> declared twice</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">Resolved duplicate JS variable conflicts in the AI engine config — declared twice</div></div>
           <div class="vc-item"><div class="vc-dot dot-perf">OPT</div><div class="vc-text"><code>URL.revokeObjectURL</code> for audio memory cleanup, lazy <code>buildDocs()</code>, debounced search input</div></div>
         </div>
       </div>
@@ -429,12 +446,12 @@ body {
           <span class="vc-date">2025-12-01</span>
         </div>
         <div class="vc-items">
-          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Generator Hub</strong> — Gemini API integration with dialect support (Darija, Gulf, Franco, EN, FR, ES)</div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Generator Hub</strong> — Zunexa AI engine with dialect support (Darija, Gulf, Franco, EN, FR, ES)</div></div>
           <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>SEO Tool</strong> — keyword-rich articles for Moroccan and Arab markets</div></div>
           <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Analytics</strong> — bar charts, donut chart, weekly summary, top content</div></div>
           <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>My Accounts</strong> — social media connect/disconnect UI (Instagram, TikTok, YouTube, LinkedIn)</div></div>
           <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Affiliate Program</strong> — referral link, earnings overview, PayPal/Bank/Crypto withdrawal</div></div>
-          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Token System</strong> — watch ads (+5), billing upgrades, real-time balance display</div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Token System</strong> — billing upgrades, real-time balance display</div></div>
           <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">Auth guard — single <code>window.addEventListener</code>, eliminated redirect loop bug</div></div>
           <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">Fixed <code>overflow:hidden</code> on body causing page scroll lock</div></div>
         </div>
@@ -462,8 +479,8 @@ body {
   </div><!-- /timeline-feed -->
 
   <div class="cl-footer">
-    ZUNEXA DIGITAL BRAND — Bir Jdid, Morocco<br>
-    <span style="color:var(--gold-dim)">ahmed_dev_a | v10.0.0 Aether-Kernel Protocol | Built with ✦</span>
+    ZUNEXA DIGITAL BRAND<br>
+    <span style="color:var(--gold-dim)">v10.0.0 Aether-Kernel Protocol | Built with ✦</span>
   </div>
 </div>
 
