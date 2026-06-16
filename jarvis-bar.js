@@ -2,7 +2,7 @@
  * ═══════════════════════════════════════════════════════
  * ZUNEXA — JARVIS OWNER BAR
  * File    : jarvis-bar.js
- * Author  : ahmed_dev_a | Zunexa Digital Brand
+ * Author  : Zunexa Digital Brand
  * Access  : Owner + whitelist ONLY
  * ═══════════════════════════════════════════════════════
  */
@@ -83,8 +83,6 @@ ${styles}
 
   document.body.insertAdjacentHTML('afterbegin', html);
 
-  const GEMINI_KEY = (typeof GEMINI_API_KEY !== 'undefined') ? GEMINI_API_KEY : '';
-
   window.JARVIS = {
     _mode: 'ai', _busy: false,
     setMode(m) {
@@ -101,13 +99,16 @@ ${styles}
       
       try {
         if (this._mode === 'ai') {
-          if (!GEMINI_KEY) { res.textContent = '✕ API Key Missing'; this._busy = false; return; }
-          const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
-            method: 'POST', headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ contents: [{ role:'user', parts:[{ text: inp.value.trim() }] }] })
-          });
-          const d = await r.json();
-          res.textContent = '✦ ' + (d?.candidates?.[0]?.content?.parts?.[0]?.text || 'No response');
+          if (!window._SB) { res.textContent = '✕ Supabase not initialized'; this._busy = false; return; }
+          const q = inp.value.trim();
+          const { data, error } = await window._SB
+            .from('ai_knowledge')
+            .select('answer')
+            .textSearch('question', q, { type: 'websearch', config: 'arabic' })
+            .order('weight', { ascending: false })
+            .limit(1);
+          if (error) throw error;
+          res.textContent = '✦ ' + (data?.[0]?.answer || 'No match in Zunexa AI Engine knowledge base');
         } else {
           res.textContent = '✓ Executed successfully';
         }

@@ -1451,7 +1451,6 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
 @media(max-width:860px){.music-bar{left:0;top:36px;}.music-progress{max-width:80px;}.music-bar-name{max-width:70px;}.header{left:0;}}
 @media(max-width:500px){.music-progress{display:none;}.music-vol{display:none;}}
 /* ─── AI CHAT BAR ────────────────────────────────────────────── */
-.ai-bar-wrap{position:fixed;bottom:24px;left:calc(var(--sidebar-w) + 24px);right:88px;z-index:490;...}
 .ai-chat-panel{background:var(--bg-card);border:1px solid var(--border-gold);border-bottom:none;border-radius:var(--radius-lg) var(--radius-lg) 0 0;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .3s;opacity:0;pointer-events:none;box-shadow:0 -8px 40px rgba(0,0,0,.5);}
 .ai-chat-panel.open{max-height:420px;opacity:1;pointer-events:all;}
 .ai-chat-msgs{height:360px;overflow-y:auto;padding:20px 20px 10px;display:flex;flex-direction:column;gap:14px;}
@@ -1471,19 +1470,6 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
 .ai-typing span:nth-child(2){animation-delay:.18s;}
 .ai-typing span:nth-child(3){animation-delay:.36s;}
 @keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-.ai-bar-input-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-deep);border:1px solid var(--border-gold);border-radius:var(--radius-lg);pointer-events:all;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:border-color var(--trans),box-shadow var(--trans);}
-.ai-bar-input-row:focus-within{border-color:var(--gold);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 0 3px rgba(212,175,55,.12);}
-.ai-bar-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--gold-dim),var(--gold));border-radius:8px;display:grid;place-items:center;font-size:16px;flex-shrink:0;cursor:pointer;transition:all var(--trans);box-shadow:0 0 12px rgba(212,175,55,.3);}
-.ai-bar-icon:hover{transform:scale(1.08);}
-.ai-bar-label{font-family:'Cinzel',serif;font-size:11px;color:var(--gold-dim);letter-spacing:.1em;white-space:nowrap;}
-.ai-bar-input{flex:1;background:none;border:none;color:var(--text-white);font-size:14px;font-family:'Rajdhani',sans-serif;outline:none;padding:0 4px;}
-.ai-bar-input::placeholder{color:var(--text-muted);}
-.ai-bar-send{width:34px;height:34px;background:var(--gold);border:none;border-radius:8px;color:#000;font-size:16px;display:grid;place-items:center;cursor:pointer;transition:all var(--trans);flex-shrink:0;}
-.ai-bar-send:hover{background:var(--gold-bright);transform:scale(1.05);}
-.ai-bar-send:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-.ai-bar-clear{width:34px;height:34px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-size:14px;display:grid;place-items:center;cursor:pointer;transition:all var(--trans);flex-shrink:0;}
-.ai-bar-clear:hover{border-color:var(--border-gold);color:var(--gold);}
-@media(max-width:860px){.ai-bar-wrap{left:12px;right:12px;bottom:16px;}.ai-bar-label{display:none;}}
 @media(max-width:600px){.ai-chat-msgs{height:260px;}.ai-chat-panel.open{max-height:320px;}}
 /* ── PHASE 2 RESPONSIVE FIX ── */
 @media(max-width:860px){
@@ -3620,7 +3606,70 @@ const ZX_AI_TOPICS = [
   { kw:['cookie','خصوصية','privacy'], idx:25 },
 ];
 
+/* ─── Connect zunexa_qa.json + live ai_knowledge to the AI bar ───
+ * Loaded once at startup; zxSearchQA() returns the best-matching
+ * real answer (Q&A bank + learned Supabase knowledge) before the
+ * generic ZX_AI_TOPICS fallback is used.
+ * ────────────────────────────────────────────────────────────── */
+let ZX_QA_KB = [];
+function zxNorm(t) {
+  return (t || '').toLowerCase()
+    .replace(/[أإآاى]/g,'ا').replace(/[ةه]/g,'ه').replace(/[يى]/g,'ي')
+    .replace(/[^\u0621-\u064Aa-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+}
+const ZX_STOP = new Set(['في','من','على','إلى','هو','هي','هل','ما','كيف','لماذا','متى','أين','و','أو','لا','نعم','هذا','هذه','ذلك','التي','الذي','عن','مع','بين','the','is','are','a','an','to','of','and','or','in','it','that','this']);
+function zxTok(t) { return zxNorm(t).split(/\s+/).filter(w => w.length > 1 && !ZX_STOP.has(w)); }
+
+async function zxLoadQA() {
+  try {
+    const r = await fetch('zunexa_qa.json?_=' + Date.now());
+    if (r.ok) {
+      const d = await r.json();
+      ZX_QA_KB = d.map(i => ({
+        q:  i.question || i.q || (i.keywords || []).join(' '),
+        a:  i.response || i.answer || i.a || '',
+        kw: i.keywords || []
+      })).filter(i => i.a);
+    }
+  } catch (e) { console.warn('Zunexa AI bar: qa.json not loaded', e); }
+
+  // Merge live learned answers from Supabase (ai_knowledge)
+  try {
+    const { data, error } = await _SB.from('ai_knowledge')
+      .select('question,answer,keywords')
+      .eq('is_active', true)
+      .order('weight', { ascending: false })
+      .limit(200);
+    if (!error && data) {
+      data.forEach(row => ZX_QA_KB.push({ q: row.question, a: row.answer, kw: row.keywords || [] }));
+    }
+  } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', () => { zxLoadQA(); });
+
+function zxSearchQA(text) {
+  if (!ZX_QA_KB.length) return null;
+  const qToks = new Set(zxTok(text));
+  if (!qToks.size) return null;
+  let best = null, bestScore = 0;
+  ZX_QA_KB.forEach(item => {
+    const dToks = new Set(zxTok(item.q + ' ' + item.kw.join(' ')));
+    if (!dToks.size) return;
+    const inter = [...qToks].filter(t => dToks.has(t)).length;
+    const jacc  = inter / (qToks.size + dToks.size - inter + 0.001);
+    const kwBonus = item.kw.filter(k => zxNorm(text).includes(zxNorm(k))).length * 0.1;
+    const score = jacc + kwBonus;
+    if (score > bestScore) { bestScore = score; best = item; }
+  });
+  return (best && bestScore >= 0.18) ? best.a : null;
+}
+
 function zxLocalAiReply(text) {
+  // 1) Real knowledge base first (zunexa_qa.json + learned Q&A)
+  const qaHit = zxSearchQA(text);
+  if (qaHit) return qaHit;
+
+  // 2) Topical canned answers
   const t = text.toLowerCase();
   for (const topic of ZX_AI_TOPICS) {
     if (topic.kw.some(k => t.includes(k))) {
@@ -3646,7 +3695,7 @@ const AI_FALLBACK = [
   'يمكنك ربط حسابات Instagram، TikTok، YouTube، LinkedIn مباشرة من My Accounts.',
   'API Zunexa متاحة لبناء تطبيقاتك الخاصة — راجع قسم API Settings.',
   'الـ Affiliate Program يمنحك 30% commission على كل referral مدفوع.',
-  'يمكن مشاهدة إعلان قصير للحصول على +5 tokens مجاناً.',
+  'يمكنك ترقية خطتك من Billing للحصول على المزيد من tokens والمميزات.',
   'الـ SEO Tool متخصص في توليد مقالات SEO للسوق المغربي والعربي.',
   'Webhook available لاستقبال أحداث real-time من المنصة.',
   'الـ Token balance يتجدد شهرياً حسب خطتك.',

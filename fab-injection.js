@@ -2,7 +2,7 @@
  * ═══════════════════════════════════════════════════════════════
  * ZUNEXA V10 — FLOATING ACTION BUTTON (FAB) INJECTION
  * File    : fab-injection.js
- * Author  : ahmed_dev_a | Zunexa Digital Brand | Bir Jdid, Morocco
+ * Author  : Zunexa Digital Brand
  * Version : 10.0.0 — Aether-Kernel Protocol
  *
  * USAGE: Add ONE <script> tag before </body> in dashboard.html:

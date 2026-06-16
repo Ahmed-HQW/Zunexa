@@ -4,7 +4,7 @@
   ║  ZUNEXA — ARCHON AI                                             ║
   ║  Stack   : HTML5 · CSS3 · Vanilla JS                            ║
   ║  Design  : Zalij Mode — Premium Moroccan Noir & Gold            ║
-  ║  Engine  : TF-IDF + Cosine Similarity + Supabase Learning       ║
+  ║  Engine  : Zunexa Neural Engine — Semantic Search + Live Learning║
   ║  Version : V9 — Archon Protocol                                 ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
@@ -539,6 +539,16 @@ img{max-width:100%;display:block}
 .voice-btn.recording{border-color:var(--red);color:var(--red);animation:rec-pulse .8s ease infinite}
 @keyframes rec-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,77,109,.3)}50%{box-shadow:0 0 0 6px rgba(255,77,109,.0)}}
 
+/* Toast */
+#zxToast{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--bg2,#141414);border:1px solid var(--gold);color:var(--tw,#f5f5f0);
+  padding:10px 18px;border-radius:99px;font-size:12.5px;white-space:nowrap;
+  box-shadow:0 8px 30px rgba(0,0,0,.5);z-index:9999;opacity:0;
+  transition:opacity .25s ease, transform .25s ease;pointer-events:none;
+}
+#zxToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
 /* Send btn */
 .send-btn{
   width:38px;height:38px;flex-shrink:0;
@@ -773,10 +783,10 @@ img{max-width:100%;display:block}
   <div class="topbar">
     <div class="tb-left">
       <button class="hamburger" onclick="openSidebar()">☰</button>
-      <div class="tb-title">ARCHON INTELLIGENCE · V9</div>
+      <div class="tb-title">ZUNEXA INTELLIGENCE · V9</div>
     </div>
     <div class="tb-right">
-      <div class="model-tag">TF-IDF Engine</div>
+      <div class="model-tag">Zunexa AI Engine</div>
       <button class="web-toggle" id="webTgl" onclick="toggleWeb()">
         <span class="wd"></span>
         <span class="wl">بحث</span>
@@ -812,6 +822,9 @@ img{max-width:100%;display:block}
       </div>
     </div>
   </div>
+
+  <!-- Toast -->
+  <div id="zxToast"></div>
 
   <!-- Input -->
   <div class="input-zone">
@@ -854,9 +867,9 @@ img{max-width:100%;display:block}
 
 <script>
 /* ════════════════════════════════════════════════════════════
-   ZUNEXA ARCHON AI ENGINE
+   ZUNEXA AI ENGINE
    Stack   : HTML5 · CSS3 · Vanilla JS
-   Engine  : TF-IDF + Cosine Similarity + Supabase Learning
+   Engine  : Zunexa Neural Engine — Semantic Search + Live Learning
    No external AI API required
 ════════════════════════════════════════════════════════════ */
 
@@ -1016,7 +1029,7 @@ function tok(text) {
 }
 
 /* ════════════════════════════════════════════════════════════
-   TF-IDF ENGINE
+   SEMANTIC MATCH ENGINE
 ════════════════════════════════════════════════════════════ */
 function buildIDF(docs) {
   const df = {}, N = docs.length || 1;
@@ -1105,14 +1118,14 @@ async function answer(userQ) {
   if (match && match.score >= 0.06) {
     // Partial
     const txt = match.a + '\n\n_💡 إجابة بثقة متوسطة — جرّب إعادة الصياغة للحصول على نتيجة أدق._';
-    await logMsg(userQ, txt, 'partial', match.score);
+    await logMsg(userQ, txt, 'fallback', match.score);
     return { text: txt, src: 'partial', score: match.score };
   }
 
   // Unknown — learn it
   await learnQ(userQ);
   const txt = buildUnknown(userQ);
-  await logMsg(userQ, txt, 'learning', 0);
+  await logMsg(userQ, txt, 'system', 0);
   return { text: txt, src: 'learning', score: 0 };
 }
 
@@ -1161,10 +1174,17 @@ async function logMsg(prompt, response, src, score) {
 
 async function incrWeight(question) {
   try {
+    const url = `${SB_URL}/rest/v1/ai_knowledge?question=eq.${encodeURIComponent(question)}&select=weight,used_count`;
+    const r = await fetch(url, { headers: SB_H });
+    if (!r.ok) return;
+    const d = await r.json();
+    if (!d || !d[0]) return;
+    const newWeight = Math.min(5, (parseFloat(d[0].weight) || 1.0) + 0.04);
+    const newUsed   = (d[0].used_count || 0) + 1;
     await fetch(
       `${SB_URL}/rest/v1/ai_knowledge?question=eq.${encodeURIComponent(question)}`,
-      { method:'PATCH', headers:SB_H,
-        body: JSON.stringify({ weight: 'weight + 0.04', used_count: 'used_count + 1' }) }
+      { method:'PATCH', headers:{...SB_H,'Prefer':'return=minimal'},
+        body: JSON.stringify({ weight: newWeight, used_count: newUsed }) }
     );
   } catch(e){}
 }
@@ -1325,6 +1345,16 @@ function resize(el) {
   document.getElementById('charCount').textContent = l ? l : '';
 }
 
+let _toastTimer = null;
+function toast(msg) {
+  const el = document.getElementById('zxToast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
 /* ════════════════════════════════════════════════════════════
    HISTORY
 ════════════════════════════════════════════════════════════ */
@@ -1415,6 +1445,7 @@ function initVoice() {
   recog = new SpeechRecognition();
   recog.lang = 'ar-MA';
   recog.interimResults = false;
+  recog.continuous = false;
   recog.maxAlternatives = 1;
 
   recog.onresult = e => {
@@ -1424,14 +1455,33 @@ function initVoice() {
     stopVoice();
     send();
   };
-  recog.onerror = () => stopVoice();
-  recog.onend   = () => stopVoice();
+  recog.onerror = (e) => {
+    stopVoice();
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+      toast('🎙 يرجى السماح بالوصول إلى الميكروفون من إعدادات المتصفح');
+    } else if (e.error === 'no-speech') {
+      toast('🎙 لم يُسمع أي صوت — حاول مرة أخرى');
+    } else if (e.error !== 'aborted') {
+      toast('🎙 تعذّر التعرف على الصوت');
+    }
+  };
+  recog.onend = () => stopVoice();
 }
 
 function toggleVoice() {
-  if (!recog) return;
-  if (recording) { recog.stop(); stopVoice(); }
-  else { recog.start(); startVoice(); }
+  if (!recog) { toast('🎙 التعرف على الصوت غير مدعوم في هذا المتصفح'); return; }
+  if (recording) {
+    recog.stop();
+    stopVoice();
+  } else {
+    try {
+      recog.start();
+      startVoice();
+    } catch (err) {
+      stopVoice();
+      toast('🎙 تعذّر بدء التسجيل — حاول من جديد');
+    }
+  }
 }
 
 function startVoice() {

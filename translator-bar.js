@@ -2,7 +2,7 @@
  * ═══════════════════════════════════════════════════════════════
  * ZUNEXA V10 — TRANSLATION SYSTEM (ARCHON CORE)
  * File    : translator-bar.js
- * Author  : ahmed_dev_a | Zunexa Digital Brand | Bir Jdid, Morocco
+ * Author  : Zunexa Digital Brand
  * Version : 10.0.0 — Aether-Kernel Protocol
  * ═══════════════════════════════════════════════════════════════
  */

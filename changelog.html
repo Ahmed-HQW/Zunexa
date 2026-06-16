@@ -385,6 +385,13 @@ body {
           <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Real Recent Activity &amp; Content History</strong> — both tables now read live from the <code>content_history</code> table via Supabase; every generation is also archived to <code>generated_content</code>.</div></div>
           <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Pro Icon Set</strong> — sidebar and table-action icons upgraded to a consistent line-icon set (Lucide) for a more premium feel.</div></div>
           <div class="vc-item"><div class="vc-dot dot-perf">OPT</div><div class="vc-text">Changelog scrubbed of internal developer details and AI-provider names ahead of a wider AI engine rebrand.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Zunexa AI Engine rebrand</strong> — "TF-IDF Engine" label renamed to "Zunexa AI Engine" in ai.html topbar.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">Microphone was silently failing — global Permissions-Policy header was blocking microphone access (<code>microphone=()</code>). Now allowed for same-origin with proper error toasts.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">Fixed broken Supabase PATCH on ai.html that sent SQL expressions as JSON strings — knowledge weight now reads then increments correctly.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">AI message logging used invalid <code>source</code> values ("partial", "learning") that violated the DB check constraint — now mapped to allowed values.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Dashboard AI bar</strong> now searches <code>zunexa_qa.json</code> + live <code>ai_knowledge</code> (Supabase) before falling back to generic replies.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">Fixed broken sidebar-injection.js — typo <code>chengelog.html</code>, wrong <code>affiliate.html</code> path, duplicate routes, empty dead function removed.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">JARVIS owner bar: replaced broken Gemini API call with live Supabase <code>ai_knowledge</code> full-text search query.</div></div>
         </div>
       </div>
     </div>

@@ -42,7 +42,17 @@
   };
   const planInfo = PLAN_MAP[plan] || PLAN_MAP.free;
 
-
+  /* ── 3. Nav items config ── */
+  const NAV_ITEMS = [
+    { icon: '⊞',  label: 'Dashboard',    href: 'dashboard.html',    section: 'main' },
+    { icon: '📊', label: 'Analytics',    href: 'analytics.html', section: 'main' },
+    { icon: '🤖', label: 'Ai Zunexa',    href: 'ai.html',        section: 'main' },
+    { icon: '🎯', label: 'Affiliate',    href: 'affiliat.html',  section: 'tools' },
+    { icon: '⚙️', label: 'Settings',     href: 'settings.html',      section: 'tools' },
+    { icon: '💳', label: 'Billing',      href: 'pro_accounts.html',       section: 'tools' },
+    { icon: '📜', label: 'Changelog',    href: 'changelog.html',     section: 'info'  },
+    { icon: '✉️', label: 'Contact',      href: 'CONTACT.html',   section: 'info'  },
+  ];
 
   /* ── 4. Build nav items HTML ── */
   function buildNavItem(item) {
@@ -54,18 +64,6 @@
         ${isActive ? '<span class="nav-pip"></span>' : ''}
       </a>`;
   }
-   /* ── 3. Nav items config ── */
-  const NAV_ITEMS = [
-    { icon: '⊞',  label: 'Dashboard',    href: 'dashboard.html',    section: 'main' },
-    { icon: '📊', label: 'Analytics',    href: 'analytics.html', section: 'main' },
-    { icon: '👥', label: 'Accounts',     href: 'pro_accounts.html',  section: 'main' },
-    { icon: '🎯', label: 'Affiliate',    href: 'affiliate.html', section: 'tools' },
-    { icon: '📋', label: 'Docs',         href: 'chengelog.html',      section: 'tools' },
-    { icon: '⚙️', label: 'Settings',     href: 'settings.html',      section: 'tools' },
-    { icon: '💳', label: 'Billing',      href: 'pro_accounts.html',       section: 'tools' },
-    { icon: '📜', label: 'Changelog',    href: 'changelog.html',     section: 'info'  },
-    { icon: '✉️', label: 'Contact',      href: 'CONTACT.html',   section: 'info'  },
-  ];
 
   const navMain  = NAV_ITEMS.filter(i => i.section === 'main').map(buildNavItem).join('');
   const navTools = NAV_ITEMS.filter(i => i.section === 'tools').map(buildNavItem).join('');
@@ -405,9 +403,6 @@ body.sidebar-compact { padding-left: 64px; }
 
 })();
 
-
-/* ZX LOGO INTERACTION SYSTEM */
-(function initLogoInteraction() { /* Logic for Toast and Titles */ })();
 
 /* ══ ZX LOGO INTERACTION — Archon Core ══ */
 (function initLogoInteraction() {
