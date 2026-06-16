@@ -1,682 +1,539 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Zunexa — Sign In</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23080808'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%23D4AF37' stroke-width='.8' opacity='.6'/><text x='16' y='21' text-anchor='middle' font-size='17' font-family='Georgia,serif' fill='%23D4AF37' font-weight='bold'>Z</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet"/>
-<style>
-:root{--bg-void:#080808;--bg-deep:#0e0e0e;--bg-card:#141414;--bg-input:#111111;--border:#242424;--border-gold:rgba(212,175,55,.35);--gold:#D4AF37;--gold-bright:#f0cc55;--gold-dim:#8a7022;--gold-glow:rgba(212,175,55,.18);--text-white:#f5f5f0;--text-grey:#9a9a8a;--text-muted:#555548;--green:#3ddc84;--red:#ff4d6d;--blue:#5b8dee;--purple:#a78bfa;--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--trans:.22s cubic-bezier(.4,0,.2,1);}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--text-white);display:flex;align-items:center;justify-content:center;min-height:100vh;font-size:15px;position:relative;}
-.bg-layer{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,rgba(212,175,55,.04) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 85% 80%,rgba(212,175,55,.03) 0%,transparent 60%),var(--bg-void);}
-.zalij-bg-pattern{position:fixed;inset:0;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%23D4AF3709' stroke-width='.8'%3E%3Cpolygon points='40,3 76,22 76,58 40,77 4,58 4,22'/%3E%3Cpolygon points='40,14 65,28 65,52 40,66 15,52 15,28'/%3E%3Ccircle cx='40' cy='40' r='10'/%3E%3C/g%3E%3C/svg%3E");opacity:.6;}
-.floating-hex{position:fixed;z-index:0;pointer-events:none;animation:floatHex 20s ease-in-out infinite;opacity:.04;font-size:200px;color:var(--gold);font-family:'Cinzel',serif;line-height:1;}
-.floating-hex:nth-child(1){top:-60px;left:-40px;animation-delay:0s}
-.floating-hex:nth-child(2){bottom:-80px;right:-30px;animation-delay:-10s;font-size:160px}
-@keyframes floatHex{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-20px) rotate(5deg)}}
-.auth-shell{position:relative;z-index:10;width:100%;max-width:480px;padding:16px;}
-.auth-logo{text-align:center;margin-bottom:32px;}
-.logo-hex{width:64px;height:64px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:16px;display:inline-grid;place-items:center;font-size:32px;margin-bottom:14px;box-shadow:0 0 40px rgba(212,175,55,.3),0 8px 32px rgba(0,0,0,.5);animation:pulseLogo 3s ease-in-out infinite;}
-@keyframes pulseLogo{0%,100%{box-shadow:0 0 40px rgba(212,175,55,.3),0 8px 32px rgba(0,0,0,.5)}50%{box-shadow:0 0 60px rgba(212,175,55,.5),0 8px 32px rgba(0,0,0,.5)}}
-.logo-name{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--gold);letter-spacing:.06em;display:block;line-height:1;}
-.logo-tagline{font-size:11px;color:var(--text-muted);letter-spacing:.14em;text-transform:uppercase;margin-top:4px;display:block;}
-.auth-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;box-shadow:0 24px 80px rgba(0,0,0,.6),0 1px 0 rgba(212,175,55,.08) inset;position:relative;overflow:hidden;}
-.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
-.auth-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border-gold),transparent);opacity:.5;}
-.auth-tabs{display:flex;gap:0;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;margin-bottom:28px;}
-.tab-btn{flex:1;padding:9px;background:none;border:none;color:var(--text-muted);font-size:13px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all var(--trans);}
-.tab-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#000;box-shadow:0 2px 12px rgba(212,175,55,.3);}
-.avatar-upload-wrap{text-align:center;margin-bottom:24px;}
-.avatar-ring{position:relative;display:inline-block;cursor:pointer;}
-.avatar-ring input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;}
-.avatar-preview{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;color:#000;font-family:'Cinzel',serif;position:relative;overflow:hidden;border:3px solid var(--border-gold);box-shadow:0 0 30px rgba(212,175,55,.2);transition:all var(--trans);}
-.avatar-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.avatar-edit-badge{position:absolute;bottom:2px;right:2px;width:26px;height:26px;background:var(--gold);border-radius:50%;display:grid;place-items:center;font-size:13px;z-index:3;border:2px solid var(--bg-card);pointer-events:none;}
-.avatar-ring:hover .avatar-preview{border-color:var(--gold);box-shadow:0 0 40px rgba(212,175,55,.4)}
-.avatar-label{display:block;margin-top:8px;font-size:11px;color:var(--text-muted);letter-spacing:.08em;}
-.form-field{margin-bottom:16px;}
-.form-field label{display:block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px;}
-.field-wrap{position:relative;}
-.field-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text-muted);pointer-events:none;}
-.field-wrap input{width:100%;padding:11px 14px 11px 40px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:14px;font-family:'Rajdhani',sans-serif;outline:none;transition:border-color var(--trans),box-shadow var(--trans);}
-.field-wrap input:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px rgba(212,175,55,.12);}
-.field-wrap input::placeholder{color:var(--text-muted);}
-.code-field{background:var(--bg-input);border:1px solid var(--border-gold);border-radius:var(--radius-sm);padding:11px 14px 11px 40px;width:100%;font-size:14px;font-family:'Courier New',monospace;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;outline:none;transition:all var(--trans);}
-.code-field:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.15);}
-.code-field::placeholder{color:var(--text-muted);font-family:'Rajdhani',sans-serif;letter-spacing:normal;text-transform:none;}
-.plan-preview{margin-top:8px;padding:8px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px;transition:all var(--trans);min-height:36px;}
-.plan-preview.hidden{display:none}
-.plan-preview.free{background:rgba(155,155,155,.1);border:1px solid #444;color:#888}
-.plan-preview.plus{background:rgba(91,141,238,.1);border:1px solid rgba(91,141,238,.3);color:var(--blue)}
-.plan-preview.pro{background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.35);color:var(--gold)}
-.plan-preview.senior{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:var(--purple)}
-.plan-preview.owner{background:rgba(212,175,55,.2);border:1px solid var(--gold);color:var(--gold)}
-.free-notice{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(61,220,132,.06);border:1px solid rgba(61,220,132,.2);border-radius:var(--radius-sm);font-size:12px;color:var(--text-grey);margin-bottom:20px;}
-.free-notice .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
-.or-divider{display:flex;align-items:center;gap:12px;margin:20px 0;font-size:11px;color:var(--text-muted);letter-spacing:.1em;}
-.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border));}
-.or-divider::after{background:linear-gradient(90deg,var(--border),transparent)}
-.btn-auth{width:100%;padding:13px;background:linear-gradient(135deg,var(--gold) 0%,#b8922e 100%);border:none;border-radius:var(--radius-sm);color:#000;font-size:14px;font-weight:700;font-family:'Cinzel',serif;letter-spacing:.08em;cursor:pointer;transition:all var(--trans);box-shadow:0 4px 24px rgba(212,175,55,.35);display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;margin-top:4px;}
-.btn-auth::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,transparent 50%);}
-.btn-auth:hover{background:linear-gradient(135deg,var(--gold-bright) 0%,var(--gold) 100%);box-shadow:0 6px 32px rgba(212,175,55,.5);transform:translateY(-1px);}
-.btn-auth:active{transform:translateY(0)}
-.btn-auth .spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;display:none;}
-.btn-auth.loading .spinner{display:block}
-.btn-auth.loading .btn-label{display:none}
-@keyframes spin{to{transform:rotate(360deg)}}
-.auth-footer-link{text-align:center;margin-top:20px;font-size:13px;color:var(--text-muted);}
-.auth-footer-link a{color:var(--gold);cursor:pointer}
-.auth-footer-link a:hover{color:var(--gold-bright)}
-.success-screen{display:none;text-align:center;padding:20px 0;}
-.success-icon{width:72px;height:72px;background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.3);border-radius:50%;display:inline-grid;place-items:center;font-size:32px;margin-bottom:16px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1);}
-@keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
-.success-title{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--text-white);margin-bottom:6px}
-.success-sub{font-size:13px;color:var(--text-grey);margin-bottom:8px}
-.success-plan-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:20px;}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-.shake{animation:shake .4s ease}
-.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg-card);border:1px solid var(--border-gold);border-radius:var(--radius-md);padding:12px 18px;font-size:13px;color:var(--text-white);display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;transform:translateX(40px);transition:all .3s ease;pointer-events:none;}
-.toast.show{opacity:1;transform:translateX(0)}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg-deep)}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:99px}
-/* Owner badge special */
-.owner-badge-wrap{text-align:center;margin-bottom:16px;display:none;}
-.owner-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;background:linear-gradient(135deg,rgba(212,175,55,.2),rgba(212,175,55,.05));border:1px solid var(--gold);border-radius:99px;font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:.08em;}
-/* Error box */
-.err-box{background:rgba(255,77,109,.07);border:1px solid rgba(255,77,109,.25);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:#ff8096;display:none;align-items:center;gap:8px;margin-bottom:12px;}
-.err-box.show{display:flex;}
-@media(max-width:520px){.auth-card{padding:22px 16px}.auth-shell{padding:12px}}
-  /* ══ OAUTH & PHONE AUTH — PREMIUM ══ */
-.oauth-divider{display:flex;align-items:center;gap:10px;margin:20px 0 14px;color:var(--text-muted);font-size:10px;letter-spacing:.14em;text-transform:uppercase;}
-.oauth-divider::before,.oauth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.oauth-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px;}
-.btn-oauth{padding:10px 6px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-size:12px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.04em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:all var(--trans);position:relative;overflow:hidden;}
-.btn-oauth:hover{border-color:var(--gold);background:rgba(212,175,55,.06);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
-.btn-oauth:active{transform:translateY(0);}
-.btn-oauth.loading{opacity:.5;pointer-events:none;}
-.btn-oauth svg{width:20px;height:20px;flex-shrink:0;}
-.btn-oauth span{font-size:10px;color:var(--text-muted);}
-  
-</style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
-// ── Supabase Init ──
-const _SB = supabase.createClient(
-  atob('aHR0cHM6Ly94cmxkaGZzeXR5c3pueXlod2psci5zdXBhYmFzZS5jbw=='),
-  atob('c2JfcHVibGlzaGFibGVfcXRaeXpMU1BWWWpIMHlCMEJKWTh5Z18ycjJjdDM1Rg==')
-);
-</script>
-<style id="zx-pwd-validator-styles">
-        #zx-pwd-strength { margin-top: 8px; display: none; flex-direction: column; gap: 4px; }
-        #zx-pwd-strength.visible { display: flex; }
-        .pwd-bar-wrap { height: 3px; background: #1a1a1a; border-radius: 99px; overflow: hidden; }
-        .pwd-bar-fill { height: 100%; width: 0%; border-radius: 99px; transition: width .35s ease, background .35s ease; }
-        .pwd-rules { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
-        .pwd-rule { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #333328; display: flex; align-items: center; gap: 6px; transition: color .2s; }
-        .pwd-rule.ok { color: #3ddc84; }
-        .pwd-rule.bad { color: #ff4d6d; }
-        .pwd-rule::before { content: '○'; }
-        .pwd-rule.ok::before { content: '●'; }
-        .pwd-rule.bad::before { content: '✕'; }
-        .pwd-label { font-family: 'Rajdhani', sans-serif; font-size: 10px; color: #555548; letter-spacing: .08em; }
-        </style>
-        </head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zarix Coaching — Elite AI-Powered Training</title>
+  <meta name="description" content="Zarix Coaching: AI-powered fitness coaching for sport, gym, boxing, calisthenics, and nutrition. Personalized guidance from Free to Max tier." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
 <body>
-<div class="bg-layer"></div>
-<div class="zalij-bg-pattern"></div>
-<div class="floating-hex">⬡</div>
-<div class="floating-hex">⬡</div>
 
-<div class="auth-shell">
-  <div class="auth-logo">
-    <div class="logo-hex">⬡</div>
-    <span class="logo-name">ZUNEXA</span>
-    <span class="logo-tagline">AI Content Generation Platform</span>
-  </div>
+<!-- ═══════════════════════════════════════════════════════════
+     TOAST CONTAINER
+═══════════════════════════════════════════════════════════ -->
+<div class="toast-container" id="toastContainer"></div>
 
-  <div class="auth-card" id="authCard">
-    <div class="auth-tabs">
-      <button class="tab-btn active" onclick="switchTab('signin')" id="tab-signin">Sign In</button>
-      <button class="tab-btn" onclick="switchTab('signup')" id="tab-signup">Sign Up</button>
-    </div>
-
-    <!-- ERR BOX -->
-    <div class="err-box" id="errBox">
-      <span>⚠</span><span id="errMsg">Error</span>
-    </div>
-    
-    <!-- SIGN IN -->
-    <div id="form-signin">
-      <div class="free-notice">
-        <span class="dot"></span>
-        <span>No code? Enter with <strong style="color:var(--green)">Free Plan</strong> — upgrade anytime.</span>
+<!-- ═══════════════════════════════════════════════════════════
+     AUTH MODAL
+═══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal glass-card">
+    <button onclick="closeModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--text-muted);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="modal-title" id="authTitle">Welcome Back</div>
+    <div class="modal-sub" id="authSub">Sign in to unlock your personalized coaching.</div>
+    <div class="auth-error" id="authError"></div>
+    <div id="authForm">
+      <div class="form-group" id="nameGroup" style="display:none;">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-input" id="authName" placeholder="Your name" autocomplete="name" />
       </div>
-      <div class="avatar-upload-wrap">
-        <div class="avatar-ring" title="Click to change photo">
-          <input type="file" accept="image/*" onchange="handleAvatarUpload(event,'signin')"/>
-          <div class="avatar-preview" id="avatar-signin">
-            <span id="avatar-initials-signin">A</span>
-            <img id="avatar-img-signin" src="" style="display:none"/>
-          </div>
-          <div class="avatar-edit-badge">✏</div>
-        </div>
-        <span class="avatar-label">Tap to change photo</span>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" id="authEmail" placeholder="you@example.com" autocomplete="email" />
       </div>
-      <div class="form-field">
-        <label>Username</label>
-        <div class="field-wrap">
-          <span class="field-icon">◎</span>
-          <input type="text" id="si-username" placeholder="Enter your username" autocomplete="username" oninput="checkOwnerMode()"/>
-        </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="authPassword" placeholder="••••••••" autocomplete="current-password" />
       </div>
-      <div class="form-field">
-        <label>Password</label>
-        <div class="field-wrap">
-          <span class="field-icon">🔒</span>
-          <input type="password" id="si-password" placeholder="••••••••" autocomplete="current-password"/>
-        </div>
-      </div>
-      <div class="or-divider">Optional Plan Code</div>
-      <div class="form-field">
-        <label>🔑 Plan Activation Code</label>
-        <div class="field-wrap">
-          <span class="field-icon">◆</span>
-          <input class="code-field" type="text" id="si-code" placeholder="Leave empty for Free Plan" oninput="detectPlan(this.value,'si')" maxlength="24" autocomplete="off"/>
-        </div>
-        <div class="plan-preview hidden" id="si-plan-preview"></div>
-      </div>
-      <button class="btn-auth" onclick="handleSignIn()">
-        <div class="spinner"></div>
-        <span class="btn-label">✦ &nbsp; Enter Zunexa</span>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="authSubmit" onclick="handleAuth()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <span id="authBtnText">Sign In</span>
       </button>
-      <div class="oauth-divider">or continue with</div>
-      <div class="oauth-row" style="grid-template-columns:1fr 1fr">
-        <button class="btn-oauth" onclick="handleOAuth('google')">
-          <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-          <span>Google</span>
-        </button>
-        <button class="btn-oauth" onclick="handleOAuth('github')">
-          <svg viewBox="0 0 24 24" fill="var(--text-white)"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-          <span>GitHub</span>
-        </button>
-      </div>
-      <div class="auth-footer-link" style="margin-top:16px">No account? <a onclick="switchTab('signup')">Create one →</a></div>
     </div>
-
-    <!-- SIGN UP -->
-    <div id="form-signup" style="display:none">
-      <div class="avatar-upload-wrap">
-        <div class="avatar-ring" title="Upload profile photo">
-          <input type="file" accept="image/*" onchange="handleAvatarUpload(event,'signup')"/>
-          <div class="avatar-preview" id="avatar-signup">
-            <span id="avatar-initials-signup">?</span>
-            <img id="avatar-img-signup" src="" style="display:none"/>
-          </div>
-          <div class="avatar-edit-badge">📷</div>
-        </div>
-        <span class="avatar-label">Upload profile photo</span>
-      </div>
-      <div class="form-field">
-        <label>Name</label>
-        <div class="field-wrap"><span class="field-icon">◎</span>
-          <input type="text" id="su-fname" placeholder="Your name" oninput="updateInitials()"/>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Username</label>
-        <div class="field-wrap"><span class="field-icon">⬡</span>
-          <input type="text" id="su-username" placeholder="username"/>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Email</label>
-        <div class="field-wrap"><span class="field-icon">✉</span>
-          <input type="email" id="su-email" placeholder="name@example.com"/>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Password</label>
-        <div class="field-wrap"><span class="field-icon">🔒</span>
-          <input type="password" id="su-password" placeholder="Min 8 characters" autocomplete="new-password"/>
-           <div id="zx-pwd-strength">
-   <div class="pwd-bar-wrap"><div class="pwd-bar-fill" id="pwd-bar"></div></div>
-   <span class="pwd-label" id="pwd-label">— Enter password</span>
-   <div class="pwd-rules">
-     <span class="pwd-rule" id="r-len">At least 8 characters</span>
-     <span class="pwd-rule" id="r-upp">Uppercase letter (A–Z)</span>
-     <span class="pwd-rule" id="r-num">Number (0–9)</span>
-     <span class="pwd-rule" id="r-sym">Special character (!@#…)</span>
-   </div>
- </div>
-        </div>
-      </div>
-      <div class="auth-footer-link" style="margin-top:8px;margin-bottom:4px">
-        <a onclick="togglePlanCode('su')" id="su-code-toggle">Have a plan code? →</a>
-      </div>
-      <div class="form-field" id="su-code-wrap" style="display:none">
-        <label>🔑 Plan Code</label>
-        <div class="field-wrap"><span class="field-icon">◆</span>
-          <input class="code-field" type="text" id="su-code" placeholder="ZX-PLUS-XXXX / ZX-PRO-XXXX / ZX-SENIOR-XXXX" oninput="detectPlan(this.value,'su')" maxlength="24" autocomplete="off"/>
-        </div>
-        <div class="plan-preview hidden" id="su-plan-preview"></div>
-      </div>
-     <button class="btn-auth" style="margin-top:16px" onclick="handleSignUp()">
-        <div class="spinner"></div>
-        <span class="btn-label">✦ &nbsp; Create Account</span>
-      </button>
-      <div class="oauth-divider">or sign up with</div>
-      <div class="oauth-row" style="grid-template-columns:1fr 1fr">
-        <button class="btn-oauth" onclick="handleOAuth('google')">
-          <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-          <span>Google</span>
-        </button>
-        <button class="btn-oauth" onclick="handleOAuth('github')">
-          <svg viewBox="0 0 24 24" fill="var(--text-white)"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-          <span>GitHub</span>
-        </button>
-      </div>
-      <div class="auth-footer-link" style="margin-top:16px">Have an account? <a onclick="switchTab('signin')">Sign In →</a></div>
+    <div class="modal-footer">
+      <span id="authToggleText">Don't have an account?</span>
+      <a onclick="toggleAuthMode()" id="authToggleLink">Sign Up</a>
     </div>
-
-    <!-- SUCCESS -->
-    <div class="success-screen" id="success-screen">
-      <div class="success-icon">✓</div>
-      <div class="success-title">Welcome to Zunexa!</div>
-      <div class="success-sub" id="success-name">مرحباً 👋</div>
-      <div class="success-plan-badge" id="success-plan-badge">✦ Pro Plan</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px" id="redirect-msg">Redirecting to dashboard...</div>
-      <div id="progress-wrap" style="width:100%;height:3px;background:var(--border);border-radius:99px;overflow:hidden">
-        <div id="progress-bar" style="height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));width:0%;transition:width 2.2s ease;border-radius:99px"></div>
-      </div>
-    </div>
-
   </div>
 </div>
 
-<div class="toast" id="toast">
-  <span id="toast-icon">✔</span>
-  <span id="toast-msg">Done!</span>
+<!-- ═══════════════════════════════════════════════════════════
+     QA EXPANDED MODAL
+═══════════════════════════════════════════════════════════ -->
+<div class="qa-expanded" id="qaExpanded">
+  <div class="qa-expanded-inner glass-card">
+    <button onclick="closeQA()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;color:var(--text-muted);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="qa-expanded-cat" id="qaExpCat"></div>
+    <div class="qa-expanded-q" id="qaExpQ"></div>
+    <div class="qa-expanded-tier-note" id="qaExpTierNote"></div>
+    <div class="qa-expanded-answer" id="qaExpAnswer"></div>
+    <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="billing.html" class="btn btn-primary btn-sm">Upgrade for deeper insights</a>
+      <button onclick="closeQA()" class="btn btn-secondary btn-sm">Close</button>
+    </div>
+  </div>
 </div>
 
-<script>
-// ══════════════════════════════════════════════════════
-// ZUNEXA AUTH ENGINE v3.0 — ARCHON PROTOCOL
-// ══════════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════════
+     APP SHELL
+═══════════════════════════════════════════════════════════ -->
+<div class="app-shell">
 
-// ── Plan display labels (cosmetic only — actual plan/tokens/role are
-//    determined server-side via the redeem_plan_code RPC + user_plans /
-//    user_tokens tables, never written directly from the client) ──
-const PLAN_DISPLAY = {
-  Free:   { label:'○ Free Plan',   color:'free'   },
-  Plus:   { label:'⭐ Plus Plan',   color:'plus'   },
-  Pro:    { label:'✦ Pro Plan',    color:'pro'    },
-  Senior: { label:'◆ Senior Plan', color:'senior' },
-};
-const FREE_PLAN = PLAN_DISPLAY.Free;
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <a href="index.html" class="sidebar-logo">
+      <div class="sidebar-logo-mark">Z</div>
+      <span class="sidebar-logo-text">Zarix</span>
+    </a>
 
-const PLAN_COLORS = { free:'#888', plus:'#5b8dee', pro:'#D4AF37', senior:'#a78bfa', owner:'#D4AF37' };
+    <div class="sidebar-divider"></div>
 
-let currentTab = 'signin';
+    <a href="index.html" class="nav-item active" data-page="home">
+      <!-- Home icon -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span class="nav-label">Home</span>
+    </a>
 
-  /* ── TRY BEFORE YOU BUY — Guest Mode ── */
-  const ZX_GUEST = {
-    KEY: 'zx_guest_used',
-    canGenerate() { return sessionStorage.getItem(this.KEY) !== '1'; },
-    markUsed()    { sessionStorage.setItem(this.KEY, '1'); },
-  };
-  let avatarDataURL = null;
+    <button class="nav-item" onclick="toggleChat()" id="chatNavBtn">
+      <!-- Chat icon -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span class="nav-label">Global Chat</span>
+      <span class="online-badge" style="margin-left:auto;"></span>
+    </button>
 
-// ── Quotes bank (ibda3 = daka2 variations) ──
-const IBDA3_QUOTES = [
-  '"الإبداع هو الذكاء في حالة مرح" — أينشتاين',
-  '"الإبداع هو رؤية ما لا يراه الآخرون" — كريتيف',
-  '"كل إبداع يبدأ بفكرة جريئة واحدة" — زونيكسا',
-  '"الذكاء بلا إبداع كالنهر بلا منبع" — أرشون',
-  '"أبدع اليوم ليتذكرك الغد" — زونيكسا AI',
-  '"Innovation is seeing change as opportunity" — Steve Jobs',
-  '"Creativity is intelligence having fun" — Einstein',
-  '"لا حدود للإبداع إلا ما يضعه عقلك" — أرشون برتوكول',
-];
+    <a href="billing.html" class="nav-item">
+      <!-- Billing icon -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+        <line x1="1" y1="10" x2="23" y2="10"/>
+      </svg>
+      <span class="nav-label">Plans</span>
+    </a>
 
-// ── Random quote on load ──
-window.addEventListener('DOMContentLoaded', () => {
-  // Rotate greeting quote in auth page if visible
-  const qt = document.querySelector('.greeting-quote');
-  if(qt) qt.textContent = IBDA3_QUOTES[Math.floor(Math.random()*IBDA3_QUOTES.length)];
+    <button class="nav-item" onclick="openProfile()">
+      <!-- Profile icon -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span class="nav-label">Profile</span>
+    </button>
 
-  const saved = localStorage.getItem('zunexa_avatar');
-  if(saved){ applyAvatar(saved,'signin'); applyAvatar(saved,'signup'); avatarDataURL=saved; }
-  const su = localStorage.getItem('zunexa_user');
-  if(su){ try{ const u=JSON.parse(su); if(u.username) document.getElementById('si-username').value=u.username; }catch(e){} }
+    <div class="sidebar-divider"></div>
 
-  // Auto redirect if already logged in
-  _SB.auth.getSession().then(({data:{session}})=>{
-    if(session) window.location.replace('dashboard.html');
-  });
-});
+    <!-- Search -->
+    <button class="nav-item" onclick="focusSearch()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <span class="nav-label">Search</span>
+    </button>
 
-// ── Owner mode detect (disabled: role is determined server-side via Supabase 'profiles.role', never client-side) ──
-function checkOwnerMode(){
-  const ob = document.getElementById('ownerBadgeWrap');
-  if(ob) ob.style.display = 'none';
-}
+    <div class="sidebar-bottom">
+      <div class="sidebar-divider"></div>
+      <!-- Auth button -->
+      <button class="nav-item" id="sidebarAuthBtn" onclick="openModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+          <polyline points="10 17 15 12 10 7"/>
+          <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        <span class="nav-label" id="sidebarAuthLabel">Sign In</span>
+      </button>
+    </div>
+  </aside>
 
-// ── Tab switch ──
-function switchTab(tab){
-  currentTab = tab;
-  document.getElementById('form-signin').style.display = tab==='signin'?'block':'none';
-  document.getElementById('form-signup').style.display = tab==='signup'?'block':'none';
-  document.getElementById('tab-signin').classList.toggle('active',tab==='signin');
-  document.getElementById('tab-signup').classList.toggle('active',tab==='signup');
-  document.getElementById('success-screen').style.display='none';
-  hideErr();
-}
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main-content">
 
-// ── Avatar ──
-function handleAvatarUpload(event,prefix){
-  const file=event.target.files[0]; if(!file) return;
-  if(file.size>2*1024*1024){showToast('⚠','Photo must be under 2MB');return;}
-  const reader=new FileReader();
-  reader.onload=e=>{
-    avatarDataURL=e.target.result;
-    localStorage.setItem('zunexa_avatar',avatarDataURL);
-    applyAvatar(avatarDataURL,'signin');
-    applyAvatar(avatarDataURL,'signup');
-    showToast('📷','Photo saved!');
-  };
-  reader.readAsDataURL(file);
-}
-function applyAvatar(dataURL,prefix){
-  const img=document.getElementById('avatar-img-'+prefix);
-  const ini=document.getElementById('avatar-initials-'+prefix);
-  if(img){img.src=dataURL;img.style.display='block';}
-  if(ini) ini.style.display='none';
-}
-function updateInitials(){
-  const fname=document.getElementById('su-fname').value.trim();
-  const el=document.getElementById('avatar-initials-signup');
-  if(el&&fname&&!avatarDataURL) el.textContent=fname[0].toUpperCase();
-}
+    <!-- ── TOPBAR ── -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <!-- Mobile menu -->
+        <button class="btn-icon btn" onclick="toggleSidebar()" style="display:none;" id="mobileMenuBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <span class="topbar-title">Zarix Coaching</span>
+      </div>
+      <div class="topbar-right">
+        <div id="topbarSearchWrap" style="position:relative;">
+          <input type="text" id="searchInput" placeholder="Search questions…"
+            style="background:var(--dark-2);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:8px 14px 8px 36px;font-size:13px;color:var(--text-primary);font-family:var(--font-body);outline:none;width:220px;transition:all 0.3s;"
+            oninput="handleSearch(this.value)"
+            onfocus="this.style.borderColor='var(--pistachio)'"
+            onblur="this.style.borderColor='var(--glass-border)'" />
+          <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
 
-// ── Toggle optional plan code field ──
-function togglePlanCode(prefix){
-  const wrap=document.getElementById(prefix+'-code-wrap');
-  const toggle=document.getElementById(prefix+'-code-toggle');
-  if(!wrap) return;
-  const show = wrap.style.display==='none';
-  wrap.style.display = show ? '' : 'none';
-  if(toggle) toggle.textContent = show ? '← Hide plan code' : 'Have a plan code? →';
-}
+        <!-- Auth / User display -->
+        <div id="topbarAuth">
+          <button class="btn btn-primary btn-sm" onclick="openModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Sign In
+          </button>
+        </div>
 
-// ── Plan code format check (cosmetic only — real validation is server-side) ──
-function detectPlan(val,prefix){
-  const code=val.trim().toUpperCase();
-  const previewEl=document.getElementById(prefix+'-plan-preview');
-  if(!previewEl) return;
-  if(!code){previewEl.className='plan-preview hidden';return;}
-  if(/^ZX-[A-Z0-9-]{3,20}$/.test(code)){
-    previewEl.className='plan-preview plus';
-    previewEl.innerHTML=`<span>✓</span><span>سيتم التحقق من الكود بعد إنشاء الحساب</span>`;
-  } else {
-    previewEl.className='plan-preview';
-    previewEl.style.cssText='background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);color:#ff4d6d';
-    previewEl.innerHTML='<span>✕</span><span>صيغة الكود غير صحيحة (مثال: ZX-PLUS-XXXX)</span>';
-  }
-}
+        <div id="topbarUser" style="display:none;">
+          <div class="topbar-user">
+            <div class="user-avatar" id="topbarAvatar" onclick="openProfile()">Z</div>
+            <span id="topbarUserName" style="font-size:13px;font-weight:500;"></span>
+            <span class="tier-badge" id="topbarTierBadge">free</span>
+          </div>
+        </div>
 
-// ── Redeem a plan code via secure server-side RPC (call only when a session exists) ──
-async function redeemPlanCodeIfAny(codeVal){
-  if(!codeVal || !codeVal.trim()) return null;
-  try{
-    const {data,error}=await _SB.rpc('redeem_plan_code',{p_code:codeVal.trim().toUpperCase()});
-    if(error){
-      const messages={
-        invalid_code:'الكود غير صحيح',
-        code_inactive:'الكود غير مفعّل',
-        code_expired:'الكود منتهي الصلاحية',
-        code_exhausted:'تم استهلاك هذا الكود بالكامل',
-        already_redeemed:'لقد استخدمت هذا الكود من قبل',
-      };
-      showToast('✕', messages[error.message] || 'تعذر تفعيل الكود');
-      return null;
-    }
-    return data; // { plan, tokens_bonus }
-  }catch(e){ return null; }
-}
+      </div>
+    </header>
 
-// ── Error UI ──
-function showErr(msg){const b=document.getElementById('errBox');const m=document.getElementById('errMsg');if(b&&m){m.textContent=msg;b.classList.add('show');}}
-function hideErr(){const b=document.getElementById('errBox');if(b)b.classList.remove('show');}
+    <!-- ═══════════════════════════════════════════
+         HERO SECTION
+    ════════════════════════════════════════════ -->
+    <section class="hero" id="heroSection">
+      <!-- Floating orbs -->
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
 
-// ── Sign In ──
-async function handleSignIn(){
-  hideErr();
-  const username=document.getElementById('si-username').value.trim();
-  const password=document.getElementById('si-password').value.trim();
-  const codeVal=document.getElementById('si-code').value.trim();
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span class="hero-eyebrow-dot"></span>
+          AI-Powered Coaching Platform
+        </div>
 
-  if(!username){shakeField('si-username');showToast('✕','Enter a username');return;}
-  if(!password){shakeField('si-password');showToast('✕','Enter your password');return;}
+        <h1 class="hero-title">
+          <span class="hero-title-line1">ZARIX</span>
+          <span class="hero-title-line2">COACHING</span>
+        </h1>
 
-  const btn=document.querySelector('#form-signin .btn-auth');
-  btn.classList.add('loading');
+        <p class="hero-subtitle">
+          Elite training intelligence for <strong>athletes, boxers, bodybuilders</strong> and everyone building their best body. Ask anything. Get coached.
+        </p>
 
-  // ── Supabase sign in ──
-  const fakeEmail=username.toLowerCase().replace(/[^a-z0-9]/g,'')+'@zunexa.local';
-  const {data,error}=await _SB.auth.signInWithPassword({email:fakeEmail,password:password});
-  btn.classList.remove('loading');
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="scrollToQA()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Start Exploring
+          </button>
+          <button class="btn btn-secondary" onclick="toggleChat()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Open Global Chat
+          </button>
+        </div>
+      </div>
 
-  if(error){
-    // Try with actual email if first fails
-    const {data:d2,error:e2}=await _SB.auth.signInWithPassword({email:username,password:password});
-    if(e2){
-      shakeField('si-password');
-      showErr('Invalid credentials. Check username/password.');
-      showToast('✕','Sign in failed');
-      return;
-    }
-    // Success with email
-    let redeemed=null;
-    if(codeVal.trim()&&d2.user) redeemed=await redeemPlanCodeIfAny(codeVal);
-    const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan]||FREE_PLAN) : FREE_PLAN;
-    showSuccess(username,plan);
-    setTimeout(()=>window.location.replace('dashboard.html'),1800);
-    return;
-  }
+      <!-- Scroll cue -->
+      <div style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-muted);font-size:12px;animation:fade-in 1s ease 1s both;">
+        <span>Scroll to explore</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="animation:float-orb 2s ease-in-out infinite;"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </section>
 
-  let redeemed=null;
-  if(codeVal.trim()&&data.user) redeemed=await redeemPlanCodeIfAny(codeVal);
-  const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan]||FREE_PLAN) : FREE_PLAN;
-  showSuccess(username,plan);
-  setTimeout(()=>window.location.replace('dashboard.html'),1800);
-}
+    <!-- ═══════════════════════════════════════════
+         STATS BAR
+    ════════════════════════════════════════════ -->
+    <div class="stats-bar reveal">
+      <div class="stat-item">
+        <div class="stat-num" data-count="30">0</div>
+        <div class="stat-label">Expert Q&As</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">7</div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Coaching Tiers</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">AI Questions (Max)</div>
+      </div>
+    </div>
 
-// ── Sign Up ──
-async function handleSignUp(){
-  hideErr();
-  const fname=document.getElementById('su-fname').value.trim();
-  const username=document.getElementById('su-username').value.trim().toLowerCase().replace(/\s+/g,'_');
-  document.getElementById('su-username').value=username;
-  const email=document.getElementById('su-email').value.trim();
-  const password=document.getElementById('su-password').value.trim();
-  const codeWrap=document.getElementById('su-code-wrap');
-  const codeVal=(codeWrap&&codeWrap.style.display!=='none')
-    ? (document.getElementById('su-code').value||'').trim()
-    : '';
+    <!-- ═══════════════════════════════════════════
+         FEATURES SECTION
+    ════════════════════════════════════════════ -->
+    <section class="section">
+      <div class="section-header reveal">
+        <div class="section-tag">Why Zarix</div>
+        <h2 class="section-title">Coaching built for <br>serious athletes</h2>
+        <p class="section-desc">Every answer tiered to your level. Free to explore, Max to dominate.</p>
+      </div>
 
-  if(!fname){shakeField('su-fname');showToast('✕','Enter first name');return;}
-  if(!username||username.length<3){shakeField('su-username');showToast('✕','Username min 3 characters');return;}
-  if(!/^[a-z0-9_]+$/.test(username)){shakeField('su-username');showToast('✕','Username: letters, numbers, _ only');return;}
-  if(!email||!email.includes('@')){shakeField('su-email');showToast('✕','Valid email required');return;}
-  if(password.length<8){shakeField('su-password');showToast('✕','Min 8 characters');return;}
+      <div class="features-grid">
+        <div class="feature-card glass-card reveal">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="feature-title">AI Knowledge Base</div>
+          <div class="feature-desc">Curated expert answers across Sport, Gym, Boxing, Calisthenics, and Nutrition — with depth that grows with your plan.</div>
+        </div>
 
-  const btn=document.querySelector('#form-signup .btn-auth');
-  btn.classList.add('loading');
+        <div class="feature-card glass-card reveal" style="transition-delay:0.1s;">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="feature-title">Real-Time Global Chat</div>
+          <div class="feature-desc">Connect with other athletes worldwide. Type <code style="font-family:var(--font-mono);color:var(--pistachio);font-size:12px;">@ai</code> in the chat to summon the AI coach.</div>
+        </div>
 
-  const {data,error}=await _SB.auth.signUp({
-    email:email,
-    password:password,
-    options:{data:{username,first_name:fname}}
-  });
-  btn.classList.remove('loading');
+        <div class="feature-card glass-card reveal" style="transition-delay:0.2s;">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="feature-title">Tiered Coaching Depth</div>
+          <div class="feature-desc">Free users get the gist. Max users get the complete blueprint — periodized programs, nutrition protocols, recovery systems.</div>
+        </div>
 
-  if(error){
-    showErr(error.message);
-    showToast('✕',error.message);
-    return;
-  }
+        <div class="feature-card glass-card reveal" style="transition-delay:0.3s;">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          </div>
+          <div class="feature-title">7 Training Categories</div>
+          <div class="feature-desc">Sport performance, gym training, lifestyle, boxing, bodybuilding, calisthenics, and precision nutrition — all in one place.</div>
+        </div>
 
-  if(data.user){
-    // Safe defaults only — plan/tokens/role are managed server-side
-    // (handle_new_user_tokens trigger + user_plans/user_tokens tables)
-    await _SB.from('profiles').upsert({
-      id:data.user.id,
-      username,
-      first_name:fname,
-      email,
-      current_theme:'zalij-dark',
-      avatar_url:avatarDataURL||null
-    });
-  }
+        <div class="feature-card glass-card reveal" style="transition-delay:0.1s;">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="feature-title">Built for Results</div>
+          <div class="feature-desc">Not generic fitness advice. Evidence-based protocols designed by coaches who train champions.</div>
+        </div>
 
-  let plan = FREE_PLAN;
-  if(data.session){
-    if(codeVal){
-      const redeemed = await redeemPlanCodeIfAny(codeVal);
-      if(redeemed) plan = PLAN_DISPLAY[redeemed.plan] || FREE_PLAN;
-    }
-    showSuccess(fname,plan);
-    setTimeout(()=>window.location.replace('dashboard.html'),1800);
-  } else {
-    // Email confirmation required — redeem the code on first dashboard
-    // load instead (no session yet to call the RPC with).
-    if(codeVal) localStorage.setItem('zx_pending_plan_code', codeVal);
-    showEmailConfirmation(fname,email);
-  }
-}
+        <div class="feature-card glass-card reveal" style="transition-delay:0.2s;">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="feature-title">Free to Start</div>
+          <div class="feature-desc">No credit card needed to explore. Browse all categories, read answers, and join the community — upgrade when you're ready.</div>
+        </div>
+      </div>
+    </section>
 
-// ── Email confirmation screen ──
-function showEmailConfirmation(name,email){
-  ['form-signin','form-signup'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-  const tabs=document.querySelector('.auth-tabs');
-  if(tabs) tabs.style.display='none';
+    <!-- ═══════════════════════════════════════════
+         Q&A BROWSE SECTION
+    ════════════════════════════════════════════ -->
+    <section id="qaSection">
+      <div style="padding:0 40px 8px; max-width:1200px; margin:0 auto;">
+        <div class="section-tag reveal">Knowledge Base</div>
+        <h2 class="section-title reveal" style="margin-bottom:4px;">Ask. Learn. Perform.</h2>
+        <p class="section-desc reveal" style="margin-bottom:0;">Browse expert answers or use the chat to ask your own questions.</p>
+      </div>
 
-  const screen=document.getElementById('success-screen');
-  if(screen) screen.style.display='block';
+      <!-- Category Filter -->
+      <div class="categories-bar" id="categoriesBar">
+        <button class="cat-chip active" onclick="filterCategory('all', this)">All</button>
+        <button class="cat-chip" onclick="filterCategory('Sport', this)">Sport</button>
+        <button class="cat-chip" onclick="filterCategory('Gym', this)">Gym</button>
+        <button class="cat-chip" onclick="filterCategory('Lifestyle', this)">Lifestyle</button>
+        <button class="cat-chip" onclick="filterCategory('Boxing', this)">Boxing</button>
+        <button class="cat-chip" onclick="filterCategory('Bodybuilder', this)">Bodybuilder</button>
+        <button class="cat-chip" onclick="filterCategory('Calisthenics', this)">Calisthenics</button>
+        <button class="cat-chip" onclick="filterCategory('Nutrition', this)">Nutrition</button>
+      </div>
 
-  const icon=document.querySelector('#success-screen .success-icon');
-  if(icon) icon.textContent='✉';
+      <!-- Q&A Grid -->
+      <div class="qa-grid" id="qaGrid">
+        <!-- Skeleton loaders -->
+        <div class="glass-card qa-card skeleton-card">
+          <div class="skeleton skeleton-line w-60" style="height:11px;"></div>
+          <div class="skeleton skeleton-line w-90" style="height:17px;margin-top:10px;"></div>
+          <div class="skeleton skeleton-line w-80" style="height:13px;margin-top:10px;"></div>
+          <div class="skeleton skeleton-line w-60" style="height:13px;"></div>
+        </div>
+        <div class="glass-card qa-card skeleton-card">
+          <div class="skeleton skeleton-line w-60" style="height:11px;"></div>
+          <div class="skeleton skeleton-line w-80" style="height:17px;margin-top:10px;"></div>
+          <div class="skeleton skeleton-line w-90" style="height:13px;margin-top:10px;"></div>
+          <div class="skeleton skeleton-line w-60" style="height:13px;"></div>
+        </div>
+        <div class="glass-card qa-card skeleton-card">
+          <div class="skeleton skeleton-line w-60" style="height:11px;"></div>
+          <div class="skeleton skeleton-line w-70" style="height:17px;margin-top:10px;"></div>
+          <div class="skeleton skeleton-line w-80" style="height:13px;margin-top:10px;"></div>
+          <div class="skeleton skeleton-line w-50" style="height:13px;"></div>
+        </div>
+      </div>
+    </section>
 
-  const title=document.querySelector('#success-screen .success-title');
-  if(title) title.textContent='Almost there!';
+    <!-- ═══════════════════════════════════════════
+         PROFILE VIEW (hidden by default)
+    ════════════════════════════════════════════ -->
+    <section id="profileSection" style="display:none;">
+      <div class="profile-panel">
+        <div class="profile-header glass-card">
+          <div class="profile-avatar-large" id="profileAvatarLarge">Z</div>
+          <div class="profile-info">
+            <h2 id="profileName">Not signed in</h2>
+            <div class="email" id="profileEmail"></div>
+            <span class="plan-chip" id="profilePlan">Free</span>
+          </div>
+        </div>
+        <div class="glass-card" style="padding:24px;margin-top:16px;">
+          <h3 style="font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:16px;">Account</h3>
+          <button class="btn btn-secondary btn-sm" onclick="signOut()" id="signOutBtn" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="openModal()" id="signInProfileBtn">
+            Sign In / Sign Up
+          </button>
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--glass-border);">
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Upgrade your plan to unlock deeper AI coaching:</p>
+            <a href="billing.html" class="btn btn-primary btn-sm">View Plans</a>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  const nameEl=document.getElementById('success-name');
-  if(nameEl) nameEl.innerHTML = `مرحباً ${name} 👋<br><span style="color:var(--text-muted);font-size:13px;font-weight:400">تحققنا من بريدك — أرسلنا رابط التفعيل إلى<br><b style="color:var(--gold)">${email}</b></span>`;
+    <!-- ═══════════════════════════════════════════
+         FOOTER
+    ════════════════════════════════════════════ -->
+    <footer class="footer" id="mainFooter">
+      <div class="footer-grid">
 
-  const badge=document.getElementById('success-plan-badge');
-  if(badge) badge.style.display='none';
+        <!-- Brand -->
+        <div class="footer-brand">
+          <h3>Zarix Coaching</h3>
+          <p>Elite AI-powered coaching for athletes who refuse to settle. Built on science, delivered with precision.</p>
+          <div class="social-links">
+            <!-- Instagram -->
+            <a href="https://instagram.com/Zunexa_hq" target="_blank" rel="noopener" class="social-link" title="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <!-- YouTube -->
+            <a href="https://youtube.com/@zunexa_ahmed?si=FwxdvQfnmQrWfTqh" target="_blank" rel="noopener" class="social-link" title="YouTube">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+            </a>
+            <!-- TikTok -->
+            <a href="#" target="_blank" rel="noopener" class="social-link" title="TikTok">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+            </a>
+            <!-- Globe -->
+            <a href="https://Lifeos.free.nf" target="_blank" rel="noopener" class="social-link" title="Own Site">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </a>
+          </div>
+        </div>
 
-  const redirectMsg=document.getElementById('redirect-msg');
-  if(redirectMsg) redirectMsg.textContent='افتح بريدك الإلكتروني واضغط على رابط التفعيل لتسجيل الدخول ✦';
+        <!-- Links -->
+        <div class="footer-col">
+          <h4>Projects</h4>
+          <a href="https://Zunexa.vercel.app/landing" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/></svg>
+            Zunexa Info
+          </a>
+          <a href="https://Zunexa.vercel.app" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Zunexa Site
+          </a>
+          <a href="https://ZAXAI.VERCEL.APP" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+            AI Site — ZAXAI
+          </a>
+          <a href="https://Lifeos.free.nf" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            LifeOS
+          </a>
+        </div>
 
-  const progressWrap=document.getElementById('progress-wrap');
-  if(progressWrap) progressWrap.style.display='none';
-}
+        <!-- Navigation -->
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <a href="index.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Home
+          </a>
+          <a href="billing.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Pricing
+          </a>
+          <a href="#" onclick="toggleChat();return false;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Global Chat
+          </a>
+          <a href="#" onclick="openModal();return false;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Sign In
+          </a>
+        </div>
 
-// ── Success screen ──
-function showSuccess(name,plan){
-  ['form-signin','form-signup'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-  const tabs=document.querySelector('.auth-tabs');
-  if(tabs) tabs.style.display='none';
-  document.getElementById('success-screen').style.display='block';
+        <!-- Contact -->
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Owner / Coach</span>
+          </div>
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:Mrahmed20101119@gmail.com">Mrahmed20101119@gmail.com</a>
+          </div>
+          <div class="contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.4 2 2 0 0 1 3.6 2.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:0777364251">0777 364 251</a>
+          </div>
+        </div>
+      </div>
 
-  const icon=document.querySelector('#success-screen .success-icon');
-  if(icon) icon.textContent='✓';
-  const title=document.querySelector('#success-screen .success-title');
-  if(title) title.textContent='Welcome to Zunexa!';
-  const redirectMsg=document.getElementById('redirect-msg');
-  if(redirectMsg) redirectMsg.textContent='Redirecting to dashboard...';
-  const progressWrap=document.getElementById('progress-wrap');
-  if(progressWrap) progressWrap.style.display='';
-  const progressBar=document.getElementById('progress-bar');
-  if(progressBar){ progressBar.style.transition='width 2.2s ease'; progressBar.style.width='0%'; }
+      <div class="footer-bottom">
+        <span>© 2025 Zarix Coaching. Built by <a href="https://Zunexa.vercel.app" target="_blank">Zunexa</a>.</span>
+        <span>Powered by AI · Supabase · Vercel</span>
+      </div>
+    </footer>
 
-  document.getElementById('success-name').textContent=`مرحباً، ${name} 👋`;
-  const badge=document.getElementById('success-plan-badge');
-  badge.style.display='';
-  badge.textContent=plan.label;
-  const rgb=planColorRGB(plan.color);
-  badge.style.cssText=`background:rgba(${rgb},.12);border:1px solid rgba(${rgb},.35);color:${PLAN_COLORS[plan.color]};display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:20px;`;
-  requestAnimationFrame(()=>{document.getElementById('progress-bar').style.width='100%';});
-}
-function planColorRGB(c){return{free:'155,155,155',plus:'91,141,238',pro:'212,175,55',senior:'167,139,250',owner:'212,175,55'}[c]||'212,175,55';}
+  </main><!-- end main-content -->
 
-// ── Shake / Toast ──
-function shakeField(id){const el=document.getElementById(id);if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');el.style.borderColor='var(--red)';setTimeout(()=>{el.style.borderColor='';el.classList.remove('shake');},600);}
-let _tt;
-function showToast(icon,msg){const t=document.getElementById('toast');document.getElementById('toast-icon').textContent=icon;document.getElementById('toast-msg').textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);}
-// ── Password Strength Checker ──────────────────────────────
-document.getElementById('su-password').addEventListener('input', function(){
-  const v = this.value;
-  const rules = [
-    { id:'r-len', ok: v.length >= 8 },
-    { id:'r-upp', ok: /[A-Z]/.test(v) },
-    { id:'r-num', ok: /[0-9]/.test(v) },
-    { id:'r-sym', ok: /[^a-zA-Z0-9]/.test(v) },
-  ];
-  const score = rules.filter(r=>r.ok).length;
-  const bar   = document.getElementById('pwd-bar');
-  const label = document.getElementById('pwd-label');
-  const colors= ['','#ff4d6d','#f59e0b','#3ddc84','#D4AF37'];
-  const labels= ['','Weak','Fair','Strong','Perfect ✦'];
-  if(bar){
-    bar.style.width  = (score/4*100)+'%';
-    bar.style.background = colors[score]||'#888';
-  }
-  if(label){ label.textContent = v.length ? labels[score]||'' : '— Enter password'; label.style.color = colors[score]||'var(--text-muted)'; }
-  rules.forEach(r=>{
-    const el=document.getElementById(r.id);
-    if(el){ el.classList.toggle('ok',r.ok); el.classList.toggle('bad',v.length>0&&!r.ok); }
-  });
-  const wrap = document.getElementById('zx-pwd-strength');
-  if(wrap) wrap.classList.toggle('visible', v.length > 0);
-});
-  /* ══════════════════════════════════════════════════
-   ZUNEXA AUTH — OAuth Engine
-   © Zunexa / Archon Protocol — All rights reserved
-══════════════════════════════════════════════════ */
-const ZX_PROD_URL = 'https://zunexa.vercel.app';
+  <!-- ── GLOBAL CHAT PANEL ── -->
+  <aside class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <span class="online-badge"></span>
+        <div>
+          <div class="chat-title">Global Chat</div>
+          <div class="chat-subtitle" id="chatOnlineCount">Loading…</div>
+        </div>
+      </div>
+      <button onclick="toggleChat()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);padding:4px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
 
-// ── OAuth (Google / GitHub) ──────────────────────
-async function handleOAuth(provider) {
-  document.querySelectorAll('.btn-oauth').forEach(b => b.classList.add('loading'));
-  const { error } = await _SB.auth.signInWithOAuth({
-    provider,
-    options: { redirectTo: ZX_PROD_URL + '/dashboard.html' }
-  });
-  if (error) {
-    document.querySelectorAll('.btn-oauth').forEach(b => b.classList.remove('loading'));
-    showToast('✕', provider + ' error: ' + error.message);
-  }
-}
+    <div class="chat-messages" id="chatMessages">
+      <!-- Messages injected by JS -->
+      <div style="text-align:center;padding:20px 0;color:var(--text-muted);font-size:13px;">
+        <div class="typing-indicator" style="justify-content:center;margin-bottom:8px;">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+        Connecting to live chat…
+      </div>
+    </div>
 
-// ── Fix localhost redirect (email confirm) ────────
-// Intercepts Supabase token from URL on any page
-(async () => {
-  const hash = window.location.hash;
-  if (hash.includes('access_token')) {
-    const params = new URLSearchParams(hash.replace('#','?'));
-    const access  = params.get('access_token');
-    const refresh = params.get('refresh_token');
-    if (access && refresh) {
-      await _SB.auth.setSession({ access_token: access, refresh_token: refresh });
-      window.location.replace(ZX_PROD_URL + '/dashboard.html');
-    }
-  }
-})();
-</script>
+    <div class="chat-footer">
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chatInput" placeholder="Message the community…" rows="1"
+          onkeydown="handleChatKey(event)" oninput="autoResizeTextarea(this)"></textarea>
+        <button class="btn btn-primary btn-icon" onclick="sendMessage()" title="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="chat-hint">
+        Type <code>@ai how do I get stronger?</code> to query the AI coach
+      </div>
+    </div>
+  </aside>
+
+</div><!-- end app-shell -->
+
+<!-- ═══════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════ -->
+<script type="module" src="app.js"></script>
+
 </body>
 </html>

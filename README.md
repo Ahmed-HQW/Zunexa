@@ -1,46 +1,74 @@
-# Zunexa Projects SaaS Private
+# Zarix Coaching — Setup & Deployment Guide
 
-## Overview / نظرة عامة
-**Zunexa Projects SaaS Private** is a closed-source, integrated software ecosystem designed as a centralized platform for digital operations, task automation, and cloud-based application development.
-**Zunexa Projects SaaS Private** هو نظام بيئي برمجي متكامل ومغلق المصدر، مصمم ليكون منصة مركزية لإدارة العمليات الرقمية، أتمتة المهام، وتطوير التطبيقات السحابية.
+## Files
+```
+zarix-coaching/
+├── index.html        ← Main app (hero, Q&A, chat, auth)
+├── billing.html      ← Pricing page (Free / Plus / Pro / Max)
+├── styles.css        ← All styles (glassmorphism, animations, responsive)
+├── app.js            ← Main logic (Supabase auth, realtime chat, QA rendering)
+├── qa-database.js    ← AI knowledge base (30 expert Q&As, 7 categories)
+├── vercel.json       ← Vercel static deployment config
+└── README.md         ← This file
+```
 
----
+## Deploy to Vercel
 
-## Core Components / المكونات الأساسية
-*   **Zunexa-SaaS Engine:** AI-powered engine for generating customized digital content with dynamic subscription management.
-    *(محرك ذكاء اصطناعي لتوليد المحتوى الرقمي المخصص مع نظام إدارة اشتراكات ديناميكي).*
-*   **AuraOS Interface:** A sophisticated UI that simulates an operating system environment within the browser for organized workspaces.
-    *(واجهة نظام تشغيل سحابي داخل المتصفح تحاكي تجربة سطح المكتب لتنظيم العمل).*
-*   **NeoTalk & LifeOS:** Modular units for intelligent communication management and daily life organization.
-    *(وحدات مدمجة لإدارة التواصل الذكي وتنظيم الحياة اليومية).*
+1. Push all files to a GitHub repository
+2. Go to [vercel.com](https://vercel.com) → **New Project** → Import your repo
+3. Framework: **Other** (static)
+4. Root directory: the folder containing these files
+5. Click **Deploy** — zero configuration needed
 
----
+## Supabase Setup
 
-## Technical Stack / التقنيات المستخدمة
-| Component | Technology |
-| :--- | :--- |
-| **Frontend** | HTML5, Vanilla JavaScript, CSS3 |
-| **Backend** | Vercel Serverless Functions |
-| **Database** | Supabase / MariaDB |
-| **Deployment** | Vercel (Private/Optimized) |
+The app uses:
+- **Supabase Auth** (email + password) — works out of the box
+- **Supabase Realtime** (broadcast channel) — works out of the box, no DB table needed for chat
 
----
+### Optional: Persistent Chat Messages
+To store chat history, create a `messages` table in Supabase:
+```sql
+create table messages (
+  id uuid default gen_random_uuid() primary key,
+  content text not null,
+  sender text not null,
+  sender_id uuid references auth.users,
+  tier text default 'free',
+  is_ai boolean default false,
+  created_at timestamptz default now()
+);
 
-## Security & Privacy / الأمن والخصوصية
-This project is **Closed-Source**. The source code is maintained in a private repository to protect the logic, algorithms, and infrastructure details. Unauthorized distribution is prohibited.
-هذا المشروع **مغلق المصدر (Closed-Source)**. الكود المصدري محفوظ في مستودع خاص لحماية الخوارزميات وتفاصيل البنية التحتية. يمنع توزيع الكود أو استخدامه بدون إذن.
+-- Allow anyone to read, auth users to insert
+alter table messages enable row level security;
+create policy "Anyone can read" on messages for select using (true);
+create policy "Auth users can insert" on messages for insert with check (auth.uid() = sender_id);
+```
 
----
+### Optional: User Profiles Table
+```sql
+create table profiles (
+  id uuid references auth.users primary key,
+  full_name text,
+  tier text default 'free',
+  updated_at timestamptz default now()
+);
+```
 
-## Deployment / النشر
-This project is optimized for deployment on Vercel with strict security configurations to ensure a private and efficient environment.
-هذا المشروع مخصص للنشر على منصة Vercel مع إعدادات أمنية صارمة لضمان بيئة عمل خاصة وفعالة.
+## Features
 
-### Setup Instructions / تعليمات الإعداد
-1. **Repository:** Ensure the repository is set to **Private** on GitHub.
-2. **Environment:** Use Vercel **Environment Variables** for API keys and sensitive data.
-3. **Obfuscation:** All sensitive JavaScript logic should be obfuscated before deployment.
-4. **Deploy:** Connect via Vercel CLI or Dashboard.
+| Feature | Details |
+|---------|---------|
+| Auth | Supabase email/password sign up & sign in |
+| Global Chat | Supabase Realtime broadcast — everyone sees messages live |
+| @ai command | Type `@ai <question>` in chat to get an AI coaching response |
+| AI depth | Free = short summary, Plus = full answer, Pro = protocol, Max = full blueprint |
+| Q&A browse | 30 entries across 7 categories with filter + search |
+| Plans | Free / Plus ($9) / Pro ($19) / Max ($39) with feature comparison table |
+| Design | Pistachio green + White caramel palette, glassmorphism, animated hero |
 
----
-*Developed for private use.*
+## Contact
+- Email: Mrahmed20101119@gmail.com
+- Phone: 0777 364 251
+- Instagram: @Zunexa_hq
+- YouTube: @zunexa_ahmed
