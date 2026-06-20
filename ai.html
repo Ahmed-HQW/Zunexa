@@ -1104,6 +1104,17 @@ function search(userQ) {
    INTELLIGENCE — Build Response
 ════════════════════════════════════════════════════════════ */
 async function answer(userQ) {
+  const kbResult = searchKnowledgeBase(userMessage);
+
+if (kbResult) {
+
+   addMessage(
+      kbResult.response,
+      'bot'
+   );
+
+   return;
+}
   // Context-aware: check if question references previous answer
   const enriched = buildCtxQ(userQ);
   const match = search(enriched);
@@ -1611,6 +1622,55 @@ document.getElementById('settModal').addEventListener('click', function(e) {
 
 /* ── BOOT ── */
 init();
+  let KNOWLEDGE_BASE = [];
+
+async function loadKnowledgeBase() {
+  try {
+    const response = await fetch('./zunexa_qa.json');
+    KNOWLEDGE_BASE = await response.json();
+
+    console.log(
+      `Knowledge Base Loaded: ${KNOWLEDGE_BASE.length} entries`
+    );
+
+    updateKBCount?.(KNOWLEDGE_BASE.length);
+
+  } catch (error) {
+    console.error(
+      'Knowledge Base Load Error:',
+      error
+    );
+  }
+}
+
+function searchKnowledgeBase(message) {
+  if (!message || !KNOWLEDGE_BASE.length) return null;
+
+  const query = message.toLowerCase().trim();
+
+  for (const item of KNOWLEDGE_BASE) {
+
+    if (!item.keywords || !item.response) continue;
+
+    const matched = item.keywords.some(keyword =>
+      query.includes(
+        keyword.toLowerCase()
+      )
+    );
+
+    if (matched) {
+      return {
+        response: item.response,
+        source: 'knowledge-base',
+        confidence: 100
+      };
+    }
+  }
+
+  return null;
+}
+
+loadKnowledgeBase();
 </script>
 </body>
 </html>
