@@ -1028,6 +1028,49 @@ function tok(text) {
   return norm(text).split(/\s+/).filter(t => t.length > 1 && !STOP.has(t));
 }
 
+// Adjacent-word phrases — catches multi-word concepts ("ai content", "محتوى ذكي")
+function bigrams(tokens) {
+  const out = [];
+  for (let i = 0; i < tokens.length - 1; i++) out.push(tokens[i] + '_' + tokens[i+1]);
+  return out;
+}
+
+// Edit-distance — lets the engine survive typos / Darija spelling drift
+function levenshtein(a, b) {
+  if (a === b) return 0;
+  const al = a.length, bl = b.length;
+  if (!al) return bl;
+  if (!bl) return al;
+  let prev = new Array(bl + 1);
+  for (let j = 0; j <= bl; j++) prev[j] = j;
+  for (let i = 1; i <= al; i++) {
+    const cur = [i];
+    for (let j = 1; j <= bl; j++) {
+      cur[j] = a[i-1] === b[j-1]
+        ? prev[j-1]
+        : 1 + Math.min(prev[j-1], prev[j], cur[j-1]);
+    }
+    prev = cur;
+  }
+  return prev[bl];
+}
+
+// % of query tokens that have a "close enough" (typo-tolerant) match in the doc
+function fuzzyTokenScore(qToks, dToks) {
+  if (!qToks.length || !dToks.length) return 0;
+  let hits = 0;
+  qToks.forEach(qt => {
+    if (dToks.includes(qt)) { hits++; return; }
+    const close = dToks.some(dt => {
+      const maxLen = Math.max(qt.length, dt.length);
+      if (maxLen < 4) return false; // too short to fuzz safely
+      return levenshtein(qt, dt) <= (maxLen <= 6 ? 1 : 2);
+    });
+    if (close) hits += 0.7;
+  });
+  return hits / qToks.length;
+}
+
 /* ════════════════════════════════════════════════════════════
    SEMANTIC MATCH ENGINE
 ════════════════════════════════════════════════════════════ */
@@ -1064,88 +1107,113 @@ function cosine(a, b) {
 }
 
 /* ════════════════════════════════════════════════════════════
-   SEARCH — Find Best Answer
+   SEARCH — Find Best Answer(s)
+   Returns the top match PLUS the runner-up, so answer() can blend
+   them into a synthesized reply instead of a flat lookup.
 ════════════════════════════════════════════════════════════ */
-function search(userQ) {
-  if (!KB.length) return null;
-  const qVec  = tfidfVec(userQ);
-  const qToks = new Set(tok(userQ));
-  let best=null, bestScore=0;
+function rankKB(userQ) {
+  if (!KB.length) return [];
+  const qVec   = tfidfVec(userQ);
+  const qToks  = tok(userQ);
+  const qSet   = new Set(qToks);
+  const qBi    = new Set(bigrams(qToks));
+  const scored = [];
 
   KB.forEach(item => {
     if (!item.a) return;
     const docText = item.q + ' ' + item.kw.join(' ');
     const dVec    = tfidfVec(docText);
+    const dToks   = tok(docText);
+    const dSet    = new Set(dToks);
 
-    // TF-IDF cosine
-    let score = cosine(qVec, dVec) * 0.55;
+    // 1) TF-IDF cosine — overall topical closeness
+    let score = cosine(qVec, dVec) * 0.40;
 
-    // Jaccard on tokens
-    const dToks = new Set(tok(docText));
-    const inter = [...qToks].filter(t => dToks.has(t)).length;
-    const jacc  = inter / (qToks.size + dToks.size - inter + 0.001);
-    score += jacc * 0.35;
+    // 2) Jaccard on tokens — raw word overlap
+    const inter = [...qSet].filter(t => dSet.has(t)).length;
+    const jacc  = inter / (qSet.size + dSet.size - inter + 0.001);
+    score += jacc * 0.25;
 
-    // Keyword exact match bonus
+    // 3) Bigram overlap — rewards matching 2-word concepts, not just loose words
+    const dBi = new Set(bigrams(dToks));
+    const biHits = [...qBi].filter(b => dBi.has(b)).length;
+    if (qBi.size) score += (biHits / qBi.size) * 0.15;
+
+    // 4) Fuzzy token match — typo / dialect-spelling tolerance
+    score += fuzzyTokenScore(qToks, dToks) * 0.12;
+
+    // 5) Keyword exact-substring bonus
     const kwBonus = item.kw.filter(k => norm(userQ).includes(norm(k))).length;
     score += kwBonus * 0.08;
 
-    // Weight boost (learned = higher weight)
+    // 6) Weight boost (learned / frequently-confirmed answers rank higher)
     score *= (item.w || 1.0);
 
-    if (score > bestScore) { bestScore = score; best = item; }
+    if (score > 0.02) scored.push({ ...item, score });
   });
 
-  if (bestScore < 0.05) return null;
-  return { ...best, score: bestScore };
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, 3);
+}
+
+function search(userQ) {
+  const top = rankKB(userQ);
+  if (!top.length || top[0].score < 0.05) return null;
+  return top[0];
 }
 
 /* ════════════════════════════════════════════════════════════
    INTELLIGENCE — Build Response
+   3-tier brain: confident lookup → synthesized blend of close
+   matches → guided "I'm learning this" reply. This is what makes
+   Archon feel like it's reasoning instead of just doing a lookup.
 ════════════════════════════════════════════════════════════ */
 async function answer(userQ) {
-  const kbResult = searchKnowledgeBase(userMessage);
-
-if (kbResult) {
-
-   addMessage(
-      kbResult.response,
-      'bot'
-   );
-
-   return;
-}
-  // Context-aware: check if question references previous answer
   const enriched = buildCtxQ(userQ);
-  const match = search(enriched);
+  const top = rankKB(enriched);
+  const best = top[0] || null;
 
-  if (match && match.score >= 0.14) {
-    // High confidence
-    incrWeight(match.q);
-    await logMsg(userQ, match.a, 'qa', match.score);
-    return { text: match.a, src: match.src==='learned'?'learned':'qa', score: match.score };
+  if (best && best.score >= 0.14) {
+    incrWeight(best.q);
+    await logMsg(userQ, best.a, 'qa', best.score);
+    return { text: best.a, src: best.src==='learned'?'learned':'qa', score: best.score };
   }
 
-  if (match && match.score >= 0.06) {
-    // Partial
-    const txt = match.a + '\n\n_💡 إجابة بثقة متوسطة — جرّب إعادة الصياغة للحصول على نتيجة أدق._';
-    await logMsg(userQ, txt, 'fallback', match.score);
-    return { text: txt, src: 'partial', score: match.score };
+  // Synthesis tier — two weak-ish signals together are often a real answer.
+  // Blend them with a connective phrase instead of returning a raw "maybe".
+  if (best && best.score >= 0.06) {
+    const second = top[1] && top[1].score >= 0.045 ? top[1] : null;
+    let txt = best.a;
+    if (second && second.q !== best.q) {
+      txt += `\n\n${pickConnector()} ${second.a}`;
+    }
+    txt += '\n\n_💡 إجابة مُركّبة من أقرب المعلومات المتوفرة — صيغ سؤالك بدقة أكبر لإجابة أوضح._';
+    incrWeight(best.q);
+    await logMsg(userQ, txt, 'fallback', best.score);
+    return { text: txt, src: 'partial', score: best.score };
   }
 
-  // Unknown — learn it
+  // Truly unknown — learn it
   await learnQ(userQ);
   const txt = buildUnknown(userQ);
   await logMsg(userQ, txt, 'system', 0);
   return { text: txt, src: 'learning', score: 0 };
 }
 
+const CONNECTORS = [
+  'بالإضافة إلى ذلك،', 'وفي سياق متصل،', 'ومن زاوية أخرى،', 'يضاف إلى ذلك أن'
+];
+function pickConnector() { return CONNECTORS[Math.floor(Math.random()*CONNECTORS.length)]; }
+
 function buildCtxQ(q) {
   if (!ctx.length) return q;
-  // Append last bot answer keywords for context
-  const lastBot = ctx.filter(c=>c.role==='bot').slice(-1)[0];
-  if (!lastBot) return q;
-  return q + ' ' + tok(lastBot.text).slice(0,5).join(' ');
+  // Carry forward the last exchange (user + bot) for follow-up questions
+  const lastBot  = ctx.filter(c=>c.role==='bot').slice(-1)[0];
+  const lastUser = ctx.filter(c=>c.role==='user').slice(-2,-1)[0];
+  let extra = '';
+  if (lastUser) extra += ' ' + tok(lastUser.text).slice(0,4).join(' ');
+  if (lastBot)  extra += ' ' + tok(lastBot.text).slice(0,6).join(' ');
+  return q + extra;
 }
 
 const UNKNOWNS = [
@@ -1622,55 +1690,6 @@ document.getElementById('settModal').addEventListener('click', function(e) {
 
 /* ── BOOT ── */
 init();
-  let KNOWLEDGE_BASE = [];
-
-async function loadKnowledgeBase() {
-  try {
-    const response = await fetch('./zunexa_qa.json');
-    KNOWLEDGE_BASE = await response.json();
-
-    console.log(
-      `Knowledge Base Loaded: ${KNOWLEDGE_BASE.length} entries`
-    );
-
-    updateKBCount?.(KNOWLEDGE_BASE.length);
-
-  } catch (error) {
-    console.error(
-      'Knowledge Base Load Error:',
-      error
-    );
-  }
-}
-
-function searchKnowledgeBase(message) {
-  if (!message || !KNOWLEDGE_BASE.length) return null;
-
-  const query = message.toLowerCase().trim();
-
-  for (const item of KNOWLEDGE_BASE) {
-
-    if (!item.keywords || !item.response) continue;
-
-    const matched = item.keywords.some(keyword =>
-      query.includes(
-        keyword.toLowerCase()
-      )
-    );
-
-    if (matched) {
-      return {
-        response: item.response,
-        source: 'knowledge-base',
-        confidence: 100
-      };
-    }
-  }
-
-  return null;
-}
-
-loadKnowledgeBase();
 </script>
 </body>
 </html>
