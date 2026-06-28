@@ -1,74 +1,140 @@
-# Zarix Coaching — Setup & Deployment Guide
+<div align="center">
 
-## Files
+# ✦ ZUNEXA
+### AI Content & SaaS Platform — Zalij Mode
+
+**Live:** [zunexa.vercel.app](https://zunexa.vercel.app) · **Status:** Private Repository · **Version:** V11 — Clarity Protocol
+
+</div>
+
+---
+
+## 🏛 Overview
+
+**Zunexa** is a premium, AI-powered SaaS platform built for the Moroccan & MENA digital market. It combines a multi-dialect content generation engine (Darija, Gulf Arabic, Franco-Arabe, French, English, Spanish) with a full SaaS operations layer — billing, affiliate program, analytics, and a local-first AI assistant — all wrapped in a distinctive **"Zalij Mode"** design language: matte black, royal gold, and Moroccan geometric motifs.
+
+No frameworks. No build step. Pure **HTML5 / CSS3 / Vanilla JavaScript**, deployed instantly on **Vercel**.
+
+> This repository is **private**. Access is restricted to the core team. Do not share source files, Supabase keys, or deployment credentials outside this org.
+
+---
+
+## ⚙️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | HTML5, CSS3, Vanilla JS (zero frameworks) |
+| Backend / Auth | [Supabase](https://supabase.com) (Postgres, Auth, Realtime, RLS) |
+| AI Engine | Local TF-IDF/keyword engine (`ai.html`) + serverless proxy (`/api/ai.js`) with Gemini/Groq fallback chain |
+| Hosting | [Vercel](https://vercel.com) — static + serverless functions |
+| Fonts | Cinzel (display), Rajdhani (body), JetBrains Mono (technical), Amiri (Arabic) |
+
+---
+
+## 📁 Repository Structure
+
 ```
-zarix-coaching/
-├── index.html        ← Main app (hero, Q&A, chat, auth)
-├── billing.html      ← Pricing page (Free / Plus / Pro / Max)
-├── styles.css        ← All styles (glassmorphism, animations, responsive)
-├── app.js            ← Main logic (Supabase auth, realtime chat, QA rendering)
-├── qa-database.js    ← AI knowledge base (30 expert Q&As, 7 categories)
-├── vercel.json       ← Vercel static deployment config
-└── README.md         ← This file
+zunexa/
+├── index.html              # Auth — Sign In / Sign Up (Supabase)
+├── dashboard.html           # Main app shell — Generator Hub, Analytics, History
+├── ai.html                  # Zunexa Archon AI — local + cloud hybrid assistant
+├── landing.html             # Public marketing landing page
+├── billing.html             # Plan tiers & checkout
+├── pro_accounts.html        # Manual plan-activation request flow
+├── owner_admin.html         # Internal ops dashboard (owner-only)
+├── settings.html            # Account, appearance, privacy, API keys
+├── analytics.html           # Usage charts & content performance
+├── affiliat.html            # Referral program
+├── changelog.html           # Versioned release timeline
+├── apps.html / downloads.html  # Native client distribution
+│
+├── theme.css                # Central design-token system (single source of truth)
+├── style.css / styles.css   # Secondary page-specific stylesheets
+│
+├── sidebar-injection.js     # Universal sidebar + navbar (single <script> injection)
+├── fab-injection.js         # Floating action button system
+├── jarvis-bar.js            # Owner-only command bar
+├── translator-bar.js        # Language switch UI
+├── i18n-system.js           # 700+ string translation engine
+├── onboarding.js            # First-run onboarding modal
+│
+├── ai.js                    # /api/ai serverless proxy (Gemini/Groq, key-isolated)
+├── qa-database.js           # Structured Q&A knowledge base (coaching vertical)
+│
+├── zunexa_qa.json           # Core AI knowledge base (100+ Q&A entries)
+├── zunexa_free_templates.json  # Free-tier content template bank
+│
+├── vercel.json              # Routing, headers, CSP, caching rules
+└── LICENSE                  # Mozilla Public License 2.0
 ```
 
-## Deploy to Vercel
+---
 
-1. Push all files to a GitHub repository
-2. Go to [vercel.com](https://vercel.com) → **New Project** → Import your repo
-3. Framework: **Other** (static)
-4. Root directory: the folder containing these files
-5. Click **Deploy** — zero configuration needed
+## 🎨 Design System — "Zalij Mode"
 
-## Supabase Setup
+All visual identity flows through **`theme.css`** as the single source of truth:
 
-The app uses:
-- **Supabase Auth** (email + password) — works out of the box
-- **Supabase Realtime** (broadcast channel) — works out of the box, no DB table needed for chat
+- **Palette:** `--bg-void: #080808` · `--gold: #D4AF37` · `--gold-bright: #f0cc55`
+- **Typography:** Cinzel for headings, Rajdhani for UI/body, JetBrains Mono for technical/code blocks
+- **Motifs:** SVG Zellige/Zalij hexagonal tiling patterns as low-opacity background layers
+- **Components:** Glassmorphism cards, gold-gradient buttons, animated gold particle canvas, pulse-glow CTAs
 
-### Optional: Persistent Chat Messages
-To store chat history, create a `messages` table in Supabase:
-```sql
-create table messages (
-  id uuid default gen_random_uuid() primary key,
-  content text not null,
-  sender text not null,
-  sender_id uuid references auth.users,
-  tier text default 'free',
-  is_ai boolean default false,
-  created_at timestamptz default now()
-);
+New pages must `<link rel="stylesheet" href="theme.css">` rather than duplicating tokens.
 
--- Allow anyone to read, auth users to insert
-alter table messages enable row level security;
-create policy "Anyone can read" on messages for select using (true);
-create policy "Auth users can insert" on messages for insert with check (auth.uid() = sender_id);
+---
+
+## 🚀 Deployment (Vercel)
+
+This project deploys as a **zero-config static site** with serverless API routes.
+
+```bash
+# Production is auto-deployed from the default branch via Vercel Git integration.
+# Manual deploy:
+vercel --prod
 ```
 
-### Optional: User Profiles Table
-```sql
-create table profiles (
-  id uuid references auth.users primary key,
-  full_name text,
-  tier text default 'free',
-  updated_at timestamptz default now()
-);
+Routing, security headers, and cache policy are defined in [`vercel.json`](./vercel.json):
+- Strict CSP, X-Frame-Options: DENY, HSTS preload
+- Clean URLs (`/ai` → `ai.html`, `/dashboard` → `dashboard.html`)
+- Long-cache immutable assets for `theme.css`, injection scripts, and JSON data banks
+
+**Environment variables required on Vercel** (Project → Settings → Environment Variables):
 ```
+GEMINI_KEY_1
+GEMINI_KEY_2        # optional
+GEMINI_KEY_3        # optional
+GROQ_KEY            # fallback provider
+```
+Keys are **never** exposed client-side — all AI calls route through `/api/ai.js`.
 
-## Features
+---
 
-| Feature | Details |
-|---------|---------|
-| Auth | Supabase email/password sign up & sign in |
-| Global Chat | Supabase Realtime broadcast — everyone sees messages live |
-| @ai command | Type `@ai <question>` in chat to get an AI coaching response |
-| AI depth | Free = short summary, Plus = full answer, Pro = protocol, Max = full blueprint |
-| Q&A browse | 30 entries across 7 categories with filter + search |
-| Plans | Free / Plus ($9) / Pro ($19) / Max ($39) with feature comparison table |
-| Design | Pistachio green + White caramel palette, glassmorphism, animated hero |
+## 🔐 Security Notes
 
-## Contact
-- Email: Mrahmed20101119@gmail.com
-- Phone: 0777 364 251
-- Instagram: @Zunexa_hq
-- YouTube: @zunexa_ahmed
+- Supabase Row-Level Security (RLS) is mandatory on all tables (`profiles`, `content_history`, `ai_knowledge`, `billing_requests`).
+- Plan tier, role, and token balance are **never** trusted from client `localStorage` — server-side via Supabase RPC (`redeem_plan_code`) is the source of truth.
+- `owner_admin.html` and `jarvis-bar.js` gate access via `profiles.role === 'owner'`, checked server-side.
+
+---
+
+## 🧩 Contributing (Internal)
+
+1. Branch from `main`, prefix with `feat/`, `fix/`, or `chore/`.
+2. New pages: link `theme.css`, then inject `sidebar-injection.js` + `fab-injection.js` before `</body>`.
+3. Never duplicate design tokens — extend `theme.css` instead.
+4. Log every release in `changelog.html` under a new version block.
+
+---
+
+## 📄 License
+
+Licensed under the **Mozilla Public License 2.0** — see [`LICENSE`](./LICENSE).
+
+---
+
+<div align="center">
+
+**Zunexa Digital Brand** · Bir Jdid, Morocco
+Built with ✦ — Private & Confidential
+
+</div>
