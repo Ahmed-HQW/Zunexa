@@ -1,102 +1,689 @@
 {
-  "version": "1.0",
-  "description": "Zunexa Free-Mode content bank. Loaded at runtime to extend the built-in ZX_LANG_BANK with extra hooks/bodies/CTAs/hashtags per language, giving Free-plan users more variety without calling a paid AI provider.",
+  "version": "2.0",
+  "schema_info": {
+    "description": "Zunexa Free-Mode intelligent content bank. Loaded at runtime by the TemplateEngine (templates-engine.js) to extend or replace the built-in ZX_LANG_BANK. Free-plan users get high-variety, niche-aware, tone-aware content WITHOUT calling a paid AI provider.",
+    "dimensions": [
+      "language",
+      "tone",
+      "niche (hashtags only)",
+      "cta_category"
+    ],
+    "placeholders": {
+      "{topic}": "the subject the user typed (e.g. 'fitness coaching', 'real estate in Casablanca')",
+      "{niche}": "optional detected niche label, used for hashtag selection only"
+    },
+    "combinatorics_note": "The engine combines hook x body x cta x hashtag-set across tones, so the *effective* number of unique generated posts is languages x tones x hooks x bodies x ctas x hashtag-sets, not just the raw item count. This is what makes the bank feel much bigger than its raw size."
+  },
   "languages": {
     "darija": {
-      "hooks": [
-        "ماشي كاع الناس عندهم هاد المعلومة على {topic} 🤫",
-        "هاكا كنبدا نهاري م3 {topic} — جربها 👇",
-        "غادي تندم إلا ما قريتيش هادشي على {topic} ⏳"
-      ],
-      "bodies": [
-        "بزاف من الناس كيخافو يبداو فـ {topic} علاش كيبان ليهم معقد.\n\nالحقيقة: غير بدا بخطوة وحدة صغيرة، والباقي كيجي وحدو.",
-        "هادي 3 حوايج لي خاصك تعرفهم قبل ما تبدا فـ {topic}:\n\n1️⃣ حدد الهدف بالضبط\n2️⃣ تعلم من غلطات الآخرين\n3️⃣ كون صبور — النتائج كاتبان مع الوقت"
-      ],
-      "ctas": [
-        "❤️ دوز لايك إلا عجباك المعلومة على {topic}",
-        "📤 شارك هاد البوست مع شي صاحب يحتاجو"
-      ],
-      "hashtags": ["#زونيكسا", "#أعمال", "#تسويق", "#نصائح"]
-    },
-    "english": {
-      "hooks": [
-        "Nobody talks about this side of {topic} 🤫",
-        "Here's how I'd start {topic} if I began again today 👇",
-        "You'll wish you knew this about {topic} sooner ⏳"
-      ],
-      "bodies": [
-        "Most people overthink {topic} before they even start.\n\nThe truth: just take one small step — momentum builds from there.",
-        "3 things to know before diving into {topic}:\n\n1️⃣ Define the exact outcome you want\n2️⃣ Learn from others' mistakes\n3️⃣ Stay patient — results compound over time"
-      ],
-      "ctas": [
-        "❤️ Like this if {topic} is relevant to you",
-        "📤 Share this with someone who needs it"
-      ],
-      "hashtags": ["#Zunexa", "#Business", "#DigitalMarketing", "#ContentTips"]
-    },
-    "french": {
-      "hooks": [
-        "Personne ne parle de cet aspect de {topic} 🤫",
-        "Voici comment je recommencerais {topic} aujourd'hui 👇",
-        "Tu vas regretter de ne pas avoir su ça plus tôt sur {topic} ⏳"
-      ],
-      "bodies": [
-        "La plupart des gens réfléchissent trop avant de commencer {topic}.\n\nLa vérité : fais juste un petit pas — l'élan suit naturellement.",
-        "3 choses à savoir avant de te lancer dans {topic} :\n\n1️⃣ Définis précisément ton objectif\n2️⃣ Apprends des erreurs des autres\n3️⃣ Sois patient — les résultats s'accumulent avec le temps"
-      ],
-      "ctas": [
-        "❤️ Like si {topic} te concerne",
-        "📤 Partage ce post avec quelqu'un qui en a besoin"
-      ],
-      "hashtags": ["#Zunexa", "#Business", "#MarketingDigital", "#Conseils"]
+      "tones": {
+        "curiosity": {
+          "hooks": [
+            "ماشي كاع الناس عندهم هاد المعلومة على {topic} 🤫",
+            "هاكا كنبدا نهاري م3 {topic} — جربها 👇"
+          ],
+          "bodies": [
+            "بزاف من الناس كيخافو يبداو فـ {topic} علاش كيبان ليهم معقد.\n\nالحقيقة: غير بدا بخطوة وحدة صغيرة، والباقي كيجي وحدو.",
+            "كاين سر صغير ف {topic} مايعرفوش بزاف د الناس:\n\nماشي خاصك تكون خبير من البداية، خاصك غير تبدا وتصلح فالطريق."
+          ]
+        },
+        "listicle": {
+          "hooks": [
+            "3 حوايج خاصك تعرفهم على {topic} قبل ما تبدا ⏳",
+            "هادي الأخطاء لي كاع الناس كيديروها ف {topic} 🚫"
+          ],
+          "bodies": [
+            "هادي 3 حوايج لي خاصك تعرفهم قبل ما تبدا فـ {topic}:\n\n1️⃣ حدد الهدف بالضبط\n2️⃣ تعلم من غلطات الآخرين\n3️⃣ كون صبور — النتائج كاتبان مع الوقت",
+            "أكبر 3 أخطاء كيديروها الناس ف {topic}:\n\n1️⃣ كيبداو بلا خطة\n2️⃣ كيقارنو راسهم بالآخرين\n3️⃣ كيوقفو قبل ما توصل النتيجة"
+          ]
+        },
+        "story": {
+          "hooks": [
+            "هاد القصة غادي تبدل الفكرة ديالك على {topic} 📖",
+            "من سنة، كنت كنفكر بزاف ف {topic} حتى وقع ليا هادشي..."
+          ],
+          "bodies": [
+            "بداية مشيتي صعيبة م3 {topic}، حسيت بلي ماشي طريقي.\n\nولكن مع الصبر والتجربة، فهمت بلي الطريق كيبدا بخطوة وحدة فقط — والباقي كيتعلم بالممارسة.",
+            "كل واحد لي بدا ف {topic} عدا من نفس المرحلة: الشك والخوف من الفشل.\n\nالفرق بين لي وصل ولي توقف هو غير الاستمرارية."
+          ]
+        },
+        "question": {
+          "hooks": [
+            "واش حقا فاهم شنو كيخصك ف {topic}؟ 🤔",
+            "شحال من مرة حاولتي ف {topic} وما نجحتيش؟"
+          ],
+          "bodies": [
+            "إلا كنتي كتسول راسك علاش {topic} ما كيمشيش معاك كيف بغيتي، الجواب غالبا بسيط:\n\nماشي مشكلة فالفكرة، مشكلة فالطريقة.",
+            "واحد من الأسئلة لي كثر كيجيوني على {topic}: 'فين نبدا؟'\n\nالجواب: بدا فين كاين، صلح فالطريق."
+          ]
+        },
+        "controversial": {
+          "hooks": [
+            "غادي نقول حاجة ماشي بزاف ديال الناس غاديين يحبوها على {topic} 😬",
+            "اللي كيقولو ليك على {topic} كاع غالط 🚫"
+          ],
+          "bodies": [
+            "الناس كيقولو ليك خاصك الخبرة بزاف قبل ما تبدا ف {topic}.\n\nالحقيقة؟ الخبرة كاتجي بالتطبيق، ماشي بالقراءة برك."
+          ]
+        },
+        "fomo": {
+          "hooks": [
+            "إلا ما بدتيش ف {topic} هاد الشهر، غادي تندم مزيان ⏳",
+            "بقا شوية ديال الوقت بحال تستافد من {topic} 🔥"
+          ],
+          "bodies": [
+            "السوق ديال {topic} كيتبدل بزربة، ولي كيبقى واقف غادي يبقى لور.\n\nالفرصة دابا، ماشي غدا."
+          ]
+        }
+      },
+      "ctas": {
+        "engagement": [
+          "❤️ دوز لايك إلا عجباك المعلومة على {topic}",
+          "إلا فادتك هاد النصيحة على {topic}، خلي ليك لايك ❤️"
+        ],
+        "share": [
+          "📤 شارك هاد البوست مع شي صاحب يحتاجو",
+          "بعت هادشي لشي واحد كيخدم ف {topic} 📤"
+        ],
+        "save": [
+          "💾 صيفط هاد البوست بحال ترجع ليه فالمستقبل",
+          "حفظ هاد المعلومة، غادي تحتاجها 💾"
+        ],
+        "comment": [
+          "💬 كتب فالكومنتار شنو رايك ف {topic}",
+          "أي سؤال على {topic}؟ كتبو هنا 👇"
+        ]
+      },
+      "hashtags": {
+        "business": [
+          "#زونيكسا",
+          "#أعمال",
+          "#ريادة_الأعمال",
+          "#نجاح"
+        ],
+        "marketing": [
+          "#تسويق",
+          "#تسويق_رقمي",
+          "#سوشل_ميديا",
+          "#محتوى"
+        ],
+        "fitness": [
+          "#رياضة",
+          "#صحة",
+          "#تحدي_رياضي",
+          "#لياقة"
+        ],
+        "beauty": [
+          "#جمال",
+          "#عناية_بالبشرة",
+          "#مكياج",
+          "#ستايل"
+        ],
+        "food": [
+          "#طبخ",
+          "#أكل_مغربي",
+          "#وصفات",
+          "#مطبخ"
+        ],
+        "coaching": [
+          "#تطوير_الذات",
+          "#كوتشينغ",
+          "#نصائح",
+          "#تحفيز"
+        ]
+      }
     },
     "franco": {
-      "hooks": [
-        "Hadi 7aja ma kayqolhach 7ta wa7d 3la {topic} 🤫",
-        "Hakda ghadi nbda {topic} ila bdit lyoum men jdid 👇",
-        "Ghadi tnedem ila ma 3reftich hadchi 3la {topic} bekri ⏳"
-      ],
-      "bodies": [
-        "Bzaf dyal nas kay réfléchissent bzaf qbel ma yebdaw {topic}.\n\nLa vérité: ghir bda b pas sghir — le reste kayji wahdo.",
-        "3 hwayej khasek t3ref qbel matebda {topic}:\n\n1️⃣ Hdd l-objectif b dakka\n2️⃣ T3llem men ghalat l-okhrin\n3️⃣ Kun patient — les résultats kayjiw m3a lwe9t"
-      ],
-      "ctas": [
-        "❤️ Dwz like ila {topic} khassek",
-        "📤 Partagi had post m3a chi w7ed 3ndo besoin"
-      ],
-      "hashtags": ["#zunexa", "#Maroc", "#business", "#tips"]
+      "tones": {
+        "curiosity": {
+          "hooks": [
+            "Hadi 7aja ma kayqolhach 7ta wa7d 3la {topic} 🤫",
+            "Hakda ghadi nbda {topic} ila bdit lyoum men jdid 👇"
+          ],
+          "bodies": [
+            "Bzaf dyal nas kay réfléchissent bzaf qbel ma yebdaw {topic}.\n\nLa vérité: ghir bda b pas sghir — le reste kayji wahdo.",
+            "Kayn secret sghir f {topic} ma y3rfouh chi bzaf dyal nas:\n\nMakhassek tkon expert men l-bidaya, khassek ghir tbda w tsa779 fl-tariq."
+          ]
+        },
+        "listicle": {
+          "hooks": [
+            "3 hwayej khassek t3ref 3la {topic} qbel matebda ⏳",
+            "Hadchi les erreurs li kaykono dayrinha les gens f {topic} 🚫"
+          ],
+          "bodies": [
+            "3 hwayej khasek t3ref qbel matebda fi {topic}:\n\n1️⃣ Hdd l-objectif b dakka\n2️⃣ T3llem men ghalat l-okhrin\n3️⃣ Kun patient — les résultats kayjiw m3a lwe9t",
+            "Akbar 3 erreurs li kaydiro nas fi {topic}:\n\n1️⃣ Kaybdaw bla plan\n2️⃣ Kayqarno rashom m3a lokhrin\n3️⃣ Kaywqfo qbel matwsl ntija"
+          ]
+        },
+        "story": {
+          "hooks": [
+            "Had qissa ghadi tbdl l-fikra dyalk 3la {topic} 📖",
+            "Mn 3am, kant kanfker bzaf f {topic} hta w93 liya hadchi..."
+          ],
+          "bodies": [
+            "Bidaya dyali m3a {topic} kant s3iba, 7sit bli mashi tariq dyali.\n\nWalakin m3a sabr w tajriba, fhmt bli tariq kaybda b pas wahd ghir — w lbaqi kaytl3lm b la pratique."
+          ]
+        },
+        "question": {
+          "hooks": [
+            "Wach hqq fahm chno khassk f {topic}? 🤔",
+            "Chhal mn marra 7awlti f {topic} w ma njhtich?"
+          ],
+          "bodies": [
+            "Ila knti katsewl rasek 3lash {topic} ma kaymchich m3ak kifma bghiti, jawab ghaliban basit:\n\nMashi mochkil fl-fikra, mochkil fl-tariqa."
+          ]
+        },
+        "controversial": {
+          "hooks": [
+            "Ghadi ngol 7aja ma bzaf dyal nas ghaykono 7bouha 3la {topic} 😬"
+          ],
+          "bodies": [
+            "Nas kayqolo lik khassk l-khibra bzaf qbel matbda f {topic}.\n\nLa vérité? L-khibra katji b la pratique, mashi b la 9raya ghir."
+          ]
+        },
+        "fomo": {
+          "hooks": [
+            "Ila ma bdytich f {topic} had chhar, ghadi tnedem mzyan ⏳"
+          ],
+          "bodies": [
+            "Le marché dyal {topic} kaytbdl b sor3a, w li kaybqa wa9f ghadi yb9a lwra.\n\nL-occasion daba, mashi ghda."
+          ]
+        }
+      },
+      "ctas": {
+        "engagement": [
+          "❤️ Dwz like ila {topic} khassek",
+          "Ila fadtek had nasiha 3la {topic}, khalli like ❤️"
+        ],
+        "share": [
+          "📤 Partagi had post m3a chi w7ed 3ndo besoin",
+          "Sift hadchi l chi wahd kay khdam f {topic} 📤"
+        ],
+        "save": [
+          "💾 Save had post bach trj3 lih fl-futur",
+          "Save hadi l-ma3luma, ghadi tkhassek 💾"
+        ],
+        "comment": [
+          "💬 Kteb f comment chno ra'yek f {topic}",
+          "Chi so'al 3la {topic}? Kteb hna 👇"
+        ]
+      },
+      "hashtags": {
+        "business": [
+          "#zunexa",
+          "#business",
+          "#entrepreneur",
+          "#success"
+        ],
+        "marketing": [
+          "#marketing",
+          "#marketingdigital",
+          "#socialmedia",
+          "#content"
+        ],
+        "fitness": [
+          "#sport",
+          "#santé",
+          "#fitness",
+          "#challenge"
+        ],
+        "beauty": [
+          "#beauty",
+          "#skincare",
+          "#makeup",
+          "#style"
+        ],
+        "food": [
+          "#cuisine",
+          "#cuisinemarocaine",
+          "#recettes",
+          "#food"
+        ],
+        "coaching": [
+          "#developpementpersonnel",
+          "#coaching",
+          "#tips",
+          "#motivation"
+        ]
+      }
+    },
+    "english": {
+      "tones": {
+        "curiosity": {
+          "hooks": [
+            "Nobody talks about this side of {topic} 🤫",
+            "Here's how I'd start {topic} if I began again today 👇"
+          ],
+          "bodies": [
+            "Most people overthink {topic} before they even start.\n\nThe truth: just take one small step — momentum builds from there.",
+            "There's a small detail about {topic} most people miss:\n\nYou don't need to be an expert to start — you become one by doing it."
+          ]
+        },
+        "listicle": {
+          "hooks": [
+            "3 things to know before you start {topic} ⏳",
+            "These are the mistakes everyone makes with {topic} 🚫"
+          ],
+          "bodies": [
+            "3 things to know before diving into {topic}:\n\n1️⃣ Define the exact outcome you want\n2️⃣ Learn from others' mistakes\n3️⃣ Stay patient — results compound over time",
+            "The 3 biggest mistakes people make with {topic}:\n\n1️⃣ Starting without a plan\n2️⃣ Comparing themselves to others\n3️⃣ Quitting right before results show up"
+          ]
+        },
+        "story": {
+          "hooks": [
+            "This story will change how you see {topic} 📖",
+            "A year ago I kept overthinking {topic}, until this happened..."
+          ],
+          "bodies": [
+            "My first attempt at {topic} felt completely wrong.\n\nBut with patience and practice, I realized the path always starts with one small step — the rest you learn by doing."
+          ]
+        },
+        "question": {
+          "hooks": [
+            "Do you actually know what you need for {topic}? 🤔",
+            "How many times have you tried {topic} and failed?"
+          ],
+          "bodies": [
+            "If you keep asking why {topic} isn't working the way you want, the answer is usually simple:\n\nIt's not the idea that's broken, it's the approach."
+          ]
+        },
+        "controversial": {
+          "hooks": [
+            "I'm going to say something unpopular about {topic} 😬"
+          ],
+          "bodies": [
+            "Everyone tells you that you need years of experience before starting {topic}.\n\nTruth is, real experience only comes from doing — not from reading about it."
+          ]
+        },
+        "fomo": {
+          "hooks": [
+            "If you don't start {topic} this month, you'll regret it ⏳"
+          ],
+          "bodies": [
+            "The {topic} space is moving fast, and whoever stays still gets left behind.\n\nThe window is open now, not later."
+          ]
+        }
+      },
+      "ctas": {
+        "engagement": [
+          "❤️ Like this if {topic} is relevant to you",
+          "If this tip on {topic} helped you, drop a like ❤️"
+        ],
+        "share": [
+          "📤 Share this with someone who needs it",
+          "Send this to someone working on {topic} 📤"
+        ],
+        "save": [
+          "💾 Save this post for later",
+          "Save this — you'll want to come back to it 💾"
+        ],
+        "comment": [
+          "💬 Comment your thoughts on {topic}",
+          "Got a question about {topic}? Drop it below 👇"
+        ]
+      },
+      "hashtags": {
+        "business": [
+          "#Zunexa",
+          "#Business",
+          "#Entrepreneur",
+          "#Success"
+        ],
+        "marketing": [
+          "#DigitalMarketing",
+          "#ContentTips",
+          "#SocialMedia",
+          "#Marketing"
+        ],
+        "fitness": [
+          "#Fitness",
+          "#Health",
+          "#Workout",
+          "#Wellness"
+        ],
+        "beauty": [
+          "#Beauty",
+          "#Skincare",
+          "#Makeup",
+          "#Style"
+        ],
+        "food": [
+          "#Food",
+          "#Recipes",
+          "#Cooking",
+          "#Foodie"
+        ],
+        "coaching": [
+          "#PersonalDevelopment",
+          "#Coaching",
+          "#Motivation",
+          "#Growth"
+        ]
+      }
+    },
+    "french": {
+      "tones": {
+        "curiosity": {
+          "hooks": [
+            "Personne ne parle de cet aspect de {topic} 🤫",
+            "Voici comment je recommencerais {topic} aujourd'hui 👇"
+          ],
+          "bodies": [
+            "La plupart des gens réfléchissent trop avant de commencer {topic}.\n\nLa vérité : fais juste un petit pas — l'élan suit naturellement.",
+            "Il y a un détail que peu de gens connaissent sur {topic} :\n\nTu n'as pas besoin d'être expert pour commencer — tu le deviens en pratiquant."
+          ]
+        },
+        "listicle": {
+          "hooks": [
+            "3 choses à savoir avant de te lancer dans {topic} ⏳",
+            "Les erreurs que tout le monde fait avec {topic} 🚫"
+          ],
+          "bodies": [
+            "3 choses à savoir avant de te lancer dans {topic} :\n\n1️⃣ Définis précisément ton objectif\n2️⃣ Apprends des erreurs des autres\n3️⃣ Sois patient — les résultats s'accumulent avec le temps",
+            "Les 3 plus grandes erreurs avec {topic} :\n\n1️⃣ Commencer sans plan\n2️⃣ Se comparer aux autres\n3️⃣ Abandonner juste avant les résultats"
+          ]
+        },
+        "story": {
+          "hooks": [
+            "Cette histoire va changer ta vision de {topic} 📖",
+            "Il y a un an, je réfléchissais trop à {topic}, jusqu'à ce que..."
+          ],
+          "bodies": [
+            "Mes débuts avec {topic} ont été difficiles.\n\nMais avec la patience et la pratique, j'ai compris que tout commence par un petit pas — le reste s'apprend en avançant."
+          ]
+        },
+        "question": {
+          "hooks": [
+            "Sais-tu vraiment ce qu'il te faut pour {topic} ? 🤔",
+            "Combien de fois as-tu essayé {topic} sans succès ?"
+          ],
+          "bodies": [
+            "Si tu te demandes pourquoi {topic} n'avance pas comme tu veux, la réponse est souvent simple :\n\nCe n'est pas l'idée qui est mauvaise, c'est la méthode."
+          ]
+        },
+        "controversial": {
+          "hooks": [
+            "Je vais dire un truc impopulaire sur {topic} 😬"
+          ],
+          "bodies": [
+            "On te dit qu'il faut des années d'expérience avant de commencer {topic}.\n\nLa vérité ? L'expérience vient de la pratique, pas de la lecture."
+          ]
+        },
+        "fomo": {
+          "hooks": [
+            "Si tu ne commences pas {topic} ce mois-ci, tu vas le regretter ⏳"
+          ],
+          "bodies": [
+            "Le secteur de {topic} évolue vite, et ceux qui restent immobiles se font dépasser.\n\nLa fenêtre est ouverte maintenant, pas plus tard."
+          ]
+        }
+      },
+      "ctas": {
+        "engagement": [
+          "❤️ Like si {topic} te concerne",
+          "Si ce conseil sur {topic} t'a aidé, laisse un like ❤️"
+        ],
+        "share": [
+          "📤 Partage ce post avec quelqu'un qui en a besoin",
+          "Envoie ça à quelqu'un qui travaille sur {topic} 📤"
+        ],
+        "save": [
+          "💾 Enregistre ce post pour plus tard",
+          "Enregistre ça, tu en auras besoin 💾"
+        ],
+        "comment": [
+          "💬 Dis-moi en commentaire ce que tu penses de {topic}",
+          "Une question sur {topic} ? Écris-la ici 👇"
+        ]
+      },
+      "hashtags": {
+        "business": [
+          "#Zunexa",
+          "#Business",
+          "#Entrepreneuriat",
+          "#Succès"
+        ],
+        "marketing": [
+          "#MarketingDigital",
+          "#Conseils",
+          "#ReseauxSociaux",
+          "#Contenu"
+        ],
+        "fitness": [
+          "#Sport",
+          "#Santé",
+          "#Fitness",
+          "#Bienêtre"
+        ],
+        "beauty": [
+          "#Beauté",
+          "#SoinsDeLaPeau",
+          "#Maquillage",
+          "#Style"
+        ],
+        "food": [
+          "#Cuisine",
+          "#Recettes",
+          "#CuisineMarocaine",
+          "#Foodie"
+        ],
+        "coaching": [
+          "#DéveloppementPersonnel",
+          "#Coaching",
+          "#Motivation",
+          "#Conseils"
+        ]
+      }
     },
     "gulf": {
-      "hooks": [
-        "ما أحد يتكلم عن هذا الجانب من {topic} 🤫",
-        "هكذا بدأت {topic} ولو رجعت من جديد 👇",
-        "بتتمنى لو عرفت هذا عن {topic} من زمان ⏳"
-      ],
-      "bodies": [
-        "أغلب الناس يفكرون كثير قبل البدء في {topic}.\n\nالحقيقة: ابدأ بخطوة صغيرة وبعدها كل شي يكمل لحاله.",
-        "3 أشياء لازم تعرفها قبل {topic}:\n\n1️⃣ حدد هدفك بدقة\n2️⃣ استفد من أخطاء غيرك\n3️⃣ كن صبور — النتائج تتراكم مع الوقت"
-      ],
-      "ctas": [
-        "❤️ لايك إذا كان {topic} يهمك",
-        "📤 شارك هذا المنشور مع شخص يحتاجه"
-      ],
-      "hashtags": ["#زونيكسا", "#أعمال", "#تسويق_رقمي", "#نصائح"]
+      "tones": {
+        "curiosity": {
+          "hooks": [
+            "ما أحد يتكلم عن هذا الجانب من {topic} 🤫",
+            "هكذا بدأت {topic} ولو رجعت من جديد 👇"
+          ],
+          "bodies": [
+            "أغلب الناس يفكرون كثير قبل البدء في {topic}.\n\nالحقيقة: ابدأ بخطوة صغيرة وبعدها كل شي يكمل لحاله.",
+            "كاين تفصيل صغير على {topic} قليل من الناس يعرفونه:\n\nمالازم تكون خبير من البداية، تصير خبير بالتطبيق."
+          ]
+        },
+        "listicle": {
+          "hooks": [
+            "3 أشياء لازم تعرفها قبل {topic} ⏳",
+            "هذي الأخطاء اللي يسويها أغلب الناس في {topic} 🚫"
+          ],
+          "bodies": [
+            "3 أشياء لازم تعرفها قبل {topic}:\n\n1️⃣ حدد هدفك بدقة\n2️⃣ استفد من أخطاء غيرك\n3️⃣ كن صبور — النتائج تتراكم مع الوقت",
+            "أكبر 3 أخطاء يسويها الناس في {topic}:\n\n1️⃣ يبدأون بدون خطة\n2️⃣ يقارنون نفسهم بالآخرين\n3️⃣ يتوقفون قبل ظهور النتيجة"
+          ]
+        },
+        "story": {
+          "hooks": [
+            "هذي القصة بتغيّر نظرتك على {topic} 📖",
+            "من سنة وأنا أفكر كثير في {topic}، إلى أن صار هذا..."
+          ],
+          "bodies": [
+            "بداياتي مع {topic} كانت صعبة وحسيت إنه ما هو طريقي.\n\nلكن مع الصبر والتجربة فهمت إن الطريق يبدأ بخطوة وحدة فقط، والباقي يتعلم بالممارسة."
+          ]
+        },
+        "question": {
+          "hooks": [
+            "هل فعلاً تعرف وش تحتاج في {topic}؟ 🤔",
+            "كم مرة جربت {topic} وما نجحت؟"
+          ],
+          "bodies": [
+            "إذا كنت تسأل نفسك ليش {topic} ما يمشي كما تريد، الجواب غالباً بسيط:\n\nالمشكلة مو في الفكرة، المشكلة في الطريقة."
+          ]
+        }
+      },
+      "ctas": {
+        "engagement": [
+          "❤️ لايك إذا كان {topic} يهمك",
+          "إذا هذي النصيحة عن {topic} فادتك، خل لايك ❤️"
+        ],
+        "share": [
+          "📤 شارك هذا المنشور مع شخص يحتاجه",
+          "ابعث هذا لشخص يشتغل في {topic} 📤"
+        ],
+        "save": [
+          "💾 حفظ هذا المنشور للرجوع له بعدين",
+          "حفظ هذي المعلومة، بتحتاجها 💾"
+        ],
+        "comment": [
+          "💬 اكتب رأيك في {topic} بالتعليقات",
+          "عندك سؤال عن {topic}؟ اكتبه هنا 👇"
+        ]
+      },
+      "hashtags": {
+        "business": [
+          "#زونيكسا",
+          "#أعمال",
+          "#ريادة",
+          "#نجاح"
+        ],
+        "marketing": [
+          "#تسويق_رقمي",
+          "#تسويق",
+          "#سوشيال_ميديا",
+          "#محتوى"
+        ],
+        "fitness": [
+          "#رياضة",
+          "#صحة",
+          "#لياقة_بدنية",
+          "#تحدي"
+        ],
+        "beauty": [
+          "#جمال",
+          "#العناية_بالبشرة",
+          "#مكياج",
+          "#ستايل"
+        ],
+        "food": [
+          "#طبخ",
+          "#وصفات",
+          "#اكل",
+          "#مطبخ"
+        ],
+        "coaching": [
+          "#تطوير_الذات",
+          "#كوتشينغ",
+          "#تحفيز",
+          "#نصائح"
+        ]
+      }
     },
     "spanish": {
-      "hooks": [
-        "Nadie habla de este lado de {topic} 🤫",
-        "Así empezaría {topic} si comenzara hoy de nuevo 👇",
-        "Te arrepentirás de no haber sabido esto sobre {topic} antes ⏳"
-      ],
-      "bodies": [
-        "La mayoría piensa demasiado antes de empezar con {topic}.\n\nLa verdad: da solo un pequeño paso — el impulso llega después.",
-        "3 cosas que debes saber antes de empezar con {topic}:\n\n1️⃣ Define exactamente tu objetivo\n2️⃣ Aprende de los errores de otros\n3️⃣ Sé paciente — los resultados se acumulan con el tiempo"
-      ],
-      "ctas": [
-        "❤️ Dale like si {topic} te interesa",
-        "📤 Comparte esto con alguien que lo necesite"
-      ],
-      "hashtags": ["#Zunexa", "#Negocios", "#MarketingDigital", "#Consejos"]
+      "tones": {
+        "curiosity": {
+          "hooks": [
+            "Nadie habla de este lado de {topic} 🤫",
+            "Así empezaría {topic} si comenzara hoy de nuevo 👇"
+          ],
+          "bodies": [
+            "La mayoría piensa demasiado antes de empezar con {topic}.\n\nLa verdad: da solo un pequeño paso — el impulso llega después.",
+            "Hay un pequeño detalle sobre {topic} que casi nadie sabe:\n\nNo necesitas ser experto para empezar — te conviertes en uno haciéndolo."
+          ]
+        },
+        "listicle": {
+          "hooks": [
+            "3 cosas que debes saber antes de empezar con {topic} ⏳",
+            "Estos son los errores que todos cometen con {topic} 🚫"
+          ],
+          "bodies": [
+            "3 cosas que debes saber antes de empezar con {topic}:\n\n1️⃣ Define exactamente tu objetivo\n2️⃣ Aprende de los errores de otros\n3️⃣ Sé paciente — los resultados se acumulan con el tiempo",
+            "Los 3 errores más grandes con {topic}:\n\n1️⃣ Empezar sin un plan\n2️⃣ Compararse con otros\n3️⃣ Abandonar justo antes de ver resultados"
+          ]
+        },
+        "story": {
+          "hooks": [
+            "Esta historia cambiará tu forma de ver {topic} 📖",
+            "Hace un año pensaba demasiado en {topic}, hasta que pasó esto..."
+          ],
+          "bodies": [
+            "Mis primeros intentos con {topic} se sintieron completamente mal.\n\nPero con paciencia y práctica entendí que el camino siempre empieza con un pequeño paso."
+          ]
+        },
+        "question": {
+          "hooks": [
+            "¿Realmente sabes qué necesitas para {topic}? 🤔",
+            "¿Cuántas veces intentaste {topic} sin éxito?"
+          ],
+          "bodies": [
+            "Si te preguntas por qué {topic} no avanza como quieres, la respuesta suele ser simple:\n\nNo es la idea lo que falla, es el enfoque."
+          ]
+        }
+      },
+      "ctas": {
+        "engagement": [
+          "❤️ Dale like si {topic} te interesa",
+          "Si este consejo sobre {topic} te ayudó, deja un like ❤️"
+        ],
+        "share": [
+          "📤 Comparte esto con alguien que lo necesite",
+          "Envía esto a alguien que trabaje en {topic} 📤"
+        ],
+        "save": [
+          "💾 Guarda este post para después",
+          "Guarda esto, lo vas a necesitar 💾"
+        ],
+        "comment": [
+          "💬 Comenta qué piensas sobre {topic}",
+          "¿Tienes una pregunta sobre {topic}? Escríbela aquí 👇"
+        ]
+      },
+      "hashtags": {
+        "business": [
+          "#Zunexa",
+          "#Negocios",
+          "#Emprendimiento",
+          "#Éxito"
+        ],
+        "marketing": [
+          "#MarketingDigital",
+          "#Consejos",
+          "#RedesSociales",
+          "#Contenido"
+        ],
+        "fitness": [
+          "#Fitness",
+          "#Salud",
+          "#Ejercicio",
+          "#Bienestar"
+        ],
+        "beauty": [
+          "#Belleza",
+          "#CuidadoDeLaPiel",
+          "#Maquillaje",
+          "#Estilo"
+        ],
+        "food": [
+          "#Comida",
+          "#Recetas",
+          "#Cocina",
+          "#Foodie"
+        ],
+        "coaching": [
+          "#DesarrolloPersonal",
+          "#Coaching",
+          "#Motivación",
+          "#Consejos"
+        ]
+      }
     }
-  }
+  },
+  "cta_categories": [
+    "engagement",
+    "share",
+    "save",
+    "comment"
+  ],
+  "niches": [
+    "business",
+    "marketing",
+    "fitness",
+    "beauty",
+    "food",
+    "coaching"
+  ]
 }
