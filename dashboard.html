@@ -2810,12 +2810,38 @@ const ZX_LANG_BANK = {
 
 function zxPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-/* ─── Free-Mode Template Loader ──────────────────────────────────
- * Fetches zunexa_free_templates.json and merges extra hooks/bodies/
- * CTAs/hashtags into ZX_LANG_BANK so Free-plan users get more variety
- * from the local content engine — no external AI call needed.
- * Fails silently and keeps the built-in bank if the file is missing.
+/* ─── Free-Mode Template Loader (v2 — intelligent) ───────────────
+ * Fetches zunexa_free_templates.json and merges it into ZX_LANG_BANK.
+ * Supports TWO schemas so old and new template files both work:
+ *   1) Flat (legacy):   { languages: { darija: { hooks:[], bodies:[], ctas:[], hashtags:[] } } }
+ *   2) Tones (v2):      { languages: { darija: { tones:{ curiosity:{hooks,bodies}, ... },
+ *                                                  ctas:{engagement:[],share:[],...},
+ *                                                  hashtags:{business:[],fitness:[],...} } } }
+ * Tones get flattened into hooks/bodies (so variety still grows a lot),
+ * niche-keyed hashtags are kept separately for smart per-topic selection,
+ * and category-keyed ctas are flattened too. Fails silently if the file
+ * is missing — built-in ZX_LANG_BANK keeps working either way.
  * ────────────────────────────────────────────────────────────── */
+const ZX_NICHE_HASHTAGS = {}; // { lang: { niche: [tags] } } — populated if v2 schema is used
+const ZX_NICHE_KEYWORDS = {
+  business:  ['business','entrepreneur','أعمال','ريادة','boutique','vente','négoce','شركة'],
+  marketing: ['marketing','تسويق','social media','content','ads','إعلان','publicité'],
+  fitness:   ['fitness','gym','رياضة','صحة','coach sportif','workout','musculation'],
+  beauty:    ['beauty','جمال','skincare','makeup','مكياج','beauté'],
+  food:      ['food','recipe','طبخ','cuisine','وصفة','restaurant','recette'],
+  coaching:  ['coaching','كوتشينغ','تطوير','mindset','développement','تحفيز'],
+};
+
+function zxDetectNiche(text) {
+  const lower = (text || '').toLowerCase();
+  let best = null, bestScore = 0;
+  for (const [niche, kws] of Object.entries(ZX_NICHE_KEYWORDS)) {
+    const score = kws.reduce((acc, kw) => lower.includes(kw.toLowerCase()) ? acc + 1 : acc, 0);
+    if (score > bestScore) { bestScore = score; best = niche; }
+  }
+  return best; // null if nothing matched -> caller falls back to general hashtags
+}
+
 (async function zxLoadFreeTemplates() {
   try {
     const res = await fetch('zunexa_free_templates.json', { cache: 'force-cache' });
@@ -2825,11 +2851,31 @@ function zxPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
     Object.keys(langs).forEach(key => {
       if (!ZX_LANG_BANK[key]) return;
       const extra = langs[key];
+
+      // --- Legacy flat schema ---
       ['hooks','bodies','ctas'].forEach(field => {
         if (Array.isArray(extra[field])) ZX_LANG_BANK[key][field].push(...extra[field]);
       });
       if (Array.isArray(extra.hashtags)) {
         extra.hashtags.forEach(h => { if (!ZX_LANG_BANK[key].hashtags.includes(h)) ZX_LANG_BANK[key].hashtags.push(h); });
+      }
+
+      // --- v2 tones schema ---
+      if (extra.tones && typeof extra.tones === 'object') {
+        Object.values(extra.tones).forEach(toneBank => {
+          if (Array.isArray(toneBank.hooks))  ZX_LANG_BANK[key].hooks.push(...toneBank.hooks);
+          if (Array.isArray(toneBank.bodies)) ZX_LANG_BANK[key].bodies.push(...toneBank.bodies);
+        });
+      }
+      if (extra.ctas && !Array.isArray(extra.ctas) && typeof extra.ctas === 'object') {
+        Object.values(extra.ctas).forEach(arr => { if (Array.isArray(arr)) ZX_LANG_BANK[key].ctas.push(...arr); });
+      }
+      if (extra.hashtags && !Array.isArray(extra.hashtags) && typeof extra.hashtags === 'object') {
+        ZX_NICHE_HASHTAGS[key] = extra.hashtags; // keep niche-keyed map for smart lookup
+        Object.values(extra.hashtags).forEach(arr => {
+          if (!Array.isArray(arr)) return;
+          arr.forEach(h => { if (!ZX_LANG_BANK[key].hashtags.includes(h)) ZX_LANG_BANK[key].hashtags.push(h); });
+        });
       }
     });
   } catch (err) { console.warn('Zunexa: free templates not loaded, using built-in bank.', err); }
@@ -2844,6 +2890,21 @@ function zxShuffleHashtags(tags, n) {
   return copy.slice(0, n).join(' ');
 }
 
+// Anti-repetition memory: avoids handing back the same hook/body/cta
+// again until the rest of the variety has been used up for that slot.
+const ZX_PICK_HISTORY = {};
+function zxPickSmart(lang, field, arr) {
+  if (!arr || !arr.length) return '';
+  const key = lang + ':' + field;
+  if (!ZX_PICK_HISTORY[key]) ZX_PICK_HISTORY[key] = new Set();
+  const used = ZX_PICK_HISTORY[key];
+  let pool = arr.map((t, i) => i).filter(i => !used.has(i));
+  if (!pool.length) { used.clear(); pool = arr.map((t, i) => i); }
+  const idx = pool[Math.floor(Math.random() * pool.length)];
+  used.add(idx);
+  return arr[idx];
+}
+
 function composeLocalContent(language, contentType, tone, prompt) {
   const langMap = { darija: 'darija', gulf: 'gulf', franco: 'franco', english: 'english', french: 'french', spanish: 'spanish' };
   const lang = langMap[language] || 'english';
@@ -2851,10 +2912,15 @@ function composeLocalContent(language, contentType, tone, prompt) {
   const topic = (prompt || '').trim() || (lang === 'english' ? 'your project' : lang === 'french' ? 'votre projet' : 'مشروعك');
 
   const fill = s => s.replace(/\{topic\}/g, topic);
-  const hook = fill(zxPick(bank.hooks));
-  const body = fill(zxPick(bank.bodies));
-  const cta  = fill(zxPick(bank.ctas));
-  const tags = zxShuffleHashtags(bank.hashtags, 4);
+  const hook = fill(zxPickSmart(lang, 'hooks', bank.hooks));
+  const body = fill(zxPickSmart(lang, 'bodies', bank.bodies));
+  const cta  = fill(zxPickSmart(lang, 'ctas', bank.ctas));
+
+  // Niche-aware hashtags: if the v2 niche-keyed bank loaded, try to match
+  // the topic to a niche and pull from there first, else use the general pool.
+  const niche = zxDetectNiche(topic);
+  const nicheTags = (niche && ZX_NICHE_HASHTAGS[lang] && ZX_NICHE_HASHTAGS[lang][niche]) || null;
+  const tags = nicheTags ? zxShuffleHashtags(nicheTags, 4) : zxShuffleHashtags(bank.hashtags, 4);
 
   switch (contentType) {
     case 'tiktok':
