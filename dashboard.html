@@ -8,12 +8,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <!-- ============================================================
-     ZUNEXA SAAS — MAIN DASHBOARD
-     Stack   : HTML5 · CSS3 · Vanilla JS
-     Backend : No backend first html code 
-     Design  : "Zalij Mode" — Premium Moroccan Geometric
+     ZUNEXA SAAS — MAIN DASHBOARD  v10.2
+     ──────────────────────────────────────────────────────────
+     Stack    : HTML5 · CSS3 · Vanilla JS (zero dependencies)
+     Backend  : Supabase (auth · profiles · content_history ·
+                generated_content · ai_knowledge)
+     AI Layer : Claude Sonnet 4.6 via /api/ai proxy +
+                local ZX_LANG_BANK fallback engine +
+                zunexa_qa.json knowledge base (307 entries)
+     Design   : "Zalij Mode" — Premium Moroccan Geometric
+                Gold / Black · Cinzel + Rajdhani + Amiri
+     Image AI : Pollinations.ai (free, no-key image gen)
+     Author   : Ahmed — Zunexa Founder & Sole Developer
+     Market   : MENA · Moroccan Darija first
+     Pages    : dashboard · generator · history · analytics
+                seo · affiliate · billing · api · docs ·
+                appearance · contact · about
+     Updated  : 2026 — Archon Protocol active
 ============================================================ -->
-window.location.replace('index.html')
 <style>
 /* --- CSS START --- */
 
@@ -1307,7 +1319,6 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
   z-index: 190;
 }
 .sidebar-overlay.open { display: block; }
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 /* ─── THEMES ──────────────────────────────── */
 [data-theme="zalij-light"]{--bg-void:#f5f5f0;--bg-deep:#ece9e0;--bg-card:#fff;--bg-card-hover:#f9f6ef;--bg-input:#f0ece0;--border:#ddd8c4;--border-gold:rgba(212,175,55,.5);--text-white:#1a1a14;--text-grey:#5a5a4a;--text-muted:#9a9a7a;}
@@ -1678,6 +1689,89 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
         padding: 12px;
     }
 }
+/* ─── RESPONSIVE: All Devices ───────────────────────────────── */
+
+/* ── Tablet (768px–1024px) ── */
+@media (max-width: 1024px) and (min-width: 769px) {
+  :root { --sidebar-w: 200px; }
+  .grid-4 { grid-template-columns: repeat(2,1fr); }
+  .selectors-row { grid-template-columns: 1fr 1fr; }
+  .greeting-banner { padding: 20px 24px; }
+  .page { padding: 20px; }
+}
+
+/* ── Laptop small (1025px–1280px) ── */
+@media (max-width: 1280px) and (min-width: 1025px) {
+  .grid-4 { grid-template-columns: repeat(2,1fr); }
+}
+
+/* ── Mobile general (≤768px) ── */
+@media (max-width: 768px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar { transform: translateX(-240px); --sidebar-w: 240px; width: 240px; }
+  .sidebar.open { transform: translateX(0); box-shadow: 8px 0 40px rgba(0,0,0,.7); }
+  .header { left: 0 !important; }
+  .main-content { padding-left: 0 !important; }
+  .sidebar-toggle { display: block; }
+  .grid-4 { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .selectors-row { grid-template-columns: 1fr; }
+  .greeting-banner { flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px; }
+  .greeting-zalij { display: none; }
+  .greeting-name { font-size: 20px; }
+  .page { padding: 14px; }
+  .generator-wrap { padding: 16px; }
+  .ai-bar-wrap { left: 10px !important; right: 10px !important; bottom: 12px; }
+  .ai-bar-label { display: none; }
+  .profile-btn .pname { display: none; }
+  .seo-grid { grid-template-columns: 1fr; }
+  .zx-hub-grid { grid-template-columns: repeat(auto-fill,minmax(110px,1fr)); gap:8px; padding:12px; }
+}
+
+/* ── Phone small (≤480px) ── */
+@media (max-width: 480px) {
+  .grid-4 { grid-template-columns: 1fr !important; }
+  .header { padding: 0 10px; }
+  .header-search { display: none; }
+  .page { padding: 10px !important; }
+  .card { padding: 14px; }
+  .generator-wrap { padding: 12px; }
+  .gen-textarea { min-height: 90px; }
+  .greeting-banner { padding: 14px !important; }
+  .greeting-name { font-size: 18px; }
+  .page-heading { font-size: 20px; }
+  .ai-chat-msgs { height: 220px; }
+  .ai-chat-panel.open { max-height: 280px; }
+  .btn { padding: 9px 16px; font-size: 12px; }
+  .sidebar-logo .logo-text { font-size: 15px; }
+  .music-progress { display: none; }
+  .music-vol { display: none; }
+  .zx-hub-grid { grid-template-columns: 1fr 1fr 1fr; gap:6px; padding:8px; }
+  .zx-hub-tile { padding: 14px 6px; }
+}
+
+/* ── Ultra-small (≤360px) ── */
+@media (max-width: 360px) {
+  .grid-4,.grid-3,.grid-2 { grid-template-columns: 1fr !important; }
+  .zx-hub-grid { grid-template-columns: 1fr 1fr; }
+  .greeting-actions { flex-direction: column; width: 100%; }
+  .greeting-actions .btn { width: 100%; justify-content: center; }
+}
+
+/* ── Landscape phone ── */
+@media (max-width: 768px) and (orientation: landscape) {
+  .ai-chat-panel.open { max-height: 200px; }
+  .ai-chat-msgs { height: 140px; }
+  .page { padding-bottom: 90px; }
+}
+
+/* ── Large screens (≥1440px) ── */
+@media (min-width: 1440px) {
+  .main-content { max-width: 1600px; }
+  .page { padding: 32px 40px 80px; }
+}
+
 /* ─── CSS END ─── */
  </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -1691,11 +1785,6 @@ const ZX_RATE = (function(){
   return { check() { const now = Date.now(); while (_log.length && _log[0] < now - WINDOW_MS) _log.shift(); if (_log.length >= MAX_CALLS) { alert('Rate limit reached. Wait 1 min.'); return false; } _log.push(now); return true; } };
 })();
 </script>
-    /* ── ZUNEXA RATE LIMITER (Client-Side Guard) ── */
-    
-    
-</script>
-
 
 <script>
     (function() {
@@ -1705,11 +1794,10 @@ const ZX_RATE = (function(){
         }
     })()
 </script>
-</script>
 </head>
 <body>
 	<div id="archon-changelog-bar" style="background:linear-gradient(90deg,#0a0a0a,#111);color:#d4af37;text-align:center;padding:8px 16px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.06em;border-bottom:1px solid rgba(212,175,55,.3);z-index:10000;position:fixed;top:0;left:0;right:0;height:36px;display:flex;align-items:center;justify-content:center;gap:14px;">
-  <span style="font-weight:700">⚡ ZUNEXA V9 — Archon Protocol</span>
+  <span style="font-weight:700">⚡ ZUNEXA V10.2 — Archon Protocol</span>
   <a href="changelog.html" style="color:#000;background:linear-gradient(135deg,#D4AF37,#8a7022);padding:3px 12px;text-decoration:none;font-weight:700;border-radius:3px;font-size:11px;letter-spacing:.08em">VIEW CHANGELOG</a>
   <button onclick="document.getElementById('archon-changelog-bar').style.display='none';document.querySelector('.music-bar').style.top='0';document.querySelector('.header').style.top='40px';document.querySelector('.main-content').style.paddingTop='calc(var(--header-h) + 40px)';" style="position:absolute;right:12px;background:none;border:none;color:rgba(212,175,55,.4);font-size:16px;cursor:pointer;line-height:1">✕</button>
 </div>
@@ -1806,7 +1894,10 @@ const ZX_RATE = (function(){
       <span class="nav-icon"><i data-lucide="bot"></i></span> Ai Zunexa
     </button>
 	  <button class="nav-item" onclick="window.location.href='zarix.html'">
-      <span class="nav-icon"><i data-lucide="spabase"></i></span> Coaching
+      <span class="nav-icon"><i data-lucide="dumbbell"></i></span> Coaching
+    </button>
+    <button class="nav-item" onclick="window.location.href='about.html'">
+      <span class="nav-icon"><i data-lucide="user-circle"></i></span> About Me
     </button>
    </nav>
 
@@ -2258,8 +2349,8 @@ const ZX_RATE = (function(){
     <div class="ai-bar-icon" onclick="toggleAiPanel()" title="Zunexa AI">✦</div>
     <span class="ai-bar-label">ZUNEXA AI</span>
     <input class="ai-bar-input" id="aiBarInput" type="text" placeholder="اسأل Zunexa AI..." autocomplete="off" onkeydown="if(event.key==='Enter')sendAiMsg()"/>
-    <button class="ai-bar-clear" onclick="clearAiChat()" title="Clear">✕</button>
-    <button class="ai-bar-send" id="aiBarSend" onclick="sendAiMsg()">➤</button>
+    <button class="ai-bar-clear" onclick="clearAiChat()" title="Clear chat">✕</button>
+    <button class="ai-bar-send" id="aiBarSend" onclick="sendAiMsg()" title="Send">➤</button>
   </div>
 </div>
 <!-- Toast Container -->
@@ -2938,17 +3029,33 @@ function composeLocalContent(language, contentType, tone, prompt) {
   }
 }
 
+/* ─── Image Generation via Pollinations.ai (Free, No Key) ──── */
+async function generateImageWithAI(prompt, contentType, language) {
+  const styleHint = {
+    instagram: 'vibrant lifestyle photography, social media aesthetic',
+    tiktok:    'dynamic colorful vertical thumbnail style',
+    linkedin:  'professional corporate clean editorial design',
+    youtube:   'eye-catching thumbnail bold vivid colors',
+    seo:       'editorial magazine infographic style',
+    twitter:   'bold graphic design minimalist',
+  }[contentType] || 'modern premium digital art';
+  const langHint = (language === 'darija' || language === 'gulf') ? ', arabic MENA aesthetic' : '';
+  const full = `${prompt}, ${styleHint}${langHint}, gold and black premium brand, high quality`.replace(/,\s*,/g,',');
+  const seed = Math.floor(Math.random() * 999999);
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(full)}?width=800&height=500&seed=${seed}&nologo=true&model=flux`;
+}
+
 /* ─── Handle Generate ────────────────────────────────────────── */
 async function handleGenerate(event, prefix) {
   event.preventDefault();
 
-  const promptEl = document.getElementById(prefix + '-prompt');
-  const langEl   = document.getElementById(prefix + '-lang');
-  const typeEl   = document.getElementById(prefix + '-type');
-  const toneEl   = document.getElementById(prefix + '-tone');
-  const imgEl    = document.getElementById(prefix + '-img');
-  const btn      = document.getElementById(prefix + '-gen-btn');
-  const outputEl = document.getElementById(prefix + '-output');
+  const promptEl  = document.getElementById(prefix + '-prompt');
+  const langEl    = document.getElementById(prefix + '-lang');
+  const typeEl    = document.getElementById(prefix + '-type');
+  const toneEl    = document.getElementById(prefix + '-tone');
+  const imgEl     = document.getElementById(prefix + '-img');
+  const btn       = document.getElementById(prefix + '-gen-btn');
+  const outputEl  = document.getElementById(prefix + '-output');
   const actionsEl = document.getElementById(prefix + '-preview-actions');
 
   if (!promptEl || !promptEl.value.trim()) {
@@ -2977,16 +3084,14 @@ async function handleGenerate(event, prefix) {
     tone: toneEl.value
   };
 
-  // Generate via local Zunexa AI engine, fallback to dummy
+  // Generate text
   let generatedText = await generateContentWithZunexaAI(promptEl.value, config);
-    if (generatedText === '__NSFW__') {
-      btn.classList.remove('loading');
-      btn.disabled = false;
-      outputEl.innerHTML = '<div style="color:var(--red);padding:20px;text-align:center">⚠ المحتوى المطلوب غير مسموح به على Zunexa.</div>';
-      return false;
-    }
+  if (generatedText === '__NSFW__') {
+    btn.classList.remove('loading'); btn.disabled = false;
+    outputEl.innerHTML = '<div style="color:var(--red);padding:20px;text-align:center">⚠ المحتوى المطلوب غير مسموح به على Zunexa.</div>';
+    return false;
+  }
   if (!generatedText) {
-    // Simulate delay for fallback
     await new Promise(r => setTimeout(r, 1200));
     generatedText = composeLocalContent(langEl.value, typeEl.value, toneEl.value, promptEl.value);
   }
@@ -2995,32 +3100,56 @@ async function handleGenerate(event, prefix) {
   tokenBalance -= cost;
   updateAllTokenDisplays();
 
-  // Populate output with typewriter effect
-  outputEl.textContent = '';
+  // Build output HTML (text + optional image)
+  let imageHTML = '';
+  if (imgEl?.checked) {
+    // Show image loading placeholder immediately
+    const imgId = 'gen-img-' + prefix + '-' + Date.now();
+    imageHTML = `<div id="${imgId}-wrap" style="margin-top:16px;border-radius:10px;overflow:hidden;border:1px solid var(--border-gold);background:var(--bg-input);min-height:120px;display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;color:var(--text-muted);padding:20px">
+        <div style="width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 10px"></div>
+        <div style="font-size:12px">🖼️ جاري توليد الصورة...</div>
+      </div>
+    </div>`;
+    // Generate image async
+    generateImageWithAI(promptEl.value, typeEl.value, langEl.value).then(imgUrl => {
+      const wrap = document.getElementById(imgId + '-wrap');
+      if (!wrap) return;
+      const img = new Image();
+      img.onload = () => {
+        wrap.innerHTML = `<img src="${imgUrl}" alt="AI Generated" style="width:100%;display:block;border-radius:9px;" loading="lazy"/><div style="padding:8px 12px;font-size:11px;color:var(--text-muted);text-align:right">🖼️ Generated by Pollinations AI · Zunexa</div>`;
+      };
+      img.onerror = () => {
+        wrap.innerHTML = `<div style="padding:16px;color:var(--text-muted);font-size:12px;text-align:center">⚠ Image generation unavailable — check your connection.</div>`;
+      };
+      img.src = imgUrl;
+    });
+  }
+
+  // Typewriter for text, then show image area
+  outputEl.innerHTML = `<span id="tw-${prefix}"></span>${imageHTML}`;
+  const twEl = document.getElementById('tw-' + prefix);
   let i = 0;
-  if(window._twTimer) clearInterval(window._twTimer);
+  if (window._twTimer) clearInterval(window._twTimer);
   window._twTimer = setInterval(() => {
     if (i < generatedText.length) {
-      outputEl.textContent += generatedText[i];
+      if (twEl) twEl.textContent += generatedText[i];
       i++;
     } else {
       clearInterval(window._twTimer);
       if (actionsEl) actionsEl.style.display = 'flex';
-      // Populate edit modal
       const editTA = document.getElementById('edit-textarea');
       if (editTA) editTA.value = generatedText;
     }
-  }, 12);
+  }, 11);
 
-  // Save generation to Supabase (content_history + generated_content) and refresh tables with real data
+  // Save to Supabase
   recordGeneration(typeEl.value, typeEl.options[typeEl.selectedIndex].text, langEl.value, generatedText, cost);
 
-  // End loading
   btn.classList.remove('loading');
   btn.disabled = false;
-
   showToast('success', `✨ Content generated! ${cost} tokens used.`);
-syncTokens(); // fire-and-forget
+  syncTokens();
   return false;
 }
 
@@ -3684,7 +3813,7 @@ let ZX_QA_KB = [];
 function zxNorm(t) {
   return (t || '').toLowerCase()
     .replace(/[أإآاى]/g,'ا').replace(/[ةه]/g,'ه').replace(/[يى]/g,'ي')
-    .replace(/[^\u0621-\u064Aa-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+    .replace(/[^\u0621-\u064Aa-z0-9#\s]/g,' ').replace(/\s+/g,' ').trim();
 }
 const ZX_STOP = new Set(['في','من','على','إلى','هو','هي','هل','ما','كيف','لماذا','متى','أين','و','أو','لا','نعم','هذا','هذه','ذلك','التي','الذي','عن','مع','بين','the','is','are','a','an','to','of','and','or','in','it','that','this']);
 function zxTok(t) { return zxNorm(t).split(/\s+/).filter(w => w.length > 1 && !ZX_STOP.has(w)); }
