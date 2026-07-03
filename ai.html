@@ -20,6 +20,7 @@
 <title>Zunexa — Archon AI</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23060606'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%23D4AF37' stroke-width='.7' opacity='.7'/><text x='16' y='22' text-anchor='middle' font-size='18' font-family='Georgia,serif' fill='%23D4AF37' font-weight='bold'>Z</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 /* ════════════════════════════════════════════════════════
    DESIGN TOKENS — Zalij Mode · Noir & Gold
@@ -850,18 +851,34 @@ img{max-width:100%;display:block}
 
 <!-- ══════════════════════════════════════════════════
      SETTINGS MODAL
+     SECURITY FIX: the old modal had free-text "Supabase User ID" and
+     "الخطة" (Plan) fields that saved straight to localStorage — meaning
+     anyone could type in any other user's id (and see their real name/
+     email via loadUser()) or simply type "Premium" to self-assign a
+     paid plan client-side, no verification. Removed both; real name/
+     email/plan now come exclusively from the authenticated Supabase
+     session (see loadUser()). Only a cosmetic guest display name
+     remains, and it never touches plan/billing status.
 ══════════════════════════════════════════════════ -->
 <div class="modal-wrap" id="settModal">
   <div class="modal-box">
     <button class="modal-x" onclick="closeSettings()">✕</button>
     <div class="modal-title">⚙ الإعدادات</div>
-    <label class="field-label">Supabase User ID</label>
-    <input class="field-input" type="text" id="fUserId" placeholder="00000000-0000-...">
-    <label class="field-label">اسم المستخدم (يُعرض في الـ sidebar)</label>
-    <input class="field-input" type="text" id="fName" placeholder="اسمك">
-    <label class="field-label">الخطة</label>
-    <input class="field-input" type="text" id="fPlan" placeholder="Premium">
-    <button class="modal-save" onclick="saveSettings()">✓ حفظ</button>
+    <div id="settLoggedInInfo" style="display:none">
+      <label class="field-label">الاسم</label>
+      <div class="field-input" style="opacity:.7" id="settRealName">—</div>
+      <label class="field-label">البريد الإلكتروني</label>
+      <div class="field-input" style="opacity:.7" id="settRealEmail">—</div>
+      <label class="field-label">الخطة</label>
+      <div class="field-input" style="opacity:.7" id="settRealPlan">—</div>
+      <p style="font-size:11px;color:var(--text-muted,#888);margin:6px 0 14px">لتغيير معلومات حسابك أو خطتك، توجه إلى صفحة الإعدادات الكاملة.</p>
+      <button class="modal-save" onclick="window.location.href='settings.html'">⚙ إدارة الحساب</button>
+    </div>
+    <div id="settGuestInfo" style="display:none">
+      <label class="field-label">اسم الضيف (محلي فقط، لا يؤثر على أي حساب)</label>
+      <input class="field-input" type="text" id="fName" placeholder="اسمك">
+      <button class="modal-save" onclick="saveSettings()">✓ حفظ</button>
+    </div>
   </div>
 </div>
 
@@ -873,9 +890,29 @@ img{max-width:100%;display:block}
    No external AI API required
 ════════════════════════════════════════════════════════════ */
 
-const SB_URL = "https://xrldhfsytysznyyhwjlr.supabase.co";
-const SB_KEY = "sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F";
-const SB_H   = { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json" };
+/* ── SECURITY FIX — see AUDIT_REPORT.md for full detail ───────────
+ * The old version had NO real authentication at all: it trusted
+ * localStorage.getItem('zx_uid') as "who is this user", built REST
+ * URLs by directly string-interpolating that value, and a Settings
+ * modal let anyone TYPE any user ID or "Premium" into a text field
+ * and save it — meaning any visitor could self-assign Premium status
+ * or look up another user's name/email/plan by pasting in their id,
+ * entirely on the client with zero server-side check.
+ * Fixed: real Supabase Auth session (same pattern as dashboard.html),
+ * via the SDK client below instead of raw fetch + manual headers. */
+const _SB = supabase.createClient(
+  'https://xrldhfsytysznyyhwjlr.supabase.co',
+  'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
+);
+
+// Lightweight rate limiter (same pattern as dashboard.html) — the old
+// ai.html had NO throttling at all on its Supabase writes (learnQ /
+// logMsg / incrWeight), so a script could spam the learning queue and
+// the message log with unlimited requests.
+const ZX_AI_RATE = (function(){
+  const WINDOW_MS = 60000; const MAX_CALLS = 15; const _log = [];
+  return { check() { const now = Date.now(); while (_log.length && _log[0] < now - WINDOW_MS) _log.shift(); if (_log.length >= MAX_CALLS) { toast('⏳ رسائل كثيرة بسرعة — استنى شوية.'); return false; } _log.push(now); return true; } };
+})();
 
 /* ── STATE ── */
 let KB        = [];          // knowledge base (qa.json + supabase)
@@ -904,27 +941,36 @@ async function init() {
    SUPABASE — Load User
 ════════════════════════════════════════════════════════════ */
 async function loadUser() {
-  const uid = localStorage.getItem('zx_uid');
-  // Apply saved local settings first (instant)
-  const ln = localStorage.getItem('zx_name');
-  const lp = localStorage.getItem('zx_plan');
-  const le = localStorage.getItem('zx_email');
-  if (ln) setUserUI(ln, lp||'Premium', le||'', (ln[0]||'Z').toUpperCase());
-
-  if (!uid) { setUserUI('Zunexa User','Premium','archon@zunexa.io','Z'); return; }
+  // Real auth session — replaces the old localStorage.getItem('zx_uid')
+  // pattern, which let anyone declare themselves any user id with zero
+  // verification (see security note above _SB init).
   try {
-    const r = await fetch(`${SB_URL}/rest/v1/users?select=name,email,plan,avatar_initial&id=eq.${uid}&limit=1`, { headers: SB_H });
-    if (!r.ok) return;
-    const d = await r.json();
-    if (d && d[0]) {
-      const u = d[0];
-      const ini = u.avatar_initial || (u.name&&u.name[0]) || 'Z';
-      setUserUI(u.name||'Zunexa User', u.plan||'Premium', u.email||'', ini.toUpperCase());
-      localStorage.setItem('zx_name',  u.name||'');
-      localStorage.setItem('zx_plan',  u.plan||'');
-      localStorage.setItem('zx_email', u.email||'');
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) {
+      // Not logged in: a real guest, not a fake "Premium" user. The old
+      // code defaulted anonymous visitors to Premium, which both hides
+      // a login problem from you and makes zero business sense — nobody
+      // should see "Premium" until they've actually authenticated.
+      setUserUI('Guest', 'Free', '', 'G');
+      return;
     }
-  } catch(e){}
+    const uid = session.user.id;
+    const { data, error } = await _SB
+      .from('profiles')
+      .select('name, email, plan, avatar_initial')
+      .eq('id', uid)
+      .maybeSingle();
+    if (error) throw error;
+    const u = data || {};
+    const ini = u.avatar_initial || (u.name && u.name[0]) || (session.user.email && session.user.email[0]) || 'Z';
+    setUserUI(u.name || 'Zunexa User', u.plan || 'Free', u.email || session.user.email || '', ini.toUpperCase());
+    // Cache for instant paint next load — display-only, never trusted
+    // as the source of truth (loadUser() above always re-verifies).
+    localStorage.setItem('zx_name_cache', u.name || '');
+  } catch (e) {
+    console.error('Zunexa: failed to load user', e);
+    setUserUI('Guest', 'Free', '', 'G');
+  }
 }
 
 function setUserUI(name, plan, email, ini) {
@@ -932,9 +978,6 @@ function setUserUI(name, plan, email, ini) {
   document.getElementById('uPlan').textContent   = plan;
   document.getElementById('uEmail').textContent  = email;
   document.getElementById('uAvatar').textContent = ini;
-  // Prefill settings modal
-  document.getElementById('fName').value = name;
-  document.getElementById('fPlan').value = plan;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -970,12 +1013,13 @@ async function loadKB() {
 
   // 2. Supabase ai_knowledge (learned entries)
   try {
-    const r = await fetch(
-      `${SB_URL}/rest/v1/ai_knowledge?select=question,answer,keywords,weight,used_count,source&is_active=eq.true&order=weight.desc&limit=400`,
-      { headers: SB_H }
-    );
-    if (r.ok) {
-      const d = await r.json();
+    const { data: d, error } = await _SB
+      .from('ai_knowledge')
+      .select('question,answer,keywords,weight,used_count,source')
+      .eq('is_active', true)
+      .order('weight', { ascending: false })
+      .limit(400);
+    if (!error) {
       cloud = (d||[]).map(i => ({
         q:   i.question||'',
         a:   i.answer||'',
@@ -1228,43 +1272,30 @@ function buildUnknown(q){ return UNKNOWNS[Math.floor(Math.random()*UNKNOWNS.leng
 ════════════════════════════════════════════════════════════ */
 async function learnQ(q) {
   try {
-    await fetch(`${SB_URL}/rest/v1/ai_learning`, {
-      method:'POST', headers:{...SB_H,'Prefer':'return=minimal'},
-      body: JSON.stringify({ question:q, category:detectCat(q), source:'user_chat', status:'pending' })
-    });
+    await _SB.from('ai_learning').insert({ question: q, category: detectCat(q), source: 'user_chat', status: 'pending' });
   } catch(e){}
 }
 
 async function logMsg(prompt, response, src, score) {
   try {
-    await fetch(`${SB_URL}/rest/v1/zunexa_messages`, {
-      method:'POST', headers:{...SB_H,'Prefer':'return=minimal'},
-      body: JSON.stringify({
-        user_prompt:  prompt,
-        bot_response: response,
-        source:       src,
-        tokens_used:  Math.round(score*100),
-        platform:     'web',
-        created_at:   new Date().toISOString()
-      })
+    await _SB.from('zunexa_messages').insert({
+      user_prompt:  prompt,
+      bot_response: response,
+      source:       src,
+      tokens_used:  Math.round(score*100),
+      platform:     'web',
+      created_at:   new Date().toISOString()
     });
   } catch(e){}
 }
 
 async function incrWeight(question) {
   try {
-    const url = `${SB_URL}/rest/v1/ai_knowledge?question=eq.${encodeURIComponent(question)}&select=weight,used_count`;
-    const r = await fetch(url, { headers: SB_H });
-    if (!r.ok) return;
-    const d = await r.json();
-    if (!d || !d[0]) return;
+    const { data: d, error } = await _SB.from('ai_knowledge').select('weight,used_count').eq('question', question).limit(1);
+    if (error || !d || !d[0]) return;
     const newWeight = Math.min(5, (parseFloat(d[0].weight) || 1.0) + 0.04);
     const newUsed   = (d[0].used_count || 0) + 1;
-    await fetch(
-      `${SB_URL}/rest/v1/ai_knowledge?question=eq.${encodeURIComponent(question)}`,
-      { method:'PATCH', headers:{...SB_H,'Prefer':'return=minimal'},
-        body: JSON.stringify({ weight: newWeight, used_count: newUsed }) }
-    );
+    await _SB.from('ai_knowledge').update({ weight: newWeight, used_count: newUsed }).eq('question', question);
   } catch(e){}
 }
 
@@ -1287,6 +1318,7 @@ async function send() {
   const inp = document.getElementById('aiInput');
   const q   = inp.value.trim();
   if (!q) return;
+  if (!ZX_AI_RATE.check()) return;
 
   busy = true;
   document.getElementById('sendBtn').disabled = true;
@@ -1592,26 +1624,35 @@ function closeSidebar() {
 /* ════════════════════════════════════════════════════════════
    SETTINGS
 ════════════════════════════════════════════════════════════ */
-function openSettings() {
-  // Prefill
-  document.getElementById('fUserId').value = localStorage.getItem('zx_uid')||'';
-  document.getElementById('fName').value   = localStorage.getItem('zx_name')||'';
-  document.getElementById('fPlan').value   = localStorage.getItem('zx_plan')||'Premium';
+async function openSettings() {
+  const { data: { session } } = await _SB.auth.getSession();
+  const loggedInBox = document.getElementById('settLoggedInInfo');
+  const guestBox     = document.getElementById('settGuestInfo');
+  if (session) {
+    loggedInBox.style.display = 'block';
+    guestBox.style.display    = 'none';
+    document.getElementById('settRealName').textContent  = document.getElementById('uName').textContent  || '—';
+    document.getElementById('settRealEmail').textContent = document.getElementById('uEmail').textContent || session.user.email || '—';
+    document.getElementById('settRealPlan').textContent  = document.getElementById('uPlan').textContent  || '—';
+  } else {
+    loggedInBox.style.display = 'none';
+    guestBox.style.display    = 'block';
+    document.getElementById('fName').value = localStorage.getItem('zx_guest_name') || '';
+  }
   document.getElementById('settModal').classList.add('on');
   closeSidebar();
 }
 function closeSettings() { document.getElementById('settModal').classList.remove('on'); }
 
 function saveSettings() {
-  const uid  = document.getElementById('fUserId').value.trim();
+  // Guest-only, cosmetic display name. Never writes an id or plan —
+  // those can only ever come from a real authenticated session.
   const name = document.getElementById('fName').value.trim();
-  const plan = document.getElementById('fPlan').value.trim();
-  if (uid)  localStorage.setItem('zx_uid',  uid);
-  if (name) localStorage.setItem('zx_name', name);
-  if (plan) localStorage.setItem('zx_plan', plan);
-  setUserUI(name||'Zunexa User', plan||'Premium', localStorage.getItem('zx_email')||'', (name[0]||'Z').toUpperCase());
+  if (name) {
+    localStorage.setItem('zx_guest_name', name);
+    setUserUI(name, 'Free', '', name[0].toUpperCase());
+  }
   closeSettings();
-  if (uid) loadUser();
 }
 
 /* ════════════════════════════════════════════════════════════
