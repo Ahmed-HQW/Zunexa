@@ -1370,7 +1370,18 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
 @media(max-width:860px){.music-bar{left:0;top:36px;}.music-progress{max-width:100px;}.music-bar-name{max-width:90px;}.header{left:0;}}
 @media(max-width:500px){.music-progress{display:none;}.music-vol{display:none;}}
 /* ─── AI Chat Bar ────────────────────────────────────────────── */
-.ai-bar-wrap{position:fixed;bottom:24px;left:calc(var(--sidebar-w) + 24px);right:24px;z-index:500;display:flex;flex-direction:column;gap:0;pointer-events:none;}
+/* FIX: right was 24px here with no clearance for the floating action
+   button injected by fab-injection.js (which sits bottom-right). On
+   normal desktop widths (the most common case — this base rule has no
+   media query) the bar's input row ran full-width and the FAB covered
+   its rightmost buttons (Clear / Send), making them unclickable. A
+   later "PHASE 2" patch fixed this ONLY inside one narrow 769-860px
+   breakpoint, and an even later mobile breakpoint (≤768px) reset it
+   back to a tight 10px with no clearance at all — so the bug was
+   actually present on every width EXCEPT a ~90px sliver. --zx-fab-clear
+   below is now the single source of truth, reused at every breakpoint. */
+:root { --zx-fab-clear: 72px; }
+.ai-bar-wrap{position:fixed;bottom:24px;left:calc(var(--sidebar-w) + 24px);right:var(--zx-fab-clear);z-index:500;display:flex;flex-direction:column;gap:0;pointer-events:none;}
 .ai-chat-panel{background:var(--bg-card);border:1px solid var(--border-gold);border-bottom:none;border-radius:var(--radius-lg) var(--radius-lg) 0 0;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1),opacity .3s;opacity:0;pointer-events:none;box-shadow:0 -8px 40px rgba(0,0,0,.5),0 0 60px rgba(212,175,55,.06);}
 .ai-chat-panel.open{max-height:420px;opacity:1;pointer-events:all;}
 .ai-chat-msgs{height:360px;overflow-y:auto;padding:20px 20px 10px;display:flex;flex-direction:column;gap:14px;}
@@ -1402,7 +1413,12 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
 .ai-bar-send:disabled{opacity:.5;cursor:not-allowed;transform:none;}
 .ai-bar-clear{width:34px;height:34px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-size:14px;display:grid;place-items:center;cursor:pointer;transition:all var(--trans);flex-shrink:0;}
 .ai-bar-clear:hover{border-color:var(--border-gold);color:var(--gold);}
-@media(max-width:860px){.ai-bar-wrap{left:12px;right:12px;bottom:16px;}.ai-bar-label{display:none;}}
+@media(max-width:860px){.ai-bar-wrap{left:12px;bottom:16px;}.ai-bar-label{display:none;}}
+/* NOTE: this block's old right:12px was already dead code — a later,
+   more specific rule with !important always overrode it at this width.
+   Removed rather than left in place, since a value that visually looks
+   correct but is silently never applied is exactly the kind of thing
+   that causes "I already fixed this, why is it still broken?" confusion. */
 @media(max-width:600px){.ai-chat-msgs{height:260px;}.ai-chat-panel.open{max-height:320px;}}
 
 /* ─── THEMES ────────────────────────────────────────────────── */
@@ -1488,7 +1504,7 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
   .sidebar.open{transform:translateX(0);box-shadow:8px 0 40px rgba(0,0,0,.7);}
    .header{left:0!important;}
   .main-content{padding-left:0!important;}
-  .ai-bar-wrap{left:12px!important;right:72px!important;}
+  .ai-bar-wrap{left:12px!important;right:var(--zx-fab-clear)!important;}
 }
 @media(max-width:600px){
   .header-search{display:none;}
@@ -1722,7 +1738,7 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
   .greeting-name { font-size: 20px; }
   .page { padding: 14px; }
   .generator-wrap { padding: 16px; }
-  .ai-bar-wrap { left: 10px !important; right: 10px !important; bottom: 12px; }
+  .ai-bar-wrap { left: 10px !important; right: var(--zx-fab-clear) !important; bottom: 12px; }
   .ai-bar-label { display: none; }
   .profile-btn .pname { display: none; }
   .seo-grid { grid-template-columns: 1fr; }
@@ -1776,13 +1792,30 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
  </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+/* ── ARCHON SECURITY NOTE ──────────────────────────────────────
+   This is Supabase's PUBLISHABLE key (the browser-safe "anon" key).
+   It is *designed* to be visible in client code — it is not a secret.
+   Real protection comes 100% from Row Level Security (RLS) policies
+   on every table in Supabase. Base64-wrapping it (as the previous
+   version did) adds zero real security and can give a false sense
+   of safety, so it has been removed — the value is unchanged.
+   -> Action item: double-check RLS is ON for profiles, content_history,
+      generated_content, ai_knowledge, api_keys in the Supabase dashboard.
+   ─────────────────────────────────────────────────────────────── */
 const _SB = supabase.createClient(
-  atob('aHR0cHM6Ly94cmxkaGZzeXR5c3pueXlod2psci5zdXBhYmFzZS5jbw=='),
-  atob('c2JfcHVibGlzaGFibGVfcXRaeXpMU1BWWWpIMHlCMEJKWTh5Z18ycjJjdDM1Rg==')
+  'https://xrldhfsytysznyyhwjlr.supabase.co',
+  'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
+
+/* ── Client-side rate limiter (defense-in-depth, UX-level only) ──
+   Real throttling for paid resources must also happen server-side
+   (Supabase Edge Function / DB policy) — this only stops a single
+   browser tab from hammering the button. Now actually wired into
+   handleGenerate() (previously declared but never called anywhere
+   — a rate limiter that limited nothing). ── */
 const ZX_RATE = (function(){
   const WINDOW_MS = 60000; const MAX_CALLS = 10; const _log = [];
-  return { check() { const now = Date.now(); while (_log.length && _log[0] < now - WINDOW_MS) _log.shift(); if (_log.length >= MAX_CALLS) { alert('Rate limit reached. Wait 1 min.'); return false; } _log.push(now); return true; } };
+  return { check() { const now = Date.now(); while (_log.length && _log[0] < now - WINDOW_MS) _log.shift(); if (_log.length >= MAX_CALLS) { (typeof showToast === 'function') ? showToast('error','⏳ Rate limit reached — wait a minute before generating more.') : alert('Rate limit reached. Wait 1 min.'); return false; } _log.push(now); return true; } };
 })();
 </script>
 
@@ -1933,10 +1966,14 @@ const ZX_RATE = (function(){
         <span class="parrow">▾</span>
       </button>
       <div class="profile-dropdown" id="profileDropdown">
-        <a href="#" onclick="showPage('billing',null);closeDropdown()">⚙ &nbsp;Account Settings</a>
-        <a href="#" onclick="showPage('billing',null);closeDropdown()">◈ &nbsp;Billing</a>
+        <!-- "Account Settings" previously called showPage('billing') — an exact
+             copy-paste duplicate of the Billing link below, so it silently opened
+             the wrong page. Routed to the dedicated settings.html instead, matching
+             the sidebar's own Settings nav item. -->
+        <a href="#" onclick="window.location.href='settings.html'">⚙ &nbsp;Account Settings</a>
+        <a href="#" onclick="window.location.href='pro_accounts.html'">◈ &nbsp;Billing</a>
         <a href="#" onclick="showPage('api',null);closeDropdown()">⌖ &nbsp;API Keys</a>
-        <a href="#" onclick="showPage('docs',null);closeDropdown()">📖 &nbsp;Documentation</a>
+        <a href="#" onclick="window.location.href='landing.html'">📖 &nbsp;Documentation</a>
         <div class="dropdown-divider"></div>
         <a href="#" style="color:var(--red)" onclick="signOut()">✕ &nbsp;Sign Out</a>
       </div>
@@ -1981,7 +2018,7 @@ const ZX_RATE = (function(){
 
   <!-- Stats Row -->
   <div class="section-title">Overview Statistics</div>
-  <div class="grid-4 mb-3">
+  <div class="grid-3 mb-3">
 
     <!-- Token Balance -->
     <div class="card">
@@ -1995,17 +2032,17 @@ const ZX_RATE = (function(){
         </div>
       </div>
       <div style="margin-top:10px">
-        <button class="btn btn-gold btn-sm" onclick="showPage('billing',null)">+ Buy More</button>
+        <button class="btn btn-gold btn-sm" onclick="window.location.href='pro_accounts.html'">+ Buy More</button>
       </div>
     </div>
 
-    <!-- Generated Content -->
+    <!-- Generated Content — LIVE from Supabase (see loadGenerationStats()) -->
     <div class="card">
       <span class="card-icon">✦</span>
       <div class="card-label">Generated Content</div>
-      <div class="card-value" id="gen-count-display">1,247</div>
+      <div class="card-value zx-name-skel" id="gen-count-display">—</div>
       <div class="card-sub">items created lifetime</div>
-      <span class="card-badge badge-green mt-1">↑ 34 this week</span>
+      <span class="card-badge badge-green mt-1" id="gen-count-week-badge" style="visibility:hidden">↑ 0 this week</span>
     </div>
 
     <!-- Current Plan -->
@@ -2015,20 +2052,6 @@ const ZX_RATE = (function(){
       <div class="card-value text-gold" style="font-size:22px">PRO</div>
       <div class="card-sub">Renews Dec 1, 2025</div>
       <span class="card-badge badge-gold mt-1">⭐ Pro Tier</span>
-    </div>
-
-    <!-- Active Platforms -->
-    <div class="card">
-      <span class="card-icon">⬡</span>
-      <div class="card-label">Active Platforms</div>
-      <div class="card-value" style="font-size:20px">3 / 4</div>
-      <div class="card-sub">linked accounts</div>
-      <div class="platforms-row">
-        <span class="platform-chip connected"><span class="dot"></span>IG</span>
-        <span class="platform-chip connected"><span class="dot"></span>TT</span>
-        <span class="platform-chip connected"><span class="dot"></span>YT</span>
-        <span class="platform-chip disconnected"><span class="dot"></span>LI</span>
-      </div>
     </div>
   </div>
 
@@ -2234,7 +2257,7 @@ const ZX_RATE = (function(){
     </div>
   </div>
 
-  <footer class="app-footer">Zunexa SaaS — <span id="zx-footer-user">Zunexa Digital Brand</span></footer>
+  <footer class="app-footer">Zunexa SaaS — <span class="zx-footer-user">Zunexa Digital Brand</span></footer>
 </section>
 
 <!-- ═══════════════════════════════════════════
@@ -2269,7 +2292,7 @@ const ZX_RATE = (function(){
     </div>
   </div>
 
-  <footer class="app-footer">Zunexa SaaS — <span id="zx-footer-user">Zunexa Digital Brand</span></footer>
+  <footer class="app-footer">Zunexa SaaS — <span class="zx-footer-user">Zunexa Digital Brand</span></footer>
 </section>
 
 
@@ -2366,7 +2389,18 @@ let tokenBalance = 500;
 const TOKEN_GEN_COST = 20;
 const TOKEN_IMG_COST = 10;
 let apiKeyVisible = false;
-const REAL_API_KEY = 'zx_live_a7d3f9e2b0c14a88d91f3e6c780b2d5f'; // demo key
+/* ── SECURITY FIX ─────────────────────────────────────────────
+   The old code hardcoded ONE static key ('zx_live_a7d3...') as a
+   JS constant shipped to every visitor's browser — anyone opening
+   devtools could read it, and every single user saw the exact same
+   key. That's a real credential-exposure bug (ironic, since the FAQ
+   two lines below literally warns "never embed your API key in
+   frontend JavaScript"). Fixed: the key is now per-user, generated
+   server-side via Supabase RPC (see zx_generate_api_key in the audit
+   report SQL), stored in api_keys (RLS: user can only read their own
+   row), and loaded here — never hardcoded. See loadApiKey() / 
+   regenApiKey() below. ── */
+let REAL_API_KEY = null;
 
 // Zunexa AI Content Engine — fully local, no external API
 
@@ -2488,6 +2522,8 @@ document.addEventListener('DOMContentLoaded', () => {
      if (!session) { enterFreeMode(); renderHistoryTable('history-tbody', []); renderHistoryTable('history-full-tbody', []); return; }
      _loadUserProfile(session.user);
      loadHistoryFromCloud();
+     loadApiKey();
+     loadGenerationStats();
    });
 
    function _loadUserProfile(supaUser) {
@@ -2696,6 +2732,36 @@ function setHubPlatformStyle(style) {
 }
 
 /* ─── Zunexa AI Content Engine (cloud proxy + local fallback) ─── */
+/* ─── "High-Quality Response" Engine — Generator Hub ──────────────
+ * New dedicated method (as requested) that every generation now
+ * routes through. It's honest about what it can and can't do:
+ *  - On the real AI path (Claude via /api/ai), it strengthens the
+ *    system prompt with explicit anti-generic-AI-voice instructions
+ *    (see ZX_HUMANIZE_SYSTEM_ADDON above generateContentWithZunexaAI)
+ *    — that's a genuine, real lever for sounding more human.
+ *  - On the local template fallback (no LLM involved, so it can't
+ *    rewrite phrasing on the fly), it applies real cleanup so the
+ *    output doesn't carry visible template-concatenation artifacts.
+ *    It does NOT claim to make template output indistinguishable
+ *    from a human writer — that would need an actual model call.
+ * ─────────────────────────────────────────────────────────────── */
+const ZX_HUMANIZE_SYSTEM_ADDON = `Sound like a skilled native-speaking human copywriter, not a generic AI: vary sentence length and rhythm, avoid stock filler phrases ("in today's fast-paced world", "unlock your potential", "take it to the next level"), use concrete specific details over vague generalities, and match the natural voice a real local creator would use in that language/dialect rather than a stiff translated-sounding template.`;
+
+function zxHumanizeLocalText(text) {
+  if (!text || typeof text !== 'string') return text;
+  return text
+    .replace(/[ \t]+\n/g, '\n')   // trailing spaces left over from concatenation
+    .replace(/\n{3,}/g, '\n\n')    // collapsed accidental multi-blank-lines
+    .replace(/ {2,}/g, ' ')        // double spaces from template joins
+    .trim();
+}
+
+async function generateHighQualityContent(prompt, config) {
+  const text = await generateContentWithZunexaAI(prompt, config);
+  if (text === '__NSFW__') return text;
+  return zxHumanizeLocalText(text);
+}
+
 async function generateContentWithZunexaAI(prompt, config) {
   if (zxIsNSFW(prompt)) {
     showToast('error','⚠ المحتوى المطلوب مخالف لسياسة Zunexa');
@@ -2711,6 +2777,7 @@ async function generateContentWithZunexaAI(prompt, config) {
 Platform: ${config.contentType}. ${platformHint}
 Tone: ${config.tone}. ${toneHint}${styleNote}
 Write in ${langHint}.
+${ZX_HUMANIZE_SYSTEM_ADDON}
 Respond ONLY with the final content, no preamble or explanation. Never generate sexual, violent, or hateful content.`;
 
   // Try the secure cloud proxy first
@@ -2915,12 +2982,17 @@ function zxPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
  * ────────────────────────────────────────────────────────────── */
 const ZX_NICHE_HASHTAGS = {}; // { lang: { niche: [tags] } } — populated if v2 schema is used
 const ZX_NICHE_KEYWORDS = {
-  business:  ['business','entrepreneur','أعمال','ريادة','boutique','vente','négoce','شركة'],
-  marketing: ['marketing','تسويق','social media','content','ads','إعلان','publicité'],
-  fitness:   ['fitness','gym','رياضة','صحة','coach sportif','workout','musculation'],
-  beauty:    ['beauty','جمال','skincare','makeup','مكياج','beauté'],
-  food:      ['food','recipe','طبخ','cuisine','وصفة','restaurant','recette'],
-  coaching:  ['coaching','كوتشينغ','تطوير','mindset','développement','تحفيز'],
+  business:    ['business','entrepreneur','أعمال','ريادة','boutique','vente','négoce','شركة'],
+  marketing:   ['marketing','تسويق','social media','content','ads','إعلان','publicité'],
+  fitness:     ['fitness','gym','رياضة','صحة','coach sportif','workout','musculation'],
+  beauty:      ['beauty','جمال','skincare','makeup','مكياج','beauté'],
+  food:        ['food','recipe','طبخ','cuisine','وصفة','restaurant','recette'],
+  coaching:    ['coaching','كوتشينغ','تطوير','mindset','développement','تحفيز'],
+  // Added — these two niches already existed in the hashtag data
+  // (zunexa_free_templates.json) but had no keywords here, so
+  // zxDetectNiche() could never actually return them.
+  tech:        ['tech','technology','تقنية','برمجة','coding','developer','app','startup تقني','logiciel','saas'],
+  real_estate: ['real estate','عقار','عقارات','immobilier','villa','appartement','riad','immeuble','property'],
 };
 
 function zxDetectNiche(text) {
@@ -3029,20 +3101,85 @@ function composeLocalContent(language, contentType, tone, prompt) {
   }
 }
 
-/* ─── Image Generation via Pollinations.ai (Free, No Key) ──── */
+/* ─── Image Generation via Pollinations.ai (Free, No Key) ────────
+ * REWRITTEN — the old version forced literally every image through
+ * ", gold and black premium brand, high quality" plus "arabic MENA
+ * aesthetic" the instant the UI language was Darija/Gulf — regardless
+ * of what the user actually asked for. That's Zunexa's OWN branding
+ * bleeding into customers' content images, and it's the direct cause
+ * of the "mostly gold-themed / stereotyped Khaliji figures" complaint:
+ * the prompt was fighting the user's own request every single time,
+ * and always in the same direction, so outputs converged on one look.
+ *
+ * Fixed by:
+ *  1. Removing the forced brand/aesthetic suffix entirely — a fitness
+ *     coach's client asking for "sunrise gym session" should not get
+ *     Zunexa's gold-and-black palette forced onto it.
+ *  2. Real per-generation variety: format + niche + lighting + lens +
+ *     color-grade are each pulled from a pool via zxPickSmart(), the
+ *     SAME anti-repetition picker the text engine already uses — so a
+ *     modifier won't repeat until the rest of its pool has been used.
+ *  3. Niche-aware subject styling via the existing zxDetectNiche(),
+ *     instead of one static "premium digital art" fallback for
+ *     everything Zunexa doesn't specifically brand.
+ *  4. Real Pollinations parameters (confirmed against their current
+ *     API docs, not guessed): enhance=true asks their own model to
+ *     improve the prompt; private=true keeps generated images out of
+ *     the public feed; safe=true adds NSFW filtering; referrer=
+ *     identifies the app (recommended by Pollinations for browser
+ *     apps — a Bearer token is deliberately NOT used here because
+ *     Pollinations' own docs warn against ever putting a Bearer token
+ *     in frontend JS; referrer is the correct browser-side method).
+ *     nologo=true is kept, but note Pollinations' docs say it "needs
+ *     account" to fully guarantee — for 100% reliable watermark-free
+ *     output, register a free account at auth.pollinations.ai and see
+ *     AUDIT_REPORT.md for how to wire the resulting token in server-side.
+ * ────────────────────────────────────────────────────────────────── */
+const ZX_IMG_STYLE_POOLS = {
+  format: {
+    instagram: ['vibrant lifestyle photography', 'candid warm social-media style shot', 'natural-light editorial lifestyle photo'],
+    tiktok:    ['dynamic vertical thumbnail composition', 'high-energy bold vertical frame', 'punchy trend-style vertical shot'],
+    linkedin:  ['clean professional editorial photography', 'polished modern corporate portrait style', 'minimal editorial business photography'],
+    youtube:   ['bold eye-catching thumbnail composition', 'high-contrast dramatic thumbnail style', 'punchy vivid thumbnail framing'],
+    seo:       ['editorial magazine-style photography', 'clean infographic-friendly composition', 'polished blog-header photography'],
+    twitter:   ['bold minimalist graphic composition', 'punchy modern social-card visual', 'clean flat-design graphic layout'],
+  },
+  niche: {
+    business:    ['modern office environment', 'confident entrepreneur portrait', 'city skyline with soft depth of field', 'collaborative meeting moment'],
+    marketing:   ['abstract creative color composition', 'dynamic digital campaign visual', 'bold creative studio composition'],
+    fitness:     ['dynamic gym action shot', 'athletic movement mid-motion', 'outdoor training session at sunrise', 'healthy active lifestyle scene'],
+    beauty:      ['soft glam close-up portrait', 'natural skincare routine moment', 'elegant beauty studio lighting'],
+    food:        ['appetizing close-up food photography', 'rustic kitchen scene', 'vibrant plated dish, overhead shot'],
+    coaching:    ['aspirational mentorship moment', 'motivational speaking scene', 'genuine one-on-one coaching session'],
+    tech:        ['clean modern tech workspace', 'sleek product-style gadget shot', 'minimalist UI-inspired composition'],
+    real_estate: ['bright architectural interior photography', 'elegant property exterior at golden hour', 'modern minimalist living space'],
+  },
+  lighting: ['soft natural light', 'golden hour lighting', 'dramatic studio lighting', 'bright airy daylight', 'moody cinematic lighting'],
+  lens:     ['shot on 50mm lens, shallow depth of field', 'wide-angle composition', '85mm portrait lens, soft bokeh', '35mm documentary-style framing'],
+  grade:    ['warm natural color grading', 'clean neutral tones', 'rich contrast color grade', 'soft modern color palette'],
+};
+
 async function generateImageWithAI(prompt, contentType, language) {
-  const styleHint = {
-    instagram: 'vibrant lifestyle photography, social media aesthetic',
-    tiktok:    'dynamic colorful vertical thumbnail style',
-    linkedin:  'professional corporate clean editorial design',
-    youtube:   'eye-catching thumbnail bold vivid colors',
-    seo:       'editorial magazine infographic style',
-    twitter:   'bold graphic design minimalist',
-  }[contentType] || 'modern premium digital art';
-  const langHint = (language === 'darija' || language === 'gulf') ? ', arabic MENA aesthetic' : '';
-  const full = `${prompt}, ${styleHint}${langHint}, gold and black premium brand, high quality`.replace(/,\s*,/g,',');
+  const topic = (prompt || '').trim();
+  const niche = zxDetectNiche(topic) || zxDetectNiche(contentType);
+  const pick = (field, pool) => zxPickSmart('img', field, pool);
+
+  const formatStyle  = pick('format_' + contentType, ZX_IMG_STYLE_POOLS.format[contentType] || ZX_IMG_STYLE_POOLS.format.instagram);
+  const subjectStyle = niche ? pick('niche_' + niche, ZX_IMG_STYLE_POOLS.niche[niche]) : null;
+  const lighting      = pick('lighting', ZX_IMG_STYLE_POOLS.lighting);
+  const lens           = pick('lens', ZX_IMG_STYLE_POOLS.lens);
+  const grade           = pick('grade', ZX_IMG_STYLE_POOLS.grade);
+
+  const full = [topic, subjectStyle, formatStyle, lighting, lens, grade, 'photorealistic, high detail']
+    .filter(Boolean).join(', ').replace(/,\s*,/g, ',');
+
   const seed = Math.floor(Math.random() * 999999);
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(full)}?width=800&height=500&seed=${seed}&nologo=true&model=flux`;
+  const qs = new URLSearchParams({
+    width: '800', height: '500', seed: String(seed),
+    model: 'flux', nologo: 'true', enhance: 'true',
+    private: 'true', safe: 'true', referrer: 'zunexa.io'
+  });
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(full)}?${qs.toString()}`;
 }
 
 /* ─── Handle Generate ────────────────────────────────────────── */
@@ -3068,6 +3205,7 @@ async function handleGenerate(event, prefix) {
     showToast('error', '✕ Insufficient tokens. Buy more in Billing.');
     return false;
   }
+  if (!ZX_RATE.check()) return false;
 
   // Start loading state
   btn.classList.add('loading');
@@ -3084,8 +3222,8 @@ async function handleGenerate(event, prefix) {
     tone: toneEl.value
   };
 
-  // Generate text
-  let generatedText = await generateContentWithZunexaAI(promptEl.value, config);
+  // Generate text — routed through the High-Quality Response engine
+  let generatedText = await generateHighQualityContent(promptEl.value, config);
   if (generatedText === '__NSFW__') {
     btn.classList.remove('loading'); btn.disabled = false;
     outputEl.innerHTML = '<div style="color:var(--red);padding:20px;text-align:center">⚠ المحتوى المطلوب غير مسموح به على Zunexa.</div>';
@@ -3117,9 +3255,19 @@ async function handleGenerate(event, prefix) {
       if (!wrap) return;
       const img = new Image();
       img.onload = () => {
-        wrap.innerHTML = `<img src="${imgUrl}" alt="AI Generated" style="width:100%;display:block;border-radius:9px;" loading="lazy"/><div style="padding:8px 12px;font-size:11px;color:var(--text-muted);text-align:right">🖼️ Generated by Pollinations AI · Zunexa</div>`;
+        wrap.innerHTML = `<img src="${imgUrl}" alt="AI Generated" style="width:100%;display:block;border-radius:9px;" loading="lazy"/>`;
       };
       img.onerror = () => {
+        // One retry with a fresh seed before giving up — Pollinations'
+        // own docs note anonymous-tier requests can be rate-limited
+        // (1 per 15s) or transiently fail under load; a silent retry
+        // fixes most of those without the user having to click Generate
+        // again.
+        if (!img.dataset.retried) {
+          img.dataset.retried = '1';
+          setTimeout(() => { img.src = imgUrl.replace(/seed=\d+/, 'seed=' + Math.floor(Math.random() * 999999)); }, 1500);
+          return;
+        }
         wrap.innerHTML = `<div style="padding:16px;color:var(--text-muted);font-size:12px;text-align:center">⚠ Image generation unavailable — check your connection.</div>`;
       };
       img.src = imgUrl;
@@ -3266,6 +3414,64 @@ async function loadHistoryFromCloud() {
   renderHistoryTable('history-full-tbody', historyData);
 }
 
+/* ─── Live Generation Stats (Supabase) ───────────────────────────
+ * Replaces the old hardcoded "1,247 / ↑34 this week" markup with a
+ * real count against content_history for the signed-in user.
+ * Called on load, again right after every successful generation
+ * (recordGeneration), and kept live across tabs/devices via a
+ * Supabase Realtime subscription if Realtime is enabled on the
+ * table (safe no-op if it isn't — see AUDIT_REPORT.md).
+ * ────────────────────────────────────────────────────────────── */
+async function loadGenerationStats() {
+  const valEl  = document.getElementById('gen-count-display');
+  const badgeEl = document.getElementById('gen-count-week-badge');
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) {
+      if (valEl) { valEl.textContent = '0'; valEl.classList.remove('zx-name-skel'); }
+      if (badgeEl) badgeEl.style.visibility = 'hidden';
+      return;
+    }
+
+    const weekAgoISO = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    const [{ count: totalCount, error: totalErr }, { count: weekCount, error: weekErr }] = await Promise.all([
+      _SB.from('content_history').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id),
+      _SB.from('content_history').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id).gte('created_at', weekAgoISO)
+    ]);
+    if (totalErr) throw totalErr;
+    if (weekErr) throw weekErr;
+
+    if (valEl) {
+      valEl.textContent = (totalCount ?? 0).toLocaleString('en-US');
+      valEl.classList.remove('zx-name-skel');
+      valEl.classList.add('zx-loaded');
+    }
+    if (badgeEl) {
+      badgeEl.textContent = `↑ ${weekCount ?? 0} this week`;
+      badgeEl.style.visibility = 'visible';
+    }
+  } catch (err) {
+    console.error('Zunexa: failed to load generation stats', err);
+    if (valEl) { valEl.textContent = '—'; valEl.classList.remove('zx-name-skel'); }
+  }
+}
+
+// Best-effort live cross-tab sync. No-ops quietly if Realtime replication
+// isn't enabled on content_history in the Supabase project settings —
+// the stat still updates instantly on this tab via loadGenerationStats()
+// being called directly inside recordGeneration() below either way.
+(function zxSubscribeStatsRealtime() {
+  try {
+    _SB.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      _SB.channel('zx-content-history-changes')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'content_history', filter: `user_id=eq.${session.user.id}` }, () => loadGenerationStats())
+        .subscribe();
+    });
+  } catch (e) { /* Realtime not available — silent, non-critical */ }
+})();
+
 /* ─── Save a generation to Supabase (content_history + generated_content) ── */
 async function recordGeneration(contentTypeValue, contentTypeLabel, languageValue, fullText, tokensUsed) {
   try {
@@ -3299,6 +3505,7 @@ async function recordGeneration(contentTypeValue, contentTypeLabel, languageValu
     console.error('Zunexa: failed to save generation', err);
   }
   loadHistoryFromCloud();
+  loadGenerationStats();
 }
 
 function viewHistoryItem(id) {
@@ -3316,7 +3523,13 @@ async function deleteHistoryItem(id) {
   const idx = historyData.findIndex(h => h.id === id);
   if (idx === -1) return;
   try {
-    const { error } = await _SB.from('content_history').delete().eq('id', id);
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) { showToast('error', '✕ Please sign in first.'); return; }
+    // Defense-in-depth: scope the delete to the current user even though
+    // RLS should already enforce this server-side. Never trust a single
+    // layer — if an RLS policy is ever misconfigured, this second filter
+    // still stops a user from deleting rows by guessing another id.
+    const { error } = await _SB.from('content_history').delete().eq('id', id).eq('user_id', session.user.id);
     if (error) throw error;
     showToast('success', '🗑 Item deleted');
   } catch (err) {
@@ -3388,7 +3601,31 @@ function copyOutput(elId) {
   navigator.clipboard?.writeText(el.textContent || el.innerText);
   showToast('success', '📋 Copied to clipboard!');
 }
+/* ─── Real per-user API key (Supabase-backed) ───────────────────
+ * Loaded on session init. Never hardcoded — see security note above.
+ * ──────────────────────────────────────────────────────────────── */
+async function loadApiKey() {
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) { REAL_API_KEY = null; return; }
+    const { data, error } = await _SB
+      .from('api_keys')
+      .select('api_key')
+      .eq('user_id', session.user.id)
+      .maybeSingle();
+    if (error) throw error;
+    REAL_API_KEY = data?.api_key || null;
+    const el = document.getElementById('api-key-val');
+    if (el) el.textContent = REAL_API_KEY
+      ? (apiKeyVisible ? REAL_API_KEY : 'zx_live_••••••••••••••••••••••••••••••••')
+      : '— click Regenerate to create your key —';
+  } catch (err) {
+    console.error('Zunexa: failed to load API key', err);
+  }
+}
+
 function copyApiKey() {
+  if (!REAL_API_KEY) { showToast('error', '✕ No API key yet — generate one first.'); return; }
   navigator.clipboard?.writeText(REAL_API_KEY);
   showToast('success', '🔑 API key copied!');
 }
@@ -3402,12 +3639,26 @@ function copyRef() {
 function toggleApiKey() {
   const el = document.getElementById('api-key-val');
   if (!el) return;
+  if (!REAL_API_KEY) { showToast('error', '✕ No API key yet — click Regenerate to create one.'); return; }
   apiKeyVisible = !apiKeyVisible;
   el.textContent = apiKeyVisible ? REAL_API_KEY : 'zx_live_••••••••••••••••••••••••••••••••';
 }
-function regenApiKey() {
-  closeModal('regen-modal');
-  showToast('success', '🔑 New API key generated successfully!');
+async function regenApiKey() {
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) { showToast('error', '✕ Please sign in first.'); closeModal('regen-modal'); return; }
+    const { data, error } = await _SB.rpc('zx_generate_api_key');
+    if (error) throw error;
+    REAL_API_KEY = data;
+    apiKeyVisible = true;
+    const el = document.getElementById('api-key-val');
+    if (el) el.textContent = REAL_API_KEY;
+    closeModal('regen-modal');
+    showToast('success', '🔑 New API key generated successfully!');
+  } catch (err) {
+    console.error('Zunexa: failed to regenerate API key', err);
+    showToast('error', '✕ Could not generate a new key — try again.');
+  }
 }
 
 /* ─── Edit Modal Save ────────────────────────────────────────── */
@@ -4403,7 +4654,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const slug = (user.username || user.first_name || 'user').toLowerCase().replace(/\s+/g,'_');
 
   /* Footer credits */
-  document.querySelectorAll('#zx-footer-user').forEach(el => {
+  document.querySelectorAll('.zx-footer-user').forEach(el => {
     el.textContent = user.username ? `@${user.username}` : 'Zunexa Digital Brand';
   });
   /* Social handle */
