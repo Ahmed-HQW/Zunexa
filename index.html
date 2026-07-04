@@ -186,22 +186,11 @@ const ZX_LOGIN_RATE = (function(){
         <span class="dot"></span>
         <span>No code? Enter with <strong style="color:var(--green)">Free Plan</strong> — upgrade anytime.</span>
       </div>
-      <div class="avatar-upload-wrap">
-        <div class="avatar-ring" title="Click to change photo">
-          <input type="file" accept="image/*" onchange="handleAvatarUpload(event,'signin')"/>
-          <div class="avatar-preview" id="avatar-signin">
-            <span id="avatar-initials-signin">A</span>
-            <img id="avatar-img-signin" src="" style="display:none"/>
-          </div>
-          <div class="avatar-edit-badge">✏</div>
-        </div>
-        <span class="avatar-label">Tap to change photo</span>
-      </div>
       <div class="form-field">
-        <label>Username or Email</label>
+        <label>Email</label>
         <div class="field-wrap">
-          <span class="field-icon">◎</span>
-          <input type="text" id="si-username" placeholder="Enter your username or email" autocomplete="username" autofocus oninput="checkOwnerMode()" onkeydown="if(event.key==='Enter')document.getElementById('si-password').focus()"/>
+          <span class="field-icon">✉</span>
+          <input type="email" id="si-username" placeholder="you@example.com" autocomplete="username" autofocus onkeydown="if(event.key==='Enter')document.getElementById('si-password').focus()"/>
         </div>
       </div>
       <div class="form-field">
@@ -243,27 +232,10 @@ const ZX_LOGIN_RATE = (function(){
 
     <!-- SIGN UP -->
     <div id="form-signup" style="display:none">
-      <div class="avatar-upload-wrap">
-        <div class="avatar-ring" title="Upload profile photo">
-          <input type="file" accept="image/*" onchange="handleAvatarUpload(event,'signup')"/>
-          <div class="avatar-preview" id="avatar-signup">
-            <span id="avatar-initials-signup">?</span>
-            <img id="avatar-img-signup" src="" style="display:none"/>
-          </div>
-          <div class="avatar-edit-badge">📷</div>
-        </div>
-        <span class="avatar-label">Upload profile photo</span>
-      </div>
       <div class="form-field">
         <label>Name</label>
         <div class="field-wrap"><span class="field-icon">◎</span>
-          <input type="text" id="su-fname" placeholder="Your name" oninput="updateInitials()" onkeydown="if(event.key==='Enter')document.getElementById('su-username').focus()"/>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Username</label>
-        <div class="field-wrap"><span class="field-icon">⬡</span>
-          <input type="text" id="su-username" placeholder="username" onkeydown="if(event.key==='Enter')document.getElementById('su-email').focus()"/>
+          <input type="text" id="su-fname" placeholder="Your name" onkeydown="if(event.key==='Enter')document.getElementById('su-email').focus()"/>
         </div>
       </div>
       <div class="form-field">
@@ -327,6 +299,11 @@ const ZX_LOGIN_RATE = (function(){
       <div id="progress-wrap" style="width:100%;height:3px;background:var(--border);border-radius:99px;overflow:hidden">
         <div id="progress-bar" style="height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));width:0%;transition:width 2.2s ease;border-radius:99px"></div>
       </div>
+      <div id="resend-wrap" style="display:none;margin-top:16px">
+        <button class="btn-auth" style="background:transparent;border:1px solid var(--border-gold);color:var(--gold);box-shadow:none" onclick="resendConfirmation()">
+          <span class="btn-label">✉ &nbsp; Resend Email</span>
+        </button>
+      </div>
     </div>
 
   </div>
@@ -363,8 +340,6 @@ let currentTab = 'signin';
     canGenerate() { return sessionStorage.getItem(this.KEY) !== '1'; },
     markUsed()    { sessionStorage.setItem(this.KEY, '1'); },
   };
-  let avatarDataURL = null;
-
 // ── Quotes bank (ibda3 = daka2 variations) ──
 const IBDA3_QUOTES = [
   '"الإبداع هو الذكاء في حالة مرح" — أينشتاين',
@@ -383,22 +358,14 @@ window.addEventListener('DOMContentLoaded', () => {
   const qt = document.querySelector('.greeting-quote');
   if(qt) qt.textContent = IBDA3_QUOTES[Math.floor(Math.random()*IBDA3_QUOTES.length)];
 
-  const saved = localStorage.getItem('zunexa_avatar');
-  if(saved){ applyAvatar(saved,'signin'); applyAvatar(saved,'signup'); avatarDataURL=saved; }
   const su = localStorage.getItem('zunexa_user');
-  if(su){ try{ const u=JSON.parse(su); if(u.username) document.getElementById('si-username').value=u.username; }catch(e){} }
+  if(su){ try{ const u=JSON.parse(su); if(u.email) document.getElementById('si-username').value=u.email; }catch(e){} }
 
   // Auto redirect if already logged in
   _SB.auth.getSession().then(({data:{session}})=>{
     if(session) window.location.replace('dashboard.html');
   });
 });
-
-// ── Owner mode detect (disabled: role is determined server-side via Supabase 'profiles.role', never client-side) ──
-function checkOwnerMode(){
-  const ob = document.getElementById('ownerBadgeWrap');
-  if(ob) ob.style.display = 'none';
-}
 
 // ── Tab switch ──
 function switchTab(tab){
@@ -409,32 +376,6 @@ function switchTab(tab){
   document.getElementById('tab-signup').classList.toggle('active',tab==='signup');
   document.getElementById('success-screen').style.display='none';
   hideErr();
-}
-
-// ── Avatar ──
-function handleAvatarUpload(event,prefix){
-  const file=event.target.files[0]; if(!file) return;
-  if(file.size>2*1024*1024){showToast('⚠','Photo must be under 2MB');return;}
-  const reader=new FileReader();
-  reader.onload=e=>{
-    avatarDataURL=e.target.result;
-    localStorage.setItem('zunexa_avatar',avatarDataURL);
-    applyAvatar(avatarDataURL,'signin');
-    applyAvatar(avatarDataURL,'signup');
-    showToast('📷','Photo saved!');
-  };
-  reader.readAsDataURL(file);
-}
-function applyAvatar(dataURL,prefix){
-  const img=document.getElementById('avatar-img-'+prefix);
-  const ini=document.getElementById('avatar-initials-'+prefix);
-  if(img){img.src=dataURL;img.style.display='block';}
-  if(ini) ini.style.display='none';
-}
-function updateInitials(){
-  const fname=document.getElementById('su-fname').value.trim();
-  const el=document.getElementById('avatar-initials-signup');
-  if(el&&fname&&!avatarDataURL) el.textContent=fname[0].toUpperCase();
 }
 
 // ── Toggle optional plan code field ──
@@ -494,38 +435,37 @@ async function handleSignIn(){
   const waitSec = ZX_LOGIN_RATE.blocked();
   if (waitSec) { showErr(`Too many attempts. Try again in ${waitSec}s.`); return; }
 
-  const identifier=document.getElementById('si-username').value.trim();
+  const email=document.getElementById('si-username').value.trim();
   const password=document.getElementById('si-password').value.trim();
   const codeVal=document.getElementById('si-code').value.trim();
 
-  if(!identifier){shakeField('si-username');showToast('✕','Enter your username or email');return;}
+  if(!email||!email.includes('@')){shakeField('si-username');showToast('✕','Enter a valid email');return;}
   if(!password){shakeField('si-password');showToast('✕','Enter your password');return;}
 
   const btn=document.querySelector('#form-signin .btn-auth');
   btn.classList.add('loading');
 
-  /* ── FIX: the old code guessed a fake "username@zunexa.local" email,
-     which never matched how sign-up actually registers users (their
-     real email) — meaning a genuine username almost never logged in
-     on the first try, and sometimes not at all. Now resolved properly
-     via a security-definer RPC: pass through real emails untouched,
-     look up a username's real email server-side otherwise. One clean
-     round trip instead of two blind guesses. ── */
-  let loginEmail = identifier;
-  if (!identifier.includes('@')) {
-    try {
-      const { data: resolved } = await _SB.rpc('resolve_login_identifier', { p_identifier: identifier });
-      if (resolved) loginEmail = resolved;
-    } catch (e) { /* fall through — let Supabase return its own generic error */ }
-  }
-
-  const {data,error}=await _SB.auth.signInWithPassword({email:loginEmail,password:password});
+  /* ── SIMPLIFIED: sign in with the real email directly — no more
+     "resolve_login_identifier" RPC. That RPC has to exist as a SQL
+     function in your Supabase project; if it was never created there
+     (or was removed), the call silently returned nothing, so a
+     username-based login always fell back to signInWithPassword with
+     a non-email string — which Supabase always rejects. That was the
+     actual cause of "login doesn't work". Email-only login removes
+     that whole failure mode. If you want username login back later,
+     create the RPC in Supabase first, then re-add the lookup step. ── */
+  const {data,error}=await _SB.auth.signInWithPassword({email,password});
   btn.classList.remove('loading');
 
   if(error){
     ZX_LOGIN_RATE.fail();
     shakeField('si-password');
-    showErr('Invalid credentials. Check username/password.');
+    const msg = /email not confirmed/i.test(error.message)
+      ? 'Please confirm your email first — check your inbox (and spam folder) for the activation link.'
+      : /invalid login credentials/i.test(error.message)
+      ? 'Incorrect email or password.'
+      : error.message;
+    showErr(msg);
     showToast('✕','Sign in failed');
     return;
   }
@@ -534,7 +474,7 @@ async function handleSignIn(){
   let redeemed=null;
   if(codeVal.trim()&&data.user) redeemed=await redeemPlanCodeIfAny(codeVal);
   const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan]||FREE_PLAN) : FREE_PLAN;
-  showSuccess(identifier,plan);
+  showSuccess(email,plan);
   setTimeout(()=>window.location.replace('dashboard.html'),1800);
 }
 
@@ -551,8 +491,6 @@ function togglePwdVisibility(inputId, iconEl){
 async function handleSignUp(){
   hideErr();
   const fname=document.getElementById('su-fname').value.trim();
-  const username=document.getElementById('su-username').value.trim().toLowerCase().replace(/\s+/g,'_');
-  document.getElementById('su-username').value=username;
   const email=document.getElementById('su-email').value.trim();
   const password=document.getElementById('su-password').value.trim();
   const codeWrap=document.getElementById('su-code-wrap');
@@ -560,11 +498,17 @@ async function handleSignUp(){
     ? (document.getElementById('su-code').value||'').trim()
     : '';
 
-  if(!fname){shakeField('su-fname');showToast('✕','Enter first name');return;}
-  if(!username||username.length<3){shakeField('su-username');showToast('✕','Username min 3 characters');return;}
-  if(!/^[a-z0-9_]+$/.test(username)){shakeField('su-username');showToast('✕','Username: letters, numbers, _ only');return;}
+  if(!fname){shakeField('su-fname');showToast('✕','Enter your name');return;}
   if(!email||!email.includes('@')){shakeField('su-email');showToast('✕','Valid email required');return;}
   if(password.length<8){shakeField('su-password');showToast('✕','Min 8 characters');return;}
+
+  // ── SIMPLIFIED: no more username field to fill in/validate.
+  // Auto-generate one from the email so downstream features (profile,
+  // chat display, etc.) still get a username — the person can change
+  // it later in Settings. Random suffix keeps collisions unlikely
+  // without needing an extra round trip to check availability here.
+  const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g,'_').slice(0,16)
+    + Math.floor(100 + Math.random()*900);
 
   const btn=document.querySelector('#form-signup .btn-auth');
   btn.classList.add('loading');
@@ -577,8 +521,11 @@ async function handleSignUp(){
   btn.classList.remove('loading');
 
   if(error){
-    showErr(error.message);
-    showToast('✕',error.message);
+    const msg = /already registered/i.test(error.message)
+      ? 'This email is already registered — try signing in instead.'
+      : error.message;
+    showErr(msg);
+    showToast('✕',msg);
     return;
   }
 
@@ -591,7 +538,7 @@ async function handleSignUp(){
       first_name:fname,
       email,
       current_theme:'zalij-dark',
-      avatar_url:avatarDataURL||null
+      avatar_url:null
     });
   }
 
@@ -637,6 +584,28 @@ function showEmailConfirmation(name,email){
 
   const progressWrap=document.getElementById('progress-wrap');
   if(progressWrap) progressWrap.style.display='none';
+
+  // Keep the email around so the Resend button can use it, and show it
+  _pendingConfirmEmail = email;
+  const resendWrap=document.getElementById('resend-wrap');
+  if(resendWrap) resendWrap.style.display='block';
+}
+
+let _pendingConfirmEmail = null;
+let _resendCooldown = 0;
+
+// ── Resend the confirmation email (common need: link expired, lost
+// in spam, or the person waited too long before checking their inbox) ──
+async function resendConfirmation(){
+  if(!_pendingConfirmEmail) return;
+  if(Date.now() < _resendCooldown){
+    showToast('⏳', `Wait ${Math.ceil((_resendCooldown-Date.now())/1000)}s before resending`);
+    return;
+  }
+  const {error}=await _SB.auth.resend({type:'signup', email:_pendingConfirmEmail});
+  if(error){ showToast('✕', error.message); return; }
+  _resendCooldown = Date.now()+30000;
+  showToast('✉','Confirmation email sent again — check your inbox/spam.');
 }
 
 // ── Success screen ──
@@ -712,7 +681,14 @@ async function handleOAuth(provider) {
   });
   if (error) {
     document.querySelectorAll('.btn-oauth').forEach(b => b.classList.remove('loading'));
-    showToast('✕', provider + ' error: ' + error.message);
+    // "Unsupported provider" means Google/GitHub isn't turned on yet in
+    // Supabase → Authentication → Providers. Common cause of "OAuth
+    // button does nothing/errors" — surface it plainly instead of a
+    // raw error string that doesn't tell you what to do about it.
+    const msg = /unsupported provider|provider is not enabled/i.test(error.message)
+      ? `${provider} sign-in isn't set up yet — use email instead, or enable it in Supabase → Auth → Providers.`
+      : provider + ' error: ' + error.message;
+    showToast('✕', msg);
   }
 }
 
