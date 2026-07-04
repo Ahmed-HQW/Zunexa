@@ -42,9 +42,6 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
 .form-field label{display:block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px;}
 .field-wrap{position:relative;}
 .field-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text-muted);pointer-events:none;}
-.field-icon-end{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text-muted);pointer-events:auto;opacity:.7;transition:opacity .15s ease;user-select:none;}
-.field-icon-end:hover{opacity:1;color:var(--gold);}
-.field-wrap:has(.field-icon-end) input{padding-right:38px;}
 .field-wrap input{width:100%;padding:11px 14px 11px 40px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:14px;font-family:'Rajdhani',sans-serif;outline:none;transition:border-color var(--trans),box-shadow var(--trans);}
 .field-wrap input:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px rgba(212,175,55,.12);}
 .field-wrap input::placeholder{color:var(--text-muted);}
@@ -107,34 +104,10 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 // ── Supabase Init ──
-// (Key is the public/anon "publishable" key — meant to be visible client-side;
-// base64-wrapping it added no real protection, so it's been removed. Same fix
-// already applied to dashboard.html / ai.html — see AUDIT_REPORT.md.)
 const _SB = supabase.createClient(
-  'https://xrldhfsytysznyyhwjlr.supabase.co',
-  'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
+  atob('aHR0cHM6Ly94cmxkaGZzeXR5c3pueXlod2psci5zdXBhYmFzZS5jbw=='),
+  atob('c2JfcHVibGlzaGFibGVfcXRaeXpMU1BWWWpIMHlCMEJKWTh5Z18ycjJjdDM1Rg==')
 );
-
-// ── Login attempt throttle (defense-in-depth against brute force) ──
-// This is a client-side speed bump only — it slows down a single browser
-// tab, nothing more. Real brute-force protection must also come from
-// Supabase's own Auth rate limits (Dashboard → Authentication → Rate
-// Limits) and ideally leaked-password protection — please confirm both
-// are on; I can't check or change server-side settings from static files.
-const ZX_LOGIN_RATE = (function(){
-  let fails = 0; let lockUntil = 0;
-  return {
-    blocked() {
-      if (Date.now() < lockUntil) return Math.ceil((lockUntil - Date.now())/1000);
-      return 0;
-    },
-    fail() {
-      fails++;
-      if (fails >= 5) { lockUntil = Date.now() + 30000; fails = 0; }
-    },
-    reset() { fails = 0; lockUntil = 0; }
-  };
-})();
 </script>
 <style id="zx-pwd-validator-styles">
         #zx-pwd-strength { margin-top: 8px; display: none; flex-direction: column; gap: 4px; }
@@ -198,24 +171,21 @@ const ZX_LOGIN_RATE = (function(){
         <span class="avatar-label">Tap to change photo</span>
       </div>
       <div class="form-field">
-        <label>Username or Email</label>
+        <label>Username</label>
         <div class="field-wrap">
           <span class="field-icon">◎</span>
-          <input type="text" id="si-username" placeholder="Enter your username or email" autocomplete="username" autofocus oninput="checkOwnerMode()" onkeydown="if(event.key==='Enter')document.getElementById('si-password').focus()"/>
+          <input type="text" id="si-username" placeholder="Enter your username" autocomplete="username" oninput="checkOwnerMode()"/>
         </div>
       </div>
       <div class="form-field">
         <label>Password</label>
         <div class="field-wrap">
           <span class="field-icon">🔒</span>
-          <input type="password" id="si-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')handleSignIn()"/>
-          <span class="field-icon-end" onclick="togglePwdVisibility('si-password',this)" style="cursor:pointer" title="Show/hide password">👁</span>
+          <input type="password" id="si-password" placeholder="••••••••" autocomplete="current-password"/>
         </div>
       </div>
-      <div class="auth-footer-link" style="margin-top:8px;margin-bottom:4px">
-        <a onclick="togglePlanCode('si')" id="si-code-toggle">Have a plan code? →</a>
-      </div>
-      <div class="form-field" id="si-code-wrap" style="display:none">
+      <div class="or-divider">Optional Plan Code</div>
+      <div class="form-field">
         <label>🔑 Plan Activation Code</label>
         <div class="field-wrap">
           <span class="field-icon">◆</span>
@@ -257,26 +227,25 @@ const ZX_LOGIN_RATE = (function(){
       <div class="form-field">
         <label>Name</label>
         <div class="field-wrap"><span class="field-icon">◎</span>
-          <input type="text" id="su-fname" placeholder="Your name" oninput="updateInitials()" onkeydown="if(event.key==='Enter')document.getElementById('su-username').focus()"/>
+          <input type="text" id="su-fname" placeholder="Your name" oninput="updateInitials()"/>
         </div>
       </div>
       <div class="form-field">
         <label>Username</label>
         <div class="field-wrap"><span class="field-icon">⬡</span>
-          <input type="text" id="su-username" placeholder="username" onkeydown="if(event.key==='Enter')document.getElementById('su-email').focus()"/>
+          <input type="text" id="su-username" placeholder="username"/>
         </div>
       </div>
       <div class="form-field">
         <label>Email</label>
         <div class="field-wrap"><span class="field-icon">✉</span>
-          <input type="email" id="su-email" placeholder="name@example.com" onkeydown="if(event.key==='Enter')document.getElementById('su-password').focus()"/>
+          <input type="email" id="su-email" placeholder="name@example.com"/>
         </div>
       </div>
       <div class="form-field">
         <label>Password</label>
         <div class="field-wrap"><span class="field-icon">🔒</span>
-          <input type="password" id="su-password" placeholder="Min 8 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')handleSignUp()"/>
-          <span class="field-icon-end" onclick="togglePwdVisibility('su-password',this)" style="cursor:pointer" title="Show/hide password">👁</span>
+          <input type="password" id="su-password" placeholder="Min 8 characters" autocomplete="new-password"/>
            <div id="zx-pwd-strength">
    <div class="pwd-bar-wrap"><div class="pwd-bar-fill" id="pwd-bar"></div></div>
    <span class="pwd-label" id="pwd-label">— Enter password</span>
@@ -490,61 +459,44 @@ function hideErr(){const b=document.getElementById('errBox');if(b)b.classList.re
 // ── Sign In ──
 async function handleSignIn(){
   hideErr();
-
-  const waitSec = ZX_LOGIN_RATE.blocked();
-  if (waitSec) { showErr(`Too many attempts. Try again in ${waitSec}s.`); return; }
-
-  const identifier=document.getElementById('si-username').value.trim();
+  const username=document.getElementById('si-username').value.trim();
   const password=document.getElementById('si-password').value.trim();
   const codeVal=document.getElementById('si-code').value.trim();
 
-  if(!identifier){shakeField('si-username');showToast('✕','Enter your username or email');return;}
+  if(!username){shakeField('si-username');showToast('✕','Enter a username');return;}
   if(!password){shakeField('si-password');showToast('✕','Enter your password');return;}
 
   const btn=document.querySelector('#form-signin .btn-auth');
   btn.classList.add('loading');
 
-  /* ── FIX: the old code guessed a fake "username@zunexa.local" email,
-     which never matched how sign-up actually registers users (their
-     real email) — meaning a genuine username almost never logged in
-     on the first try, and sometimes not at all. Now resolved properly
-     via a security-definer RPC: pass through real emails untouched,
-     look up a username's real email server-side otherwise. One clean
-     round trip instead of two blind guesses. ── */
-  let loginEmail = identifier;
-  if (!identifier.includes('@')) {
-    try {
-      const { data: resolved } = await _SB.rpc('resolve_login_identifier', { p_identifier: identifier });
-      if (resolved) loginEmail = resolved;
-    } catch (e) { /* fall through — let Supabase return its own generic error */ }
-  }
-
-  const {data,error}=await _SB.auth.signInWithPassword({email:loginEmail,password:password});
+  // ── Supabase sign in ──
+  const fakeEmail=username.toLowerCase().replace(/[^a-z0-9]/g,'')+'@zunexa.local';
+  const {data,error}=await _SB.auth.signInWithPassword({email:fakeEmail,password:password});
   btn.classList.remove('loading');
 
   if(error){
-    ZX_LOGIN_RATE.fail();
-    shakeField('si-password');
-    showErr('Invalid credentials. Check username/password.');
-    showToast('✕','Sign in failed');
+    // Try with actual email if first fails
+    const {data:d2,error:e2}=await _SB.auth.signInWithPassword({email:username,password:password});
+    if(e2){
+      shakeField('si-password');
+      showErr('Invalid credentials. Check username/password.');
+      showToast('✕','Sign in failed');
+      return;
+    }
+    // Success with email
+    let redeemed=null;
+    if(codeVal.trim()&&d2.user) redeemed=await redeemPlanCodeIfAny(codeVal);
+    const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan]||FREE_PLAN) : FREE_PLAN;
+    showSuccess(username,plan);
+    setTimeout(()=>window.location.replace('dashboard.html'),1800);
     return;
   }
 
-  ZX_LOGIN_RATE.reset();
   let redeemed=null;
   if(codeVal.trim()&&data.user) redeemed=await redeemPlanCodeIfAny(codeVal);
   const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan]||FREE_PLAN) : FREE_PLAN;
-  showSuccess(identifier,plan);
+  showSuccess(username,plan);
   setTimeout(()=>window.location.replace('dashboard.html'),1800);
-}
-
-// ── Show/hide password ──
-function togglePwdVisibility(inputId, iconEl){
-  const el = document.getElementById(inputId);
-  if (!el) return;
-  const show = el.type === 'password';
-  el.type = show ? 'text' : 'password';
-  if (iconEl) iconEl.style.opacity = show ? '1' : '.7';
 }
 
 // ── Sign Up ──
