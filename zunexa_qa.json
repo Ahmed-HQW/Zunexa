@@ -4482,5 +4482,335 @@
       "ctr",
       "حملة إعلانية"
     ]
+  },
+  {
+    "question": "واش يمكن ليا نستعمل Zunexa باش نكتب أوصاف احترافية للمنتجات ديال المتاجر الإلكترونية؟",
+    "response": "أكيد، Zunexa كتولد ليك Product Descriptions احترافية، مقنعة، ومهيأة باش تزيد نسبة المبيعات، مع التركيز على المميزات والفوائد والكلمات المفتاحية المناسبة.",
+    "keywords": [
+      "product description",
+      "وصف منتج",
+      "متجر",
+      "ecommerce",
+      "shopify",
+      "amazon",
+      "مبيعات"
+    ]
+  },
+  {
+    "question": "واش Zunexa كيساعدني نولد أفكار جديدة للمحتوى؟",
+    "response": "نعم، تقدر تولد عشرات الأفكار للمقالات، الفيديوهات، المنشورات، والحملات التسويقية حسب المجال والجمهور المستهدف ديالك، باش تبقى ديما عندك محتوى جديد.",
+    "keywords": [
+      "أفكار محتوى",
+      "content ideas",
+      "منشورات",
+      "مقالات",
+      "تسويق",
+      "ابداع",
+      "content"
+    ]
+  },
+  {
+    "question": "كيفاش نقدر نكتب Emails احترافية باستعمال Zunexa؟",
+    "response": "غير اختار Email Generator، حدد نوع الرسالة، والمستقبل، والنبرة اللي بغيتي، وغادي يعطيك رسالة احترافية جاهزة للإرسال أو التعديل.",
+    "keywords": [
+      "email",
+      "بريد",
+      "رسالة",
+      "business email",
+      "احترافي",
+      "ايميل",
+      "generator"
+    ]
+  },
+  {
+    "question": "واش Zunexa كيقدر يعاود يصيغ النصوص بطريقة احترافية؟",
+    "response": "نعم، أداة Rewrite كتخليك تعاود صياغة أي نص مع الحفاظ على نفس المعنى، وتحسين الأسلوب، الوضوح، وجودة الكتابة.",
+    "keywords": [
+      "rewrite",
+      "اعادة صياغة",
+      "paraphrase",
+      "تحسين النص",
+      "صياغة",
+      "كتابة",
+      "تعديل"
+    ]
+  },
+  {
+    "question": "واش يمكن ليا نولد Prompts احترافية باستعمال Zunexa؟",
+    "response": "أكيد، Zunexa كتساعدك تولد Prompts موجهة لـ ChatGPT وGemini وClaude وغيرهم، باش تحصل على نتائج أدق وأفضل.",
+    "keywords": [
+      "prompt",
+      "chatgpt",
+      "gemini",
+      "claude",
+      "ai prompt",
+      "برومبت",
+      "ذكاء اصطناعي"
+    ]
+  },
+  {
+    "question": "واش كاينة أداة باش تلخص المقالات الطويلة؟",
+    "response": "نعم، Summary Generator كتستخرج أهم النقاط من أي مقال أو تقرير طويل، مع الحفاظ على الأفكار الأساسية بشكل مختصر وواضح.",
+    "keywords": [
+      "summary",
+      "تلخيص",
+      "اختصار",
+      "مقال",
+      "تقرير",
+      "summarize",
+      "ملخص"
+    ]
+  },
+  {
+    "question": "واش Zunexa كتدعم كتابة Posts ديال LinkedIn؟",
+    "response": "نعم، تقدر تنشئ منشورات احترافية لـ LinkedIn مناسبة للشركات، المطورين، ورواد الأعمال مع أسلوب احترافي يزيد من التفاعل.",
+    "keywords": [
+      "linkedin",
+      "منشور",
+      "احترافي",
+      "business",
+      "post",
+      "لينكدان",
+      "content"
+    ]
+  },
+  {
+    "question": "واش نقدر نولد Captions ديال Instagram باستعمال Zunexa؟",
+    "response": "أكيد، عندنا Instagram Caption Generator كيكتب ليك كابشنات جذابة مع هاشتاغات مناسبة باش تزيد نسبة الوصول.",
+    "keywords": [
+      "instagram",
+      "caption",
+      "هاشتاغ",
+      "ريلز",
+      "post",
+      "انستغرام",
+      "content"
+    ]
+  },
+  {
+    "question": "واش يمكن ليا نكتب تغريدات احترافية لـ X (Twitter)؟",
+    "response": "نعم، Zunexa كتولد Tweets قصيرة، قوية، ومناسبة للتفاعل على منصة X مع احترام عدد الأحرف.",
+    "keywords": [
+      "twitter",
+      "x",
+      "tweet",
+      "تغريدة",
+      "منشور",
+      "social",
+      "post"
+    ]
+  },
+  {
+    "question": "واش Zunexa كتساعدني نكتب Bio احترافي للحسابات ديالي؟",
+    "response": "نعم، تقدر تولد Bio احترافي لـ Instagram، LinkedIn، TikTok أو أي منصة أخرى حسب المجال ديالك.",
+    "keywords": [
+      "bio",
+      "نبذة",
+      "profile",
+      "instagram bio",
+      "linkedin bio",
+      "تعريف",
+      "حساب"
+    ]
+  },
+  {
+	    "question": "واش يمكن ليا نستخدم Zunexa باش نولد FAQ كاملة للموقع ديالي؟",
+    "response": "نعم، تقدر تستعمل أداة FAQ Generator لإنشاء أسئلة وأجوبة احترافية خاصة بالخدمات أو المنتجات ديالك، بطريقة واضحة ومنظمة تساعد الزوار يلقاو الأجوبة بسرعة وتحسن تجربة المستخدم.",
+    "keywords": [
+      "faq",
+      "الاسئلة الشائعة",
+      "faq generator",
+      "موقع",
+      "أسئلة",
+      "أجوبة",
+      "support"
+    ]
+  },
+  {
+    "question": "واش Zunexa كتساعدني نكتب Landing Pages احترافية؟",
+    "response": "أكيد، المنصة كتولد محتوى كامل لصفحات الهبوط (Landing Pages) مع عناوين جذابة، وصف مقنع، ومحتوى موجه لزيادة التحويلات والمبيعات.",
+    "keywords": [
+      "landing page",
+      "صفحة هبوط",
+      "تحويل",
+      "conversion",
+      "copywriting",
+      "مبيعات",
+      "landing"
+    ]
+  },
+  {
+    "question": "واش يمكن ليا نولد أسماء شركات أو مشاريع باستعمال Zunexa؟",
+    "response": "نعم، Zunexa كتقترح أسماء احترافية وإبداعية للمشاريع، الشركات، التطبيقات، والمتاجر الإلكترونية مع مراعاة سهولة التذكر والتميز.",
+    "keywords": [
+      "اسم شركة",
+      "business name",
+      "brand",
+      "startup",
+      "اسم مشروع",
+      "naming",
+      "شركة"
+    ]
+  },
+  {
+    "question": "واش Zunexa كتولد شعارات تسويقية (Slogans)؟",
+    "response": "نعم، عندك أداة مخصصة لإنشاء Slogans احترافية تعبر على هوية المشروع وتساعد في التسويق وبناء العلامة التجارية.",
+    "keywords": [
+      "slogan",
+      "tagline",
+      "شعار",
+      "عبارة",
+      "تسويق",
+      "branding",
+      "هوية"
+    ]
+  },
+  {
+    "question": "واش يمكن ليا نولد أسماء دومينات لموقعي؟",
+    "response": "أكيد، تقدر تستعمل Domain Name Generator باش تحصل على اقتراحات أسماء مناسبة للموقع أو المشروع مع أفكار مميزة وسهلة الحفظ.",
+    "keywords": [
+      "domain",
+      "اسم دومين",
+      "website",
+      "اسم موقع",
+      "domain name",
+      "دومين",
+      "url"
+    ]
+  },
+  {
+    "question": "واش Zunexa كتساعدني نكتب وصف احترافي للخدمات؟",
+    "response": "نعم، المنصة كتولد Service Descriptions احترافية تبرز المميزات والفوائد ديال الخدمة بطريقة مقنعة وسهلة القراءة.",
+    "keywords": [
+      "service description",
+      "خدمة",
+      "وصف",
+      "business",
+      "service",
+      "تعريف",
+      "marketing"
+    ]
+  },
+  {
+    "question": "واش يمكن ليا نولد Call-To-Action احترافي؟",
+    "response": "أكيد، Zunexa كتولد عبارات CTA قوية بحال: اشتر الآن، جرب مجانا، ابدأ اليوم، وغيرها باش تزيد معدل النقرات والتحويلات.",
+    "keywords": [
+      "cta",
+      "call to action",
+      "زر",
+      "تحويل",
+      "marketing",
+      "click",
+      "action"
+    ]
+  },
+  {
+    "question": "واش Zunexa كتساعدني نكتب محتوى صفحات About Us؟",
+    "response": "نعم، تقدر تنشئ صفحة About Us احترافية تعرف بالشركة، الرؤية، الرسالة، والقيم بطريقة تعطي انطباع احترافي.",
+    "keywords": [
+      "about us",
+      "من نحن",
+      "شركة",
+      "تعريف",
+      "موقع",
+      "about",
+      "business"
+    ]
+  },
+  {
+    "question": "واش يمكن ليا نولد محتوى صفحة Contact Us؟",
+    "response": "نعم، المنصة كتساعدك تكتب صفحة تواصل احترافية مع رسائل ترحيبية وتعليمات واضحة للزوار.",
+    "keywords": [
+      "contact us",
+      "اتصل بنا",
+      "تواصل",
+      "contact",
+      "صفحة",
+      "website",
+      "support"
+    ]
+  },
+  {
+    "question": "واش Zunexa كتساعدني نكتب Meta Titles و Meta Descriptions؟",
+    "response": "أكيد، المنصة كتولد Meta Titles وMeta Descriptions محسنة لمحركات البحث SEO باش تزيد فرص ظهور صفحاتك في نتائج البحث.",
+    "keywords": [
+      "meta",
+      "seo",
+      "meta title",
+      "meta description",
+      "جوجل",
+      "بحث",
+      "ranking"
+    ]
+  },
+  {
+    "question": "واش يمكن ليا نولد Keywords خاصة بالـ SEO؟",
+    "response": "نعم، Zunexa كتساعدك تلقى الكلمات المفتاحية المناسبة حسب المجال ديالك لتحسين ظهور المحتوى في محركات البحث.",
+    "keywords": [
+      "keywords",
+      "seo",
+      "keyword",
+      "كلمات مفتاحية",
+      "google",
+      "ranking",
+      "search"
+    ]
+  },
+  {
+    "question": "واش Zunexa كتساعدني نكتب عناوين جذابة للمقالات؟",
+    "response": "أكيد، Title Generator كيولد عناوين احترافية وجذابة تشجع الزوار على الضغط وقراءة المحتوى.",
+    "keywords": [
+      "title",
+      "headline",
+      "عنوان",
+      "blog",
+      "article",
+      "seo",
+      "click"
+    ]
+  },
+  {
+    "question": "واش يمكن ليا نولد أفكار Reels و Shorts؟",
+    "response": "نعم، تقدر تولد أفكار قصيرة لـ Instagram Reels وYouTube Shorts وTikTok حسب النيتش والجمهور ديالك.",
+    "keywords": [
+      "reels",
+      "shorts",
+      "tiktok",
+      "youtube",
+      "instagram",
+      "video",
+      "ideas"
+    ]
+  },
+  {
+    "question": "واش Zunexa كتساعدني نكتب وصف احترافي للتطبيقات؟",
+    "response": "نعم، يمكنها إنشاء App Descriptions احترافية مناسبة للنشر في Google Play وApp Store مع إبراز أهم المميزات.",
+    "keywords": [
+      "app",
+      "application",
+      "play store",
+      "app store",
+      "description",
+      "تطبيق",
+      "mobile"
+    ]
+  },
+  {
+    "question": "واش يمكن ليا نولد JSON أو Markdown باستعمال Zunexa؟",
+    "response": "أكيد، Zunexa كتساعد المطورين في إنشاء JSON وMarkdown منظم، صحيح، وجاهز للاستعمال داخل المشاريع أو APIs أو GitHub.",
+    "keywords": [
+      "json",
+      "markdown",
+      "github",
+      "developer",
+      "api",
+      "code",
+      "programming"
+    ]
   }
 ]
+
+
+
+
+
