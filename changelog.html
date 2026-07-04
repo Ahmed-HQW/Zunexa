@@ -340,20 +340,21 @@ body {
 <div class="cl-wrap">
   <a href="index.html" class="back-btn">← Back to Login</a>
 
-  <!-- ══ V10 KERNEL BANNER ══ -->
+  <!-- ══ V12 KERNEL BANNER ══ -->
   <div class="kernel-banner">
-    <span class="kb-tag">▸ LATEST RELEASE — SYSTEM INTEGRATION</span>
-    <div class="kb-title">Version V10: System Integration &amp; Aether-Kernel Protocol</div>
+    <span class="kb-tag">▸ LATEST RELEASE — SECURITY &amp; STABILITY AUDIT</span>
+    <div class="kb-title">Version V12: Security &amp; Stability Audit</div>
     <div class="kb-desc">
-      Complete architectural overhaul introducing a centralized theme engine, modular injection system,
-      global sidebar runtime, and a unified design token layer across all pages.
-      The Aether-Kernel Protocol establishes a zero-rewrite update strategy for all future versions.
+      Full security pass across dashboard.html, ai.html, and index.html: real per-user API keys,
+      real authentication on the AI assistant page, a fixed sign-in flow, and a rewritten Pollinations
+      image engine that no longer forces the same look onto every generation. Live Supabase-backed
+      stats replace the last static placeholders.
     </div>
     <div class="kb-meta">
-      <div class="kb-meta-item">ARCH: <span>Modular Injection</span></div>
-      <div class="kb-meta-item">ENGINE: <span>theme.css + sidebar-injection.js</span></div>
-      <div class="kb-meta-item">STACK: <span>HTML5 · CSS3 · Vanilla JS</span></div>
-      <div class="kb-meta-item">DATE: <span>2026-05-21</span></div>
+      <div class="kb-meta-item">FOCUS: <span>Security · Auth · Live Data</span></div>
+      <div class="kb-meta-item">FILES: <span>dashboard.html · ai.html · index.html</span></div>
+      <div class="kb-meta-item">STACK: <span>HTML5 · CSS3 · Vanilla JS · Supabase</span></div>
+      <div class="kb-meta-item">DATE: <span>2026-07-04</span></div>
     </div>
   </div>
 
@@ -367,12 +368,40 @@ body {
   <!-- ══ TIMELINE FEED ══ -->
   <div class="timeline-feed">
 
+    <!-- ── V12 ── -->
+    <div class="tl-entry anim-fadeIn stagger-1">
+      <div class="tl-dot"></div>
+      <div class="version-card">
+        <div class="vc-head">
+          <span class="vc-badge badge-v10">V12 · LIVE</span>
+          <span class="vc-version">v12.0.0 — Security &amp; Stability Audit</span>
+          <span class="vc-date">2026-07-04</span>
+        </div>
+        <div class="vc-items">
+          <div class="vc-item"><div class="vc-dot dot-sec">SECURITY</div><div class="vc-text">Dashboard API key page hardcoded <strong>one shared static key</strong> shipped to every visitor's browser. Now generated per-user server-side via a Postgres RPC (<code>zx_generate_api_key</code>) and stored in a new RLS-protected <code>api_keys</code> table.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-sec">SECURITY</div><div class="vc-text"><code>ai.html</code> had no real authentication — identity came from a free-text <code>localStorage</code> field anyone could edit to view another user's data or self-assign "Premium." Rebuilt on real Supabase Auth sessions (same pattern as the dashboard); anonymous visitors now correctly show as Guest/Free instead of Premium.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-sec">SECURITY</div><div class="vc-text">Sign-in page: broken username→email guessing (a fake <code>username@zunexa.local</code> address that never matched real registered emails) replaced with a proper server-side resolver, <code>resolve_login_identifier</code> RPC — also the likely root cause of usernames failing to log in at all.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-sec">SECURITY</div><div class="vc-text">Added a login attempt throttle (<code>ZX_LOGIN_RATE</code>) and confirmed <code>ai.html</code>'s Supabase writes (learn/log/weight) now share the same rate-limiting pattern as the dashboard generator — previously unthrottled.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-sec">SECURITY</div><div class="vc-text">Closed an IDOR gap in content-history delete (now scoped to the signed-in user, not just a row id) and migrated <code>ai.html</code>'s hand-built Supabase REST calls to the official SDK, removing unencoded string-interpolated queries.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-sec">SECURITY</div><div class="vc-text">Removed cosmetic base64-wrapping of the public Supabase key across <code>dashboard.html</code>, <code>ai.html</code>, and <code>index.html</code> — it added no real protection; the key is unchanged (RLS is the real boundary).</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">Pollinations image generation was forcing <strong>"gold and black premium brand"</strong> and <strong>"arabic MENA aesthetic"</strong> onto every single image regardless of what was requested — the direct cause of repetitive, stereotyped output. Replaced with niche-aware, non-repeating style pools (reusing the existing <code>zxPickSmart</code> anti-repetition picker).</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">AI-bar / FAB overlap: <code>.ai-bar-wrap</code> right-clearance was inconsistent across breakpoints (correct only in a ~90px sliver). Now one shared <code>--zx-fab-clear</code> variable, set to a confirmed-precise 96px against the real <code>fab-injection.js</code> button geometry.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">"Active Platforms" static card removed from the dashboard stats row as requested; grid rebalanced from 4 to 3 columns.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-fix">FIX</div><div class="vc-text">Profile-dropdown routing: Documentation → <code>landing.html</code>, Billing → <code>pro_accounts.html</code>. Also caught "Account Settings" silently duplicating the Billing link (copy-paste bug) — now correctly routes to <code>settings.html</code>.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>Live generation stats</strong> — the "items created lifetime / this week" card was 100% static markup with zero JS behind it. Now backed by real <code>content_history</code> counts, refreshed after every generation plus a best-effort Realtime subscription.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text"><strong>generateHighQualityContent()</strong> — new Generator Hub method: strengthens the system prompt on the real AI path against generic-sounding phrasing, and cleans up concatenation artifacts on the local template fallback.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-new">NEW</div><div class="vc-text">Sign-in / sign-up: password show/hide toggle, Enter-key submission through both forms, username field autofocus, and the plan-code field on sign-in now collapses behind a toggle by default (matching sign-up) instead of always showing.</div></div>
+          <div class="vc-item"><div class="vc-dot dot-perf">OPT</div><div class="vc-text">Image generation now silently retries once with a fresh seed on load failure before showing an error — smooths over Pollinations' anonymous-tier rate limiting.</div></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── V11 ── -->
     <div class="tl-entry anim-fadeIn stagger-1">
       <div class="tl-dot"></div>
       <div class="version-card">
         <div class="vc-head">
-          <span class="vc-badge badge-v10">V11 · LIVE</span>
+          <span class="vc-badge badge-latest">PREVIOUS</span>
           <span class="vc-version">v11.0.0 — Clarity Protocol</span>
           <span class="vc-date">2026-06-15</span>
         </div>
