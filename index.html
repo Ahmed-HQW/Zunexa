@@ -232,10 +232,21 @@ const ZX_LOGIN_RATE = (function(){
 
     <!-- SIGN UP -->
     <div id="form-signup" style="display:none">
+      <div class="avatar-upload-wrap">
+        <div class="avatar-ring" title="Upload profile photo (optional)">
+          <input type="file" accept="image/*" onchange="handleAvatarUpload(event,'signup')"/>
+          <div class="avatar-preview" id="avatar-signup">
+            <span id="avatar-initials-signup">?</span>
+            <img id="avatar-img-signup" src="" style="display:none"/>
+          </div>
+          <div class="avatar-edit-badge">📷</div>
+        </div>
+        <span class="avatar-label">Photo — optional, can add later</span>
+      </div>
       <div class="form-field">
         <label>Name</label>
         <div class="field-wrap"><span class="field-icon">◎</span>
-          <input type="text" id="su-fname" placeholder="Your name" onkeydown="if(event.key==='Enter')document.getElementById('su-email').focus()"/>
+          <input type="text" id="su-fname" placeholder="Your name" oninput="updateInitials()" onkeydown="if(event.key==='Enter')document.getElementById('su-email').focus()"/>
         </div>
       </div>
       <div class="form-field">
@@ -340,6 +351,8 @@ let currentTab = 'signin';
     canGenerate() { return sessionStorage.getItem(this.KEY) !== '1'; },
     markUsed()    { sessionStorage.setItem(this.KEY, '1'); },
   };
+  let avatarDataURL = null;
+
 // ── Quotes bank (ibda3 = daka2 variations) ──
 const IBDA3_QUOTES = [
   '"الإبداع هو الذكاء في حالة مرح" — أينشتاين',
@@ -358,6 +371,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const qt = document.querySelector('.greeting-quote');
   if(qt) qt.textContent = IBDA3_QUOTES[Math.floor(Math.random()*IBDA3_QUOTES.length)];
 
+  const saved = localStorage.getItem('zunexa_avatar');
+  if(saved){ applyAvatar(saved,'signup'); avatarDataURL=saved; }
   const su = localStorage.getItem('zunexa_user');
   if(su){ try{ const u=JSON.parse(su); if(u.email) document.getElementById('si-username').value=u.email; }catch(e){} }
 
@@ -376,6 +391,32 @@ function switchTab(tab){
   document.getElementById('tab-signup').classList.toggle('active',tab==='signup');
   document.getElementById('success-screen').style.display='none';
   hideErr();
+}
+
+// ── Avatar (Sign Up only — optional, skippable) ──
+function handleAvatarUpload(event,prefix){
+  const file=event.target.files[0]; if(!file) return;
+  if(!file.type.startsWith('image/')){showToast('⚠','Please choose an image file');return;}
+  if(file.size>2*1024*1024){showToast('⚠','Photo must be under 2MB');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    avatarDataURL=e.target.result;
+    localStorage.setItem('zunexa_avatar',avatarDataURL);
+    applyAvatar(avatarDataURL,prefix);
+    showToast('📷','Photo added!');
+  };
+  reader.readAsDataURL(file);
+}
+function applyAvatar(dataURL,prefix){
+  const img=document.getElementById('avatar-img-'+prefix);
+  const ini=document.getElementById('avatar-initials-'+prefix);
+  if(img){img.src=dataURL;img.style.display='block';}
+  if(ini) ini.style.display='none';
+}
+function updateInitials(){
+  const fname=document.getElementById('su-fname').value.trim();
+  const el=document.getElementById('avatar-initials-signup');
+  if(el&&fname&&!avatarDataURL) el.textContent=fname[0].toUpperCase();
 }
 
 // ── Toggle optional plan code field ──
@@ -538,7 +579,7 @@ async function handleSignUp(){
       first_name:fname,
       email,
       current_theme:'zalij-dark',
-      avatar_url:null
+      avatar_url:avatarDataURL||null
     });
   }
 
