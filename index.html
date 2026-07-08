@@ -6,312 +6,240 @@
 <title>Zunexa — Sign In</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23080808'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%23D4AF37' stroke-width='.8' opacity='.6'/><text x='16' y='21' text-anchor='middle' font-size='17' font-family='Georgia,serif' fill='%23D4AF37' font-weight='bold'>Z</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg-void:#080808;--bg-deep:#0e0e0e;--bg-card:#141414;--bg-input:#111111;--border:#242424;--border-gold:rgba(212,175,55,.35);--gold:#D4AF37;--gold-bright:#f0cc55;--gold-dim:#8a7022;--gold-glow:rgba(212,175,55,.18);--text-white:#f5f5f0;--text-grey:#9a9a8a;--text-muted:#555548;--green:#3ddc84;--red:#ff4d6d;--blue:#5b8dee;--purple:#a78bfa;--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--trans:.22s cubic-bezier(.4,0,.2,1);}
+:root{--bg-void:#080808;--bg-card:#141414;--bg-input:#111111;--border:#242424;--border-gold:rgba(212,175,55,.35);--gold:#D4AF37;--gold-bright:#f0cc55;--gold-dim:#8a7022;--text-white:#f5f5f0;--text-grey:#9a9a8a;--text-muted:#555548;--green:#3ddc84;--red:#ff4d6d;--blue:#5b8dee;--purple:#a78bfa;--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--trans:.22s cubic-bezier(.4,0,.2,1);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--text-white);display:flex;align-items:center;justify-content:center;min-height:100vh;font-size:15px;position:relative;}
 .bg-layer{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,rgba(212,175,55,.04) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 85% 80%,rgba(212,175,55,.03) 0%,transparent 60%),var(--bg-void);}
 .zalij-bg-pattern{position:fixed;inset:0;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%23D4AF3709' stroke-width='.8'%3E%3Cpolygon points='40,3 76,22 76,58 40,77 4,58 4,22'/%3E%3Cpolygon points='40,14 65,28 65,52 40,66 15,52 15,28'/%3E%3Ccircle cx='40' cy='40' r='10'/%3E%3C/g%3E%3C/svg%3E");opacity:.6;}
-.floating-hex{position:fixed;z-index:0;pointer-events:none;animation:floatHex 20s ease-in-out infinite;opacity:.04;font-size:200px;color:var(--gold);font-family:'Cinzel',serif;line-height:1;}
-.floating-hex:nth-child(1){top:-60px;left:-40px;animation-delay:0s}
-.floating-hex:nth-child(2){bottom:-80px;right:-30px;animation-delay:-10s;font-size:160px}
-@keyframes floatHex{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-20px) rotate(5deg)}}
-.auth-shell{position:relative;z-index:10;width:100%;max-width:480px;padding:16px;}
-.auth-logo{text-align:center;margin-bottom:32px;}
-.logo-hex{width:64px;height:64px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:16px;display:inline-grid;place-items:center;font-size:32px;margin-bottom:14px;box-shadow:0 0 40px rgba(212,175,55,.3),0 8px 32px rgba(0,0,0,.5);animation:pulseLogo 3s ease-in-out infinite;}
+.auth-shell{position:relative;z-index:10;width:100%;max-width:420px;padding:16px;}
+.auth-logo{text-align:center;margin-bottom:28px;}
+.logo-hex{width:60px;height:60px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:16px;display:inline-grid;place-items:center;font-size:30px;margin-bottom:12px;box-shadow:0 0 40px rgba(212,175,55,.3),0 8px 32px rgba(0,0,0,.5);animation:pulseLogo 3s ease-in-out infinite;}
 @keyframes pulseLogo{0%,100%{box-shadow:0 0 40px rgba(212,175,55,.3),0 8px 32px rgba(0,0,0,.5)}50%{box-shadow:0 0 60px rgba(212,175,55,.5),0 8px 32px rgba(0,0,0,.5)}}
-.logo-name{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--gold);letter-spacing:.06em;display:block;line-height:1;}
+.logo-name{font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--gold);letter-spacing:.06em;display:block;line-height:1;}
 .logo-tagline{font-size:11px;color:var(--text-muted);letter-spacing:.14em;text-transform:uppercase;margin-top:4px;display:block;}
-.auth-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;box-shadow:0 24px 80px rgba(0,0,0,.6),0 1px 0 rgba(212,175,55,.08) inset;position:relative;overflow:hidden;}
+.auth-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:30px;box-shadow:0 24px 80px rgba(0,0,0,.6),0 1px 0 rgba(212,175,55,.08) inset;position:relative;overflow:hidden;}
 .auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
-.auth-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border-gold),transparent);opacity:.5;}
-.auth-tabs{display:flex;gap:0;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;margin-bottom:28px;}
-.tab-btn{flex:1;padding:9px;background:none;border:none;color:var(--text-muted);font-size:13px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all var(--trans);}
+.auth-tabs{display:flex;gap:0;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;margin-bottom:22px;}
+.tab-btn{flex:1;padding:10px;background:none;border:none;color:var(--text-muted);font-size:13px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all var(--trans);}
 .tab-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#000;box-shadow:0 2px 12px rgba(212,175,55,.3);}
-.avatar-upload-wrap{text-align:center;margin-bottom:24px;}
-.avatar-ring{position:relative;display:inline-block;cursor:pointer;}
-.avatar-ring input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2;}
-.avatar-preview{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;color:#000;font-family:'Cinzel',serif;position:relative;overflow:hidden;border:3px solid var(--border-gold);box-shadow:0 0 30px rgba(212,175,55,.2);transition:all var(--trans);}
-.avatar-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.avatar-edit-badge{position:absolute;bottom:2px;right:2px;width:26px;height:26px;background:var(--gold);border-radius:50%;display:grid;place-items:center;font-size:13px;z-index:3;border:2px solid var(--bg-card);pointer-events:none;}
-.avatar-ring:hover .avatar-preview{border-color:var(--gold);box-shadow:0 0 40px rgba(212,175,55,.4)}
-.avatar-label{display:block;margin-top:8px;font-size:11px;color:var(--text-muted);letter-spacing:.08em;}
+.guide-link{text-align:center;margin-bottom:16px;font-size:12px;color:var(--text-muted);}
+.guide-link a{color:var(--gold);text-decoration:none;}
+.guide-link a:hover{color:var(--gold-bright);text-decoration:underline;}
 .form-field{margin-bottom:16px;}
 .form-field label{display:block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px;}
 .field-wrap{position:relative;}
 .field-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text-muted);pointer-events:none;}
-.field-icon-end{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text-muted);pointer-events:auto;opacity:.7;transition:opacity .15s ease;user-select:none;}
+.field-icon-end{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text-muted);pointer-events:auto;opacity:.7;transition:opacity .15s ease;user-select:none;cursor:pointer;background:none;border:none;}
 .field-icon-end:hover{opacity:1;color:var(--gold);}
-.field-wrap:has(.field-icon-end) input{padding-right:38px;}
-.field-wrap input{width:100%;padding:11px 14px 11px 40px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:14px;font-family:'Rajdhani',sans-serif;outline:none;transition:border-color var(--trans),box-shadow var(--trans);}
+.field-wrap input{width:100%;padding:12px 40px 12px 40px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:15px;font-family:'Rajdhani',sans-serif;outline:none;transition:border-color var(--trans),box-shadow var(--trans);}
 .field-wrap input:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px rgba(212,175,55,.12);}
 .field-wrap input::placeholder{color:var(--text-muted);}
-.code-field{background:var(--bg-input);border:1px solid var(--border-gold);border-radius:var(--radius-sm);padding:11px 14px 11px 40px;width:100%;font-size:14px;font-family:'Courier New',monospace;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;outline:none;transition:all var(--trans);}
+.field-wrap input:invalid:not(:placeholder-shown){border-color:rgba(255,77,109,.4);}
+.code-field{background:var(--bg-input);border:1px solid var(--border-gold);border-radius:var(--radius-sm);padding:11px 14px 11px 40px;width:100%;font-size:14px;font-family:'Courier New',monospace;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;outline:none;transition:all var(--trans);}
 .code-field:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.15);}
 .code-field::placeholder{color:var(--text-muted);font-family:'Rajdhani',sans-serif;letter-spacing:normal;text-transform:none;}
-.plan-preview{margin-top:8px;padding:8px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px;transition:all var(--trans);min-height:36px;}
+.plan-preview{margin-top:8px;padding:8px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px;min-height:36px;}
 .plan-preview.hidden{display:none}
-.plan-preview.free{background:rgba(155,155,155,.1);border:1px solid #444;color:#888}
-.plan-preview.plus{background:rgba(91,141,238,.1);border:1px solid rgba(91,141,238,.3);color:var(--blue)}
-.plan-preview.pro{background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.35);color:var(--gold)}
-.plan-preview.senior{background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:var(--purple)}
-.plan-preview.owner{background:rgba(212,175,55,.2);border:1px solid var(--gold);color:var(--gold)}
-.free-notice{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(61,220,132,.06);border:1px solid rgba(61,220,132,.2);border-radius:var(--radius-sm);font-size:12px;color:var(--text-grey);margin-bottom:20px;}
+.plan-preview.ok{background:rgba(61,220,132,.08);border:1px solid rgba(61,220,132,.25);color:var(--green)}
+.plan-preview.bad{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);color:#ff4d6d}
+.free-notice{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(61,220,132,.06);border:1px solid rgba(61,220,132,.2);border-radius:var(--radius-sm);font-size:12px;color:var(--text-grey);margin-bottom:18px;}
 .free-notice .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
-.or-divider{display:flex;align-items:center;gap:12px;margin:20px 0;font-size:11px;color:var(--text-muted);letter-spacing:.1em;}
-.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border));}
-.or-divider::after{background:linear-gradient(90deg,var(--border),transparent)}
-.btn-auth{width:100%;padding:13px;background:linear-gradient(135deg,var(--gold) 0%,#b8922e 100%);border:none;border-radius:var(--radius-sm);color:#000;font-size:14px;font-weight:700;font-family:'Cinzel',serif;letter-spacing:.08em;cursor:pointer;transition:all var(--trans);box-shadow:0 4px 24px rgba(212,175,55,.35);display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;margin-top:4px;}
-.btn-auth::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,transparent 50%);}
-.btn-auth:hover{background:linear-gradient(135deg,var(--gold-bright) 0%,var(--gold) 100%);box-shadow:0 6px 32px rgba(212,175,55,.5);transform:translateY(-1px);}
-.btn-auth:active{transform:translateY(0)}
+.btn-auth{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold) 0%,#b8922e 100%);border:none;border-radius:var(--radius-sm);color:#000;font-size:14px;font-weight:700;font-family:'Cinzel',serif;letter-spacing:.08em;cursor:pointer;transition:all var(--trans);box-shadow:0 4px 24px rgba(212,175,55,.35);display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;margin-top:6px;}
+.btn-auth:hover:not(:disabled){background:linear-gradient(135deg,var(--gold-bright) 0%,var(--gold) 100%);box-shadow:0 6px 32px rgba(212,175,55,.5);transform:translateY(-1px);}
+.btn-auth:active:not(:disabled){transform:translateY(0)}
+.btn-auth:disabled{cursor:not-allowed;opacity:.55;transform:none;}
+.btn-auth.locked{background:linear-gradient(135deg,#555,#333);box-shadow:none;color:var(--text-grey);}
 .btn-auth .spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;display:none;}
 .btn-auth.loading .spinner{display:block}
 .btn-auth.loading .btn-label{display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
-.auth-footer-link{text-align:center;margin-top:20px;font-size:13px;color:var(--text-muted);}
+.auth-footer-link{text-align:center;margin-top:18px;font-size:13px;color:var(--text-muted);}
 .auth-footer-link a{color:var(--gold);cursor:pointer}
 .auth-footer-link a:hover{color:var(--gold-bright)}
+.toggle-link{display:block;text-align:right;font-size:12px;color:var(--text-muted);margin:-8px 0 14px;cursor:pointer;}
+.toggle-link:hover{color:var(--gold);}
 .success-screen{display:none;text-align:center;padding:20px 0;}
-.success-icon{width:72px;height:72px;background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.3);border-radius:50%;display:inline-grid;place-items:center;font-size:32px;margin-bottom:16px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1);}
+.success-icon{width:68px;height:68px;background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.3);border-radius:50%;display:inline-grid;place-items:center;font-size:30px;margin-bottom:16px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1);}
 @keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
-.success-title{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--text-white);margin-bottom:6px}
-.success-sub{font-size:13px;color:var(--text-grey);margin-bottom:8px}
+.success-title{font-family:'Cinzel',serif;font-size:19px;font-weight:700;color:var(--text-white);margin-bottom:6px}
+.success-sub{font-size:13px;color:var(--text-grey);margin-bottom:8px;line-height:1.5;}
 .success-plan-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:20px;}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 .shake{animation:shake .4s ease}
-.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg-card);border:1px solid var(--border-gold);border-radius:var(--radius-md);padding:12px 18px;font-size:13px;color:var(--text-white);display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;transform:translateX(40px);transition:all .3s ease;pointer-events:none;}
+.toast{position:fixed;bottom:24px;right:24px;left:auto;z-index:9999;background:var(--bg-card);border:1px solid var(--border-gold);border-radius:var(--radius-md);padding:12px 18px;font-size:13px;color:var(--text-white);display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;transform:translateX(40px);transition:all .3s ease;pointer-events:none;max-width:calc(100vw - 32px);}
 .toast.show{opacity:1;transform:translateX(0)}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg-deep)}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:99px}
-/* Owner badge special */
-.owner-badge-wrap{text-align:center;margin-bottom:16px;display:none;}
-.owner-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;background:linear-gradient(135deg,rgba(212,175,55,.2),rgba(212,175,55,.05));border:1px solid var(--gold);border-radius:99px;font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:.08em;}
-/* Error box */
-.err-box{background:rgba(255,77,109,.07);border:1px solid rgba(255,77,109,.25);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:#ff8096;display:none;align-items:center;gap:8px;margin-bottom:12px;}
+.err-box{background:rgba(255,77,109,.07);border:1px solid rgba(255,77,109,.25);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:#ff8096;display:none;align-items:center;gap:8px;margin-bottom:14px;line-height:1.4;}
 .err-box.show{display:flex;}
-@media(max-width:520px){.auth-card{padding:22px 16px}.auth-shell{padding:12px}}
-  /* ══ OAUTH & PHONE AUTH — PREMIUM ══ */
-.oauth-divider{display:flex;align-items:center;gap:10px;margin:20px 0 14px;color:var(--text-muted);font-size:10px;letter-spacing:.14em;text-transform:uppercase;}
+.oauth-divider{display:flex;align-items:center;gap:10px;margin:18px 0 14px;color:var(--text-muted);font-size:10px;letter-spacing:.14em;text-transform:uppercase;}
 .oauth-divider::before,.oauth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.oauth-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px;}
-.btn-oauth{padding:10px 6px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-size:12px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.04em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:all var(--trans);position:relative;overflow:hidden;}
-.btn-oauth:hover{border-color:var(--gold);background:rgba(212,175,55,.06);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
-.btn-oauth:active{transform:translateY(0);}
-.btn-oauth.loading{opacity:.5;pointer-events:none;}
-.btn-oauth svg{width:20px;height:20px;flex-shrink:0;}
-.btn-oauth span{font-size:10px;color:var(--text-muted);}
-  
+.oauth-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.btn-oauth{padding:11px 6px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:12px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.04em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all var(--trans);}
+.btn-oauth:hover:not(:disabled){border-color:var(--gold);background:rgba(212,175,55,.06);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+.btn-oauth:disabled{opacity:.5;pointer-events:none;cursor:not-allowed;}
+.btn-oauth svg{width:18px;height:18px;flex-shrink:0;}
+#zx-pwd-strength{margin-top:8px;display:none;flex-direction:column;gap:4px;}
+#zx-pwd-strength.visible{display:flex;}
+.pwd-bar-wrap{height:3px;background:#1a1a1a;border-radius:99px;overflow:hidden;}
+.pwd-bar-fill{height:100%;width:0%;border-radius:99px;transition:width .35s ease,background .35s ease;}
+.pwd-rules{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;}
+.pwd-rule{font-size:10px;color:#3a3a30;display:flex;align-items:center;gap:5px;transition:color .2s;}
+.pwd-rule.ok{color:var(--green);}
+.pwd-rule.bad{color:var(--red);}
+.pwd-rule::before{content:'○';}
+.pwd-rule.ok::before{content:'●';}
+.pwd-rule.bad::before{content:'✕';}
+.pwd-label{font-size:10px;color:var(--text-muted);letter-spacing:.08em;}
+.progress-wrap{width:100%;height:3px;background:var(--border);border-radius:99px;overflow:hidden;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));width:0%;transition:width 2.2s ease;border-radius:99px;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#0e0e0e}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:99px}
+@media(max-width:520px){.auth-card{padding:22px 16px}.auth-shell{padding:12px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
-// ── Supabase Init ──
-// (Key is the public/anon "publishable" key — meant to be visible client-side;
-// base64-wrapping it added no real protection, so it's been removed. Same fix
-// already applied to dashboard.html / ai.html — see AUDIT_REPORT.md.)
-const _SB = supabase.createClient(
-  'https://xrldhfsytysznyyhwjlr.supabase.co',
-  'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
-);
-
-// ── Login attempt throttle (defense-in-depth against brute force) ──
-// This is a client-side speed bump only — it slows down a single browser
-// tab, nothing more. Real brute-force protection must also come from
-// Supabase's own Auth rate limits (Dashboard → Authentication → Rate
-// Limits) and ideally leaked-password protection — please confirm both
-// are on; I can't check or change server-side settings from static files.
-const ZX_LOGIN_RATE = (function(){
-  let fails = 0; let lockUntil = 0;
-  return {
-    blocked() {
-      if (Date.now() < lockUntil) return Math.ceil((lockUntil - Date.now())/1000);
-      return 0;
-    },
-    fail() {
-      fails++;
-      if (fails >= 5) { lockUntil = Date.now() + 30000; fails = 0; }
-    },
-    reset() { fails = 0; lockUntil = 0; }
-  };
-})();
-</script>
-<style id="zx-pwd-validator-styles">
-        #zx-pwd-strength { margin-top: 8px; display: none; flex-direction: column; gap: 4px; }
-        #zx-pwd-strength.visible { display: flex; }
-        .pwd-bar-wrap { height: 3px; background: #1a1a1a; border-radius: 99px; overflow: hidden; }
-        .pwd-bar-fill { height: 100%; width: 0%; border-radius: 99px; transition: width .35s ease, background .35s ease; }
-        .pwd-rules { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
-        .pwd-rule { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #333328; display: flex; align-items: center; gap: 6px; transition: color .2s; }
-        .pwd-rule.ok { color: #3ddc84; }
-        .pwd-rule.bad { color: #ff4d6d; }
-        .pwd-rule::before { content: '○'; }
-        .pwd-rule.ok::before { content: '●'; }
-        .pwd-rule.bad::before { content: '✕'; }
-        .pwd-label { font-family: 'Rajdhani', sans-serif; font-size: 10px; color: #555548; letter-spacing: .08em; }
-        </style>
-        </head>
+</head>
 <body>
 <div class="bg-layer"></div>
 <div class="zalij-bg-pattern"></div>
-<div class="floating-hex">⬡</div>
-<div class="floating-hex">⬡</div>
 
 <div class="auth-shell">
   <div class="auth-logo">
-    <div class="logo-hex">⬡</div>
+    <div class="logo-hex" aria-hidden="true">⬡</div>
     <span class="logo-name">ZUNEXA</span>
     <span class="logo-tagline">AI Content Generation Platform</span>
   </div>
 
   <div class="auth-card" id="authCard">
-    <div class="auth-tabs">
-      <button class="tab-btn active" onclick="switchTab('signin')" id="tab-signin">Sign In</button>
-      <button class="tab-btn" onclick="switchTab('signup')" id="tab-signup">Sign Up</button>
+    <div class="auth-tabs" role="tablist">
+      <button class="tab-btn active" onclick="switchTab('signin')" id="tab-signin" role="tab" aria-selected="true">Sign In</button>
+      <button class="tab-btn" onclick="switchTab('signup')" id="tab-signup" role="tab" aria-selected="false">Sign Up</button>
     </div>
-    
-<div style="text-align:center;margin-top:14px;font-size:12px;color:var(--text-muted)">
-    صعيب عليك التسجيل؟
-    <a href="guide.html" style="color:var(--gold)">شوف الدليل ✦</a>
-  </div>
-    
-    <!-- ERR BOX -->
-    <div class="err-box" id="errBox">
-      <span>⚠</span><span id="errMsg">Error</span>
+
+    <div class="guide-link">
+      صعيب عليك التسجيل؟ <a href="guide.html">شوف الدليل ✦</a>
     </div>
-    
+
+    <div class="err-box" id="errBox" role="alert" aria-live="assertive">
+      <span aria-hidden="true">⚠</span><span id="errMsg">Error</span>
+    </div>
+
     <!-- SIGN IN -->
-    <div id="form-signin">
+    <form id="form-signin" novalidate onsubmit="event.preventDefault();handleSignIn();">
       <div class="free-notice">
-        <span class="dot"></span>
-        <span>No code? Enter with <strong style="color:var(--green)">Free Plan</strong> — upgrade anytime.</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span>No code needed — start free, upgrade anytime.</span>
       </div>
       <div class="form-field">
-        <label>Email</label>
+        <label for="si-username">Email</label>
         <div class="field-wrap">
-          <span class="field-icon">✉</span>
-          <input type="email" id="si-username" placeholder="you@example.com" autocomplete="username" autofocus onkeydown="if(event.key==='Enter')document.getElementById('si-password').focus()"/>
+          <span class="field-icon" aria-hidden="true">✉</span>
+          <input type="email" id="si-username" placeholder="you@example.com" autocomplete="username" autofocus required/>
         </div>
       </div>
       <div class="form-field">
-        <label>Password</label>
+        <label for="si-password">Password</label>
         <div class="field-wrap">
-          <span class="field-icon">🔒</span>
-          <input type="password" id="si-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')handleSignIn()"/>
-          <span class="field-icon-end" onclick="togglePwdVisibility('si-password',this)" style="cursor:pointer" title="Show/hide password">👁</span>
+          <span class="field-icon" aria-hidden="true">🔒</span>
+          <input type="password" id="si-password" placeholder="••••••••" autocomplete="current-password" required/>
+          <button type="button" class="field-icon-end" onclick="togglePwdVisibility('si-password',this)" aria-label="Show or hide password">👁</button>
         </div>
       </div>
-      <div class="auth-footer-link" style="margin-top:8px;margin-bottom:4px">
-        <a onclick="togglePlanCode('si')" id="si-code-toggle">Have a plan code? →</a>
-      </div>
+      <span class="toggle-link" onclick="togglePlanCode('si')" id="si-code-toggle" role="button" tabindex="0">Have a plan code? →</span>
       <div class="form-field" id="si-code-wrap" style="display:none">
-        <label>🔑 Plan Activation Code</label>
+        <label for="si-code">Plan activation code</label>
         <div class="field-wrap">
-          <span class="field-icon">◆</span>
-          <input class="code-field" type="text" id="si-code" placeholder="Leave empty for Free Plan" oninput="detectPlan(this.value,'si')" maxlength="24" autocomplete="off"/>
+          <span class="field-icon" aria-hidden="true">◆</span>
+          <input class="code-field" type="text" id="si-code" placeholder="Optional — e.g. ZX-PRO-XXXX" oninput="detectPlan(this.value,'si')" maxlength="24" autocomplete="off"/>
         </div>
         <div class="plan-preview hidden" id="si-plan-preview"></div>
       </div>
-      <button class="btn-auth" onclick="handleSignIn()">
+      <button type="submit" class="btn-auth" id="si-submit">
         <div class="spinner"></div>
         <span class="btn-label">✦ &nbsp; Enter Zunexa</span>
       </button>
       <div class="oauth-divider">or continue with</div>
-      <div class="oauth-row" style="grid-template-columns:1fr 1fr">
-        <button class="btn-oauth" onclick="handleOAuth('google')">
+      <div class="oauth-row">
+        <button type="button" class="btn-oauth" onclick="handleOAuth('google')">
           <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
           <span>Google</span>
         </button>
-        <button class="btn-oauth" onclick="handleOAuth('github')">
-          <svg viewBox="0 0 24 24" fill="var(--text-white)"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        <button type="button" class="btn-oauth" onclick="handleOAuth('github')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
           <span>GitHub</span>
         </button>
       </div>
-      <div class="auth-footer-link" style="margin-top:16px">No account? <a onclick="switchTab('signup')">Create one →</a></div>
-    </div>
+      <div class="auth-footer-link">No account? <a onclick="switchTab('signup')" role="button" tabindex="0">Create one →</a></div>
+    </form>
 
     <!-- SIGN UP -->
-    <div id="form-signup" style="display:none">
-      <div class="avatar-upload-wrap">
-        <div class="avatar-ring" title="Upload profile photo (optional)">
-          <input type="file" accept="image/*" onchange="handleAvatarUpload(event,'signup')"/>
-          <div class="avatar-preview" id="avatar-signup">
-            <span id="avatar-initials-signup">?</span>
-            <img id="avatar-img-signup" src="" style="display:none"/>
+    <form id="form-signup" novalidate style="display:none" onsubmit="event.preventDefault();handleSignUp();">
+      <div class="form-field">
+        <label for="su-fname">Name</label>
+        <div class="field-wrap"><span class="field-icon" aria-hidden="true">◎</span>
+          <input type="text" id="su-fname" placeholder="Your name" required/>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="su-email">Email</label>
+        <div class="field-wrap"><span class="field-icon" aria-hidden="true">✉</span>
+          <input type="email" id="su-email" placeholder="name@example.com" autocomplete="username" required/>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="su-password">Password</label>
+        <div class="field-wrap"><span class="field-icon" aria-hidden="true">🔒</span>
+          <input type="password" id="su-password" placeholder="Min 8 characters" autocomplete="new-password" minlength="8" required/>
+          <button type="button" class="field-icon-end" onclick="togglePwdVisibility('su-password',this)" aria-label="Show or hide password">👁</button>
+        </div>
+        <div id="zx-pwd-strength" aria-live="polite">
+          <div class="pwd-bar-wrap"><div class="pwd-bar-fill" id="pwd-bar"></div></div>
+          <span class="pwd-label" id="pwd-label">— Enter password</span>
+          <div class="pwd-rules">
+            <span class="pwd-rule" id="r-len">8+ characters</span>
+            <span class="pwd-rule" id="r-upp">Uppercase</span>
+            <span class="pwd-rule" id="r-num">Number</span>
+            <span class="pwd-rule" id="r-sym">Symbol</span>
           </div>
-          <div class="avatar-edit-badge">📷</div>
-        </div>
-        <span class="avatar-label">Photo — optional, can add later</span>
-      </div>
-      <div class="form-field">
-        <label>Name</label>
-        <div class="field-wrap"><span class="field-icon">◎</span>
-          <input type="text" id="su-fname" placeholder="Your name" oninput="updateInitials()" onkeydown="if(event.key==='Enter')document.getElementById('su-email').focus()"/>
         </div>
       </div>
-      <div class="form-field">
-        <label>Email</label>
-        <div class="field-wrap"><span class="field-icon">✉</span>
-          <input type="email" id="su-email" placeholder="name@example.com" onkeydown="if(event.key==='Enter')document.getElementById('su-password').focus()"/>
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Password</label>
-        <div class="field-wrap"><span class="field-icon">🔒</span>
-          <input type="password" id="su-password" placeholder="Min 8 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')handleSignUp()"/>
-          <span class="field-icon-end" onclick="togglePwdVisibility('su-password',this)" style="cursor:pointer" title="Show/hide password">👁</span>
-           <div id="zx-pwd-strength">
-   <div class="pwd-bar-wrap"><div class="pwd-bar-fill" id="pwd-bar"></div></div>
-   <span class="pwd-label" id="pwd-label">— Enter password</span>
-   <div class="pwd-rules">
-     <span class="pwd-rule" id="r-len">At least 8 characters</span>
-     <span class="pwd-rule" id="r-upp">Uppercase letter (A–Z)</span>
-     <span class="pwd-rule" id="r-num">Number (0–9)</span>
-     <span class="pwd-rule" id="r-sym">Special character (!@#…)</span>
-   </div>
- </div>
-        </div>
-      </div>
-      <div class="auth-footer-link" style="margin-top:8px;margin-bottom:4px">
-        <a onclick="togglePlanCode('su')" id="su-code-toggle">Have a plan code? →</a>
-      </div>
+      <span class="toggle-link" onclick="togglePlanCode('su')" id="su-code-toggle" role="button" tabindex="0">Have a plan code? →</span>
       <div class="form-field" id="su-code-wrap" style="display:none">
-        <label>🔑 Plan Code</label>
-        <div class="field-wrap"><span class="field-icon">◆</span>
-          <input class="code-field" type="text" id="su-code" placeholder="ZX-PLUS-XXXX / ZX-PRO-XXXX / ZX-SENIOR-XXXX" oninput="detectPlan(this.value,'su')" maxlength="24" autocomplete="off"/>
+        <label for="su-code">Plan code</label>
+        <div class="field-wrap"><span class="field-icon" aria-hidden="true">◆</span>
+          <input class="code-field" type="text" id="su-code" placeholder="ZX-PLUS-XXXX / ZX-PRO-XXXX" oninput="detectPlan(this.value,'su')" maxlength="24" autocomplete="off"/>
         </div>
         <div class="plan-preview hidden" id="su-plan-preview"></div>
       </div>
-     <button class="btn-auth" style="margin-top:16px" onclick="handleSignUp()">
+      <button type="submit" class="btn-auth" id="su-submit" style="margin-top:16px">
         <div class="spinner"></div>
         <span class="btn-label">✦ &nbsp; Create Account</span>
       </button>
       <div class="oauth-divider">or sign up with</div>
-      <div class="oauth-row" style="grid-template-columns:1fr 1fr">
-        <button class="btn-oauth" onclick="handleOAuth('google')">
+      <div class="oauth-row">
+        <button type="button" class="btn-oauth" onclick="handleOAuth('google')">
           <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
           <span>Google</span>
         </button>
-        <button class="btn-oauth" onclick="handleOAuth('github')">
-          <svg viewBox="0 0 24 24" fill="var(--text-white)"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        <button type="button" class="btn-oauth" onclick="handleOAuth('github')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
           <span>GitHub</span>
         </button>
       </div>
-      <div class="auth-footer-link" style="margin-top:16px">Have an account? <a onclick="switchTab('signin')">Sign In →</a></div>
-    </div>
+      <div class="auth-footer-link">Have an account? <a onclick="switchTab('signin')" role="button" tabindex="0">Sign In →</a></div>
+    </form>
 
-    <!-- SUCCESS -->
-    <div class="success-screen" id="success-screen">
-      <div class="success-icon">✓</div>
-      <div class="success-title">Welcome to Zunexa!</div>
+    <!-- SUCCESS / CONFIRMATION -->
+    <div class="success-screen" id="success-screen" aria-live="polite">
+      <div class="success-icon" id="success-icon">✓</div>
+      <div class="success-title" id="success-title">Welcome to Zunexa!</div>
       <div class="success-sub" id="success-name">مرحباً 👋</div>
       <div class="success-plan-badge" id="success-plan-badge">✦ Pro Plan</div>
       <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px" id="redirect-msg">Redirecting to dashboard...</div>
-      <div id="progress-wrap" style="width:100%;height:3px;background:var(--border);border-radius:99px;overflow:hidden">
-        <div id="progress-bar" style="height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));width:0%;transition:width 2.2s ease;border-radius:99px"></div>
-      </div>
+      <div class="progress-wrap" id="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
       <div id="resend-wrap" style="display:none;margin-top:16px">
-        <button class="btn-auth" style="background:transparent;border:1px solid var(--border-gold);color:var(--gold);box-shadow:none" onclick="resendConfirmation()">
+        <button type="button" class="btn-auth" style="background:transparent;border:1px solid var(--border-gold);color:var(--gold);box-shadow:none" onclick="resendConfirmation()">
           <span class="btn-label">✉ &nbsp; Resend Email</span>
         </button>
       </div>
@@ -320,368 +248,173 @@ const ZX_LOGIN_RATE = (function(){
   </div>
 </div>
 
-<div class="toast" id="toast">
-  <span id="toast-icon">✔</span>
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span id="toast-icon" aria-hidden="true">✔</span>
   <span id="toast-msg">Done!</span>
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════
-// ZUNEXA AUTH ENGINE v3.0 — ARCHON PROTOCOL
-// ══════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════
+   ZUNEXA AUTH — ARCHON PROTOCOL
+   © Zunexa — All rights reserved
 
-// ── Plan display labels (cosmetic only — actual plan/tokens/role are
-//    determined server-side via the redeem_plan_code RPC + user_plans /
-//    user_tokens tables, never written directly from the client) ──
+   Security notes (read before deploying):
+   - The Supabase key below is the public "publishable"/anon key. It is
+     DESIGNED to be visible in client-side code — that is not a leak.
+     Real protection comes from Supabase Row Level Security (RLS)
+     policies on every table, which must be verified server-side; no
+     static HTML file can enforce that on its own.
+   - The 10s lockout below is a client-side UX guard against casual
+     brute forcing from a single browser tab. It slows down one script
+     kiddie with one tab open — it is trivially bypassed by disabling
+     JS or calling the API directly, so it is NOT a substitute for
+     server-side rate limiting. Confirm in Supabase Dashboard →
+     Authentication → Rate Limits (and enable leaked-password
+     protection) — this file cannot configure that for you.
+   - Plan/tokens/role are never trusted from the client: they are only
+     ever set via the redeem_plan_code RPC and DB triggers/policies.
+════════════════════════════════════════════════════════ */
+
+const _SB = supabase.createClient(
+  'https://xrldhfsytysznyyhwjlr.supabase.co',
+  'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
+);
+
+const ZX_PROD_URL = 'https://zunexa.vercel.app';
+
+// ── 10-second post-failure lockout (client-side UX guard, see note above) ──
+const LOCKOUT_MS = 10000;
+const LOCKOUT_KEY = 'zx_signin_lock_until';
+
+function lockRemainingMs(){
+  const until = parseInt(sessionStorage.getItem(LOCKOUT_KEY) || '0', 10);
+  const rem = until - Date.now();
+  return rem > 0 ? rem : 0;
+}
+
+let _lockTimer = null;
+function applyLockoutUI(remainingMs){
+  const btn = document.getElementById('si-submit');
+  const label = btn.querySelector('.btn-label');
+  btn.disabled = true;
+  btn.classList.add('locked');
+  clearInterval(_lockTimer);
+  let remaining = Math.ceil(remainingMs / 1000);
+  label.textContent = `Wait ${remaining}s…`;
+  _lockTimer = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(_lockTimer);
+      sessionStorage.removeItem(LOCKOUT_KEY);
+      btn.disabled = false;
+      btn.classList.remove('locked');
+      label.textContent = '✦  Enter Zunexa';
+    } else {
+      label.textContent = `Wait ${remaining}s…`;
+    }
+  }, 1000);
+}
+function startLockout(){
+  sessionStorage.setItem(LOCKOUT_KEY, String(Date.now() + LOCKOUT_MS));
+  applyLockoutUI(LOCKOUT_MS);
+}
+
+// ── Plan display labels (cosmetic only — the actual plan/tokens/role
+//    are resolved server-side via the redeem_plan_code RPC) ──
 const PLAN_DISPLAY = {
-  Free:   { label:'○ Free Plan',   color:'free'   },
-  Plus:   { label:'⭐ Plus Plan',   color:'plus'   },
-  Pro:    { label:'✦ Pro Plan',    color:'pro'    },
-  Senior: { label:'◆ Senior Plan', color:'senior' },
+  Free:   { label:'○ Free Plan',   color:'#888'    },
+  Plus:   { label:'⭐ Plus Plan',   color:'#5b8dee' },
+  Pro:    { label:'✦ Pro Plan',    color:'#D4AF37' },
+  Senior: { label:'◆ Senior Plan', color:'#a78bfa' },
 };
 const FREE_PLAN = PLAN_DISPLAY.Free;
 
-const PLAN_COLORS = { free:'#888', plus:'#5b8dee', pro:'#D4AF37', senior:'#a78bfa', owner:'#D4AF37' };
+document.addEventListener('DOMContentLoaded', () => {
+  const rem = lockRemainingMs();
+  if (rem > 0) applyLockoutUI(rem);
 
-let currentTab = 'signin';
+  const savedEmail = localStorage.getItem('zunexa_last_email');
+  if (savedEmail) document.getElementById('si-username').value = savedEmail;
 
-  /* ── TRY BEFORE YOU BUY — Guest Mode ── */
-  const ZX_GUEST = {
-    KEY: 'zx_guest_used',
-    canGenerate() { return sessionStorage.getItem(this.KEY) !== '1'; },
-    markUsed()    { sessionStorage.setItem(this.KEY, '1'); },
-  };
-  let avatarDataURL = null;
-
-// ── Quotes bank (ibda3 = daka2 variations) ──
-const IBDA3_QUOTES = [
-  '"الإبداع هو الذكاء في حالة مرح" — أينشتاين',
-  '"الإبداع هو رؤية ما لا يراه الآخرون" — كريتيف',
-  '"كل إبداع يبدأ بفكرة جريئة واحدة" — زونيكسا',
-  '"الذكاء بلا إبداع كالنهر بلا منبع" — أرشون',
-  '"أبدع اليوم ليتذكرك الغد" — زونيكسا AI',
-  '"Innovation is seeing change as opportunity" — Steve Jobs',
-  '"Creativity is intelligence having fun" — Einstein',
-  '"لا حدود للإبداع إلا ما يضعه عقلك" — أرشون برتوكول',
-];
-
-// ── Random quote on load ──
-window.addEventListener('DOMContentLoaded', () => {
-  // Rotate greeting quote in auth page if visible
-  const qt = document.querySelector('.greeting-quote');
-  if(qt) qt.textContent = IBDA3_QUOTES[Math.floor(Math.random()*IBDA3_QUOTES.length)];
-
-  const saved = localStorage.getItem('zunexa_avatar');
-  if(saved){ applyAvatar(saved,'signup'); avatarDataURL=saved; }
-  const su = localStorage.getItem('zunexa_user');
-  if(su){ try{ const u=JSON.parse(su); if(u.email) document.getElementById('si-username').value=u.email; }catch(e){} }
-
-  // Auto redirect if already logged in
-  _SB.auth.getSession().then(({data:{session}})=>{
-    if(session) window.location.replace('dashboard.html');
+  _SB.auth.getSession().then(({ data: { session } }) => {
+    if (session) window.location.replace('dashboard.html');
   });
 });
 
 // ── Tab switch ──
 function switchTab(tab){
-  currentTab = tab;
-  document.getElementById('form-signin').style.display = tab==='signin'?'block':'none';
-  document.getElementById('form-signup').style.display = tab==='signup'?'block':'none';
-  document.getElementById('tab-signin').classList.toggle('active',tab==='signin');
-  document.getElementById('tab-signup').classList.toggle('active',tab==='signup');
-  document.getElementById('success-screen').style.display='none';
+  document.getElementById('form-signin').style.display = tab === 'signin' ? 'block' : 'none';
+  document.getElementById('form-signup').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('success-screen').style.display = 'none';
+  document.querySelector('.auth-tabs').style.display = 'flex';
+  document.getElementById('tab-signin').classList.toggle('active', tab === 'signin');
+  document.getElementById('tab-signin').setAttribute('aria-selected', tab === 'signin');
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+  document.getElementById('tab-signup').setAttribute('aria-selected', tab === 'signup');
   hideErr();
 }
 
-// ── Avatar (Sign Up only — optional, skippable) ──
-function handleAvatarUpload(event,prefix){
-  const file=event.target.files[0]; if(!file) return;
-  if(!file.type.startsWith('image/')){showToast('⚠','Please choose an image file');return;}
-  if(file.size>2*1024*1024){showToast('⚠','Photo must be under 2MB');return;}
-  const reader=new FileReader();
-  reader.onload=e=>{
-    avatarDataURL=e.target.result;
-    localStorage.setItem('zunexa_avatar',avatarDataURL);
-    applyAvatar(avatarDataURL,prefix);
-    showToast('📷','Photo added!');
-  };
-  reader.readAsDataURL(file);
-}
-function applyAvatar(dataURL,prefix){
-  const img=document.getElementById('avatar-img-'+prefix);
-  const ini=document.getElementById('avatar-initials-'+prefix);
-  if(img){img.src=dataURL;img.style.display='block';}
-  if(ini) ini.style.display='none';
-}
-function updateInitials(){
-  const fname=document.getElementById('su-fname').value.trim();
-  const el=document.getElementById('avatar-initials-signup');
-  if(el&&fname&&!avatarDataURL) el.textContent=fname[0].toUpperCase();
-}
-
-// ── Toggle optional plan code field ──
+// ── Optional plan code field ──
 function togglePlanCode(prefix){
-  const wrap=document.getElementById(prefix+'-code-wrap');
-  const toggle=document.getElementById(prefix+'-code-toggle');
-  if(!wrap) return;
-  const show = wrap.style.display==='none';
+  const wrap = document.getElementById(prefix + '-code-wrap');
+  const toggle = document.getElementById(prefix + '-code-toggle');
+  if (!wrap) return;
+  const show = wrap.style.display === 'none';
   wrap.style.display = show ? '' : 'none';
-  if(toggle) toggle.textContent = show ? '← Hide plan code' : 'Have a plan code? →';
+  if (toggle) toggle.textContent = show ? '← Hide plan code' : 'Have a plan code? →';
 }
 
 // ── Plan code format check (cosmetic only — real validation is server-side) ──
-function detectPlan(val,prefix){
-  const code=val.trim().toUpperCase();
-  const previewEl=document.getElementById(prefix+'-plan-preview');
-  if(!previewEl) return;
-  if(!code){previewEl.className='plan-preview hidden';return;}
-  if(/^ZX-[A-Z0-9-]{3,20}$/.test(code)){
-    previewEl.className='plan-preview plus';
-    previewEl.innerHTML=`<span>✓</span><span>سيتم التحقق من الكود بعد إنشاء الحساب</span>`;
+function detectPlan(val, prefix){
+  const code = val.trim().toUpperCase();
+  const previewEl = document.getElementById(prefix + '-plan-preview');
+  if (!previewEl) return;
+  if (!code) { previewEl.className = 'plan-preview hidden'; return; }
+  if (/^ZX-[A-Z0-9-]{3,20}$/.test(code)) {
+    previewEl.className = 'plan-preview ok';
+    previewEl.innerHTML = '<span>✓</span><span>Looks valid — verified after account creation</span>';
   } else {
-    previewEl.className='plan-preview';
-    previewEl.style.cssText='background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);color:#ff4d6d';
-    previewEl.innerHTML='<span>✕</span><span>صيغة الكود غير صحيحة (مثال: ZX-PLUS-XXXX)</span>';
+    previewEl.className = 'plan-preview bad';
+    previewEl.innerHTML = '<span>✕</span><span>Format should look like ZX-PLUS-XXXX</span>';
   }
 }
 
-// ── Redeem a plan code via secure server-side RPC (call only when a session exists) ──
+// ── Redeem a plan code via secure server-side RPC (only with an active session) ──
 async function redeemPlanCodeIfAny(codeVal){
-  if(!codeVal || !codeVal.trim()) return null;
-  try{
-    const {data,error}=await _SB.rpc('redeem_plan_code',{p_code:codeVal.trim().toUpperCase()});
-    if(error){
-      const messages={
-        invalid_code:'الكود غير صحيح',
-        code_inactive:'الكود غير مفعّل',
-        code_expired:'الكود منتهي الصلاحية',
-        code_exhausted:'تم استهلاك هذا الكود بالكامل',
-        already_redeemed:'لقد استخدمت هذا الكود من قبل',
+  if (!codeVal || !codeVal.trim()) return null;
+  try {
+    const { data, error } = await _SB.rpc('redeem_plan_code', { p_code: codeVal.trim().toUpperCase() });
+    if (error) {
+      const messages = {
+        invalid_code: 'Invalid code',
+        code_inactive: 'This code is not active',
+        code_expired: 'This code has expired',
+        code_exhausted: 'This code has been fully redeemed',
+        already_redeemed: 'You already redeemed a code',
       };
-      showToast('✕', messages[error.message] || 'تعذر تفعيل الكود');
+      showToast('✕', messages[error.message] || 'Could not activate code');
       return null;
     }
     return data; // { plan, tokens_bonus }
-  }catch(e){ return null; }
+  } catch (e) { return null; }
 }
 
-// ── Error UI ──
-function showErr(msg){const b=document.getElementById('errBox');const m=document.getElementById('errMsg');if(b&&m){m.textContent=msg;b.classList.add('show');}}
-function hideErr(){const b=document.getElementById('errBox');if(b)b.classList.remove('show');}
-
-// ── Sign In ──
-async function handleSignIn(){
-  hideErr();
-
-  const waitSec = ZX_LOGIN_RATE.blocked();
-  if (waitSec) { showErr(`Too many attempts. Try again in ${waitSec}s.`); return; }
-
-  const email=document.getElementById('si-username').value.trim();
-  const password=document.getElementById('si-password').value.trim();
-  const codeVal=document.getElementById('si-code').value.trim();
-
-  if(!email||!email.includes('@')){shakeField('si-username');showToast('✕','Enter a valid email');return;}
-  if(!password){shakeField('si-password');showToast('✕','Enter your password');return;}
-
-  const btn=document.querySelector('#form-signin .btn-auth');
-  btn.classList.add('loading');
-
-  /* ── SIMPLIFIED: sign in with the real email directly — no more
-     "resolve_login_identifier" RPC. That RPC has to exist as a SQL
-     function in your Supabase project; if it was never created there
-     (or was removed), the call silently returned nothing, so a
-     username-based login always fell back to signInWithPassword with
-     a non-email string — which Supabase always rejects. That was the
-     actual cause of "login doesn't work". Email-only login removes
-     that whole failure mode. If you want username login back later,
-     create the RPC in Supabase first, then re-add the lookup step. ── */
-  const {data,error}=await _SB.auth.signInWithPassword({email,password});
-  btn.classList.remove('loading');
-
-  if(error){
-    ZX_LOGIN_RATE.fail();
-    shakeField('si-password');
-    const msg = /email not confirmed/i.test(error.message)
-      ? 'Please confirm your email first — check your inbox (and spam folder) for the activation link.'
-      : /invalid login credentials/i.test(error.message)
-      ? 'Incorrect email or password.'
-      : error.message;
-    showErr(msg);
-    showToast('✕','Sign in failed');
-    return;
-  }
-
-  ZX_LOGIN_RATE.reset();
-  let redeemed=null;
-  if(codeVal.trim()&&data.user) redeemed=await redeemPlanCodeIfAny(codeVal);
-  const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan]||FREE_PLAN) : FREE_PLAN;
-  showSuccess(email,plan);
-  setTimeout(()=>window.location.replace('dashboard.html'),1800);
-}
-
-// ── Show/hide password ──
+// ── Error / toast / shake UI ──
+function showErr(msg){ const b=document.getElementById('errBox'); const m=document.getElementById('errMsg'); if(b&&m){ m.textContent=msg; b.classList.add('show'); } }
+function hideErr(){ const b=document.getElementById('errBox'); if(b) b.classList.remove('show'); }
+function shakeField(id){ const el=document.getElementById(id); if(!el) return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); el.style.borderColor='var(--red)'; setTimeout(()=>{ el.style.borderColor=''; el.classList.remove('shake'); },600); }
+let _toastTimer;
+function showToast(icon,msg){ const t=document.getElementById('toast'); document.getElementById('toast-icon').textContent=icon; document.getElementById('toast-msg').textContent=msg; t.classList.add('show'); clearTimeout(_toastTimer); _toastTimer=setTimeout(()=>t.classList.remove('show'),3000); }
 function togglePwdVisibility(inputId, iconEl){
   const el = document.getElementById(inputId);
   if (!el) return;
   const show = el.type === 'password';
   el.type = show ? 'text' : 'password';
+  el.setAttribute('aria-label', show ? 'Password (visible)' : 'Password');
   if (iconEl) iconEl.style.opacity = show ? '1' : '.7';
 }
 
-// ── Sign Up ──
-async function handleSignUp(){
-  hideErr();
-  const fname=document.getElementById('su-fname').value.trim();
-  const email=document.getElementById('su-email').value.trim();
-  const password=document.getElementById('su-password').value.trim();
-  const codeWrap=document.getElementById('su-code-wrap');
-  const codeVal=(codeWrap&&codeWrap.style.display!=='none')
-    ? (document.getElementById('su-code').value||'').trim()
-    : '';
-
-  if(!fname){shakeField('su-fname');showToast('✕','Enter your name');return;}
-  if(!email||!email.includes('@')){shakeField('su-email');showToast('✕','Valid email required');return;}
-  if(password.length<8){shakeField('su-password');showToast('✕','Min 8 characters');return;}
-
-  // ── SIMPLIFIED: no more username field to fill in/validate.
-  // Auto-generate one from the email so downstream features (profile,
-  // chat display, etc.) still get a username — the person can change
-  // it later in Settings. Random suffix keeps collisions unlikely
-  // without needing an extra round trip to check availability here.
-  const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g,'_').slice(0,16)
-    + Math.floor(100 + Math.random()*900);
-
-  const btn=document.querySelector('#form-signup .btn-auth');
-  btn.classList.add('loading');
-
-  const {data,error}=await _SB.auth.signUp({
-    email:email,
-    password:password,
-    options:{data:{username,first_name:fname}}
-  });
-  btn.classList.remove('loading');
-
-  if(error){
-    const msg = /already registered/i.test(error.message)
-      ? 'This email is already registered — try signing in instead.'
-      : error.message;
-    showErr(msg);
-    showToast('✕',msg);
-    return;
-  }
-
-  if(data.user){
-    // Safe defaults only — plan/tokens/role are managed server-side
-    // (handle_new_user_tokens trigger + user_plans/user_tokens tables)
-    await _SB.from('profiles').upsert({
-      id:data.user.id,
-      username,
-      first_name:fname,
-      email,
-      current_theme:'zalij-dark',
-      avatar_url:avatarDataURL||null
-    });
-  }
-
-  let plan = FREE_PLAN;
-  if(data.session){
-    if(codeVal){
-      const redeemed = await redeemPlanCodeIfAny(codeVal);
-      if(redeemed) plan = PLAN_DISPLAY[redeemed.plan] || FREE_PLAN;
-    }
-    showSuccess(fname,plan);
-    setTimeout(()=>window.location.replace('dashboard.html'),1800);
-  } else {
-    // Email confirmation required — redeem the code on first dashboard
-    // load instead (no session yet to call the RPC with).
-    if(codeVal) localStorage.setItem('zx_pending_plan_code', codeVal);
-    showEmailConfirmation(fname,email);
-  }
-}
-
-// ── Email confirmation screen ──
-function showEmailConfirmation(name,email){
-  ['form-signin','form-signup'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-  const tabs=document.querySelector('.auth-tabs');
-  if(tabs) tabs.style.display='none';
-
-  const screen=document.getElementById('success-screen');
-  if(screen) screen.style.display='block';
-
-  const icon=document.querySelector('#success-screen .success-icon');
-  if(icon) icon.textContent='✉';
-
-  const title=document.querySelector('#success-screen .success-title');
-  if(title) title.textContent='Almost there!';
-
-  const nameEl=document.getElementById('success-name');
-  if(nameEl) nameEl.innerHTML = `مرحباً ${name} 👋<br><span style="color:var(--text-muted);font-size:13px;font-weight:400">تحققنا من بريدك — أرسلنا رابط التفعيل إلى<br><b style="color:var(--gold)">${email}</b></span>`;
-
-  const badge=document.getElementById('success-plan-badge');
-  if(badge) badge.style.display='none';
-
-  const redirectMsg=document.getElementById('redirect-msg');
-  if(redirectMsg) redirectMsg.textContent='افتح بريدك الإلكتروني واضغط على رابط التفعيل لتسجيل الدخول ✦';
-
-  const progressWrap=document.getElementById('progress-wrap');
-  if(progressWrap) progressWrap.style.display='none';
-
-  // Keep the email around so the Resend button can use it, and show it
-  _pendingConfirmEmail = email;
-  const resendWrap=document.getElementById('resend-wrap');
-  if(resendWrap) resendWrap.style.display='block';
-}
-
-let _pendingConfirmEmail = null;
-let _resendCooldown = 0;
-
-// ── Resend the confirmation email (common need: link expired, lost
-// in spam, or the person waited too long before checking their inbox) ──
-async function resendConfirmation(){
-  if(!_pendingConfirmEmail) return;
-  if(Date.now() < _resendCooldown){
-    showToast('⏳', `Wait ${Math.ceil((_resendCooldown-Date.now())/1000)}s before resending`);
-    return;
-  }
-  const {error}=await _SB.auth.resend({type:'signup', email:_pendingConfirmEmail});
-  if(error){ showToast('✕', error.message); return; }
-  _resendCooldown = Date.now()+30000;
-  showToast('✉','Confirmation email sent again — check your inbox/spam.');
-}
-
-// ── Success screen ──
-function showSuccess(name,plan){
-  ['form-signin','form-signup'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
-  const tabs=document.querySelector('.auth-tabs');
-  if(tabs) tabs.style.display='none';
-  document.getElementById('success-screen').style.display='block';
-
-  const icon=document.querySelector('#success-screen .success-icon');
-  if(icon) icon.textContent='✓';
-  const title=document.querySelector('#success-screen .success-title');
-  if(title) title.textContent='Welcome to Zunexa!';
-  const redirectMsg=document.getElementById('redirect-msg');
-  if(redirectMsg) redirectMsg.textContent='Redirecting to dashboard...';
-  const progressWrap=document.getElementById('progress-wrap');
-  if(progressWrap) progressWrap.style.display='';
-  const progressBar=document.getElementById('progress-bar');
-  if(progressBar){ progressBar.style.transition='width 2.2s ease'; progressBar.style.width='0%'; }
-
-  document.getElementById('success-name').textContent=`مرحباً، ${name} 👋`;
-  const badge=document.getElementById('success-plan-badge');
-  badge.style.display='';
-  badge.textContent=plan.label;
-  const rgb=planColorRGB(plan.color);
-  badge.style.cssText=`background:rgba(${rgb},.12);border:1px solid rgba(${rgb},.35);color:${PLAN_COLORS[plan.color]};display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:20px;`;
-  requestAnimationFrame(()=>{document.getElementById('progress-bar').style.width='100%';});
-}
-function planColorRGB(c){return{free:'155,155,155',plus:'91,141,238',pro:'212,175,55',senior:'167,139,250',owner:'212,175,55'}[c]||'212,175,55';}
-
-// ── Shake / Toast ──
-function shakeField(id){const el=document.getElementById(id);if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');el.style.borderColor='var(--red)';setTimeout(()=>{el.style.borderColor='';el.classList.remove('shake');},600);}
-let _tt;
-function showToast(icon,msg){const t=document.getElementById('toast');document.getElementById('toast-icon').textContent=icon;document.getElementById('toast-msg').textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);}
-// ── Password Strength Checker ──────────────────────────────
+// ── Password strength meter ──
 document.getElementById('su-password').addEventListener('input', function(){
   const v = this.value;
   const rules = [
@@ -690,56 +423,217 @@ document.getElementById('su-password').addEventListener('input', function(){
     { id:'r-num', ok: /[0-9]/.test(v) },
     { id:'r-sym', ok: /[^a-zA-Z0-9]/.test(v) },
   ];
-  const score = rules.filter(r=>r.ok).length;
-  const bar   = document.getElementById('pwd-bar');
+  const score = rules.filter(r => r.ok).length;
+  const bar = document.getElementById('pwd-bar');
   const label = document.getElementById('pwd-label');
-  const colors= ['','#ff4d6d','#f59e0b','#3ddc84','#D4AF37'];
-  const labels= ['','Weak','Fair','Strong','Perfect ✦'];
-  if(bar){
-    bar.style.width  = (score/4*100)+'%';
-    bar.style.background = colors[score]||'#888';
-  }
-  if(label){ label.textContent = v.length ? labels[score]||'' : '— Enter password'; label.style.color = colors[score]||'var(--text-muted)'; }
-  rules.forEach(r=>{
-    const el=document.getElementById(r.id);
-    if(el){ el.classList.toggle('ok',r.ok); el.classList.toggle('bad',v.length>0&&!r.ok); }
+  const colors = ['', '#ff4d6d', '#f59e0b', '#3ddc84', '#D4AF37'];
+  const labels = ['', 'Weak', 'Fair', 'Strong', 'Perfect ✦'];
+  if (bar) { bar.style.width = (score/4*100) + '%'; bar.style.background = colors[score] || '#888'; }
+  if (label) { label.textContent = v.length ? (labels[score] || '') : '— Enter password'; label.style.color = colors[score] || 'var(--text-muted)'; }
+  rules.forEach(r => {
+    const el = document.getElementById(r.id);
+    if (el) { el.classList.toggle('ok', r.ok); el.classList.toggle('bad', v.length > 0 && !r.ok); }
   });
   const wrap = document.getElementById('zx-pwd-strength');
-  if(wrap) wrap.classList.toggle('visible', v.length > 0);
+  if (wrap) wrap.classList.toggle('visible', v.length > 0);
 });
-  /* ══════════════════════════════════════════════════
-   ZUNEXA AUTH — OAuth Engine
-   © Zunexa / Archon Protocol — All rights reserved
-══════════════════════════════════════════════════ */
-const ZX_PROD_URL = 'https://zunexa.vercel.app';
 
-// ── OAuth (Google / GitHub) ──────────────────────
-async function handleOAuth(provider) {
-  document.querySelectorAll('.btn-oauth').forEach(b => b.classList.add('loading'));
+// ── Sign In ──
+async function handleSignIn(){
+  hideErr();
+
+  const waitMs = lockRemainingMs();
+  if (waitMs) { showErr(`Too many attempts. Try again in ${Math.ceil(waitMs/1000)}s.`); return; }
+
+  const email = document.getElementById('si-username').value.trim();
+  const password = document.getElementById('si-password').value;
+  const codeVal = document.getElementById('si-code').value.trim();
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { shakeField('si-username'); showToast('✕','Enter a valid email'); return; }
+  if (!password) { shakeField('si-password'); showToast('✕','Enter your password'); return; }
+
+  const btn = document.getElementById('si-submit');
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  const { data, error } = await _SB.auth.signInWithPassword({ email, password });
+
+  btn.classList.remove('loading');
+
+  if (error) {
+    btn.disabled = false;
+    startLockout();
+    shakeField('si-password');
+    const msg = /email not confirmed/i.test(error.message)
+      ? 'Please confirm your email first — check your inbox (and spam folder) for the activation link.'
+      : /invalid login credentials/i.test(error.message)
+      ? 'Incorrect email or password.'
+      : 'Sign in failed — please try again.';
+    showErr(msg);
+    showToast('✕','Sign in failed');
+    return;
+  }
+
+  localStorage.setItem('zunexa_last_email', email);
+  let redeemed = null;
+  if (codeVal && data.user) redeemed = await redeemPlanCodeIfAny(codeVal);
+  const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan] || FREE_PLAN) : FREE_PLAN;
+  showSuccess(email, plan);
+  setTimeout(() => window.location.replace('dashboard.html'), 1600);
+}
+
+// ── Sign Up ──
+async function handleSignUp(){
+  hideErr();
+  const fname = document.getElementById('su-fname').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const password = document.getElementById('su-password').value;
+  const codeWrap = document.getElementById('su-code-wrap');
+  const codeVal = (codeWrap && codeWrap.style.display !== 'none')
+    ? (document.getElementById('su-code').value || '').trim()
+    : '';
+
+  if (!fname) { shakeField('su-fname'); showToast('✕','Enter your name'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { shakeField('su-email'); showToast('✕','Valid email required'); return; }
+  if (password.length < 8) { shakeField('su-password'); showToast('✕','Min 8 characters'); return; }
+
+  // Auto-generate a username from the email — no separate field to fill
+  // in or validate; can be changed later in Settings.
+  const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g,'_').slice(0,16)
+    + Math.floor(100 + Math.random()*900);
+
+  const btn = document.getElementById('su-submit');
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  const { data, error } = await _SB.auth.signUp({
+    email, password,
+    options: { data: { username, first_name: fname } }
+  });
+
+  btn.classList.remove('loading');
+  btn.disabled = false;
+
+  if (error) {
+    const msg = /already registered/i.test(error.message)
+      ? 'This email is already registered — try signing in instead.'
+      : 'Could not create account — please try again.';
+    showErr(msg);
+    showToast('✕', msg);
+    return;
+  }
+
+  if (data.user) {
+    // Safe defaults only — plan/tokens/role are managed server-side
+    // (handle_new_user_tokens trigger + user_plans / user_tokens tables).
+    await _SB.from('profiles').upsert({
+      id: data.user.id,
+      username,
+      first_name: fname,
+      email,
+      current_theme: 'zalij-dark',
+    });
+  }
+
+  let plan = FREE_PLAN;
+  if (data.session) {
+    if (codeVal) {
+      const redeemed = await redeemPlanCodeIfAny(codeVal);
+      if (redeemed) plan = PLAN_DISPLAY[redeemed.plan] || FREE_PLAN;
+    }
+    showSuccess(fname, plan);
+    setTimeout(() => window.location.replace('dashboard.html'), 1600);
+  } else {
+    // Email confirmation required — redeem the code on first dashboard
+    // load instead (no session yet to call the RPC with).
+    if (codeVal) localStorage.setItem('zx_pending_plan_code', codeVal);
+    showEmailConfirmation(fname, email);
+  }
+}
+
+// ── Email confirmation screen ──
+let _pendingConfirmEmail = null;
+let _resendCooldown = 0;
+
+function showEmailConfirmation(name, email){
+  ['form-signin','form-signup'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+  document.querySelector('.auth-tabs').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+
+  document.getElementById('success-icon').textContent = '✉';
+  document.getElementById('success-title').textContent = 'Almost there!';
+  document.getElementById('success-name').innerHTML =
+    `Hi ${escapeHtml(name)} 👋<br><span style="color:var(--text-muted);font-size:13px;font-weight:400">We sent an activation link to<br><b style="color:var(--gold)">${escapeHtml(email)}</b></span>`;
+  document.getElementById('success-plan-badge').style.display = 'none';
+  document.getElementById('redirect-msg').textContent = 'Open your email and click the activation link to sign in ✦';
+  document.getElementById('progress-wrap').style.display = 'none';
+
+  _pendingConfirmEmail = email;
+  document.getElementById('resend-wrap').style.display = 'block';
+}
+
+async function resendConfirmation(){
+  if (!_pendingConfirmEmail) return;
+  if (Date.now() < _resendCooldown) { showToast('⏳', `Wait ${Math.ceil((_resendCooldown-Date.now())/1000)}s before resending`); return; }
+  const { error } = await _SB.auth.resend({ type:'signup', email:_pendingConfirmEmail });
+  if (error) { showToast('✕','Could not resend — please try again shortly.'); return; }
+  _resendCooldown = Date.now() + 30000;
+  showToast('✉','Confirmation email sent again — check your inbox/spam.');
+}
+
+// ── Success screen ──
+function showSuccess(name, plan){
+  ['form-signin','form-signup'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+  document.querySelector('.auth-tabs').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+
+  document.getElementById('success-icon').textContent = '✓';
+  document.getElementById('success-title').textContent = 'Welcome to Zunexa!';
+  document.getElementById('redirect-msg').textContent = 'Redirecting to dashboard...';
+
+  const progressWrap = document.getElementById('progress-wrap');
+  progressWrap.style.display = '';
+  const progressBar = document.getElementById('progress-bar');
+  progressBar.style.transition = 'width 1.6s ease';
+  progressBar.style.width = '0%';
+
+  document.getElementById('success-name').textContent = `Hi, ${name} 👋`;
+  const badge = document.getElementById('success-plan-badge');
+  badge.style.display = '';
+  badge.textContent = plan.label;
+  badge.style.cssText = `background:${plan.color}22;border:1px solid ${plan.color}55;color:${plan.color};display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:20px;`;
+  requestAnimationFrame(() => { progressBar.style.width = '100%'; });
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ── OAuth (Google / GitHub) ──
+async function handleOAuth(provider){
+  document.querySelectorAll('.btn-oauth').forEach(b => { b.disabled = true; });
   const { error } = await _SB.auth.signInWithOAuth({
     provider,
     options: { redirectTo: ZX_PROD_URL + '/dashboard.html' }
   });
   if (error) {
-    document.querySelectorAll('.btn-oauth').forEach(b => b.classList.remove('loading'));
-    // "Unsupported provider" means Google/GitHub isn't turned on yet in
-    // Supabase → Authentication → Providers. Common cause of "OAuth
-    // button does nothing/errors" — surface it plainly instead of a
-    // raw error string that doesn't tell you what to do about it.
+    document.querySelectorAll('.btn-oauth').forEach(b => { b.disabled = false; });
     const msg = /unsupported provider|provider is not enabled/i.test(error.message)
       ? `${provider} sign-in isn't set up yet — use email instead, or enable it in Supabase → Auth → Providers.`
-      : provider + ' error: ' + error.message;
+      : `${provider} sign-in failed — please try again.`;
     showToast('✕', msg);
   }
 }
 
-// ── Fix localhost redirect (email confirm) ────────
-// Intercepts Supabase token from URL on any page
+// ── Fix localhost redirect after email confirm — intercepts the
+//    Supabase token from the URL hash on any page it lands on ──
 (async () => {
   const hash = window.location.hash;
   if (hash.includes('access_token')) {
     const params = new URLSearchParams(hash.replace('#','?'));
-    const access  = params.get('access_token');
+    const access = params.get('access_token');
     const refresh = params.get('refresh_token');
     if (access && refresh) {
       await _SB.auth.setSession({ access_token: access, refresh_token: refresh });
