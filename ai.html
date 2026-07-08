@@ -664,7 +664,14 @@ img{max-width:100%;display:block}
 </style>
 </head>
 <body>
-
+<script>
+    (function() {
+        const sessionKey = 'sb-xrldhfsytysznyyhwjlr-auth-token';
+        if (!localStorage.getItem(sessionKey)) {
+            window.location.replace('index.html');
+        }
+    })()
+</script>
 <!-- ── Zalij Background SVG ── -->
 <div id="zalij-bg">
   <svg viewBox="0 0 800 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
