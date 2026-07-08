@@ -1820,12 +1820,28 @@ const ZX_RATE = (function(){
 </script>
 
 <script>
-    (function() {
-        const sessionKey = 'sb-xrldhfsytysznyyhwjlr-auth-token';
-        if (!localStorage.getItem(sessionKey)) {
+    /* ── ARCHON: Auth Guard (fixed) ──────────────────────────────
+       The previous version checked localStorage for the Supabase
+       session key SYNCHRONOUSLY, immediately on page load. That
+       raced against Supabase's own async parsing of the OAuth
+       redirect (#access_token=... in the URL after Google/GitHub
+       sign-in): the token hadn't been written to localStorage yet,
+       so this guard bounced the user back to index.html before a
+       session ever had the chance to exist — killing every OAuth
+       login.
+       Fix: await _SB.auth.getSession() instead of reading
+       localStorage directly. That call internally waits for
+       Supabase's URL-based session detection to finish first, so it
+       reports the real auth state instead of a snapshot taken too
+       early. ────────────────────────────────────────────────────── */
+    (async function() {
+        try {
+            const { data: { session } } = await _SB.auth.getSession();
+            if (!session) window.location.replace('index.html');
+        } catch (e) {
             window.location.replace('index.html');
         }
-    })()
+    })();
 </script>
 </head>
 <body>
