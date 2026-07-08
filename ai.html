@@ -2,14 +2,23 @@
 <!--
   ╔══════════════════════════════════════════════════════════════════╗
   ║  ZUNEXA — ARCHON AI                                             ║
+  ║  Author  : ahmed_dev_a                                          ║
   ║  Stack   : HTML5 · CSS3 · Vanilla JS                            ║
   ║  Design  : Zalij Mode — Premium Moroccan Noir & Gold            ║
-  ║  Engine  : Zunexa Neural Engine — Semantic Search + Live Learning║
-  ║  Version : V9 — Archon Protocol                                 ║
+  ║  Engine  : Zunexa Neural Engine + Archon Brain (free keyless AI)║
+  ║  Version : V10 — Archon Protocol                                ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 <html lang="ar" dir="rtl">
 <head>
+<script>
+    (function() {
+        const sessionKey = 'sb-xrldhfsytysznyyhwjlr-auth-token';
+        if (!localStorage.getItem(sessionKey)) {
+            window.location.replace('index.html');
+        }
+    })()
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#060606">
@@ -21,6 +30,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23060606'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%23D4AF37' stroke-width='.7' opacity='.7'/><text x='16' y='22' text-anchor='middle' font-size='18' font-family='Georgia,serif' fill='%23D4AF37' font-weight='bold'>Z</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 /* ════════════════════════════════════════════════════════
    DESIGN TOKENS — Zalij Mode · Noir & Gold
@@ -356,6 +366,62 @@ img{max-width:100%;display:block}
 .web-toggle.on .wd{background:var(--gold);box-shadow:0 0 6px var(--gglow)}
 .web-toggle .wl{display:none}
 
+/* ── Model / Effort / Theme selectors ── */
+.zx-select{
+  appearance:none;-webkit-appearance:none;
+  font-family:'Rajdhani',sans-serif;font-size:10.5px;font-weight:600;
+  letter-spacing:.03em;color:var(--tg);
+  padding:5px 22px 5px 9px;background:var(--card);
+  border:1px solid var(--b1);border-radius:99px;cursor:pointer;
+  transition:all var(--tr);white-space:nowrap;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a7468'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:left 8px center;
+}
+.zx-select:hover{border-color:var(--bg);color:var(--gold)}
+.zx-select:focus{outline:none;border-color:var(--bgh)}
+@media(max-width:640px){ .zx-select{display:none} }
+
+/* ── Attach / file button ── */
+.attach-btn{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  border:1px solid var(--b1);background:var(--input-bg);color:var(--tg);
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+  cursor:pointer;transition:all var(--tr);
+}
+.attach-btn:hover{border-color:var(--bg);color:var(--gold)}
+.attach-btn.has-file{border-color:var(--gold);color:var(--gold)}
+.file-chip{
+  display:flex;align-items:center;gap:6px;max-width:100%;
+  margin:0 0 8px;padding:6px 10px;background:var(--card2);
+  border:1px solid var(--bg);border-radius:10px;font-size:11.5px;color:var(--tw);
+}
+.file-chip .fc-x{cursor:pointer;color:var(--tg);font-size:13px;margin-inline-start:auto}
+.file-chip .fc-x:hover{color:var(--red)}
+.file-chip img{max-height:34px;border-radius:4px}
+
+/* ════════════════════════════════════════════════════════
+   THEMES — Zalij Mode (default) · Emerald Bahia · Sahara Ivory
+   Switching data-zx-theme on <html> remaps these CSS vars, so every
+   component built on var(--gold)/var(--void)/etc re-themes instantly
+   with zero per-component changes.
+════════════════════════════════════════════════════════ */
+html[data-zx-theme="emerald"]{
+  --void:#050807; --deep:#070b09; --card:#0c110e; --card2:#111713;
+  --hover:#161d18; --input-bg:#0a0f0c;
+  --b1:#182420; --b2:#233530;
+  --bg: rgba(61,220,150,.22); --bgh: rgba(61,220,150,.5); --bgp: rgba(61,220,150,.08);
+  --gold:#3ddc96; --gold2:#5fe8ab; --gold3:#8ff0c6; --gdim:#1f6a49; --gglow:rgba(61,220,150,.2); --gtrace:rgba(61,220,150,.05);
+  --tw:#e7f5ee; --tg:#6f8a7d; --tm:#26332d;
+}
+html[data-zx-theme="ivory"]{
+  --void:#0b0a08; --deep:#0e0d0a; --card:#141210; --card2:#191614;
+  --hover:#1e1a17; --input-bg:#100e0c;
+  --b1:#241f1a; --b2:#332c24;
+  --bg: rgba(230,200,150,.22); --bgh: rgba(230,200,150,.5); --bgp: rgba(230,200,150,.08);
+  --gold:#e6c896; --gold2:#f0d9ae; --gold3:#f7e8ca; --gdim:#7a6a45; --gglow:rgba(230,200,150,.2); --gtrace:rgba(230,200,150,.05);
+  --tw:#f3ede1; --tg:#8a8071; --tm:#332f27;
+}
+
 /* ════════════════════════════════════════════════════════
    CONVERSATION
 ════════════════════════════════════════════════════════ */
@@ -482,6 +548,7 @@ img{max-width:100%;display:block}
 .badge-learn{color:var(--green);background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.18)}
 .badge-web{color:var(--blue);background:rgba(91,141,238,.07);border:1px solid rgba(91,141,238,.18)}
 .badge-partial{color:var(--orange);background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.18)}
+.badge-ai{color:var(--gold3);background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.25)}
 
 /* Confidence bar */
 .conf-bar{
@@ -664,14 +731,7 @@ img{max-width:100%;display:block}
 </style>
 </head>
 <body>
-<script>
-    (function() {
-        const sessionKey = 'sb-xrldhfsytysznyyhwjlr-auth-token';
-        if (!localStorage.getItem(sessionKey)) {
-            window.location.replace('index.html');
-        }
-    })()
-</script>
+
 <!-- ── Zalij Background SVG ── -->
 <div id="zalij-bg">
   <svg viewBox="0 0 800 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
@@ -737,7 +797,7 @@ img{max-width:100%;display:block}
     <div class="sb-logo-mark">Z</div>
     <div>
       <div class="sb-logo-name">Zunexa</div>
-      <div class="sb-logo-ver">Archon V9 · Zalij Mode</div>
+      <div class="sb-logo-ver">Archon V10 · Zalij Mode</div>
     </div>
     <button class="sb-close" onclick="closeSidebar()">✕</button>
   </div>
@@ -791,9 +851,25 @@ img{max-width:100%;display:block}
   <div class="topbar">
     <div class="tb-left">
       <button class="hamburger" onclick="openSidebar()">☰</button>
-      <div class="tb-title">ZUNEXA INTELLIGENCE · V9</div>
+      <div class="tb-title">ZUNEXA INTELLIGENCE · V10</div>
     </div>
     <div class="tb-right">
+      <select class="zx-select" id="themeSel" onchange="setTheme(this.value)" title="السمة">
+        <option value="zalij">Zalij Gold</option>
+        <option value="emerald">Emerald Bahia</option>
+        <option value="ivory">Sahara Ivory</option>
+      </select>
+      <select class="zx-select" id="modelSel" onchange="setModel(this.value)" title="النموذج">
+        <option value="lite">Archon Lite</option>
+        <option value="pro">Archon Pro</option>
+        <option value="max">Archon Max</option>
+      </select>
+      <select class="zx-select" id="effortSel" onchange="setEffort(this.value)" title="مستوى الجهد">
+        <option value="quick">⚡ سريع</option>
+        <option value="balanced">⚖ متوازن</option>
+        <option value="deep">🔍 عميق</option>
+        <option value="max">🚀 أقصى</option>
+      </select>
       <div class="model-tag">Zunexa AI Engine</div>
       <button class="web-toggle" id="webTgl" onclick="toggleWeb()">
         <span class="wd"></span>
@@ -826,6 +902,9 @@ img{max-width:100%;display:block}
         <div class="qchip" onclick="go('أداة SEO كيف تعمل؟')">SEO Tool</div>
         <div class="qchip" onclick="go('Generator Hub شرح')">Generator Hub</div>
         <div class="qchip" onclick="go('ما هي تقنيات المنصة؟')">التقنيات</div>
+        <div class="qchip" onclick="go('/طقس الدار البيضاء')">🌤 الطقس</div>
+        <div class="qchip" onclick="go('/صورة شعار ذهبي مغربي عصري')">🎨 توليد صورة</div>
+        <div class="qchip" onclick="go('/جيت zunexa')">🐙 GitHub</div>
       </div>
     </div>
   </div>
@@ -835,7 +914,10 @@ img{max-width:100%;display:block}
 
   <!-- Input -->
   <div class="input-zone">
+    <div id="fileChipZone"></div>
     <div class="input-shell">
+      <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.csv,.json,.md" style="display:none" onchange="onFilePicked(event)">
+      <button class="attach-btn" id="attachBtn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف / صورة / PDF">📎</button>
       <textarea
         class="chat-input" id="aiInput" rows="1"
         placeholder="اسألني أي شيء عن Zunexa أو التقنيات..."
@@ -940,6 +1022,13 @@ async function init() {
   await loadKB();
   initParticles();
   initVoice();
+  const themeSel = document.getElementById('themeSel');
+  const modelSel = document.getElementById('modelSel');
+  const effortSel = document.getElementById('effortSel');
+  if (themeSel)  themeSel.value  = zxTheme;
+  if (modelSel)  modelSel.value  = zxModel;
+  if (effortSel) effortSel.value = zxEffort;
+  setModel(zxModel);
   document.getElementById('aiInput').focus();
 }
 
@@ -988,56 +1077,79 @@ function setUserUI(name, plan, email, ini) {
 
 /* ════════════════════════════════════════════════════════════
    KNOWLEDGE BASE — Load & Merge
+   FIX (this pass): the previous build had a broken loadKB() — the
+   function header + local-JSON fetch had been overwritten by a stray
+   zunexaSearch()/renderResponse() snippet that pointed at a file that
+   doesn't exist (zunexa_qa_v9.json), so the whole KB layer silently
+   returned nothing local. This restores the real function and links
+   BOTH source files (zunexa_qa.json's keywords/response pairs +
+   zunexa_qa_ai.json's richer core_answer/technical_depth/category)
+   through one pre-merged file — zunexa_qa_merged.json — so they work
+   together as a single complete knowledge base instead of two
+   disconnected files.
 ════════════════════════════════════════════════════════════ */
-// دالة البحث المحدثة لبروتوكول Archon
-async function zunexaSearch(userQuery) {
-    const response = await fetch('zunexa_qa_v9.json');
-    const database = await response.json();
+async function loadKB() {
+  let local = [];
+  let cloud = [];
 
-    // البحث في الـ Core Answer (تقدير مبدئي للمطابقة)
-    // هنا كنقلبو على أي حاجة كتشبه لسؤال المستخدم
-    const result = database.find(item => 
-        item.data.core_answer.toLowerCase().includes(userQuery.toLowerCase())
-    );
-
-    if (result) {
-        renderResponse(result.data);
-    } else {
-        console.log("الذكاء الاصطناعي: لم أجد إجابة مباشرة، جاري البحث في الذاكرة العميقة...");
+  // 1. Local knowledge — merged zunexa_qa.json + zunexa_qa_ai.json.
+  // Falls back to loading the two raw files separately + merging in
+  // the browser if the pre-merged file isn't deployed yet, so nothing
+  // ever silently loads empty.
+  try {
+    const r = await fetch('zunexa_qa_merged.json', { cache: 'no-store' });
+    if (!r.ok) throw new Error('merged file missing');
+    const merged = await r.json();
+    local = merged.map(i => ({
+      q:   i.q || (i.kw||[]).join(' '),
+      a:   i.tech ? `${i.a}\n\n${i.tech}` : (i.a || ''),
+      kw:  i.kw || [],
+      src: i.src || 'qa',
+      w:   parseFloat(i.w) || 1.0,
+      cat: i.category || 'general'
+    })).filter(i => i.a);
+  } catch (e) {
+    console.warn('Zunexa: merged KB not found, falling back to raw files', e);
+    try {
+      const [r1, r2] = await Promise.all([
+        fetch('zunexa_qa.json', { cache: 'no-store' }),
+        fetch('zunexa_qa_ai.json', { cache: 'no-store' })
+      ]);
+      const qa = r1.ok ? await r1.json() : [];
+      const qaAi = r2.ok ? await r2.json() : [];
+      const n = Math.max(qa.length, qaAi.length);
+      for (let i = 0; i < n; i++) {
+        const a = qa[i] || {};
+        const b = qaAi[i] || {};
+        const kw = a.keywords || [];
+        const core = (b.data && b.data.core_answer) || '';
+        const tech = (b.data && b.data.technical_depth) || '';
+        const answer = core && core.length >= (a.response||'').length ? core : (a.response || core);
+        if (!answer) continue;
+        local.push({
+          q:   kw.join(' '),
+          a:   tech ? `${answer}\n\n${tech}` : answer,
+          kw,
+          src: 'qa',
+          w:   1.0,
+          cat: b.category || 'general'
+        });
+      }
+    } catch (e2) {
+      console.error('Zunexa: both KB files failed to load', e2);
     }
-}
+  }
 
-// دالة العرض (Rendering) - هادي هي اللي كتضمن "Max Output"
-function renderResponse(data) {
-    const outputContainer = document.getElementById('ai-output'); // تأكد من اسم الـ ID عندك
-    
-    // عرض الجواب الأساسي
-    let fullResponse = `
-        <div class="archon-core">
-            ${data.core_answer}
-        </div>
-    `;
-
-    // عرض العمق التقني (Zero-Loss Output)
-    if (data.technical_depth && data.technical_depth.length > 0) {
-        fullResponse += `
-            <div class="archon-tech-depth" style="margin-top: 10px; border-left: 3px solid #D4AF37; padding-left: 10px;">
-                <strong>العمق التقني:</strong> ${data.technical_depth}
-            </div>
-        `;
-    }
-
-    outputContainer.innerHTML = fullResponse;
-}
-
-  // 2. Supabase ai_knowledge (learned entries)
+  // 2. Supabase ai_knowledge (learned entries) — cap raised so the
+  // engine can hold a much larger live-learned knowledge base ("max
+  // knowledge") instead of being stuck at the old 400-row limit.
   try {
     const { data: d, error } = await _SB
       .from('ai_knowledge')
       .select('question,answer,keywords,weight,used_count,source')
       .eq('is_active', true)
       .order('weight', { ascending: false })
-      .limit(400);
+      .limit(2000);
     if (!error) {
       cloud = (d||[]).map(i => ({
         q:   i.question||'',
@@ -1231,7 +1343,7 @@ function search(userQ) {
    matches → guided "I'm learning this" reply. This is what makes
    Archon feel like it's reasoning instead of just doing a lookup.
 ════════════════════════════════════════════════════════════ */
-async function answer(userQ) {
+async function answerLocal(userQ) {
   const enriched = buildCtxQ(userQ);
   const top = rankKB(enriched);
   const best = top[0] || null;
@@ -1261,6 +1373,97 @@ async function answer(userQ) {
   const txt = buildUnknown(userQ);
   await logMsg(userQ, txt, 'system', 0);
   return { text: txt, src: 'learning', score: 0 };
+}
+
+/* ════════════════════════════════════════════════════════════
+   ARCHON BRAIN — free, keyless LLM layer (Pollinations text API)
+   Pollinations' text.pollinations.ai endpoint is a public, keyless,
+   OpenAI-compatible completion API. It's what actually makes
+   "Archon Pro" / "Archon Max" reason and write instead of only doing
+   a KB lookup. No account, no API key, no cost — if it's unreachable
+   (network/CORS hiccup) everything falls back to the local KB engine
+   automatically, so the assistant never breaks.
+════════════════════════════════════════════════════════════ */
+async function archonBrain(messages, opts) {
+  opts = opts || {};
+  try {
+    const res = await fetch('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: opts.model || 'openai',
+        messages,
+        max_tokens: opts.maxTokens || 500,
+        temperature: opts.temperature || 0.6
+      })
+    });
+    if (!res.ok) throw new Error('archonBrain http ' + res.status);
+    const data = await res.json();
+    const txt = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    return txt ? txt.trim() : null;
+  } catch (e) {
+    console.warn('Archon Brain unreachable, staying on local KB', e);
+    return null;
+  }
+}
+
+function archonSystemPrompt() {
+  return 'أنت Archon، المساعد الذكي لمنصة Zunexa (منصة مغربية لتوليد المحتوى بالذكاء الاصطناعي لصناع المحتوى في المنطقة العربية/المغاربية). '
+       + 'تكلم بأسلوب واضح، مهني، ومختصر، وادمج الدارجة المغربية بلطف عند المناسب. استعمل المعلومة التالية من قاعدة معرفة Zunexa كسياق أساسي إذا كانت متوفرة، ولا تختلق معلومات عن الشركة أو الأسعار غير موجودة في السياق.';
+}
+
+// Effort → how hard Archon tries: local-only vs. local+brain, context depth, token budget.
+const EFFORT_CFG = {
+  quick:    { useBrain: false, ctxTurns: 0, maxTokens: 220 },
+  balanced: { useBrain: 'weak', ctxTurns: 4, maxTokens: 420 },
+  deep:     { useBrain: true,  ctxTurns: 8, maxTokens: 700 },
+  max:      { useBrain: true,  ctxTurns: 12, maxTokens: 1100 }
+};
+
+/* answer() — routes between the pure local KB engine (answerLocal) and
+   the Archon Brain, depending on the selected model + effort level,
+   the strength of the local match, and any attached file content. */
+async function answer(userQ) {
+  const local = await answerLocal(userQ);
+  const cfg = EFFORT_CFG[zxEffort] || EFFORT_CFG.balanced;
+
+  // Archon Lite never leaves the browser — instant, offline, zero external calls.
+  if (zxModel === 'lite') return local;
+
+  const localIsWeak = local.score < 0.14;
+  const shouldUseBrain =
+    cfg.useBrain === true ||
+    (cfg.useBrain === 'weak' && (localIsWeak || attachedFile)) ||
+    (zxModel === 'max' && (localIsWeak || attachedFile));
+
+  if (!shouldUseBrain) return local;
+
+  const messages = [{ role: 'system', content: archonSystemPrompt() }];
+  const turns = ctx.slice(-cfg.ctxTurns);
+  turns.forEach(c => messages.push({ role: c.role === 'user' ? 'user' : 'assistant', content: c.text }));
+
+  let userContent = `سياق من قاعدة معرفة Zunexa (قد يكون فارغاً):\n"""${local.text.slice(0,900)}"""\n\nسؤال المستخدم: ${userQ}`;
+  if (attachedFile && attachedFile.textContent) {
+    userContent += `\n\nمحتوى الملف المرفق (${attachedFile.name}):\n"""${attachedFile.textContent.slice(0,3000)}"""`;
+  }
+
+  if (attachedFile && attachedFile.dataUrl && attachedFile.kind === 'image') {
+    messages.push({
+      role: 'user',
+      content: [
+        { type: 'text', text: userContent + `\n\nحلل الصورة المرفقة وأجب على سؤال المستخدم بخصوصها إن كان متعلقاً بها.` },
+        { type: 'image_url', image_url: { url: attachedFile.dataUrl } }
+      ]
+    });
+  } else {
+    messages.push({ role: 'user', content: userContent });
+  }
+
+  const brainTxt = await archonBrain(messages, { maxTokens: cfg.maxTokens });
+  if (!brainTxt) return local; // graceful fallback if Pollinations is unreachable
+
+  await logMsg(userQ, brainTxt, 'ai-brain', Math.max(local.score, 0.5));
+  return { text: brainTxt, src: 'ai-brain', score: Math.max(local.score, 0.5) };
 }
 
 const CONNECTORS = [
@@ -1351,9 +1554,10 @@ async function send() {
   addTyping();
 
   try {
-    const res = await answer(q);
+    const tool = await routeQuickCommand(q);
+    const res  = tool || await answer(q);
     removeTyping();
-    addMsg(res.text, 'bot', res.src, res.score);
+    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl);
 
     // Update context
     ctx.push({ role:'user', text:q });
@@ -1365,6 +1569,7 @@ async function send() {
     if (hist.length > 40) hist.length = 40;
     localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
     renderHist();
+    clearFile();
 
   } catch(err) {
     removeTyping();
@@ -1379,7 +1584,7 @@ async function send() {
 /* ════════════════════════════════════════════════════════════
    DOM HELPERS
 ════════════════════════════════════════════════════════════ */
-function addMsg(text, role, src, score) {
+function addMsg(text, role, src, score, imgUrl) {
   const conv = document.getElementById('conv');
   const div  = document.createElement('div');
   div.className = 'msg ' + role;
@@ -1394,6 +1599,13 @@ function addMsg(text, role, src, score) {
   const bub = document.createElement('div');
   bub.className = 'bubble';
   bub.innerHTML = fmt(text);
+  if (imgUrl) {
+    const img = document.createElement('img');
+    img.src = imgUrl;
+    img.loading = 'lazy';
+    img.style.cssText = 'max-width:100%;border-radius:12px;margin-top:10px;border:1px solid var(--b1);display:block';
+    bub.appendChild(img);
+  }
   body.appendChild(bub);
 
   // Meta
@@ -1412,6 +1624,10 @@ function addMsg(text, role, src, score) {
       meta.innerHTML += `<span class="meta-badge badge-partial">⚡ جزئي</span>`;
     } else if (src === 'web') {
       meta.innerHTML += `<span class="meta-badge badge-web">🌐 ويب</span>`;
+    } else if (src === 'ai-brain') {
+      meta.innerHTML += `<span class="meta-badge badge-ai">✦ Archon Brain</span>`;
+    } else if (src === 'tool') {
+      meta.innerHTML += `<span class="meta-badge badge-web">🛠 أداة مباشرة</span>`;
     }
 
     // Confidence bar
@@ -1549,6 +1765,9 @@ function newChat() {
         <div class="qchip" onclick="go('أداة SEO كيف تعمل؟')">SEO Tool</div>
         <div class="qchip" onclick="go('Generator Hub شرح')">Generator Hub</div>
         <div class="qchip" onclick="go('ما هي تقنيات المنصة؟')">التقنيات</div>
+        <div class="qchip" onclick="go('/طقس الدار البيضاء')">🌤 الطقس</div>
+        <div class="qchip" onclick="go('/صورة شعار ذهبي مغربي عصري')">🎨 توليد صورة</div>
+        <div class="qchip" onclick="go('/جيت zunexa')">🐙 GitHub</div>
       </div>
     </div>`;
   closeSidebar();
@@ -1747,7 +1966,197 @@ document.getElementById('settModal').addEventListener('click', function(e) {
   if (e.target === this) closeSettings();
 });
 
+/* ════════════════════════════════════════════════════════════
+   THEME / MODEL / EFFORT — state + persistence
+════════════════════════════════════════════════════════════ */
+let zxTheme  = localStorage.getItem('zx_theme')  || 'zalij';
+let zxModel  = localStorage.getItem('zx_model')  || 'lite';
+let zxEffort = localStorage.getItem('zx_effort') || 'balanced';
+
+function applyTheme(v) {
+  if (v === 'zalij') document.documentElement.removeAttribute('data-zx-theme');
+  else document.documentElement.setAttribute('data-zx-theme', v);
+}
+function setTheme(v) {
+  zxTheme = v; localStorage.setItem('zx_theme', v); applyTheme(v);
+  // Best-effort sync to the user's profile row if logged in — silent no-op for guests.
+  _SB.auth.getSession().then(({ data: { session } }) => {
+    if (session) _SB.from('profiles').update({ theme: v }).eq('id', session.user.id).then(()=>{}, ()=>{});
+  });
+}
+function setModel(v) {
+  zxModel = v; localStorage.setItem('zx_model', v);
+  const tag = document.querySelector('.model-tag');
+  const names = { lite:'Archon Lite · Local', pro:'Archon Pro · KB+AI', max:'Archon Max · Full' };
+  if (tag) tag.textContent = names[v] || 'Zunexa AI Engine';
+}
+function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); }
+
+/* ════════════════════════════════════════════════════════════
+   FILE / PHOTO / PDF ATTACHMENT
+════════════════════════════════════════════════════════════ */
+let attachedFile = null; // { name, kind:'image'|'text', textContent, dataUrl }
+
+async function onFilePicked(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 8 * 1024 * 1024) { toast('⚠ الملف كبير جداً (الحد 8MB)'); e.target.value=''; return; }
+
+  const zone = document.getElementById('fileChipZone');
+  toast('⏳ جاري قراءة الملف...');
+
+  try {
+    if (file.type.startsWith('image/')) {
+      const dataUrl = await readAsDataURL(file);
+      attachedFile = { name: file.name, kind: 'image', dataUrl, textContent: '' };
+    } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+      const buf = await file.arrayBuffer();
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+      let text = '';
+      const maxPages = Math.min(pdf.numPages, 25);
+      for (let p = 1; p <= maxPages; p++) {
+        const page = await pdf.getPage(p);
+        const content = await page.getTextContent();
+        text += content.items.map(it => it.str).join(' ') + '\n';
+      }
+      attachedFile = { name: file.name, kind: 'text', textContent: text.trim(), dataUrl: '' };
+    } else {
+      const text = await readAsText(file);
+      attachedFile = { name: file.name, kind: 'text', textContent: text, dataUrl: '' };
+    }
+
+    // Auto-select a smarter model so the file actually gets analyzed —
+    // Archon Lite is offline-only and can't reason over attachments.
+    if (zxModel === 'lite') { zxModel = 'pro'; document.getElementById('modelSel').value = 'pro'; setModel('pro'); }
+
+    document.getElementById('attachBtn').classList.add('has-file');
+    zone.innerHTML = `
+      <div class="file-chip">
+        ${attachedFile.kind === 'image' ? `<img src="${attachedFile.dataUrl}">` : '📄'}
+        <span>${esc(file.name)}</span>
+        <span class="fc-x" onclick="clearFile()">✕</span>
+      </div>`;
+    toast('✓ تم إرفاق الملف — اسأل عنه الآن');
+  } catch (err) {
+    console.error(err);
+    toast('⚠ تعذّرت قراءة هذا الملف');
+    attachedFile = null;
+  }
+  e.target.value = '';
+}
+
+function readAsDataURL(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = () => rej(r.error);
+    r.readAsDataURL(file);
+  });
+}
+function readAsText(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = () => rej(r.error);
+    r.readAsText(file);
+  });
+}
+function clearFile() {
+  attachedFile = null;
+  document.getElementById('attachBtn').classList.remove('has-file');
+  document.getElementById('fileChipZone').innerHTML = '';
+}
+
+/* ════════════════════════════════════════════════════════════
+   QUICK-COMMAND TOOLS — free, keyless third-party APIs
+   /طقس or /weather <city>   → Open-Meteo (no key)
+   /خريطة or /map <place>    → OpenStreetMap Nominatim (no key)
+   /جيت or /github <query>   → GitHub public REST API (no key, rate-limited)
+   /اخبار or /news <query>   → Hacker News Algolia API (no key)
+   /صورة or /image <prompt>  → Pollinations image generation (no key)
+════════════════════════════════════════════════════════════ */
+async function routeQuickCommand(q) {
+  const m = q.trim();
+  const low = m.toLowerCase();
+
+  const weatherMatch = m.match(/^\/(?:طقس|weather)\s+(.+)/i);
+  if (weatherMatch) return await toolWeather(weatherMatch[1].trim());
+
+  const mapMatch = m.match(/^\/(?:خريطة|map)\s+(.+)/i);
+  if (mapMatch) return await toolMap(mapMatch[1].trim());
+
+  const ghMatch = m.match(/^\/(?:جيت|github)\s+(.+)/i);
+  if (ghMatch) return await toolGithub(ghMatch[1].trim());
+
+  const newsMatch = m.match(/^\/(?:اخبار|أخبار|news)\s*(.*)/i);
+  if (newsMatch) return await toolNews(newsMatch[1].trim());
+
+  const imgMatch = m.match(/^\/(?:صورة|image)\s+(.+)/i);
+  if (imgMatch) return await toolImageGen(imgMatch[1].trim());
+
+  return null;
+}
+
+async function toolWeather(city) {
+  try {
+    const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=ar`).then(r=>r.json());
+    const loc = geo.results && geo.results[0];
+    if (!loc) return { text: `⚠ لم أجد موقع "${city}".`, src: 'tool', score: 0.3 };
+    const w = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto`).then(r=>r.json());
+    const c = w.current || {};
+    const txt = `🌤 **الطقس في ${loc.name}${loc.country ? ', '+loc.country : ''}**\n\n`
+      + `**الحرارة:** ${c.temperature_2m}°C\n`
+      + `**الرطوبة:** ${c.relative_humidity_2m}%\n`
+      + `**سرعة الرياح:** ${c.wind_speed_10m} كم/س\n\n`
+      + `_المصدر: Open-Meteo (بدون مفتاح API)_`;
+    return { text: txt, src: 'tool', score: 0.9 };
+  } catch (e) { return { text: '⚠ تعذّر جلب الطقس حالياً — حاول لاحقاً.', src: 'tool', score: 0.1 }; }
+}
+
+async function toolMap(place) {
+  try {
+    const geo = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(place)}&format=json&limit=1`, { headers: { 'Accept-Language': 'ar' } }).then(r=>r.json());
+    const loc = geo && geo[0];
+    if (!loc) return { text: `⚠ لم أجد "${place}" على الخريطة.`, src: 'tool', score: 0.3 };
+    const link = `https://www.openstreetmap.org/?mlat=${loc.lat}&mlon=${loc.lon}#map=15/${loc.lat}/${loc.lon}`;
+    const txt = `📍 **${esc(loc.display_name)}**\n\n**الإحداثيات:** ${parseFloat(loc.lat).toFixed(5)}, ${parseFloat(loc.lon).toFixed(5)}\n\n[افتح على OpenStreetMap](${link})\n\n_المصدر: OpenStreetMap Nominatim (بدون مفتاح API)_`;
+    return { text: txt, src: 'tool', score: 0.9 };
+  } catch (e) { return { text: '⚠ تعذّر جلب الموقع حالياً.', src: 'tool', score: 0.1 }; }
+}
+
+async function toolGithub(query) {
+  try {
+    const d = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=5`).then(r=>r.json());
+    if (!d.items || !d.items.length) return { text: `⚠ لا نتائج على GitHub لـ "${query}".`, src: 'tool', score: 0.3 };
+    const txt = `🐙 **أفضل نتائج GitHub لـ "${query}":**\n\n` + d.items.map((r,i) =>
+      `${i+1}. **[${r.full_name}](${r.html_url})** — ⭐ ${r.stargazers_count}\n   ${r.description ? esc(r.description).slice(0,120) : 'بدون وصف'}`
+    ).join('\n\n') + `\n\n_المصدر: GitHub REST API (بدون مفتاح API)_`;
+    return { text: txt, src: 'tool', score: 0.9 };
+  } catch (e) { return { text: '⚠ تعذّر البحث في GitHub حالياً.', src: 'tool', score: 0.1 }; }
+}
+
+async function toolNews(query) {
+  try {
+    const url = query
+      ? `https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(query)}&tags=story&hitsPerPage=5`
+      : `https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=5`;
+    const d = await fetch(url).then(r=>r.json());
+    if (!d.hits || !d.hits.length) return { text: '⚠ لا أخبار متاحة حالياً.', src: 'tool', score: 0.3 };
+    const txt = `📰 **آخر الأخبار${query ? ' عن "'+query+'"' : ''}:**\n\n` + d.hits.map((h,i) =>
+      `${i+1}. **[${esc(h.title||'بدون عنوان')}](${h.url || 'https://news.ycombinator.com/item?id='+h.objectID})** — 👍 ${h.points||0}`
+    ).join('\n\n') + `\n\n_المصدر: Hacker News / Algolia API (بدون مفتاح API)_`;
+    return { text: txt, src: 'tool', score: 0.9 };
+  } catch (e) { return { text: '⚠ تعذّر جلب الأخبار حالياً.', src: 'tool', score: 0.1 }; }
+}
+
+async function toolImageGen(prompt) {
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=768&nologo=true&seed=${Date.now()%100000}`;
+  return { text: `🎨 **صورة مولّدة بالذكاء الاصطناعي:**\n"${prompt}"\n\n_المصدر: Pollinations.ai (بدون مفتاح API)_`, src: 'tool', score: 0.9, imgUrl: url };
+}
+
 /* ── BOOT ── */
+applyTheme(zxTheme);
 init();
 </script>
 </body>
