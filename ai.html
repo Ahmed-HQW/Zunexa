@@ -6,7 +6,7 @@
   ║  Stack   : HTML5 · CSS3 · Vanilla JS                            ║
   ║  Design  : Zalij Mode — Premium Moroccan Noir & Gold            ║
   ║  Engine  : Zunexa Neural Engine + Archon Brain (free keyless AI)║
-  ║  Version : V11 — Archon Protocol                                ║
+  ║  Version : V12 — Archon Protocol                                ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 <html lang="ar" dir="rtl">
@@ -831,7 +831,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     <div class="sb-logo-mark">Z</div>
     <div>
       <div class="sb-logo-name">Zunexa</div>
-      <div class="sb-logo-ver">Archon V11 · Zalij Mode</div>
+      <div class="sb-logo-ver">Archon V12 · Zalij Mode</div>
     </div>
     <button class="sb-close" onclick="closeSidebar()">✕</button>
   </div>
@@ -868,7 +868,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     </button>
     <button class="sb-fbtn" onclick="openSettings()">
       <span class="fi">⚙</span> الإعدادات
-      <span class="kb-badge" id="kbBadge">0 Q&A</span>
     </button>
     <button class="sb-fbtn" onclick="clearAll()">
       <span class="fi">🗑</span> مسح السجل
@@ -885,7 +884,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   <div class="topbar">
     <div class="tb-left">
       <button class="hamburger" onclick="openSidebar()">☰</button>
-      <div class="tb-title">ZUNEXA INTELLIGENCE · V11</div>
+      <div class="tb-title">ZUNEXA INTELLIGENCE · V12</div>
     </div>
     <div class="tb-right">
       <select class="zx-select" id="themeSel" onchange="setTheme(this.value)" title="السمة">
@@ -931,9 +930,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <div class="gold-hr"></div>
       <div class="wl-title">مرحباً في <span>Archon</span></div>
       <div class="wl-sub"></div>
-      <div class="kb-bar">
-        
-      </div>
       <div class="quick-chips">
         <div class="qchip" onclick="go('ما هي منصة Zunexa؟')">ما هي Zunexa؟</div>
         <div class="qchip" onclick="go('التصميم Zalij Mode')">Zalij Mode</div>
@@ -1064,8 +1060,39 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <select class="field-input" id="setVoiceLang" onchange="saveVoicePrefs()">
         <option value="ar-MA">العربية (المغرب)</option>
         <option value="ar-SA">العربية (فصحى)</option>
+        <option value="ar-EG">العربية (مصر)</option>
+        <option value="ar-AE">العربية (الخليج)</option>
         <option value="fr-FR">Français</option>
-        <option value="en-US">English</option>
+        <option value="en-US">English (US)</option>
+        <option value="en-GB">English (UK)</option>
+        <option value="es-ES">Español</option>
+        <option value="de-DE">Deutsch</option>
+        <option value="it-IT">Italiano</option>
+        <option value="pt-PT">Português</option>
+        <option value="pt-BR">Português (Brasil)</option>
+        <option value="nl-NL">Nederlands</option>
+        <option value="tr-TR">Türkçe</option>
+        <option value="ru-RU">Русский</option>
+        <option value="zh-CN">中文 (简体)</option>
+        <option value="ja-JP">日本語</option>
+        <option value="ko-KR">한국어</option>
+        <option value="hi-IN">हिन्दी</option>
+        <option value="ur-PK">اردو</option>
+        <option value="fa-IR">فارسی</option>
+        <option value="id-ID">Bahasa Indonesia</option>
+        <option value="ms-MY">Bahasa Melayu</option>
+        <option value="th-TH">ไทย</option>
+        <option value="vi-VN">Tiếng Việt</option>
+        <option value="pl-PL">Polski</option>
+        <option value="uk-UA">Українська</option>
+        <option value="sv-SE">Svenska</option>
+        <option value="no-NO">Norsk</option>
+        <option value="da-DK">Dansk</option>
+        <option value="fi-FI">Suomi</option>
+        <option value="el-GR">Ελληνικά</option>
+        <option value="he-IL">עברית</option>
+        <option value="ro-RO">Română</option>
+        <option value="sw-KE">Kiswahili</option>
       </select>
       <label class="field-label">أسلوب الصوت (عند القراءة الصوتية للردود)</label>
       <select class="field-input" id="setVoiceStyle" onchange="saveVoicePrefs()">
@@ -1278,18 +1305,53 @@ async function loadUser() {
       return;
     }
     const uid = session.user.id;
+
+    // FIX: this used to select ('name, email, plan, avatar_initial') —
+    // columns that don't exist on `profiles` at all. index.html's real
+    // signUp() only ever writes id/username/first_name/email/current_theme
+    // (see its `profiles.upsert(...)` call), so every read here was
+    // silently failing/returning null and permanently falling back to
+    // "Zunexa User" / "Free" — which is exactly the "always shows
+    // Guest/Free" symptom. Reading the real columns fixes it for good.
     const { data, error } = await _SB
       .from('profiles')
-      .select('name, email, plan, avatar_initial')
+      .select('username, first_name, email, current_theme')
       .eq('id', uid)
       .maybeSingle();
     if (error) throw error;
     const u = data || {};
-    const ini = u.avatar_initial || (u.name && u.name[0]) || (session.user.email && session.user.email[0]) || 'Z';
-    setUserUI(u.name || 'Zunexa User', u.plan || 'Free', u.email || session.user.email || '', ini.toUpperCase());
+
+    const displayName = u.first_name || u.username || (session.user.email && session.user.email.split('@')[0]) || 'Zunexa User';
+    const ini = displayName[0] || 'Z';
+    const email = u.email || session.user.email || '';
+
+    // Plan lives in its own table (user_plans), managed server-side via
+    // the redeem_plan_code RPC + handle_new_user_tokens trigger — not on
+    // profiles at all. Best-effort read with a safe Free fallback so a
+    // missing/renamed table never breaks the whole user card.
+    let planLabel = 'Free';
+    try {
+      const { data: planRow } = await _SB
+        .from('user_plans')
+        .select('plan')
+        .eq('user_id', uid)
+        .maybeSingle();
+      if (planRow && planRow.plan) planLabel = planRow.plan;
+    } catch (e) {}
+
+    setUserUI(displayName, planLabel, email, ini.toUpperCase());
+
+    // Apply the user's saved theme (current_theme) on login, so it
+    // travels with the account instead of resetting per-browser.
+    if (u.current_theme && u.current_theme !== zxTheme) {
+      zxTheme = u.current_theme;
+      localStorage.setItem('zx_theme', zxTheme);
+      applyTheme(zxTheme);
+    }
+
     // Cache for instant paint next load — display-only, never trusted
     // as the source of truth (loadUser() above always re-verifies).
-    localStorage.setItem('zx_name_cache', u.name || '');
+    localStorage.setItem('zx_name_cache', displayName);
   } catch (e) {
     console.error('Zunexa: failed to load user', e);
     setUserUI('Guest', 'Free', '', 'G');
@@ -1394,10 +1456,6 @@ async function loadKB() {
   KB = mergeKB(local, cloud);
   buildIDF(KB);
   kbReady = true;
-
-  // Update UI
-  document.getElementById('kbCount').textContent = KB.length;
-  document.getElementById('kbBadge').textContent = KB.length + ' Q&A';
 }
 
 function mergeKB(local, cloud) {
@@ -1427,8 +1485,57 @@ const STOP = new Set([
   'the','is','are','a','an','to','of','and','or','in','it','that','this'
 ]);
 
+/* ════════════════════════════════════════════════════════════
+   SYNONYM EXPANSION — Darija / Arabic (فصحى + خليجي) / Franco / French /
+   English variants of the same domain concept collapse onto one
+   canonical tag, so the matching engine effectively has far more
+   "keywords" to work with than what's literally written in the KB.
+   e.g. "بغيت", "نبغي", "عايز", "want", "veux" → __want__
+════════════════════════════════════════════════════════════ */
+const SYN_GROUPS = [
+  ['__want__',    'بغيت','بغيتي','نبغي','بغى','عايز','عاوز','اريد','أريد','want','veux','souhaite'],
+  ['__price__',   'فلوس','ثمن','سعر','تمن','اسعار','أسعار','تكلفة','price','prix','cost','tarif'],
+  ['__plan__',    'خطة','اشتراك','باقة','plan','subscription','abonnement','forfait'],
+  ['__free__',    'فابور','مجاني','مجانا','بلاش','gratuit','free','bla flous','bla3andi'],
+  ['__ai__',      'ذكاء','اصطناعي','ai','intelligence','artificielle','archon','ذكاءاصطناعي'],
+  ['__content__', 'محتوى','منشور','بوست','content','contenu','post'],
+  ['__generator__','مولد','توليد','generator','generate','générateur','generateur'],
+  ['__seo__',     'سيو','seo','تحسين','محركاتبحث','referencement'],
+  ['__dashboard__','لوحة','تحكم','dashboard','tableau','bord'],
+  ['__design__',  'تصميم','زليج','zalij','design','theme','ثيم'],
+  ['__developer__','مطور','مبرمج','developer','dev','programmeur'],
+  ['__help__',    'مساعدة','عاون','عاونني','ساعدني','help','aide','aidemoi'],
+  ['__login__',   'دخول','تسجيل','دخل','login','connexion','signin'],
+  ['__account__', 'حساب','account','compte'],
+  ['__image__',   'صورة','صور','image','photo','picture'],
+  ['__video__',   'فيديو','فيديوهات','video','clip'],
+  ['__upgrade__', 'ترقية','رقي','upgrade','ameliorer','améliorer'],
+  ['__platform__','منصة','موقع','app','application','platform','plateforme'],
+  ['__weather__', 'طقس','جو','meteo','météo','weather'],
+  ['__news__',    'اخبار','أخبار','news','actualites','actualités'],
+  ['__search__',  'بحث','دور','ابحث','search','chercher','recherche'],
+  ['__translate__','ترجم','ترجمة','translate','traduire','traduction'],
+  ['__voice__',   'صوت','نطق','voice','audio','vocal'],
+  ['__file__',    'ملف','وثيقة','file','document','fichier'],
+  ['__thanks__',  'شكرا','شكراً','merci','thanks','thankyou'],
+];
+const SYN_MAP = (function(){
+  const m = {};
+  SYN_GROUPS.forEach(group => {
+    const canon = group[0];
+    group.slice(1).forEach(variant => { m[norm(variant)] = canon; });
+  });
+  return m;
+})();
+
 function tok(text) {
-  return norm(text).split(/\s+/).filter(t => t.length > 1 && !STOP.has(t));
+  const base = norm(text).split(/\s+/).filter(t => t.length > 1 && !STOP.has(t));
+  const out = [];
+  base.forEach(t => {
+    out.push(t);
+    if (SYN_MAP[t]) out.push(SYN_MAP[t]);
+  });
+  return out;
 }
 
 // Adjacent-word phrases — catches multi-word concepts ("ai content", "محتوى ذكي")
@@ -1636,9 +1743,9 @@ async function archonBrain(messages, opts) {
 }
 
 function archonSystemPrompt() {
-  return 'أنت Archon، المساعد الذكي لمنصة Zunexa (منصة مغربية لتوليد المحتوى بالذكاء الاصطناعي لصناع المحتوى في المنطقة العربية/المغاربية). '
-       + 'جاوب بنفس اللغة أو اللهجة اللي كتب بيها المستخدم — الدارجة المغربية، العربية الفصحى، الفرنسية، الإنجليزية، الإسبانية، أو أي لغة أخرى، بشكل طبيعي وسليم. '
-       + 'تكلم بأسلوب واضح، مهني، ومختصر. استعمل المعلومة التالية من قاعدة معرفة Zunexa كسياق أساسي إذا كانت متوفرة، ولا تختلق معلومات عن الشركة أو الأسعار غير موجودة في السياق.';
+  return 'أنت Archon، المساعد الذكي لمنصة Zunexa (منصة مغربية لتوليد المحتوى بالذكاء الاصطناعي لصناع المحتوى في المنطقة العربية/المغاربية والعالم). '
+       + 'تتحدث بطلاقة أكثر من 30 لغة، من بينها: العربية الفصحى، الدارجة المغربية، العربية الخليجية، الفرنسية، الإنجليزية، الإسبانية، الألمانية، الإيطالية، البرتغالية، الهولندية، التركية، الروسية، الصينية، اليابانية، الكورية، الهندية، الأردية، الفارسية، الإندونيسية، الملايوية، التايلاندية، الفيتنامية، البولندية، الأوكرانية، السويدية، النرويجية، الدنماركية، الفنلندية، اليونانية، العبرية، الرومانية، والسواحلية. '
+       + 'جاوب دائماً بنفس اللغة أو اللهجة اللي كتب بيها المستخدم، بشكل طبيعي وسليم ومهني ومختصر. استعمل المعلومة التالية من قاعدة معرفة Zunexa كسياق أساسي إذا كانت متوفرة، ولا تختلق معلومات عن الشركة أو الأسعار غير موجودة في السياق.';
 }
 
 // Effort → how hard Archon tries: local-only vs. local+brain, context depth, token budget.
@@ -2014,10 +2121,6 @@ function newChat() {
       <div class="wl-eyebrow">Zunexa Premium · Archon AI </div>
       <div class="gold-hr"></div>
       <div class="wl-title">مرحباً في <span>Archon</span></div>
-      <div class="kb-bar">
-        <div class="kb-dot"></div>
-        قاعدة المعرفة: <span class="kb-count" id="kbCount">${KB.length}</span> سؤال وجواب محمّل
-      </div>
       <div class="quick-chips">
         <div class="qchip" onclick="go('ما هي منصة Zunexa؟')">ما هي Zunexa؟</div>
         <div class="qchip" onclick="go('التصميم Zalij Mode')">Zalij Mode</div>
@@ -2243,8 +2346,10 @@ function applyTheme(v) {
 function setTheme(v) {
   zxTheme = v; localStorage.setItem('zx_theme', v); applyTheme(v);
   // Best-effort sync to the user's profile row if logged in — silent no-op for guests.
+  // FIX: was writing to a `theme` column that doesn't exist on profiles;
+  // the real column (per index.html's signUp) is `current_theme`.
   _SB.auth.getSession().then(({ data: { session } }) => {
-    if (session) _SB.from('profiles').update({ theme: v }).eq('id', session.user.id).then(()=>{}, ()=>{});
+    if (session) _SB.from('profiles').update({ current_theme: v }).eq('id', session.user.id).then(()=>{}, ()=>{});
   });
 }
 function setModel(v) {
