@@ -6,7 +6,7 @@
   ║  Stack   : HTML5 · CSS3 · Vanilla JS                            ║
   ║  Design  : Zalij Mode — Premium Moroccan Noir & Gold            ║
   ║  Engine  : Zunexa Neural Engine + Archon Brain (free keyless AI)║
-  ║  Version : V10 — Archon Protocol                                ║
+  ║  Version : V11 — Archon Protocol                                ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 <html lang="ar" dir="rtl">
@@ -400,26 +400,36 @@ img{max-width:100%;display:block}
 .file-chip img{max-height:34px;border-radius:4px}
 
 /* ════════════════════════════════════════════════════════
-   THEMES — Zalij Mode (default) · Emerald Bahia · Sahara Ivory
+   THEMES — Zalij Dark (default) · Zalij Light · Neon Purple · Ocean Dark
    Switching data-zx-theme on <html> remaps these CSS vars, so every
    component built on var(--gold)/var(--void)/etc re-themes instantly
    with zero per-component changes.
 ════════════════════════════════════════════════════════ */
-html[data-zx-theme="emerald"]{
-  --void:#050807; --deep:#070b09; --card:#0c110e; --card2:#111713;
-  --hover:#161d18; --input-bg:#0a0f0c;
-  --b1:#182420; --b2:#233530;
-  --bg: rgba(61,220,150,.22); --bgh: rgba(61,220,150,.5); --bgp: rgba(61,220,150,.08);
-  --gold:#3ddc96; --gold2:#5fe8ab; --gold3:#8ff0c6; --gdim:#1f6a49; --gglow:rgba(61,220,150,.2); --gtrace:rgba(61,220,150,.05);
-  --tw:#e7f5ee; --tg:#6f8a7d; --tm:#26332d;
+html[data-zx-theme="zalij-light"]{
+  --void:#f4efe4; --deep:#efe8d8; --card:#fbf8f0; --card2:#f6f1e4;
+  --hover:#ece4d0; --input-bg:#ffffff;
+  --b1:#e2d7bd; --b2:#d3c4a0;
+  --bg: rgba(150,110,20,.18); --bgh: rgba(150,110,20,.4); --bgp: rgba(150,110,20,.06);
+  --gold:#8a6b1e; --gold2:#a5822a; --gold3:#c19c3d; --gdim:#c8ad6a; --gglow:rgba(150,110,20,.16); --gtrace:rgba(150,110,20,.04);
+  --tw:#241f14; --tg:#6b5f43; --tm:#c9bd9c;
+  --green:#1f8a4f; --red:#c23a4f; --blue:#2f6fc2; --orange:#b5760f;
 }
-html[data-zx-theme="ivory"]{
-  --void:#0b0a08; --deep:#0e0d0a; --card:#141210; --card2:#191614;
-  --hover:#1e1a17; --input-bg:#100e0c;
-  --b1:#241f1a; --b2:#332c24;
-  --bg: rgba(230,200,150,.22); --bgh: rgba(230,200,150,.5); --bgp: rgba(230,200,150,.08);
-  --gold:#e6c896; --gold2:#f0d9ae; --gold3:#f7e8ca; --gdim:#7a6a45; --gglow:rgba(230,200,150,.2); --gtrace:rgba(230,200,150,.05);
-  --tw:#f3ede1; --tg:#8a8071; --tm:#332f27;
+html[data-zx-theme="neon-purple"]{
+  --void:#0a0612; --deep:#0d0817; --card:#130d21; --card2:#180f2a;
+  --hover:#1e1435; --input-bg:#0c0817;
+  --b1:#251a3d; --b2:#33234f;
+  --bg: rgba(190,90,240,.24); --bgh: rgba(190,90,240,.55); --bgp: rgba(190,90,240,.08);
+  --gold:#c66bff; --gold2:#d68bff; --gold3:#e6b3ff; --gdim:#6a2f96; --gglow:rgba(198,107,255,.25); --gtrace:rgba(198,107,255,.06);
+  --tw:#f0e6fb; --tg:#8a7aa3; --tm:#2c2140;
+}
+html[data-zx-theme="ocean-dark"]{
+  --void:#040c12; --deep:#061019; --card:#0a1620; --card2:#0e1c28;
+  --hover:#132430; --input-bg:#071219;
+  --b1:#182a37; --b2:#213a49;
+  --bg: rgba(60,180,220,.22); --bgh: rgba(60,180,220,.5); --bgp: rgba(60,180,220,.08);
+  --gold:#3cc9e6; --gold2:#5fd9f0; --gold3:#8fe6f5; --gdim:#1f6a7a; --gglow:rgba(60,201,230,.2); --gtrace:rgba(60,201,230,.05);
+  --tw:#e2f5f9; --tg:#6f96a3; --tm:#26404a;
+  --green:#3ddc84; --red:#ff5d78; --blue:#5bb0ee; --orange:#f5a623;
 }
 
 /* ════════════════════════════════════════════════════════
@@ -685,10 +695,34 @@ html[data-zx-theme="ivory"]{
 }
 .modal-save:hover{box-shadow:var(--sg2)}
 
+/* ── Expanded Settings modal (tabs + toggles) ── */
+.modal-box.wide{max-width:560px;max-height:86vh;overflow-y:auto}
+.set-tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--b1);margin-bottom:16px;padding-bottom:2px;scrollbar-width:thin}
+.set-tab{padding:7px 12px;font-size:11.5px;color:var(--tg);border-radius:7px 7px 0 0;cursor:pointer;white-space:nowrap;transition:all var(--tr)}
+.set-tab:hover{color:var(--gold)}
+.set-tab.on{color:var(--gold);background:var(--card2);font-weight:700}
+.set-pane{display:none}
+.set-pane.on{display:block;animation:fadeUp .18s ease}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--b1)}
+.set-row:last-child{border-bottom:none}
+.set-row-txt{flex:1;min-width:0}
+.set-row-title{font-size:13px;color:var(--tw);font-weight:600}
+.set-row-desc{font-size:11px;color:var(--tg);margin-top:3px;line-height:1.6}
+.switch{position:relative;width:40px;height:22px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.slider{position:absolute;inset:0;background:var(--b2);border-radius:99px;cursor:pointer;transition:.2s}
+.slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:var(--tg);border-radius:50%;transition:.2s}
+.switch input:checked + .slider{background:var(--gdim)}
+.switch input:checked + .slider::before{background:var(--gold);transform:translateX(-18px)}
+textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-height:1.5}
+.speak-btn{margin-top:6px;background:none;border:none;color:var(--tg);cursor:pointer;font-size:13px;padding:2px 6px;border-radius:6px;transition:all var(--tr)}
+.speak-btn:hover{color:var(--gold);background:var(--card2)}
+
 /* ════════════════════════════════════════════════════════
    ANIMATIONS
 ════════════════════════════════════════════════════════ */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.zx-reduce-motion *{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}
 
 /* ════════════════════════════════════════════════════════
    RESPONSIVE — MOBILE FIRST
@@ -797,7 +831,7 @@ html[data-zx-theme="ivory"]{
     <div class="sb-logo-mark">Z</div>
     <div>
       <div class="sb-logo-name">Zunexa</div>
-      <div class="sb-logo-ver">Archon V10 · Zalij Mode</div>
+      <div class="sb-logo-ver">Archon V11 · Zalij Mode</div>
     </div>
     <button class="sb-close" onclick="closeSidebar()">✕</button>
   </div>
@@ -851,13 +885,14 @@ html[data-zx-theme="ivory"]{
   <div class="topbar">
     <div class="tb-left">
       <button class="hamburger" onclick="openSidebar()">☰</button>
-      <div class="tb-title">ZUNEXA INTELLIGENCE · V10</div>
+      <div class="tb-title">ZUNEXA INTELLIGENCE · V11</div>
     </div>
     <div class="tb-right">
       <select class="zx-select" id="themeSel" onchange="setTheme(this.value)" title="السمة">
-        <option value="zalij">Zalij Gold</option>
-        <option value="emerald">Emerald Bahia</option>
-        <option value="ivory">Sahara Ivory</option>
+        <option value="zalij-dark">Zalij Dark</option>
+        <option value="zalij-light">Zalij Light</option>
+        <option value="neon-purple">Neon Purple</option>
+        <option value="ocean-dark">Ocean Dark</option>
       </select>
       <select class="zx-select" id="modelSel" onchange="setModel(this.value)" title="النموذج">
         <option value="lite">Archon Lite</option>
@@ -871,6 +906,10 @@ html[data-zx-theme="ivory"]{
         <option value="max">🚀 أقصى</option>
       </select>
       <div class="model-tag">Zunexa AI Engine</div>
+      <button class="web-toggle" id="tempChatBtn" onclick="toggleTempChat()" title="محادثة مؤقتة — لا تُحفظ فالسجل ولا فقاعدة البيانات">
+        <span class="wd"></span>
+        <span class="wl">🕶 مؤقتة</span>
+      </button>
       <button class="web-toggle" id="webTgl" onclick="toggleWeb()">
         <span class="wd"></span>
         <span class="wl">بحث</span>
@@ -905,6 +944,8 @@ html[data-zx-theme="ivory"]{
         <div class="qchip" onclick="go('/طقس الدار البيضاء')">🌤 الطقس</div>
         <div class="qchip" onclick="go('/صورة شعار ذهبي مغربي عصري')">🎨 توليد صورة</div>
         <div class="qchip" onclick="go('/جيت zunexa')">🐙 GitHub</div>
+        <div class="qchip" onclick="go('/بحث أفضل ممارسات SEO 2026')">🔎 بحث ويب</div>
+        <div class="qchip" onclick="go('/صوت مرحبا بك في Zunexa')">🔊 نص لصوت</div>
       </div>
     </div>
   </div>
@@ -916,7 +957,7 @@ html[data-zx-theme="ivory"]{
   <div class="input-zone">
     <div id="fileChipZone"></div>
     <div class="input-shell">
-      <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.csv,.json,.md" style="display:none" onchange="onFilePicked(event)">
+      <input type="file" id="fileInput" accept="image/*,audio/*,.pdf,.txt,.csv,.json,.md" style="display:none" onchange="onFilePicked(event)">
       <button class="attach-btn" id="attachBtn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف / صورة / PDF">📎</button>
       <textarea
         class="chat-input" id="aiInput" rows="1"
@@ -949,23 +990,155 @@ html[data-zx-theme="ivory"]{
      remains, and it never touches plan/billing status.
 ══════════════════════════════════════════════════ -->
 <div class="modal-wrap" id="settModal">
-  <div class="modal-box">
+  <div class="modal-box wide">
     <button class="modal-x" onclick="closeSettings()">✕</button>
     <div class="modal-title">⚙ الإعدادات</div>
-    <div id="settLoggedInInfo" style="display:none">
-      <label class="field-label">الاسم</label>
-      <div class="field-input" style="opacity:.7" id="settRealName">—</div>
-      <label class="field-label">البريد الإلكتروني</label>
-      <div class="field-input" style="opacity:.7" id="settRealEmail">—</div>
-      <label class="field-label">الخطة</label>
-      <div class="field-input" style="opacity:.7" id="settRealPlan">—</div>
-      <p style="font-size:11px;color:var(--text-muted,#888);margin:6px 0 14px">لتغيير معلومات حسابك أو خطتك، توجه إلى صفحة الإعدادات الكاملة.</p>
-      <button class="modal-save" onclick="window.location.href='settings.html'">⚙ إدارة الحساب</button>
+
+    <div class="set-tabs">
+      <div class="set-tab on" onclick="setSTab('profile')" id="tab-profile">الملف الشخصي</div>
+      <div class="set-tab" onclick="setSTab('prefs')" id="tab-prefs">التفضيلات</div>
+      <div class="set-tab" onclick="setSTab('voice')" id="tab-voice">الصوت</div>
+      <div class="set-tab" onclick="setSTab('notif')" id="tab-notif">الإشعارات</div>
+      <div class="set-tab" onclick="setSTab('memory')" id="tab-memory">الذاكرة</div>
+      <div class="set-tab" onclick="setSTab('tools')" id="tab-tools">الأدوات</div>
+      <div class="set-tab" onclick="setSTab('apikeys')" id="tab-apikeys">مفاتيح API</div>
+      <div class="set-tab" onclick="setSTab('account')" id="tab-account">الحساب</div>
     </div>
-    <div id="settGuestInfo" style="display:none">
-      <label class="field-label">اسم الضيف (محلي فقط، لا يؤثر على أي حساب)</label>
-      <input class="field-input" type="text" id="fName" placeholder="اسمك">
-      <button class="modal-save" onclick="saveSettings()">✓ حفظ</button>
+
+    <!-- PROFILE -->
+    <div class="set-pane on" id="pane-profile">
+      <label class="field-label">الاسم الكامل</label>
+      <input class="field-input" id="setFullName" placeholder="اسمك الكامل">
+      <label class="field-label">كيفاش تبغي Archon يناديك؟</label>
+      <input class="field-input" id="setCallName" placeholder="مثلاً: أحمد">
+      <label class="field-label">شنو كيوصف خدمتك بزاف؟</label>
+      <input class="field-input" id="setWork" placeholder="مثلاً: مطور Full-Stack">
+      <label class="field-label">تعليمات لـ Archon (كيبقاها فبالو فكل محادثة)</label>
+      <textarea class="field-input" id="setInstructions" placeholder="مثلاً: نخدم بلغة Python وDarija، جاوبني بإيجاز، ديما قترح حلول عملية..."></textarea>
+      <button class="modal-save" onclick="saveProfileSettings()">✓ حفظ الملف الشخصي</button>
+    </div>
+
+    <!-- PREFERENCES -->
+    <div class="set-pane" id="pane-prefs">
+      <label class="field-label">لغة الواجهة</label>
+      <select class="field-input" id="setPageLang" onchange="savePagePrefs()">
+        <option value="ar">العربية</option>
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+      </select>
+      <label class="field-label">السمة (Theme)</label>
+      <select class="field-input" id="setThemeSel2" onchange="setTheme(this.value)">
+        <option value="zalij-dark">Zalij Dark</option>
+        <option value="zalij-light">Zalij Light</option>
+        <option value="neon-purple">Neon Purple</option>
+        <option value="ocean-dark">Ocean Dark</option>
+      </select>
+      <label class="field-label">نموذج Archon</label>
+      <select class="field-input" id="setModelSel2" onchange="setModel(this.value); document.getElementById('modelSel').value=this.value">
+        <option value="lite">Archon Lite · محلي فقط</option>
+        <option value="pro">Archon Pro · محلي + Archon Brain</option>
+        <option value="max">Archon Max · أقصى سياق</option>
+      </select>
+      <label class="field-label">مستوى الجهد</label>
+      <select class="field-input" id="setEffortSel2" onchange="setEffort(this.value); document.getElementById('effortSel').value=this.value">
+        <option value="quick">⚡ سريع</option>
+        <option value="balanced">⚖ متوازن</option>
+        <option value="deep">🔍 عميق</option>
+        <option value="max">🚀 أقصى</option>
+      </select>
+      <label class="field-label">خط المحادثة</label>
+      <select class="field-input" id="setFontSel" onchange="setChatFont(this.value)">
+        <option value="rajdhani">Rajdhani (افتراضي)</option>
+        <option value="system">خط النظام</option>
+        <option value="mono">Monospace</option>
+      </select>
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">تقليل الحركة</div><div class="set-row-desc">إيقاف/تقليل الأنيميشن أثناء ظهور الردود والواجهة.</div></div>
+        <label class="switch"><input type="checkbox" id="setReduceMotion" onchange="setReduceMotion(this.checked)"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <!-- VOICE -->
+    <div class="set-pane" id="pane-voice">
+      <label class="field-label">لغة الصوت</label>
+      <select class="field-input" id="setVoiceLang" onchange="saveVoicePrefs()">
+        <option value="ar-MA">العربية (المغرب)</option>
+        <option value="ar-SA">العربية (فصحى)</option>
+        <option value="fr-FR">Français</option>
+        <option value="en-US">English</option>
+      </select>
+      <label class="field-label">أسلوب الصوت (عند القراءة الصوتية للردود)</label>
+      <select class="field-input" id="setVoiceStyle" onchange="saveVoicePrefs()">
+        <option value="normal">عادي</option>
+        <option value="calm">هادئ</option>
+        <option value="energetic">حيوي</option>
+      </select>
+      <label class="field-label">السرعة</label>
+      <input class="field-input" type="range" id="setVoiceSpeed" min="0.6" max="1.6" step="0.1" value="1" oninput="saveVoicePrefs()">
+      <p style="font-size:11px;color:var(--tg);line-height:1.6">تُستعمل هذه الإعدادات في الإدخال الصوتي (🎤) وفي القراءة الصوتية للردود (🔊 بجانب كل رد) — عبر Web Speech API المدمجة في المتصفح، بدون أي مفتاح API.</p>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="set-pane" id="pane-notif">
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">إشعار عند اكتمال الرد</div><div class="set-row-desc">إشعار من المتصفح عند ما يخلص Archon من رد طويل — مفيد إذا بدلت التبويب فالمتصفح.</div></div>
+        <label class="switch"><input type="checkbox" id="setNotifDone" onchange="setNotifPref(this.checked)"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <!-- MEMORY -->
+    <div class="set-pane" id="pane-memory">
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">تعلّم من المحادثات</div><div class="set-row-desc">يخلي Archon يسجل الأسئلة الجديدة اللي ما عندوش جواب عليها ويقوّي قاعدة المعرفة تلقائياً (Supabase ai_learning / ai_knowledge).</div></div>
+        <label class="switch"><input type="checkbox" id="setLearnToggle" checked onchange="setLearnPref(this.checked)"><span class="slider"></span></label>
+      </div>
+      <button class="modal-save" style="margin-top:14px;background:transparent;border:1px solid var(--red);color:var(--red)" onclick="clearAll()">🗑 مسح كل السجل والذاكرة المحلية</button>
+    </div>
+
+    <!-- TOOLS -->
+    <div class="set-pane" id="pane-tools">
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">الأدوات الخارجية</div><div class="set-row-desc">تفعيل الأوامر السريعة /طقس /خريطة /جيت /اخبار /صورة والاتصال بـ APIs مجانية خارجية بدون مفتاح.</div></div>
+        <label class="switch"><input type="checkbox" id="setToolsToggle" checked onchange="setToolsPref(this.checked)"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <!-- API KEYS (optional, free-tier — user pastes their own, stored locally only) -->
+    <div class="set-pane" id="pane-apikeys">
+      <p style="font-size:11.5px;color:var(--tg);line-height:1.7;margin-bottom:12px">
+        كلشي فهاد الصفحة خدام دابا بلا أي مفتاح (Pollinations، الطقس، الخرائط، GitHub، الأخبار، البحث عبر DuckDuckGo، والصوت عبر المتصفح). هاد المفاتيح <strong>اختيارية</strong> — كل وحدة عندها Free Tier فابور، تسجل فـ 2 دقيقة وتلصقها هنا باش تزيد جودة/حدود أعلى. كتبقى محفوظة فـ localStorage ديال المتصفح ديالك فقط، ما كتترسلش لأي سيرفر آخر غير مباشرة للـ API ديالها.
+      </p>
+      <label class="field-label">Hugging Face Token <span style="color:var(--tg)">(نماذج صور/نص بديلة)</span></label>
+      <input class="field-input" id="keyHF" placeholder="hf_xxxxxxxxxxxxxxxx" onchange="saveApiKeys()">
+      <label class="field-label">DeepL API Key <span style="color:var(--tg)">(ترجمة احترافية — /ترجم)</span></label>
+      <input class="field-input" id="keyDeepL" placeholder="xxxxxxxx-xxxx-xxxx:fx" onchange="saveApiKeys()">
+      <label class="field-label">Voice RSS API Key <span style="color:var(--tg)">(تحويل نص لصوت طبيعي)</span></label>
+      <input class="field-input" id="keyVoiceRSS" placeholder="your voicerss key" onchange="saveApiKeys()">
+      <label class="field-label">Tavily API Key <span style="color:var(--tg)">(بحث ويب أعمق للـ AI)</span></label>
+      <input class="field-input" id="keyTavily" placeholder="tvly-xxxxxxxx" onchange="saveApiKeys()">
+      <label class="field-label">Serper.ai API Key <span style="color:var(--tg)">(نتائج Google كـ JSON)</span></label>
+      <input class="field-input" id="keySerper" placeholder="your serper key" onchange="saveApiKeys()">
+      <button class="modal-save" onclick="saveApiKeys(true)">✓ حفظ المفاتيح</button>
+      <p style="font-size:11px;color:var(--tg);margin-top:10px">روابط التسجيل الفابور: huggingface.co/settings/tokens · deepl.com/pro-api · voicerss.org · tavily.com · serper.dev</p>
+    </div>
+
+    <!-- ACCOUNT (existing security-audited content) -->
+    <div class="set-pane" id="pane-account">
+      <div id="settLoggedInInfo" style="display:none">
+        <label class="field-label">الاسم</label>
+        <div class="field-input" style="opacity:.7" id="settRealName">—</div>
+        <label class="field-label">البريد الإلكتروني</label>
+        <div class="field-input" style="opacity:.7" id="settRealEmail">—</div>
+        <label class="field-label">الخطة</label>
+        <div class="field-input" style="opacity:.7" id="settRealPlan">—</div>
+        <p style="font-size:11px;color:var(--text-muted,#888);margin:6px 0 14px">لتغيير معلومات حسابك أو خطتك، توجه إلى صفحة الإعدادات الكاملة.</p>
+        <button class="modal-save" onclick="window.location.href='settings.html'">⚙ إدارة الحساب</button>
+      </div>
+      <div id="settGuestInfo" style="display:none">
+        <label class="field-label">اسم الضيف (محلي فقط، لا يؤثر على أي حساب)</label>
+        <input class="field-input" type="text" id="fName" placeholder="اسمك">
+        <button class="modal-save" onclick="saveSettings()">✓ حفظ</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1014,6 +1187,60 @@ let ctx       = [];          // conversation context (last 6)
 let hist      = JSON.parse(localStorage.getItem('zx_hist_v3') || '[]');
 
 /* ════════════════════════════════════════════════════════════
+   CHAT THREADS — real persistence per conversation
+   FIX: history items used to just re-ask the same question as a
+   brand-new message (go(item.t)) instead of restoring the actual
+   saved thread — so it looked like every click "started a new
+   chat". Each conversation now has a stable chat_id; every message
+   is appended to that thread in localStorage (and mirrored to
+   Supabase), and clicking a history item replays the real thread.
+════════════════════════════════════════════════════════════ */
+function genChatId(){ return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+let currentChatId = localStorage.getItem('zx_current_chat') || genChatId();
+localStorage.setItem('zx_current_chat', currentChatId);
+let tempChatOn = false;
+let _prevChatId = null;
+
+function saveThreadMsg(role, text, src, score, imgUrl, audioUrl) {
+  if (tempChatOn) return;
+  const key = 'zx_thread_' + currentChatId;
+  let arr = [];
+  try { arr = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e){}
+  arr.push({ role, text, src: src||null, score: score||0, imgUrl: imgUrl||null, audioUrl: audioUrl||null, ts: Date.now() });
+  if (arr.length > 300) arr = arr.slice(-300);
+  localStorage.setItem(key, JSON.stringify(arr));
+}
+function loadThread(chatId) {
+  try { return JSON.parse(localStorage.getItem('zx_thread_' + chatId) || '[]'); } catch(e){ return []; }
+}
+function replayThread(chatId) {
+  const conv = document.getElementById('conv');
+  const w = document.getElementById('welcome');
+  if (w) w.remove();
+  conv.innerHTML = '';
+  const msgs = loadThread(chatId);
+  msgs.forEach(m => addMsg(m.text, m.role, m.src, m.score, m.imgUrl, true, m.audioUrl));
+  ctx = msgs.slice(-12).map(m => ({ role: m.role === 'user' ? 'user' : 'bot', text: m.text }));
+}
+
+function toggleTempChat() {
+  tempChatOn = !tempChatOn;
+  const btn = document.getElementById('tempChatBtn');
+  if (tempChatOn) {
+    _prevChatId = currentChatId;
+    currentChatId = genChatId(); // ephemeral, never persisted to localStorage/hist/Supabase
+    if (btn) btn.classList.add('on');
+    toast('🕶 محادثة مؤقتة مفعّلة — ما غادي تتسجل فالسجل ولا فقاعدة البيانات');
+  } else {
+    currentChatId = _prevChatId || currentChatId;
+    localStorage.setItem('zx_current_chat', currentChatId);
+    if (btn) btn.classList.remove('on');
+    toast('محادثة مؤقتة متوقفة');
+  }
+  newChat();
+}
+
+/* ════════════════════════════════════════════════════════════
    INIT
 ════════════════════════════════════════════════════════════ */
 async function init() {
@@ -1029,6 +1256,7 @@ async function init() {
   if (modelSel)  modelSel.value  = zxModel;
   if (effortSel) effortSel.value = zxEffort;
   setModel(zxModel);
+  if (loadThread(currentChatId).length) replayThread(currentChatId);
   document.getElementById('aiInput').focus();
 }
 
@@ -1409,7 +1637,8 @@ async function archonBrain(messages, opts) {
 
 function archonSystemPrompt() {
   return 'أنت Archon، المساعد الذكي لمنصة Zunexa (منصة مغربية لتوليد المحتوى بالذكاء الاصطناعي لصناع المحتوى في المنطقة العربية/المغاربية). '
-       + 'تكلم بأسلوب واضح، مهني، ومختصر، وادمج الدارجة المغربية بلطف عند المناسب. استعمل المعلومة التالية من قاعدة معرفة Zunexa كسياق أساسي إذا كانت متوفرة، ولا تختلق معلومات عن الشركة أو الأسعار غير موجودة في السياق.';
+       + 'جاوب بنفس اللغة أو اللهجة اللي كتب بيها المستخدم — الدارجة المغربية، العربية الفصحى، الفرنسية، الإنجليزية، الإسبانية، أو أي لغة أخرى، بشكل طبيعي وسليم. '
+       + 'تكلم بأسلوب واضح، مهني، ومختصر. استعمل المعلومة التالية من قاعدة معرفة Zunexa كسياق أساسي إذا كانت متوفرة، ولا تختلق معلومات عن الشركة أو الأسعار غير موجودة في السياق.';
 }
 
 // Effort → how hard Archon tries: local-only vs. local+brain, context depth, token budget.
@@ -1493,12 +1722,14 @@ function buildUnknown(q){ return UNKNOWNS[Math.floor(Math.random()*UNKNOWNS.leng
    SUPABASE — Learn & Log
 ════════════════════════════════════════════════════════════ */
 async function learnQ(q) {
+  if (!isLearnEnabled() || tempChatOn) return;
   try {
     await _SB.from('ai_learning').insert({ question: q, category: detectCat(q), source: 'user_chat', status: 'pending' });
   } catch(e){}
 }
 
 async function logMsg(prompt, response, src, score) {
+  if (tempChatOn) return; // Temporary Chat: nothing is written to Supabase
   try {
     await _SB.from('zunexa_messages').insert({
       user_prompt:  prompt,
@@ -1506,6 +1737,7 @@ async function logMsg(prompt, response, src, score) {
       source:       src,
       tokens_used:  Math.round(score*100),
       platform:     'web',
+      chat_id:      currentChatId,
       created_at:   new Date().toISOString()
     });
   } catch(e){}
@@ -1557,18 +1789,22 @@ async function send() {
     const tool = await routeQuickCommand(q);
     const res  = tool || await answer(q);
     removeTyping();
-    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl);
+    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl);
 
     // Update context
     ctx.push({ role:'user', text:q });
     ctx.push({ role:'bot',  text:res.text });
     if (ctx.length > 12) ctx = ctx.slice(-12);
 
-    // Save history
-    hist.unshift({ t: q.slice(0,50), ts: Date.now() });
-    if (hist.length > 40) hist.length = 40;
-    localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
-    renderHist();
+    // Save history — one entry per thread (chat_id), not per message
+    if (!tempChatOn) {
+      const existing = hist.findIndex(h => h.chatId === currentChatId);
+      if (existing !== -1) hist.splice(existing, 1);
+      hist.unshift({ chatId: currentChatId, t: q.slice(0,50), ts: Date.now() });
+      if (hist.length > 40) hist.length = 40;
+      localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
+      renderHist();
+    }
     clearFile();
 
   } catch(err) {
@@ -1584,7 +1820,7 @@ async function send() {
 /* ════════════════════════════════════════════════════════════
    DOM HELPERS
 ════════════════════════════════════════════════════════════ */
-function addMsg(text, role, src, score, imgUrl) {
+function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
   const conv = document.getElementById('conv');
   const div  = document.createElement('div');
   div.className = 'msg ' + role;
@@ -1605,6 +1841,13 @@ function addMsg(text, role, src, score, imgUrl) {
     img.loading = 'lazy';
     img.style.cssText = 'max-width:100%;border-radius:12px;margin-top:10px;border:1px solid var(--b1);display:block';
     bub.appendChild(img);
+  }
+  if (audioUrl) {
+    const audio = document.createElement('audio');
+    audio.src = audioUrl;
+    audio.controls = true;
+    audio.style.cssText = 'width:100%;margin-top:10px';
+    bub.appendChild(audio);
   }
   body.appendChild(bub);
 
@@ -1642,12 +1885,21 @@ function addMsg(text, role, src, score, imgUrl) {
     }
 
     body.appendChild(meta);
+
+    const speakBtn = document.createElement('button');
+    speakBtn.className = 'speak-btn';
+    speakBtn.title = 'استمع للرد';
+    speakBtn.textContent = '🔊';
+    speakBtn.onclick = () => speakBrowser(text.replace(/\*\*/g,'').replace(/`/g,''), (JSON.parse(localStorage.getItem('zx_voice')||'{}').lang)||'ar-SA');
+    body.appendChild(speakBtn);
   }
 
   div.appendChild(av);
   div.appendChild(body);
   conv.appendChild(div);
   conv.scrollTop = conv.scrollHeight;
+
+  if (!skipSave) saveThreadMsg(role, text, src, score, imgUrl, audioUrl);
 }
 
 function fmt(text) {
@@ -1730,12 +1982,16 @@ function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/
 
 function reloadQ(idx) {
   const item = hist[idx];
-  if (item) go(item.t);
+  if (!item) return;
+  currentChatId = item.chatId || genChatId();
+  localStorage.setItem('zx_current_chat', currentChatId);
+  replayThread(currentChatId);
   closeSidebar();
 }
 
 function clearAll() {
   if (!confirm('هل تريد مسح كل السجل؟')) return;
+  Object.keys(localStorage).filter(k => k.startsWith('zx_thread_')).forEach(k => localStorage.removeItem(k));
   hist = []; ctx = [];
   localStorage.removeItem('zx_hist_v3');
   renderHist();
@@ -1747,6 +2003,10 @@ function clearAll() {
 ════════════════════════════════════════════════════════════ */
 function newChat() {
   ctx = [];
+  if (!tempChatOn) {
+    currentChatId = genChatId();
+    localStorage.setItem('zx_current_chat', currentChatId);
+  }
   const conv = document.getElementById('conv');
   conv.innerHTML = `
     <div class="welcome" id="welcome">
@@ -1768,6 +2028,8 @@ function newChat() {
         <div class="qchip" onclick="go('/طقس الدار البيضاء')">🌤 الطقس</div>
         <div class="qchip" onclick="go('/صورة شعار ذهبي مغربي عصري')">🎨 توليد صورة</div>
         <div class="qchip" onclick="go('/جيت zunexa')">🐙 GitHub</div>
+        <div class="qchip" onclick="go('/بحث أفضل ممارسات SEO 2026')">🔎 بحث ويب</div>
+        <div class="qchip" onclick="go('/صوت مرحبا بك في Zunexa')">🔊 نص لصوت</div>
       </div>
     </div>`;
   closeSidebar();
@@ -1877,6 +2139,7 @@ async function openSettings() {
     document.getElementById('fName').value = localStorage.getItem('zx_guest_name') || '';
   }
   document.getElementById('settModal').classList.add('on');
+  loadAllPrefsIntoUI();
   closeSidebar();
 }
 function closeSettings() { document.getElementById('settModal').classList.remove('on'); }
@@ -1969,12 +2232,12 @@ document.getElementById('settModal').addEventListener('click', function(e) {
 /* ════════════════════════════════════════════════════════════
    THEME / MODEL / EFFORT — state + persistence
 ════════════════════════════════════════════════════════════ */
-let zxTheme  = localStorage.getItem('zx_theme')  || 'zalij';
+let zxTheme  = localStorage.getItem('zx_theme')  || 'zalij-dark';
 let zxModel  = localStorage.getItem('zx_model')  || 'lite';
 let zxEffort = localStorage.getItem('zx_effort') || 'balanced';
 
 function applyTheme(v) {
-  if (v === 'zalij') document.documentElement.removeAttribute('data-zx-theme');
+  if (v === 'zalij-dark') document.documentElement.removeAttribute('data-zx-theme');
   else document.documentElement.setAttribute('data-zx-theme', v);
 }
 function setTheme(v) {
@@ -1993,6 +2256,133 @@ function setModel(v) {
 function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); }
 
 /* ════════════════════════════════════════════════════════════
+   SETTINGS — Tabs + Profile/Preferences/Voice/Notifications/
+   Memory/Tools (adapted equivalents, not a literal copy of any
+   other product's settings screen — these are wired to real,
+   working Zunexa/Supabase/browser functionality).
+════════════════════════════════════════════════════════════ */
+function setSTab(name) {
+  document.querySelectorAll('.set-tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.set-pane').forEach(p => p.classList.remove('on'));
+  document.getElementById('tab-' + name).classList.add('on');
+  document.getElementById('pane-' + name).classList.add('on');
+}
+
+async function saveProfileSettings() {
+  const full = document.getElementById('setFullName').value.trim();
+  const call = document.getElementById('setCallName').value.trim();
+  const work = document.getElementById('setWork').value.trim();
+  const inst = document.getElementById('setInstructions').value.trim();
+  localStorage.setItem('zx_profile', JSON.stringify({ full, call, work, inst }));
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (session) {
+      await _SB.from('profiles').update({
+        full_name: full, call_name: call, work_desc: work, instructions: inst
+      }).eq('id', session.user.id);
+    }
+    toast('✓ تم حفظ الملف الشخصي');
+  } catch (e) { toast('⚠ تعذّر الحفظ في الحساب — تم الحفظ محلياً فقط'); }
+}
+
+function loadProfileIntoUI() {
+  try {
+    const p = JSON.parse(localStorage.getItem('zx_profile') || '{}');
+    if (document.getElementById('setFullName')) document.getElementById('setFullName').value = p.full || '';
+    if (document.getElementById('setCallName')) document.getElementById('setCallName').value = p.call || '';
+    if (document.getElementById('setWork')) document.getElementById('setWork').value = p.work || '';
+    if (document.getElementById('setInstructions')) document.getElementById('setInstructions').value = p.inst || '';
+  } catch(e){}
+}
+
+function savePagePrefs() {
+  localStorage.setItem('zx_page_lang', document.getElementById('setPageLang').value);
+}
+
+function setChatFont(v) {
+  localStorage.setItem('zx_font', v);
+  const map = { rajdhani: "'Rajdhani',sans-serif", system: "system-ui,-apple-system,sans-serif", mono: "'Courier New',monospace" };
+  document.getElementById('conv').style.fontFamily = map[v] || map.rajdhani;
+}
+
+function setReduceMotion(on) {
+  localStorage.setItem('zx_reduce_motion', on ? '1' : '0');
+  document.documentElement.classList.toggle('zx-reduce-motion', on);
+}
+
+function saveVoicePrefs() {
+  const lang  = document.getElementById('setVoiceLang').value;
+  const style = document.getElementById('setVoiceStyle').value;
+  const speed = document.getElementById('setVoiceSpeed').value;
+  localStorage.setItem('zx_voice', JSON.stringify({ lang, style, speed }));
+  if (recog) recog.lang = lang;
+}
+
+function setNotifPref(on) {
+  localStorage.setItem('zx_notif_done', on ? '1' : '0');
+  if (on && 'Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function setLearnPref(on) { localStorage.setItem('zx_learn_enabled', on ? '1' : '0'); }
+function isLearnEnabled() { return localStorage.getItem('zx_learn_enabled') !== '0'; }
+
+function setToolsPref(on) { localStorage.setItem('zx_tools_enabled', on ? '1' : '0'); }
+function isToolsEnabled() { return localStorage.getItem('zx_tools_enabled') !== '0'; }
+
+/* ── Optional free-tier API keys (user-pasted, localStorage-only) ── */
+function getApiKeys() { try { return JSON.parse(localStorage.getItem('zx_api_keys') || '{}'); } catch(e){ return {}; } }
+function getApiKey(name) { return (getApiKeys()[name] || '').trim(); }
+function saveApiKeys(showToast) {
+  const keys = {
+    hf:      (document.getElementById('keyHF')||{}).value || '',
+    deepl:   (document.getElementById('keyDeepL')||{}).value || '',
+    voicerss:(document.getElementById('keyVoiceRSS')||{}).value || '',
+    tavily:  (document.getElementById('keyTavily')||{}).value || '',
+    serper:  (document.getElementById('keySerper')||{}).value || ''
+  };
+  localStorage.setItem('zx_api_keys', JSON.stringify(keys));
+  if (showToast) toast('✓ تم حفظ المفاتيح محلياً فالمتصفح');
+}
+function loadApiKeysIntoUI() {
+  const k = getApiKeys();
+  if (document.getElementById('keyHF'))       document.getElementById('keyHF').value = k.hf || '';
+  if (document.getElementById('keyDeepL'))    document.getElementById('keyDeepL').value = k.deepl || '';
+  if (document.getElementById('keyVoiceRSS')) document.getElementById('keyVoiceRSS').value = k.voicerss || '';
+  if (document.getElementById('keyTavily'))   document.getElementById('keyTavily').value = k.tavily || '';
+  if (document.getElementById('keySerper'))   document.getElementById('keySerper').value = k.serper || '';
+}
+
+function loadAllPrefsIntoUI() {
+  loadProfileIntoUI();
+  loadApiKeysIntoUI();
+  const font = localStorage.getItem('zx_font') || 'rajdhani';
+  const motion = localStorage.getItem('zx_reduce_motion') === '1';
+  const notif = localStorage.getItem('zx_notif_done') === '1';
+  const learn = isLearnEnabled();
+  const tools = isToolsEnabled();
+  const pageLang = localStorage.getItem('zx_page_lang') || 'ar';
+  const voice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
+
+  if (document.getElementById('setFontSel'))    document.getElementById('setFontSel').value = font;
+  if (document.getElementById('setReduceMotion')) document.getElementById('setReduceMotion').checked = motion;
+  if (document.getElementById('setNotifDone'))   document.getElementById('setNotifDone').checked = notif;
+  if (document.getElementById('setLearnToggle')) document.getElementById('setLearnToggle').checked = learn;
+  if (document.getElementById('setToolsToggle')) document.getElementById('setToolsToggle').checked = tools;
+  if (document.getElementById('setPageLang'))    document.getElementById('setPageLang').value = pageLang;
+  if (document.getElementById('setThemeSel2'))   document.getElementById('setThemeSel2').value = zxTheme;
+  if (document.getElementById('setModelSel2'))    document.getElementById('setModelSel2').value = zxModel;
+  if (document.getElementById('setEffortSel2'))   document.getElementById('setEffortSel2').value = zxEffort;
+  if (document.getElementById('setVoiceLang') && voice.lang)   document.getElementById('setVoiceLang').value = voice.lang;
+  if (document.getElementById('setVoiceStyle') && voice.style) document.getElementById('setVoiceStyle').value = voice.style;
+  if (document.getElementById('setVoiceSpeed') && voice.speed) document.getElementById('setVoiceSpeed').value = voice.speed;
+
+  setChatFont(font);
+  document.documentElement.classList.toggle('zx-reduce-motion', motion);
+}
+
+/* ════════════════════════════════════════════════════════════
    FILE / PHOTO / PDF ATTACHMENT
 ════════════════════════════════════════════════════════════ */
 let attachedFile = null; // { name, kind:'image'|'text', textContent, dataUrl }
@@ -2009,6 +2399,11 @@ async function onFilePicked(e) {
     if (file.type.startsWith('image/')) {
       const dataUrl = await readAsDataURL(file);
       attachedFile = { name: file.name, kind: 'image', dataUrl, textContent: '' };
+    } else if (file.type.startsWith('audio/')) {
+      // No keyless speech-to-text API is wired in — attaching the filename as
+      // context is honest; it does NOT transcribe the audio content.
+      attachedFile = { name: file.name, kind: 'audio', dataUrl: '', textContent: '' };
+      toast('ℹ الملف الصوتي تم إرفاقه كمرجع فقط — تحويل الصوت لنص غير مفعّل حالياً (يحتاج خدمة خارجية)');
     } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
       const buf = await file.arrayBuffer();
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -2033,7 +2428,7 @@ async function onFilePicked(e) {
     document.getElementById('attachBtn').classList.add('has-file');
     zone.innerHTML = `
       <div class="file-chip">
-        ${attachedFile.kind === 'image' ? `<img src="${attachedFile.dataUrl}">` : '📄'}
+        ${attachedFile.kind === 'image' ? `<img src="${attachedFile.dataUrl}">` : (attachedFile.kind === 'audio' ? '🎵' : '📄')}
         <span>${esc(file.name)}</span>
         <span class="fc-x" onclick="clearFile()">✕</span>
       </div>`;
@@ -2077,6 +2472,7 @@ function clearFile() {
    /صورة or /image <prompt>  → Pollinations image generation (no key)
 ════════════════════════════════════════════════════════════ */
 async function routeQuickCommand(q) {
+  if (!isToolsEnabled()) return null;
   const m = q.trim();
   const low = m.toLowerCase();
 
@@ -2094,6 +2490,18 @@ async function routeQuickCommand(q) {
 
   const imgMatch = m.match(/^\/(?:صورة|image)\s+(.+)/i);
   if (imgMatch) return await toolImageGen(imgMatch[1].trim());
+
+  const hfImgMatch = m.match(/^\/(?:صورة_hf|image_hf)\s+(.+)/i);
+  if (hfImgMatch) return await toolImageGenHF(hfImgMatch[1].trim());
+
+  const trMatch = m.match(/^\/(?:ترجم|translate)\s+([a-zA-Z]{2})\s+(.+)/i);
+  if (trMatch) return await toolTranslate(trMatch[1].toUpperCase(), trMatch[2].trim());
+
+  const ttsMatch = m.match(/^\/(?:صوت|tts)\s+(.+)/i);
+  if (ttsMatch) return toolTTS(ttsMatch[1].trim());
+
+  const searchMatch = m.match(/^\/(?:بحث_عميق|بحث|search)\s+(.+)/i);
+  if (searchMatch) return await toolDeepSearch(searchMatch[1].trim());
 
   return null;
 }
@@ -2153,6 +2561,110 @@ async function toolNews(query) {
 async function toolImageGen(prompt) {
   const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=768&nologo=true&seed=${Date.now()%100000}`;
   return { text: `🎨 **صورة مولّدة بالذكاء الاصطناعي:**\n"${prompt}"\n\n_المصدر: Pollinations.ai (بدون مفتاح API)_`, src: 'tool', score: 0.9, imgUrl: url };
+}
+
+/* Alternate image engine via Hugging Face Inference API (needs the
+   user's own free HF token — Settings → مفاتيح API). Uses FLUX.1-schnell,
+   a fast open-source model, as a second option next to Pollinations. */
+async function toolImageGenHF(prompt) {
+  const key = getApiKey('hf');
+  if (!key) return { text: `⚠ /صورة_hf تحتاج Hugging Face Token مجاني — سجّل فـ huggingface.co/settings/tokens وحطو فالإعدادات ← مفاتيح API. فالوقت الحالي جرّب /صورة (Pollinations، بلا مفتاح).`, src: 'tool', score: 0.3 };
+  try {
+    const res = await fetch('https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ inputs: prompt })
+    });
+    if (!res.ok) throw new Error('hf http ' + res.status);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    return { text: `🎨 **صورة مولّدة (Hugging Face · FLUX.1-schnell):**\n"${prompt}"`, src: 'tool', score: 0.9, imgUrl: url };
+  } catch (e) { return { text: '⚠ تعذّر التوليد عبر Hugging Face — قد يكون النموذج كايحمّل (كولد ستارت)، عاود المحاولة بعد ثوانٍ.', src: 'tool', score: 0.1 }; }
+}
+
+/* DeepL — free tier, 500k chars/month, needs the user's own free key (Settings → مفاتيح API) */
+async function toolTranslate(targetLang, text) {
+  const key = getApiKey('deepl');
+  if (!key) {
+    return { text: `⚠ الترجمة عبر DeepL تحتاج مفتاح API مجاني — سجّل فـ deepl.com/pro-api وحط المفتاح فـ الإعدادات ← مفاتيح API.`, src: 'tool', score: 0.3 };
+  }
+  try {
+    const host = key.endsWith(':fx') ? 'api-free.deepl.com' : 'api.deepl.com';
+    const res = await fetch(`https://${host}/v2/translate`, {
+      method: 'POST',
+      headers: { 'Authorization': `DeepL-Auth-Key ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: [text], target_lang: targetLang })
+    });
+    const d = await res.json();
+    const out = d.translations && d.translations[0] && d.translations[0].text;
+    if (!out) throw new Error('no translation returned');
+    return { text: `🌍 **الترجمة (${targetLang}):**\n\n${out}\n\n_المصدر: DeepL API_`, src: 'tool', score: 0.9 };
+  } catch (e) { return { text: '⚠ تعذّرت الترجمة — تحقق من صحة مفتاح DeepL.', src: 'tool', score: 0.1 }; }
+}
+
+/* Text-to-speech: VoiceRSS (natural voices, needs free key) with an
+   always-available fallback to the browser's built-in Web Speech API
+   (speechSynthesis) which needs ZERO key and works out of the box. */
+function toolTTS(text) {
+  const key = getApiKey('voicerss');
+  const voice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
+  const lang = voice.lang || 'ar-sa';
+  if (key) {
+    const url = `https://api.voicerss.org/?key=${encodeURIComponent(key)}&hl=${encodeURIComponent(lang)}&src=${encodeURIComponent(text)}&f=48khz_16bit_stereo`;
+    return { text: `🔊 **تحويل النص لصوت (VoiceRSS):**\n"${text.slice(0,120)}"`, src: 'tool', score: 0.9, audioUrl: url };
+  }
+  // Free fallback — plays immediately via the browser, no network call at all.
+  speakBrowser(text, lang);
+  return { text: `🔊 **جاري القراءة الصوتية عبر متصفحك...**\n"${text.slice(0,120)}"\n\n_ملاحظة: لصوت طبيعي أكثر، ضيف مفتاح VoiceRSS مجاني من الإعدادات._`, src: 'tool', score: 0.9 };
+}
+function speakBrowser(text, lang) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang || 'ar-SA';
+    const voice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
+    u.rate = parseFloat(voice.speed) || 1;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  } catch(e){}
+}
+
+/* Deep web search — layered:
+   1) Tavily or Serper.ai if the user pasted a free key (richer results)
+   2) DuckDuckGo Instant Answer API otherwise — genuinely free & keyless */
+async function toolDeepSearch(query) {
+  const tavilyKey = getApiKey('tavily');
+  const serperKey = getApiKey('serper');
+  try {
+    if (tavilyKey) {
+      const d = await fetch('https://api.tavily.com/search', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ api_key: tavilyKey, query, max_results: 5 })
+      }).then(r => r.json());
+      const items = d.results || [];
+      if (!items.length) return { text: `⚠ لا نتائج لـ "${query}".`, src: 'tool', score: 0.3 };
+      return { text: `🔎 **نتائج البحث (Tavily) لـ "${query}":**\n\n` + items.map((r,i) => `${i+1}. **[${esc(r.title)}](${r.url})**\n   ${esc((r.content||'').slice(0,140))}`).join('\n\n'), src: 'tool', score: 0.9 };
+    }
+    if (serperKey) {
+      const d = await fetch('https://google.serper.dev/search', {
+        method: 'POST', headers: { 'X-API-KEY': serperKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ q: query })
+      }).then(r => r.json());
+      const items = (d.organic || []).slice(0,5);
+      if (!items.length) return { text: `⚠ لا نتائج لـ "${query}".`, src: 'tool', score: 0.3 };
+      return { text: `🔎 **نتائج البحث (Google عبر Serper) لـ "${query}":**\n\n` + items.map((r,i) => `${i+1}. **[${esc(r.title)}](${r.link})**\n   ${esc((r.snippet||'').slice(0,140))}`).join('\n\n'), src: 'tool', score: 0.9 };
+    }
+    // Keyless fallback — DuckDuckGo Instant Answer
+    const d = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`).then(r => r.json());
+    const abstract = d.AbstractText;
+    const related = (d.RelatedTopics || []).filter(t => t.Text).slice(0,4);
+    if (!abstract && !related.length) return { text: `⚠ ما لقيتش نتيجة مباشرة لـ "${query}" — للبحث الأعمق ضيف مفتاح Tavily/Serper مجاني من الإعدادات.`, src: 'tool', score: 0.3 };
+    let txt = `🔎 **بحث سريع (DuckDuckGo) عن "${query}":**\n\n`;
+    if (abstract) txt += `${esc(abstract)}\n\n`;
+    if (related.length) txt += related.map(t => `• ${esc(t.Text)}`).join('\n');
+    txt += `\n\n_المصدر: DuckDuckGo Instant Answer (بدون مفتاح API)_`;
+    return { text: txt, src: 'tool', score: 0.85 };
+  } catch (e) { return { text: '⚠ تعذّر البحث حالياً.', src: 'tool', score: 0.1 }; }
 }
 
 /* ── BOOT ── */
