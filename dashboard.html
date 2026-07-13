@@ -1963,9 +1963,9 @@ const ZX_RATE = (function(){
              copy-paste duplicate of the Billing link below, so it silently opened
              the wrong page. Routed to the dedicated settings.html instead, matching
              the sidebar's own Settings nav item. -->
-        <a href="#" onclick="window.location.href='settings.html'">⚙ &nbsp;Account Settings</a>
+        <a href="#" onclick="window.location.href='about.html'">⚙ &nbsp;About owner</a>
         <a href="#" onclick="window.location.href='pro_accounts.html'">◈ &nbsp;Billing</a>
-        <a href="#" onclick="showPage('api',null);closeDropdown()">⌖ &nbsp;API Keys</a>
+        <a href="#" onclick="windows.location.href='ai.html'">⌖ &nbsp;AI archon</a>
         <a href="#" onclick="window.location.href='landing.html'">📖 &nbsp;Documentation</a>
         <div class="dropdown-divider"></div>
         <a href="#" style="color:var(--red)" onclick="signOut()">✕ &nbsp;Sign Out</a>
@@ -2311,29 +2311,6 @@ const ZX_RATE = (function(){
   </div>
 </div>
 
-<!-- Upgrade Modal -->
-<div class="modal-overlay" id="upgradeModal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <div class="modal-title">⬆ Upgrade Your Plan</div>
-      <button class="modal-close" onclick="closeModal('upgradeModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <p style="color:var(--text-grey);font-size:14px;margin-bottom:16px">You're about to upgrade to the <strong class="text-gold">Senior Plan</strong> at <strong class="text-white">$79/month</strong>. Confirm payment method below.</p>
-      <div class="form-field">
-        <label>Select Card</label>
-        <select name="upgrade_card">
-          <option>Visa •••• 4242 (Saved)</option>
-          <option>Add new card...</option>
-        </select>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('upgradeModal')">Cancel</button>
-      <button class="btn btn-gold" onclick="processUpgrade()">✦ Confirm Upgrade — $79/mo</button>
-    </div>
-  </div>
-</div>
 
 <!-- Regen API Key Modal -->
 <div class="modal-overlay" id="regen-modal">
