@@ -5,7 +5,7 @@
   ║  Author  : ahmed_dev_a                                          ║
   ║  Stack   : HTML5 · CSS3 · Vanilla JS                            ║
   ║  Design  : Zalij Mode — Premium Moroccan Noir & Gold            ║
-  ║  Engine  : Zunexa Neural Engine + Archon Brain (free keyless AI)║
+  ║  Engine  : Zunexa Neural Engine + Archon Brain                  ║
   ║  Version : V12 — Archon Protocol (Enhanced)                      ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
@@ -274,7 +274,7 @@ img{max-width:100%;display:block}
 /* ── Sidebar Footer ── */
 .sb-footer{
   border-top:1px solid var(--b1);padding:8px 6px;
-  display:flex;flex-direction:column;gap:2px;flex-shrink:0;
+  display:flex;flex-direction:column;gap:4px;flex-shrink:0;
 }
 .sb-fbtn{
   display:flex;align-items:center;gap:9px;
@@ -545,11 +545,15 @@ html[data-zx-theme="ocean-dark"]{
 .msg-meta{
   display:flex;align-items:center;gap:6px;
   padding:0 2px;font-size:9.5px;color:var(--tm);
+  flex-wrap: wrap;
 }
 .msg.user .msg-meta{justify-content:flex-end}
 .meta-badge{
   font-size:8.5px;padding:2px 6px;border-radius:4px;
   letter-spacing:.05em;font-weight:700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
 }
 .badge-qa{color:var(--gold);background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.18)}
 .badge-learn{color:var(--green);background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.18)}
@@ -647,7 +651,7 @@ html[data-zx-theme="ocean-dark"]{
 .char-count{font-size:9.5px;color:var(--tm)}
 
 /* ════════════════════════════════════════════════════════
-   MODAL — Settings
+   MODAL — Settings (iPhone 13 Pro Max iOS 15+ Aesthetic)
 ════════════════════════════════════════════════════════ */
 .modal-wrap{
   display:none;position:fixed;inset:0;z-index:999;
@@ -692,7 +696,7 @@ html[data-zx-theme="ocean-dark"]{
 }
 .modal-save:hover{box-shadow:var(--sg2)}
 
-/* ── Expanded Settings modal ── */
+/* ── Expanded Settings modal (tabs + toggles) ── */
 .modal-box.wide{max-width:560px;max-height:86vh;overflow-y:auto}
 .set-tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--b1);margin-bottom:16px;padding-bottom:2px;scrollbar-width:thin}
 .set-tab{padding:7px 12px;font-size:11.5px;color:var(--tg);border-radius:7px 7px 0 0;cursor:pointer;white-space:nowrap;transition:all var(--tr)}
@@ -714,6 +718,30 @@ html[data-zx-theme="ocean-dark"]{
 textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-height:1.5}
 .speak-btn{margin-top:6px;background:none;border:none;color:var(--tg);cursor:pointer;font-size:13px;padding:2px 6px;border-radius:6px;transition:all var(--tr)}
 .speak-btn:hover{color:var(--gold);background:var(--card2)}
+
+/* ── iOS Aesthetic Styles ── */
+.ios-card {
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--b1);
+  padding: 8px 14px;
+  margin-bottom: 16px;
+}
+.ios-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--b1);
+}
+.ios-item:last-child {
+  border-bottom: none;
+}
+.ios-label {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--tw);
+}
 
 /* ════════════════════════════════════════════════════════
    ANIMATIONS
@@ -857,7 +885,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 
   <!-- Footer -->
   <div class="sb-footer">
-    <button class="sb-fbtn" id="pwaBtn" style="display:none" onclick="installPWA()">
+    <button class="sb-fbtn" id="pwaInstallBtn" onclick="triggerPwaInstall()" style="display:none; color:var(--green); border:1px solid rgba(61,220,132,.2); background:rgba(61,220,132,.04);">
       <span class="fi">📱</span> تثبيت التطبيق (PWA)
     </button>
     <button class="sb-fbtn dl" onclick="location.href='downloads.html'">
@@ -888,10 +916,13 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     </div>
     <div class="tb-right">
       <select class="zx-select" id="agentSel" onchange="setAgent(this.value)" title="العميل الذكي">
-        <option value="core">🔮 Archon Core</option>
-        <option value="planner">📝 Planner Agent</option>
+        <option value="general">🤖 Archon General</option>
+        <option value="planner">📅 Planner Architect</option>
         <option value="security">🛡 Security Analyst</option>
-        <option value="data">📊 Data Analyst</option>
+        <option value="data">📊 Data Analyst & SQL</option>
+        <option value="architect">🏛 Software Architect</option>
+        <option value="content">✍ Content Specialist</option>
+        <option value="mentor">🎓 Tech Mentor</option>
       </select>
       <select class="zx-select" id="themeSel" onchange="setTheme(this.value)" title="السمة">
         <option value="zalij-dark">Zalij Dark</option>
@@ -948,7 +979,8 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         <div class="qchip" onclick="go('/جيت zunexa')">🐙 GitHub</div>
         <div class="qchip" onclick="go('/بحث أفضل ممارسات SEO 2026')">🔎 بحث ويب</div>
         <div class="qchip" onclick="go('/صوت مرحبا بك في Zunexa')">🔊 نص لصوت</div>
-        <div class="qchip" onclick="go('/مساعدة')">🛠 جميع الاختصارات والأدوات</div>
+        <div class="qchip" onclick="go('اشرح لي قالب ollama.html')">📄 ollama.html</div>
+        <div class="qchip" onclick="go('كيف يعمل سكربت hq_scanner.py؟')">🐍 hq_scanner.py</div>
       </div>
     </div>
   </div>
@@ -982,7 +1014,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 </div><!-- /shell -->
 
 <!-- ══════════════════════════════════════════════════
-     SETTINGS MODAL
+     SETTINGS MODAL (iOS 15 Aesthetic Layout)
 ══════════════════════════════════════════════════ -->
 <div class="modal-wrap" id="settModal">
   <div class="modal-box wide">
@@ -997,6 +1029,8 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <div class="set-tab" onclick="setSTab('memory')" id="tab-memory">الذاكرة</div>
       <div class="set-tab" onclick="setSTab('tools')" id="tab-tools">الأدوات</div>
       <div class="set-tab" onclick="setSTab('apikeys')" id="tab-apikeys">مفاتيح API</div>
+      <div class="set-tab" onclick="setSTab('terminal')" id="tab-terminal">الطرفية CLI</div>
+      <div class="set-tab" onclick="setSTab('blocklist')" id="tab-blocklist">قائمة الحظر</div>
       <div class="set-tab" onclick="setSTab('account')" id="tab-account">الحساب</div>
     </div>
 
@@ -1057,43 +1091,16 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     <div class="set-pane" id="pane-voice">
       <label class="field-label">لغة الصوت</label>
       <select class="field-input" id="setVoiceLang" onchange="saveVoicePrefs()">
-        <option value="ar-MA">العربية (المغرب)</option>
-        <option value="ar-SA">العربية (فصحى)</option>
+        <option value="ar-MA">العربية (المغرب - الدارجة)</option>
+        <option value="ar-SA">العربية (الفصحى)</option>
         <option value="ar-EG">العربية (مصر)</option>
         <option value="ar-AE">العربية (الخليج)</option>
         <option value="fr-FR">Français</option>
         <option value="en-US">English (US)</option>
         <option value="en-GB">English (UK)</option>
         <option value="es-ES">Español</option>
-        <option value="de-DE">Deutsch</option>
-        <option value="it-IT">Italiano</option>
-        <option value="pt-PT">Português</option>
-        <option value="pt-BR">Português (Brasil)</option>
-        <option value="nl-NL">Nederlands</option>
-        <option value="tr-TR">Türkçe</option>
-        <option value="ru-RU">Русский</option>
-        <option value="zh-CN">中文 (简体)</option>
-        <option value="ja-JP">日本語</option>
-        <option value="ko-KR">한국어</option>
-        <option value="hi-IN">हिन्दी</option>
-        <option value="ur-PK">اردو</option>
-        <option value="fa-IR">فارسی</option>
-        <option value="id-ID">Bahasa Indonesia</option>
-        <option value="ms-MY">Bahasa Melayu</option>
-        <option value="th-TH">ไทย</option>
-        <option value="vi-VN">Tiếng Việt</option>
-        <option value="pl-PL">Polski</option>
-        <option value="uk-UA">Українська</option>
-        <option value="sv-SE">Svenska</option>
-        <option value="no-NO">Norsk</option>
-        <option value="da-DK">Dansk</option>
-        <option value="fi-FI">Suomi</option>
-        <option value="el-GR">Ελληνικά</option>
-        <option value="he-IL">עברית</option>
-        <option value="ro-RO">Română</option>
-        <option value="sw-KE">Kiswahili</option>
       </select>
-      <label class="field-label">أسلوب الصوت (عند القراءة الصوتية للردود)</label>
+      <label class="field-label">أسلوب الصوت</label>
       <select class="field-input" id="setVoiceStyle" onchange="saveVoicePrefs()">
         <option value="normal">عادي</option>
         <option value="calm">هادئ</option>
@@ -1101,13 +1108,13 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       </select>
       <label class="field-label">السرعة</label>
       <input class="field-input" type="range" id="setVoiceSpeed" min="0.6" max="1.6" step="0.1" value="1" oninput="saveVoicePrefs()">
-      <p style="font-size:11px;color:var(--tg);line-height:1.6">تُستعمل هذه الإعدادات في الإدخال الصوتي (🎤) وفي القراءة الصوتية للردود (🔊 بجانب كل رد) — عبر Web Speech API المدمجة في المتصفح، بدون أي مفتاح API.</p>
+      <p style="font-size:11px;color:var(--tg);line-height:1.6">تُستعمل هذه الإعدادات في الإدخال الصوتي والقراءة عبر Web Speech API المدمجة.</p>
     </div>
 
     <!-- NOTIFICATIONS -->
     <div class="set-pane" id="pane-notif">
       <div class="set-row">
-        <div class="set-row-txt"><div class="set-row-title">إشعار عند اكتمال الرد</div><div class="set-row-desc">إشعار من المتصفح عند ما يخلص Archon من رد طويل — مفيد إذا بدلت التبويب فالمتصفح.</div></div>
+        <div class="set-row-txt"><div class="set-row-title">إشعار عند اكتمال الرد</div><div class="set-row-desc">إشعار من المتصفح عند انتهاء توليد الاستجابات الطويلة.</div></div>
         <label class="switch"><input type="checkbox" id="setNotifDone" onchange="setNotifPref(this.checked)"><span class="slider"></span></label>
       </div>
     </div>
@@ -1115,7 +1122,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     <!-- MEMORY -->
     <div class="set-pane" id="pane-memory">
       <div class="set-row">
-        <div class="set-row-txt"><div class="set-row-title">تعلّم من المحادثات</div><div class="set-row-desc">يخلي Archon يسجل الأسئلة الجديدة اللي ما عندوش جواب عليها ويقوّي قاعدة المعرفة تلقائياً (Supabase ai_learning / ai_knowledge).</div></div>
+        <div class="set-row-txt"><div class="set-row-title">تعلّم من المحادثات</div><div class="set-row-desc">حفظ وتغذية الذاكرة المحلية وقاعدة معرفة Supabase تلقائياً.</div></div>
         <label class="switch"><input type="checkbox" id="setLearnToggle" checked onchange="setLearnPref(this.checked)"><span class="slider"></span></label>
       </div>
       <button class="modal-save" style="margin-top:14px;background:transparent;border:1px solid var(--red);color:var(--red)" onclick="clearAll()">🗑 مسح كل السجل والذاكرة المحلية</button>
@@ -1124,41 +1131,75 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     <!-- TOOLS -->
     <div class="set-pane" id="pane-tools">
       <div class="set-row">
-        <div class="set-row-txt"><div class="set-row-title">الأدوات الخارجية</div><div class="set-row-desc">تفعيل الأوامر السريعة /طقس /خريطة /جيت /اخبار /صورة والاتصال بـ APIs مجانية خارجية بدون مفتاح.</div></div>
+        <div class="set-row-txt"><div class="set-row-title">الأدوات الخارجية</div><div class="set-row-desc">تفعيل الأوامر السريعة والاتصال بـ APIs مجانية سريعة.</div></div>
         <label class="switch"><input type="checkbox" id="setToolsToggle" checked onchange="setToolsPref(this.checked)"><span class="slider"></span></label>
       </div>
     </div>
 
-    <!-- API KEYS (optional, free-tier — user pastes their own, stored locally only) -->
+    <!-- API KEYS -->
     <div class="set-pane" id="pane-apikeys">
-      <p style="font-size:11.5px;color:var(--tg);line-height:1.7;margin-bottom:12px">
-        كلشي فهاد الصفحة خدام دابا بلا أي مفتاح (Pollinations، الطقس، الخرائط، GitHub، الأخبار، البحث عبر DuckDuckGo، والصوت عبر المتصفح). هاد المفاتيح <strong>اختيارية</strong> — كل وحدة عندها Free Tier فابور، تسجل فـ 2 دقيقة وتلصقها هنا باش تزيد جودة/حدود أعلى. كتبقى محفوظة فـ localStorage ديال المتصفح ديالك فقط، ما كتترسلش لأي سيرفر آخر غير مباشرة للـ API ديالها.
-      </p>
-      <label class="field-label">Hugging Face Token <span style="color:var(--tg)">(نماذج صور/نص بديلة)</span></label>
+      <p style="font-size:11.5px;color:var(--tg);line-height:1.7;margin-bottom:12px">مفاتيح اختيارية لرفع كفاءة عمليات توليد الصور والترجمة والبحث السحابي.</p>
+      <label class="field-label">Hugging Face Token</label>
       <input class="field-input" id="keyHF" placeholder="hf_xxxxxxxxxxxxxxxx" onchange="saveApiKeys()">
-      <label class="field-label">DeepL API Key <span style="color:var(--tg)">(ترجمة احترافية — /ترجم)</span></label>
+      <label class="field-label">DeepL API Key</label>
       <input class="field-input" id="keyDeepL" placeholder="xxxxxxxx-xxxx-xxxx:fx" onchange="saveApiKeys()">
-      <label class="field-label">Voice RSS API Key <span style="color:var(--tg)">(تحويل نص لصوت طبيعي)</span></label>
+      <label class="field-label">Voice RSS API Key</label>
       <input class="field-input" id="keyVoiceRSS" placeholder="your voicerss key" onchange="saveApiKeys()">
-      <label class="field-label">Tavily API Key <span style="color:var(--tg)">(بحث ويب أعمق للـ AI)</span></label>
+      <label class="field-label">Tavily API Key</label>
       <input class="field-input" id="keyTavily" placeholder="tvly-xxxxxxxx" onchange="saveApiKeys()">
-      <label class="field-label">Serper.ai API Key <span style="color:var(--tg)">(نتائج Google كـ JSON)</span></label>
+      <label class="field-label">Serper.ai API Key</label>
       <input class="field-input" id="keySerper" placeholder="your serper key" onchange="saveApiKeys()">
       <button class="modal-save" onclick="saveApiKeys(true)">✓ حفظ المفاتيح</button>
-      <p style="font-size:11px;color:var(--tg);margin-top:10px">روابط التسجيل الفابور: huggingface.co/settings/tokens · deepl.com/pro-api · voicerss.org · tavily.com · serper.dev</p>
+    </div>
+
+    <!-- TERMINAL CLI TOOL -->
+    <div class="set-pane" id="pane-terminal">
+      <p style="font-size:11.5px;color:var(--tg);line-height:1.7;margin-bottom:12px">سكربتات مخصصة لربط تطبيق Archon مباشرة بسطر الأوامر (Terminal) في نظام تشغيلك.</p>
+      
+      <label class="field-label">كود Node.js (أنظمة Windows/Linux)</label>
+      <textarea class="field-input" id="nodeCliText" style="height:100px; font-family:monospace; font-size:11px;" readonly></textarea>
+      <button class="modal-save" style="margin-bottom:12px;" onclick="copyToClipboard('nodeCliText')">نسخ كود Node.js</button>
+
+      <label class="field-label">كود Python (أنظمة Termux/Linux)</label>
+      <textarea class="field-input" id="pythonCliText" style="height:100px; font-family:monospace; font-size:11px;" readonly></textarea>
+      <button class="modal-save" onclick="copyToClipboard('pythonCliText')">نسخ كود Python</button>
+    </div>
+
+    <!-- KEYWORD BLOCKLIST -->
+    <div class="set-pane" id="pane-blocklist">
+      <p style="font-size:11.5px;color:var(--tg);line-height:1.7;margin-bottom:12px">التحكم في الكلمات والمواضيع المحظورة أمنياً لمنع توليد استجابات متعلقة بها.</p>
+      
+      <div class="ios-card" style="padding:10px;">
+        <label class="field-label">إضافة كلمة حظر مخصصة</label>
+        <div style="display:flex; gap:6px;">
+          <input class="field-input" id="newBlockWord" placeholder="مثلاً: spam" style="margin-bottom:0; flex:1;">
+          <button class="modal-save" style="width:auto; margin-top:0; padding:0 15px;" onclick="addBlockWordUI()">إضافة</button>
+        </div>
+      </div>
+
+      <div id="blocklistContainer" style="max-height:150px; overflow-y:auto;">
+        <!-- Dynamic Block Words -->
+      </div>
     </div>
 
     <!-- ACCOUNT -->
     <div class="set-pane" id="pane-account">
       <div id="settLoggedInInfo" style="display:none">
-        <label class="field-label">الاسم</label>
-        <div class="field-input" style="opacity:.7" id="settRealName">—</div>
-        <label class="field-label">البريد الإلكتروني</label>
-        <div class="field-input" style="opacity:.7" id="settRealEmail">—</div>
-        <label class="field-label">الخطة</label>
-        <div class="field-input" style="opacity:.7" id="settRealPlan">—</div>
-        <p style="font-size:11px;color:var(--text-muted,#888);margin:6px 0 14px">لتغيير معلومات حسابك أو خطتك، توجه إلى صفحة الإعدادات الكاملة.</p>
-        <button class="modal-save" onclick="window.location.href='settings.html'">⚙ إدارة الحساب</button>
+        <div class="ios-card">
+          <div class="ios-item">
+            <span class="ios-label">الاسم</span>
+            <span id="settRealName" style="color:var(--tg)">—</span>
+          </div>
+          <div class="ios-item">
+            <span class="ios-label">البريد الإلكتروني</span>
+            <span id="settRealEmail" style="color:var(--tg)">—</span>
+          </div>
+          <div class="ios-item">
+            <span class="ios-label">الخطة</span>
+            <span id="settRealPlan" style="color:var(--gold)">—</span>
+          </div>
+        </div>
+        <button class="modal-save" onclick="window.location.href='settings.html'">⚙ إدارة الحساب بالكامل</button>
       </div>
       <div id="settGuestInfo" style="display:none">
         <label class="field-label">اسم الضيف (محلي فقط، لا يؤثر على أي حساب)</label>
@@ -1187,94 +1228,108 @@ const ZX_AI_RATE = (function(){
 })();
 
 /* ── STATE ── */
-let KB          = [];
-let IDF         = {};
-let kbReady     = false;
-let busy        = false;
-let webOn       = false;
-let recording   = false;
-let recog       = null;
-let ctx         = [];
-let hist        = JSON.parse(localStorage.getItem('zx_hist_v3') || '[]');
-let currentAgent = 'core';
+let KB        = [];
+let IDF       = {};
+let kbReady   = false;
+let busy      = false;
+let webOn     = false;
+let recording = false;
+let recog     = null;
+let ctx       = [];
+let hist      = JSON.parse(localStorage.getItem('zx_hist_v3') || '[]');
 
-/* ── PWA Setup ── */
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const pwaBtn = document.getElementById('pwaBtn');
-  if (pwaBtn) pwaBtn.style.display = 'flex';
-});
+let zxTheme  = localStorage.getItem('zx_theme')  || 'zalij-dark';
+let zxModel  = localStorage.getItem('zx_model')  || 'lite';
+let zxEffort = localStorage.getItem('zx_effort') || 'balanced';
+let activeAgent = localStorage.getItem('zx_active_agent') || 'general';
 
-async function installPWA() {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === 'accepted') {
-    const pwaBtn = document.getElementById('pwaBtn');
-    if (pwaBtn) pwaBtn.style.display = 'none';
-  }
-  deferredPrompt = null;
-}
-
-/* ── CHAT THREADS ── */
+/* ── THREAD ID ── */
 function genChatId(){ return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
 let currentChatId = localStorage.getItem('zx_current_chat') || genChatId();
 localStorage.setItem('zx_current_chat', currentChatId);
 let tempChatOn = false;
 let _prevChatId = null;
 
-function saveThreadMsg(role, text, src, score, imgUrl, audioUrl) {
-  if (tempChatOn) return;
-  const key = 'zx_thread_' + currentChatId;
-  let arr = [];
-  try { arr = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e){}
-  arr.push({ role, text, src: src||null, score: score||0, imgUrl: imgUrl||null, audioUrl: audioUrl||null, ts: Date.now() });
-  if (arr.length > 300) arr = arr.slice(-300);
-  localStorage.setItem(key, JSON.stringify(arr));
-}
-function loadThread(chatId) {
-  try { return JSON.parse(localStorage.getItem('zx_thread_' + chatId) || '[]'); } catch(e){ return []; }
-}
-function replayThread(chatId) {
-  const conv = document.getElementById('conv');
-  const w = document.getElementById('welcome');
-  if (w) w.remove();
-  conv.innerHTML = '';
-  const msgs = loadThread(chatId);
-  msgs.forEach(m => addMsg(m.text, m.role, m.src, m.score, m.imgUrl, true, m.audioUrl));
-  ctx = msgs.slice(-12).map(m => ({ role: m.role === 'user' ? 'user' : 'bot', text: m.text }));
-}
+/* ── PERSONAS ── */
+const PERSONAS = {
+  general:   { name: "Archon General", badge: "🤖 Archon General", prompt: "أنت المساعد العام والذكي لمنصة Zunexa." },
+  planner:   { name: "Planner Architect", badge: "📅 Planner Architect", prompt: "أنت مهندس التخطيط ومصمم خرائط الطريق للمشاريع البرمجية المتكاملة." },
+  security:  { name: "Security Analyst", badge: "🛡️ Security Analyst", prompt: "أنت خبير فحص الثغرات البرمجية والتحقق من التزام الأكواد بمعايير OWASP الأمنية." },
+  data:      { name: "Data Analyst & SQL", badge: "📊 Data Analyst", prompt: "أنت محلل بيانات مالي وتقني وقواعد بيانات SQL بمهارة عالية للغاية." },
+  architect: { name: "Software Architect", badge: "🏛️ Software Architect", prompt: "أنت معماري أنظمة برمجية متطورة تلتزم بأعلى معايير Clean Code وهندسة البرمجيات." },
+  content:   { name: "Content Specialist", badge: "✍️ Content Specialist", prompt: "أنت صانع استراتيجيات تسويق وتأليف محتوى متميز ومحسن لمحركات البحث SEO." },
+  mentor:    { name: "Tech Mentor", badge: "🎓 Tech Mentor", prompt: "أنت المرشد التقني الذي يقوم بتبسيط وتوضيح أشد المفاهيم البرمجية تعقيداً بيسر وسهولة." }
+};
 
-function toggleTempChat() {
-  tempChatOn = !tempChatOn;
-  const btn = document.getElementById('tempChatBtn');
-  if (tempChatOn) {
-    _prevChatId = currentChatId;
-    currentChatId = genChatId();
-    if (btn) btn.classList.add('on');
-    toast('🕶 محادثة مؤقتة مفعّلة — ما غادي تتسجل فالسجل ولا فقاعدة البيانات');
-  } else {
-    currentChatId = _prevChatId || currentChatId;
-    localStorage.setItem('zx_current_chat', currentChatId);
-    if (btn) btn.classList.remove('on');
-    toast('محادثة مؤقتة متوقفة');
+/* ── CENTRAL TEMPLATES DATA FOR IN-MEMORY KNOWLEDGE ── */
+const CENTRAL_TEMPLATES = [
+  { q: "ollama.html template", a: "قالب ollama.html هو واجهة مستخدم متقدمة ومفتوحة المصدر مبنية بـ HTML5 و JS للاتصال المباشر مع خوادم Ollama لتشغيل النماذج اللغوية محلياً بالكامل من المتصفح دون الحاجة لاتصال خارجي.", kw: ["ollama.html", "ollama", "قالب", "محلي"], src: "qa", w: 1.5 },
+  { q: "read_map.py script", a: "نص read_map.py هو سكربت بايثون مخصص لقراءة ومعالجة الخرائط وتحويل البيانات الجغرافية بكفاءة عالية إلى صيغ مهيكلة متوافقة مع محرك Zunexa.", kw: ["read_map.py", "python", "خريطة", "جغرافي"], src: "qa", w: 1.5 },
+  { q: "debian.sh script", a: "سكربت debian.sh هو نص برمجي للتحكم السريع في إعداد وتجهيز خوادم Debian وتثبيت بيئات تشغيل البرمجيات وأتمتة المهام بأمان.", kw: ["debian.sh", "debian", "تثبيت", "خادم"], src: "qa", w: 1.5 },
+  { q: "huawei.sh script", a: "سكربت huawei.sh يوفر تهيئة برمجية متكاملة للتعامل السحابي مع البنية التحتية لـ Huawei Cloud وموازنة أعباء الخوادم المحلية.", kw: ["huawei.sh", "huawei", "سحابي"], src: "qa", w: 1.5 },
+  { q: "aura-os.html", a: "بيئة aura-os.html هي محاكاة لنظام تشغيل ويب تفاعلي مستقل مبني بلغات الويب الأساسية لتوفير بيئة إنتاجية متكاملة وسهلة الوصول.", kw: ["aura-os.html", "aura os", "نظام تشغيل ويب"], src: "qa", w: 1.5 },
+  { q: "muslim.html", a: "تطبيق muslim.html يمثل صفحة ويب مستقلة متطورة تعرض أوقات الصلاة والاتجاهات الجغرافية والقرآن الكريم بلمسات جمالية مغربية.", kw: ["muslim.html", "الصلاة", "مواقيت"], src: "qa", w: 1.5 },
+  { q: "hq_config.json configuration", a: "ملف الإعدادات hq_config.json يحتوي على الثوابت وعناوين الشبكات ونقاط الوصول الأساسية لعمل لوحة الإدارة المركزية بأمان تام.", kw: ["hq_config.json", "config", "إعدادات"], src: "qa", w: 1.5 },
+  { q: "hq_dashboard_template.html", a: "قالب لوحة قيادة hq_dashboard_template.html يوفر بنية أساسية لتصور وإعداد لوحات معلومات تفاعلية ذات أداء عالي وسرعة فائقة.", kw: ["hq_dashboard_template.html", "dashboard template", "لوحة قيادة"], src: "qa", w: 1.5 },
+  { q: "hq_scanner.py python scanner", a: "أداة hq_scanner.py هي سكربت بايثون ذكي لفحص الشبكة والمنافذ والتحقق من كفاءة بروتوكولات الأمان لحماية البنية الأساسية للمنصة.", kw: ["hq_scanner.py", "scanner", "فحص الشبكة", "بايثون"], src: "qa", w: 1.5 }
+];
+
+/* ── PWA INITIALIZATION & MANIFEST DATA-URI ── */
+(function() {
+  const pwaManifest = {
+    name: "Zunexa Archon AI",
+    short_name: "Archon",
+    start_url: ".",
+    display: "standalone",
+    background_color: "#060606",
+    theme_color: "#060606",
+    icons: [
+      {
+        src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%23060606'/><text x='256' y='340' text-anchor='middle' font-size='260' font-family='Georgia,serif' fill='%23D4AF37' font-weight='bold'>Z</text></svg>",
+        sizes: "512x512",
+        type: "image/svg+xml"
+      }
+    ]
+  };
+  const manifestBlob = new Blob([JSON.stringify(pwaManifest)], {type: 'application/json'});
+  const manifestURL = URL.createObjectURL(manifestBlob);
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = manifestURL;
+  document.head.appendChild(link);
+
+  if ('serviceWorker' in navigator) {
+    const swContent = `
+      self.addEventListener('install', (e) => self.skipWaiting());
+      self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
+      self.addEventListener('fetch', (e) => {});
+    `;
+    const swBlob = new Blob([swContent], {type: 'application/javascript'});
+    const swURL = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swURL, {scope: './'}).catch(()=>{});
   }
-  newChat();
-}
+})();
 
-function setAgent(val) {
-  currentAgent = val;
-  toast(`🕵️ تم تفعيل العميل: ${getAgentName(val)}`);
-}
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.getElementById('pwaInstallBtn');
+  if (installBtn) installBtn.style.display = 'flex';
+});
 
-function getAgentName(val) {
-  switch(val) {
-    case 'planner': return '📝 Planner Agent';
-    case 'security': return '🛡 Security Analyst';
-    case 'data': return '📊 Data Analyst';
-    default: return '🔮 Archon Core';
+function triggerPwaInstall() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        const installBtn = document.getElementById('pwaInstallBtn');
+        if (installBtn) installBtn.style.display = 'none';
+      }
+      deferredPrompt = null;
+    });
+  } else {
+    toast('📱 التطبيق مثبت بالفعل أو غير متوافق حالياً.');
   }
 }
 
@@ -1287,27 +1342,33 @@ async function init() {
   await loadKB();
   initParticles();
   initVoice();
+  initCliCodePreviews();
+  renderBlocklistUI();
+
   const themeSel = document.getElementById('themeSel');
   const modelSel = document.getElementById('modelSel');
   const effortSel = document.getElementById('effortSel');
-  const agentSel = document.getElementById('agentSel');
+  const agentSel  = document.getElementById('agentSel');
+
   if (themeSel)  themeSel.value  = zxTheme;
   if (modelSel)  modelSel.value  = zxModel;
   if (effortSel) effortSel.value = zxEffort;
-  if (agentSel)  agentSel.value  = currentAgent;
+  if (agentSel)  agentSel.value  = activeAgent;
+
   setModel(zxModel);
   if (loadThread(currentChatId).length) replayThread(currentChatId);
   document.getElementById('aiInput').focus();
 }
 
 /* ════════════════════════════════════════════════════════════
-   SUPABASE — Load User
+   SUPABASE — Load User (Unified Session Retrieval)
 ════════════════════════════════════════════════════════════ */
 async function loadUser() {
   try {
     const { data: { session } } = await _SB.auth.getSession();
     if (!session) {
-      setUserUI('Guest', 'Free', '', 'G');
+      const guestName = localStorage.getItem('zx_guest_name') || 'زائر مجهول';
+      setUserUI(guestName, 'Free', 'اتصال محلي آمن', guestName[0].toUpperCase());
       return;
     }
     const uid = session.user.id;
@@ -1320,7 +1381,7 @@ async function loadUser() {
     if (error) throw error;
     const u = data || {};
 
-    const displayName = u.first_name || u.username || (session.user.email && session.user.email.split('@')[0]) || 'Zunexa User';
+    const displayName = u.first_name || u.username || (session.user.email && session.user.email.split('@')[0]) || 'مستخدم Zunexa';
     const ini = displayName[0] || 'Z';
     const email = u.email || session.user.email || '';
 
@@ -1345,7 +1406,8 @@ async function loadUser() {
     localStorage.setItem('zx_name_cache', displayName);
   } catch (e) {
     console.error('Zunexa: failed to load user', e);
-    setUserUI('Guest', 'Free', '', 'G');
+    const guestName = localStorage.getItem('zx_guest_name') || 'زائر مجهول';
+    setUserUI(guestName, 'Free', 'اتصال محلي آمن', guestName[0].toUpperCase());
   }
 }
 
@@ -1357,7 +1419,7 @@ function setUserUI(name, plan, email, ini) {
 }
 
 /* ════════════════════════════════════════════════════════════
-   KNOWLEDGE BASE — Load & Merge
+   KNOWLEDGE BASE — Fetch & Integrate Central Templates
 ════════════════════════════════════════════════════════════ */
 async function loadKB() {
   let local = [];
@@ -1376,7 +1438,7 @@ async function loadKB() {
       cat: i.category || 'general'
     })).filter(i => i.a);
   } catch (e) {
-    console.warn('Zunexa: merged KB not found, falling back to raw files', e);
+    console.warn('Zunexa: fallback loading individual raw files', e);
     try {
       const [r1, r2] = await Promise.all([
         fetch('zunexa_qa.json', { cache: 'no-store' }),
@@ -1402,9 +1464,7 @@ async function loadKB() {
           cat: b.category || 'general'
         });
       }
-    } catch (e2) {
-      console.error('Zunexa: both KB files failed to load', e2);
-    }
+    } catch (e2) {}
   }
 
   try {
@@ -1413,7 +1473,7 @@ async function loadKB() {
       .select('question,answer,keywords,weight,used_count,source')
       .eq('is_active', true)
       .order('weight', { ascending: false })
-      .limit(2000);
+      .limit(1000);
     if (!error) {
       cloud = (d||[]).map(i => ({
         q:   i.question||'',
@@ -1427,6 +1487,7 @@ async function loadKB() {
   } catch(e){}
 
   KB = mergeKB(local, cloud);
+  KB = [...KB, ...CENTRAL_TEMPLATES]; // Inject Central Template Definitions
   buildIDF(KB);
   kbReady = true;
 }
@@ -1442,7 +1503,7 @@ function mergeKB(local, cloud) {
 }
 
 /* ════════════════════════════════════════════════════════════
-   TEXT ENGINE — Normalize / Tokenize
+   TEXT MATCHING ENGINE & STOPWORDS
 ════════════════════════════════════════════════════════════ */
 function norm(t) {
   if (!t) return '';
@@ -1458,95 +1519,11 @@ const STOP = new Set([
   'the','is','are','a','an','to','of','and','or','in','it','that','this'
 ]);
 
-const SYN_GROUPS = [
-  ['__want__',    'بغيت','بغيتي','نبغي','بغى','عايز','عاوز','اريد','أريد','want','veux','souhaite'],
-  ['__price__',   'فلوس','ثمن','سعر','تمن','اسعار','أسعار','تكلفة','price','prix','cost','tarif'],
-  ['__plan__',    'خطة','اشتراك','باقة','plan','subscription','abonnement','forfait'],
-  ['__free__',    'فابور','مجاني','مجانا','بلاش','gratuit','free','bla flous','bla3andi'],
-  ['__ai__',      'ذكاء','اصطناعي','ai','intelligence','artificielle','archon','ذكاءاصطناعي'],
-  ['__content__', 'محتوى','منشور','بوست','content','contenu','post'],
-  ['__generator__','مولد','توليد','generator','generate','générateur','generateur'],
-  ['__seo__',     'سيو','seo','تحسين','محركاتبحث','referencement'],
-  ['__dashboard__','لوحة','تحكم','dashboard','tableau','bord'],
-  ['__design__',  'تصميم','زليج','zalij','design','theme','ثيم'],
-  ['__developer__','مطور','مبرمج','developer','dev','programmeur'],
-  ['__help__',    'مساعدة','عاون','عاونني','ساعدني','help','aide','aidemoi'],
-  ['__login__',   'دخول','تسجيل','دخل','login','connexion','signin'],
-  ['__account__', 'حساب','account','compte'],
-  ['__image__',   'صورة','صور','image','photo','picture'],
-  ['__video__',   'فيديو','فيديوهات','video','clip'],
-  ['__upgrade__', 'ترقية','رقي','upgrade','ameliorer','améliorer'],
-  ['__platform__','منصة','موقع','app','application','platform','plateforme'],
-  ['__weather__', 'طقس','جو','meteo','météo','weather'],
-  ['__news__',    'اخبار','أخبار','news','actualites','actualités'],
-  ['__search__',  'بحث','دور','ابحث','search','chercher','recherche'],
-  ['__translate__','ترجم','ترجمة','translate','traduire','traduction'],
-  ['__voice__',   'صوت','نطق','voice','audio','vocal'],
-  ['__file__',    'ملف','وثيقة','file','document','fichier'],
-  ['__thanks__',  'شكرا','شكراً','merci','thanks','thankyou'],
-];
-const SYN_MAP = (function(){
-  const m = {};
-  SYN_GROUPS.forEach(group => {
-    const canon = group[0];
-    group.slice(1).forEach(variant => { m[norm(variant)] = canon; });
-  });
-  return m;
-})();
-
 function tok(text) {
   const base = norm(text).split(/\s+/).filter(t => t.length > 1 && !STOP.has(t));
-  const out = [];
-  base.forEach(t => {
-    out.push(t);
-    if (SYN_MAP[t]) out.push(SYN_MAP[t]);
-  });
-  return out;
+  return base;
 }
 
-function bigrams(tokens) {
-  const out = [];
-  for (let i = 0; i < tokens.length - 1; i++) out.push(tokens[i] + '_' + tokens[i+1]);
-  return out;
-}
-
-function levenshtein(a, b) {
-  if (a === b) return 0;
-  const al = a.length, bl = b.length;
-  if (!al) return bl;
-  if (!bl) return al;
-  let prev = new Array(bl + 1);
-  for (let j = 0; j <= bl; j++) prev[j] = j;
-  for (let i = 1; i <= al; i++) {
-    const cur = [i];
-    for (let j = 1; j <= bl; j++) {
-      cur[j] = a[i-1] === b[j-1]
-        ? prev[j-1]
-        : 1 + Math.min(prev[j-1], prev[j], cur[j-1]);
-    }
-    prev = cur;
-  }
-  return prev[bl];
-}
-
-function fuzzyTokenScore(qToks, dToks) {
-  if (!qToks.length || !dToks.length) return 0;
-  let hits = 0;
-  qToks.forEach(qt => {
-    if (dToks.includes(qt)) { hits++; return; }
-    const close = dToks.some(dt => {
-      const maxLen = Math.max(qt.length, dt.length);
-      if (maxLen < 4) return false;
-      return levenshtein(qt, dt) <= (maxLen <= 6 ? 1 : 2);
-    });
-    if (close) hits += 0.7;
-  });
-  return hits / qToks.length;
-}
-
-/* ════════════════════════════════════════════════════════════
-   SEMANTIC MATCH ENGINE
-════════════════════════════════════════════════════════════ */
 function buildIDF(docs) {
   const df = {}, N = docs.length || 1;
   docs.forEach(d => {
@@ -1579,38 +1556,27 @@ function cosine(a, b) {
   return (!na||!nb) ? 0 : dot / (Math.sqrt(na)*Math.sqrt(nb));
 }
 
-/* ════════════════════════════════════════════════════════════
-   SEARCH — Find Best Answer(s)
-════════════════════════════════════════════════════════════ */
 function rankKB(userQ) {
   if (!KB.length) return [];
   const qVec   = tfidfVec(userQ);
   const qToks  = tok(userQ);
   const qSet   = new Set(qToks);
-  const qBi    = new Set(bigrams(qToks));
   const scored = [];
 
   KB.forEach(item => {
     if (!item.a) return;
     const docText = item.q + ' ' + item.kw.join(' ');
     const dVec    = tfidfVec(docText);
-    const dToks   = tok(docText);
-    const dSet    = new Set(dToks);
+    const dSet    = new Set(tok(docText));
 
-    let score = cosine(qVec, dVec) * 0.40;
+    let score = cosine(qVec, dVec) * 0.50;
 
     const inter = [...qSet].filter(t => dSet.has(t)).length;
     const jacc  = inter / (qSet.size + dSet.size - inter + 0.001);
-    score += jacc * 0.25;
-
-    const dBi = new Set(bigrams(dToks));
-    const biHits = [...qBi].filter(b => dBi.has(b)).length;
-    if (qBi.size) score += (biHits / qBi.size) * 0.15;
-
-    score += fuzzyTokenScore(qToks, dToks) * 0.12;
+    score += jacc * 0.30;
 
     const kwBonus = item.kw.filter(k => norm(userQ).includes(norm(k))).length;
-    score += kwBonus * 0.08;
+    score += kwBonus * 0.15;
 
     score *= (item.w || 1.0);
 
@@ -1621,14 +1587,8 @@ function rankKB(userQ) {
   return scored.slice(0, 3);
 }
 
-function search(userQ) {
-  const top = rankKB(userQ);
-  if (!top.length || top[0].score < 0.05) return null;
-  return top[0];
-}
-
 /* ════════════════════════════════════════════════════════════
-   INTELLIGENCE — Build Response
+   INTELLIGENCE ROUTER & EXECUTOR
 ════════════════════════════════════════════════════════════ */
 async function answerLocal(userQ) {
   const enriched = buildCtxQ(userQ);
@@ -1645,29 +1605,19 @@ async function answerLocal(userQ) {
     const second = top[1] && top[1].score >= 0.045 ? top[1] : null;
     let txt = best.a;
     if (second && second.q !== best.q) {
-      txt += `\n\n${pickConnector()} ${second.a}`;
+      txt += `\n\nيضاف إلى ذلك، ${second.a}`;
     }
-    txt += '\n\n_💡 إجابة مُركّبة من أقرب المعلومات المتوفرة — صيغ سؤالك بدقة أكبر لإجابة أوضح._';
+    txt += '\n\n_💡 إجابة مُركّبة من أقرب المعلومات المتوفرة فالسجل._';
     incrWeight(best.q);
     await logMsg(userQ, txt, 'fallback', best.score);
     return { text: txt, src: 'partial', score: best.score };
   }
 
   await learnQ(userQ);
-  const txt = buildUnknown(userQ);
+  const txt = `لم أجد إجابة دقيقة على سؤالك: **"${userQ.slice(0,50)}"**\n\n✦ تم حفظ استفسارك فأنظمة التعلم التلقائي ومراجعته آلياً لتحديث قاعدة المعرفة.`;
   await logMsg(userQ, txt, 'system', 0);
   return { text: txt, src: 'learning', score: 0 };
 }
-
-/* ════════════════════════════════════════════════════════════
-   ARCHON BRAIN — Multi-Agent System Prompts
-════════════════════════════════════════════════════════════ */
-const AGENT_PROMPTS = {
-  core: 'أنت Archon، المساعد الذكي لمنصة Zunexa (منصة مغربية لتوليد المحتوى بالذكاء الاصطناعي لصناع المحتوى في المنطقة العربية/المغاربية والعالم). تتحدث بطلاقة أكثر من 30 لغة، من بينها العربية الفصحى والدارجة المغربية. جاوب دائماً بنفس اللغة أو اللهجة اللي كتب بيها المستخدم، بشكل طبيعي وسليم ومهني ومختصر.',
-  planner: 'أنت العميل المخطط [Planner Agent]. ينصب تركيزك بالكامل على تقديم خطط عمل واضحة ومفصلة، وتقسيم المشاريع المعقدة إلى خطوات تنفيذية ومراحل زمنية محددة، مع تنظيم الأفكار على شكل جداول أو نقاط مرتبة زمنياً.',
-  security: 'أنت محلل الحماية والتحليل الأمني [Security Analyst]. ينصب تركيزك بالكامل على مراجعة الثغرات الأمنية، وتقديم نصائح لحماية الأكواد البرمجية والأنظمة، والتوعية بأفضل الممارسات الأمنية للحفاظ على البيانات والخصوصية.',
-  data: 'أنت محلل البيانات [Data Analyst]. ينصب تركيزك بالكامل على تحليل مجموعات البيانات، والملفات، وهياكل الـ JSON/CSV، وتقديم إحصائيات دقيقة، واستخراج الأنماط، وعرض الرسوم البيانية النصية المبسطة.'
-};
 
 async function archonBrain(messages, opts) {
   opts = opts || {};
@@ -1678,60 +1628,60 @@ async function archonBrain(messages, opts) {
       body: JSON.stringify({
         model: opts.model || 'openai',
         messages,
-        max_tokens: opts.maxTokens || 500,
+        max_tokens: opts.maxTokens || 600,
         temperature: opts.temperature || 0.6
       })
     });
-    if (!res.ok) throw new Error('archonBrain http ' + res.status);
+    if (!res.ok) throw new Error('Brain unreachable');
     const data = await res.json();
     const txt = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
     return txt ? txt.trim() : null;
   } catch (e) {
-    console.warn('Archon Brain unreachable, staying on local KB', e);
+    console.warn('Fallback to local logic', e);
     return null;
   }
 }
 
-function archonSystemPrompt() {
-  const basePrompt = AGENT_PROMPTS[currentAgent] || AGENT_PROMPTS.core;
-  return basePrompt + ' استعمل المعلومة التالية من قاعدة معرفة Zunexa كسياق أساسي إذا كانت متوفرة، ولا تختلق معلومات عن الشركة أو الأسعار غير موجودة في السياق.';
+function getAgentInstructions() {
+  const pData = PERSONAS[activeAgent] || PERSONAS.general;
+  let text = pData.prompt;
+
+  try {
+    const p = JSON.parse(localStorage.getItem('zx_profile') || '{}');
+    if (p.inst) {
+      text += `\nتعليمات إضافية مخصصة من ملف المستخدم:\n${p.inst}`;
+    }
+  } catch(e){}
+
+  return text;
 }
 
-const EFFORT_CFG = {
-  quick:    { useBrain: false, ctxTurns: 0, maxTokens: 220 },
-  balanced: { useBrain: 'weak', ctxTurns: 4, maxTokens: 420 },
-  deep:     { useBrain: true,  ctxTurns: 8, maxTokens: 700 },
-  max:      { useBrain: true,  ctxTurns: 12, maxTokens: 1100 }
-};
+function archonSystemPrompt() {
+  const agentInst = getAgentInstructions();
+  return `${agentInst}
+أنت تجيب بوضوح وبلغة المستخدم الأصلية تماماً. يمكنك التحدث بأكثر من 40 لغة ولهجة بمهارة فائقة منها الدارجة المغربية (ar-MA)، العربية الفصحى، الإنجليزية، الفرنسية، الإسبانية، وغيرها.
+استعن بالسياق التالي إن كان متاحاً للإجابة بثقة دون كتابة معلومات كاذبة أو مضللة.`;
+}
 
 async function answer(userQ) {
   const local = await answerLocal(userQ);
-  const cfg = EFFORT_CFG[zxEffort] || EFFORT_CFG.balanced;
+  const cfg = { useBrain: true, maxTokens: 900 };
 
   if (zxModel === 'lite') return local;
 
-  const localIsWeak = local.score < 0.14;
-  const shouldUseBrain =
-    cfg.useBrain === true ||
-    (cfg.useBrain === 'weak' && (localIsWeak || attachedFile)) ||
-    (zxModel === 'max' && (localIsWeak || attachedFile));
-
-  if (!shouldUseBrain) return local;
-
   const messages = [{ role: 'system', content: archonSystemPrompt() }];
-  const turns = ctx.slice(-cfg.ctxTurns);
-  turns.forEach(c => messages.push({ role: c.role === 'user' ? 'user' : 'assistant', content: c.text }));
+  ctx.forEach(c => messages.push({ role: c.role === 'user' ? 'user' : 'assistant', content: c.text }));
 
-  let userContent = `سياق من قاعدة معرفة Zunexa (قد يكون فارغاً):\n"""${local.text.slice(0,900)}"""\n\nسؤال المستخدم: ${userQ}`;
+  let userContent = `سياق مستخرج من قاعدة معرفة Zunexa:\n"""${local.text.slice(0,1000)}"""\n\nالسؤال الحالي: ${userQ}`;
   if (attachedFile && attachedFile.textContent) {
-    userContent += `\n\nمحتوى الملف المرفق (${attachedFile.name}):\n"""${attachedFile.textContent.slice(0,3000)}"""`;
+    userContent += `\n\nمحتوى الملف المرفق (${attachedFile.name}):\n"""${attachedFile.textContent.slice(0,2500)}"""`;
   }
 
   if (attachedFile && attachedFile.dataUrl && attachedFile.kind === 'image') {
     messages.push({
       role: 'user',
       content: [
-        { type: 'text', text: userContent + `\n\nحلل الصورة المرفقة وأجب على سؤال المستخدم بخصوصها إن كان متعلقاً بها.` },
+        { type: 'text', text: userContent + `\nحلل الصورة المرفقة للإجابة عن السؤال.` },
         { type: 'image_url', image_url: { url: attachedFile.dataUrl } }
       ]
     });
@@ -1746,35 +1696,58 @@ async function answer(userQ) {
   return { text: brainTxt, src: 'ai-brain', score: Math.max(local.score, 0.5) };
 }
 
-const CONNECTORS = [
-  'بالإضافة إلى ذلك،', 'وفي سياق متصل،', 'ومن زاوية أخرى،', 'يضاف إلى ذلك أن'
-];
-function pickConnector() { return CONNECTORS[Math.floor(Math.random()*CONNECTORS.length)]; }
-
 function buildCtxQ(q) {
   if (!ctx.length) return q;
   const lastBot  = ctx.filter(c=>c.role==='bot').slice(-1)[0];
-  const lastUser = ctx.filter(c=>c.role==='user').slice(-2,-1)[0];
-  let extra = '';
-  if (lastUser) extra += ' ' + tok(lastUser.text).slice(0,4).join(' ');
-  if (lastBot)  extra += ' ' + tok(lastBot.text).slice(0,6).join(' ');
-  return q + extra;
+  return q + (lastBot ? ' ' + tok(lastBot.text).slice(0,6).join(' ') : '');
 }
 
-const UNKNOWNS = [
-  m=>`لم أجد إجابة دقيقة على: **"${m.slice(0,50)}"**\n\n✦ تم حفظ سؤالك في نظام التعلم — سيُضاف للـ knowledge base في التحديث القادم.\n\nجرّب سؤالاً متعلقاً بـ **Zunexa · الأدوات · التقنيات · التصميم**.`,
-  m=>`هذا خارج معرفتي الحالية.\n\n✦ **سؤالك محفوظ** في Supabase لمراجعتها من فريق Zunexa وإضافة الإجابة.\n\nاسألني عن: المنصة · SEO Tool · Generator Hub · Zalij Mode · التقنيات المستخدمة.`,
-  m=>`معلوماتي محدودة عن هذا الموضوع حالياً.\n\n✦ **تم التسجيل** — سأتعلم منه قريباً.\n\nيمكنني مساعدتك في أي موضوع يخص **Zunexa SaaS** أو تقنيات الويب.`
-];
-function buildUnknown(q){ return UNKNOWNS[Math.floor(Math.random()*UNKNOWNS.length)](q); }
+/* ════════════════════════════════════════════════════════════
+   SECURITY PRE-PROCESSING FILTER (Keywords Blocklist Check)
+════════════════════════════════════════════════════════════ */
+function checkBlocklist(query) {
+  const normQ = query.toLowerCase();
+  const hardcodedBlocks = ['porno', 'xxx', 'xnnx', 'gore'];
+  
+  let customBlocks = [];
+  try {
+    customBlocks = JSON.parse(localStorage.getItem('zx_blocklist') || '[]');
+  } catch(e){}
+
+  const allBlocks = [...hardcodedBlocks, ...customBlocks];
+  for (const word of allBlocks) {
+    if (word.trim() && normQ.includes(word.trim().toLowerCase())) {
+      return word;
+    }
+  }
+  return null;
+}
+
+async function handleBlockedRequest(query, blockedWord) {
+  const warningText = `⚠️ تم حظر هذا الاستعلام تلقائياً لاحتوائه على مصطلح غير مسموح به في سياسة المحتوى والأمان: **"${blockedWord}"**.\nتم تدوين وحفظ هذه المحاولة في سجلات الحماية للمنصة.`;
+  addMsg(query, 'user');
+  addMsg(warningText, 'bot', 'system', 0);
+  
+  try {
+    await _SB.from('zunexa_messages').insert({
+      user_prompt: `[SEC_BLOCKED] ${query}`,
+      bot_response: warningText,
+      source: 'security-filter',
+      tokens_used: 0,
+      platform: 'web',
+      chat_id: currentChatId,
+      created_at: new Date().toISOString()
+    });
+  } catch(e){}
+}
 
 /* ════════════════════════════════════════════════════════════
-   SUPABASE — Learn & Log
+   SUPABASE INTEGRATIONS
 ════════════════════════════════════════════════════════════ */
 async function learnQ(q) {
-  if (!isLearnEnabled() || tempChatOn) return;
+  if (localStorage.getItem('zx_learn_enabled') === '0' || tempChatOn) return;
   try {
-    await _SB.from('ai_learning').insert({ question: q, category: detectCat(q), source: 'user_chat', status: 'pending' });
+    await _SB.from('ai_learning').insert({ question: q, category: 'automated', source: 'user_chat', status: 'pending' });
   } catch(e){}
 }
 
@@ -1803,50 +1776,22 @@ async function incrWeight(question) {
   } catch(e){}
 }
 
-function detectCat(q) {
-  const l=q.toLowerCase();
-  if(l.includes('seo')||l.includes('سيو')) return 'seo';
-  if(l.includes('generator')||l.includes('توليد')) return 'generator';
-  if(l.includes('dashboard')||l.includes('لوحة')) return 'dashboard';
-  if(l.includes('تصميم')||l.includes('zalij')||l.includes('لون')) return 'design';
-  if(l.includes('code')||l.includes('كود')||l.includes('js')||l.includes('html')) return 'technical';
-  if(l.includes('سعر')||l.includes('اشتراك')||l.includes('plan')) return 'pricing';
-  return 'general';
-}
-
-/* ── Content Filter (NSFW Prohibited terms) ── */
-const BLOCKED_TERMS = ['porno', 'xxx', 'xnnx', 'gore'];
-function containsBlockedTerms(text) {
-  const normalized = text.toLowerCase();
-  return BLOCKED_TERMS.some(term => normalized.includes(term));
-}
-
-async function logBlockedAttempt(prompt) {
-  try {
-    await _SB.from('zunexa_security_logs').insert({
-      prompt: prompt,
-      timestamp: new Date().toISOString()
-    });
-  } catch(e){}
-}
-
 /* ════════════════════════════════════════════════════════════
-   SEND MESSAGE
+   SEND MESSAGE SEQUENCE
 ════════════════════════════════════════════════════════════ */
 async function send() {
   if (busy) return;
   const inp = document.getElementById('aiInput');
   const q   = inp.value.trim();
   if (!q) return;
+  if (!ZX_AI_RATE.check()) return;
 
-  if (containsBlockedTerms(q)) {
-    inp.value = '';
-    toast('🛑 المحتوى غير ملائم وتم حظر الاستعلام.');
-    await logBlockedAttempt(q);
+  const blockedWord = checkBlocklist(q);
+  if (blockedWord) {
+    await handleBlockedRequest(q, blockedWord);
+    inp.value = ''; resize(inp);
     return;
   }
-
-  if (!ZX_AI_RATE.check()) return;
 
   busy = true;
   document.getElementById('sendBtn').disabled = true;
@@ -1880,7 +1825,7 @@ async function send() {
 
   } catch(err) {
     removeTyping();
-    addMsg('⚠ خطأ في المعالجة. حاول مرة أخرى.', 'bot', 'error', 0);
+    addMsg('⚠️ تعذّر معالجة طلبك حالياً.', 'bot', 'error', 0);
   }
 
   busy = false;
@@ -1889,7 +1834,7 @@ async function send() {
 }
 
 /* ════════════════════════════════════════════════════════════
-   DOM HELPERS
+   DOM CHAT BUILDERS & METADATA BADGES
 ════════════════════════════════════════════════════════════ */
 function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
   const conv = document.getElementById('conv');
@@ -1929,6 +1874,10 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
     const time = new Date().toLocaleTimeString('ar', {hour:'2-digit', minute:'2-digit'});
     meta.innerHTML = `<span>${time}</span>`;
 
+    // Multi-Agent Persona Badge Display
+    const pData = PERSONAS[activeAgent] || PERSONAS.general;
+    meta.innerHTML += `<span class="meta-badge" style="background:var(--bgp); border:1px solid var(--bg); color:var(--gold);">${pData.badge}</span>`;
+
     if (src === 'qa' || src === 'local') {
       meta.innerHTML += `<span class="meta-badge badge-qa">قاعدة المعرفة</span>`;
     } else if (src === 'learned') {
@@ -1940,7 +1889,7 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
     } else if (src === 'ai-brain') {
       meta.innerHTML += `<span class="meta-badge badge-ai">✦ Archon Brain</span>`;
     } else if (src === 'tool') {
-      meta.innerHTML += `<span class="meta-badge badge-web">🛠 أداة مباشرة</span>`;
+      meta.innerHTML += `<span class="meta-badge badge-web">🛠️ أداة</span>`;
     }
 
     if (score > 0) {
@@ -2023,26 +1972,58 @@ function toast(msg) {
 }
 
 /* ════════════════════════════════════════════════════════════
-   HISTORY
+   ACTIVE PERSISTANCE HISTORY
 ════════════════════════════════════════════════════════════ */
+function saveThreadMsg(role, text, src, score, imgUrl, audioUrl) {
+  if (tempChatOn) return;
+  const key = 'zx_thread_' + currentChatId;
+  let arr = [];
+  try { arr = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e){}
+  arr.push({ role, text, src: src||null, score: score||0, imgUrl: imgUrl||null, audioUrl: audioUrl||null, ts: Date.now() });
+  localStorage.setItem(key, JSON.stringify(arr));
+}
+
+function loadThread(chatId) {
+  try { return JSON.parse(localStorage.getItem('zx_thread_' + chatId) || '[]'); } catch(e){ return []; }
+}
+
+function replayThread(chatId) {
+  const conv = document.getElementById('conv');
+  const w = document.getElementById('welcome');
+  if (w) w.remove();
+  conv.innerHTML = '';
+  const msgs = loadThread(chatId);
+  msgs.forEach(m => addMsg(m.text, m.role, m.src, m.score, m.imgUrl, true, m.audioUrl));
+  ctx = msgs.slice(-12).map(m => ({ role: m.role === 'user' ? 'user' : 'bot', text: m.text }));
+}
+
+function toggleTempChat() {
+  tempChatOn = !tempChatOn;
+  const btn = document.getElementById('tempChatBtn');
+  if (tempChatOn) {
+    _prevChatId = currentChatId;
+    currentChatId = genChatId();
+    if (btn) btn.classList.add('on');
+    toast('🕶️ تم تفعيل المحادثة المؤقتة بنجاح.');
+  } else {
+    currentChatId = _prevChatId || currentChatId;
+    localStorage.setItem('zx_current_chat', currentChatId);
+    if (btn) btn.classList.remove('on');
+    toast('المحادثة المؤقتة ملغية حالياً.');
+  }
+  newChat();
+}
+
 function renderHist() {
   const list = document.getElementById('histList');
   if (!hist.length) {
-    list.innerHTML = '<div class="h-empty">لا توجد محادثات بعد<br>ابدأ بسؤال ✦</div>';
+    list.innerHTML = '<div class="h-empty">لا توجد محادثات سابقة<br>ابدأ بالبحث والاستكشاف ✦</div>';
     return;
   }
-  const relTime = ts => {
-    const d = Date.now() - ts;
-    if (d < 60000) return 'الآن';
-    if (d < 3600000) return Math.floor(d/60000) + 'د';
-    if (d < 86400000) return Math.floor(d/3600000) + 'س';
-    return Math.floor(d/86400000) + 'ي';
-  };
-  list.innerHTML = hist.slice(0,28).map((i,idx) =>
+  list.innerHTML = hist.slice(0,25).map((i,idx) =>
     `<div class="h-item" onclick="reloadQ(${idx})">
       <span class="h-icon">💬</span>
       <span class="h-title">${esc(i.t)}</span>
-      <span class="h-time">${relTime(i.ts)}</span>
     </div>`
   ).join('');
 }
@@ -2059,7 +2040,7 @@ function reloadQ(idx) {
 }
 
 function clearAll() {
-  if (!confirm('هل تريد مسح كل السجل؟')) return;
+  if (!confirm('هل تريد بالتأكيد إزالة جميع السجلات؟')) return;
   Object.keys(localStorage).filter(k => k.startsWith('zx_thread_')).forEach(k => localStorage.removeItem(k));
   hist = []; ctx = [];
   localStorage.removeItem('zx_hist_v3');
@@ -2067,9 +2048,6 @@ function clearAll() {
   newChat();
 }
 
-/* ════════════════════════════════════════════════════════════
-   NEW CHAT
-════════════════════════════════════════════════════════════ */
 function newChat() {
   ctx = [];
   if (!tempChatOn) {
@@ -2095,22 +2073,15 @@ function newChat() {
         <div class="qchip" onclick="go('/جيت zunexa')">🐙 GitHub</div>
         <div class="qchip" onclick="go('/بحث أفضل ممارسات SEO 2026')">🔎 بحث ويب</div>
         <div class="qchip" onclick="go('/صوت مرحبا بك في Zunexa')">🔊 نص لصوت</div>
-        <div class="qchip" onclick="go('/مساعدة')">🛠 جميع الاختصارات والأدوات</div>
+        <div class="qchip" onclick="go('اشرح لي قالب ollama.html')">📄 ollama.html</div>
+        <div class="qchip" onclick="go('كيف يعمل سكربت hq_scanner.py؟')">🐍 hq_scanner.py</div>
       </div>
     </div>`;
   closeSidebar();
 }
 
 /* ════════════════════════════════════════════════════════════
-   WEB SEARCH
-════════════════════════════════════════════════════════════ */
-function toggleWeb() {
-  webOn = !webOn;
-  document.getElementById('webTgl').classList.toggle('on', webOn);
-}
-
-/* ════════════════════════════════════════════════════════════
-   VOICE INPUT — Web Speech API
+   VOICE INPUT/OUTPUT INTEGRATION
 ════════════════════════════════════════════════════════════ */
 function initVoice() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -2131,21 +2102,12 @@ function initVoice() {
     stopVoice();
     send();
   };
-  recog.onerror = (e) => {
-    stopVoice();
-    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-      toast('🎙 يرجى السماح بالوصول إلى الميكروفون من إعدادات المتصفح');
-    } else if (e.error === 'no-speech') {
-      toast('🎙 لم يُسمع أي صوت — حاول مرة أخرى');
-    } else if (e.error !== 'aborted') {
-      toast('🎙 تعذّر التعرف على الصوت');
-    }
-  };
+  recog.onerror = () => stopVoice();
   recog.onend = () => stopVoice();
 }
 
 function toggleVoice() {
-  if (!recog) { toast('🎙 التعرف على الصوت غير مدعوم في هذا المتصفح'); return; }
+  if (!recog) { toast('🎙️ خاصية الإدخال الصوتي غير معززة فمتصفحك الحالي.'); return; }
   if (recording) {
     recog.stop();
     stopVoice();
@@ -2155,7 +2117,6 @@ function toggleVoice() {
       startVoice();
     } catch (err) {
       stopVoice();
-      toast('🎙 تعذّر بدء التسجيل — حاول من جديد');
     }
   }
 }
@@ -2172,23 +2133,41 @@ function stopVoice() {
   document.getElementById('voiceBtn').textContent = '🎤';
 }
 
+function speakBrowser(text, lang) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang || 'ar-SA';
+    const voice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
+    u.rate = parseFloat(voice.speed) || 1;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  } catch(e){}
+}
+
 /* ════════════════════════════════════════════════════════════
-   SIDEBAR — Mobile
+   PWA & SIDEBAR CONTROLS
 ════════════════════════════════════════════════════════════ */
 function openSidebar() {
   document.getElementById('sidebar').classList.add('on');
   document.getElementById('overlay').classList.add('on');
-  document.body.style.overflow = 'hidden';
 }
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('on');
   document.getElementById('overlay').classList.remove('on');
-  document.body.style.overflow = '';
 }
 
 /* ════════════════════════════════════════════════════════════
-   SETTINGS
+   SETTINGS TABS INTERFACES
 ════════════════════════════════════════════════════════════ */
+function setAgent(v) {
+  activeAgent = v;
+  localStorage.setItem('zx_active_agent', v);
+  if (document.getElementById('agentSel')) {
+    document.getElementById('agentSel').value = v;
+  }
+}
+
 async function openSettings() {
   const { data: { session } } = await _SB.auth.getSession();
   const loggedInBox = document.getElementById('settLoggedInInfo');
@@ -2214,110 +2193,11 @@ function saveSettings() {
   const name = document.getElementById('fName').value.trim();
   if (name) {
     localStorage.setItem('zx_guest_name', name);
-    setUserUI(name, 'Free', '', name[0].toUpperCase());
+    setUserUI(name, 'Free', 'اتصال محلي آمن', name[0].toUpperCase());
   }
   closeSettings();
 }
 
-/* ════════════════════════════════════════════════════════════
-   PARTICLES — Gold floating dots
-════════════════════════════════════════════════════════════ */
-function initParticles() {
-  const c   = document.getElementById('pCanvas');
-  const ctx2 = c.getContext('2d');
-  let pts   = [];
-  const N   = 55;
-
-  function resize2() { c.width = innerWidth; c.height = innerHeight; }
-  window.addEventListener('resize', resize2); resize2();
-
-  const rand = (a,b) => Math.random()*(b-a)+a;
-  const mkP  = () => ({
-    x: rand(0, c.width), y: rand(0, c.height),
-    r: rand(.3,1.6), vx: rand(-.1,.1), vy: rand(-.18,-.03),
-    a: rand(.04,.28), life: rand(.0003,.0012)
-  });
-  for (let i=0;i<N;i++) pts.push(mkP());
-
-  const hexPts = Array.from({length:15}, () => ({
-    x: rand(0,c.width), y: rand(0,c.height),
-    r: rand(3,8), vx: rand(-.05,.05), vy: rand(-.08,-.02),
-    a: rand(.02,.1), life: rand(.0002,.0008), rot:rand(0,Math.PI*2), rv:rand(-.005,.005)
-  }));
-
-  function drawHex(ctx2, x, y, r, rot) {
-    ctx2.beginPath();
-    for (let i=0;i<6;i++) {
-      const a = rot + i*Math.PI/3;
-      i===0 ? ctx2.moveTo(x+r*Math.cos(a), y+r*Math.sin(a))
-             : ctx2.lineTo(x+r*Math.cos(a), y+r*Math.sin(a));
-    }
-    ctx2.closePath();
-  }
-
-  function frame() {
-    ctx2.clearRect(0,0,c.width,c.height);
-
-    pts.forEach((p,i) => {
-      ctx2.beginPath(); ctx2.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx2.fillStyle = `rgba(212,175,55,${p.a})`; ctx2.fill();
-      p.x+=p.vx; p.y+=p.vy; p.a-=p.life;
-      if (p.a<=0||p.y<-10) { pts[i]=mkP(); pts[i].y=c.height+5; pts[i].a=rand(.08,.28); }
-    });
-
-    hexPts.forEach((p,i) => {
-      ctx2.save();
-      drawHex(ctx2, p.x, p.y, p.r, p.rot);
-      ctx2.strokeStyle = `rgba(212,175,55,${p.a})`; ctx2.lineWidth=.5; ctx2.stroke();
-      ctx2.restore();
-      p.x+=p.vx; p.y+=p.vy; p.a-=p.life; p.rot+=p.rv;
-      if (p.a<=0||p.y<-20) {
-        hexPts[i] = { x:rand(0,c.width), y:c.height+10, r:rand(3,8),
-          vx:rand(-.05,.05), vy:rand(-.08,-.02),
-          a:rand(.04,.12), life:rand(.0002,.0008), rot:rand(0,Math.PI*2), rv:rand(-.005,.005) };
-      }
-    });
-
-    requestAnimationFrame(frame);
-  }
-  frame();
-}
-
-/* ════════════════════════════════════════════════════════════
-   CLOSE MODAL ON OUTSIDE CLICK
-════════════════════════════════════════════════════════════ */
-document.getElementById('settModal').addEventListener('click', function(e) {
-  if (e.target === this) closeSettings();
-});
-
-/* ════════════════════════════════════════════════════════════
-   THEME / MODEL / EFFORT — state + persistence
-════════════════════════════════════════════════════════════ */
-let zxTheme  = localStorage.getItem('zx_theme')  || 'zalij-dark';
-let zxModel  = localStorage.getItem('zx_model')  || 'lite';
-let zxEffort = localStorage.getItem('zx_effort') || 'balanced';
-
-function applyTheme(v) {
-  if (v === 'zalij-dark') document.documentElement.removeAttribute('data-zx-theme');
-  else document.documentElement.setAttribute('data-zx-theme', v);
-}
-function setTheme(v) {
-  zxTheme = v; localStorage.setItem('zx_theme', v); applyTheme(v);
-  _SB.auth.getSession().then(({ data: { session } }) => {
-    if (session) _SB.from('profiles').update({ current_theme: v }).eq('id', session.user.id).then(()=>{}, ()=>{});
-  });
-}
-function setModel(v) {
-  zxModel = v; localStorage.setItem('zx_model', v);
-  const tag = document.querySelector('.model-tag');
-  const names = { lite:'Archon Lite · Local', pro:'Archon Pro · KB+AI', max:'Archon Max · Full' };
-  if (tag) tag.textContent = names[v] || 'Zunexa AI Engine';
-}
-function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); }
-
-/* ════════════════════════════════════════════════════════════
-   SETTINGS — Tabs
-════════════════════════════════════════════════════════════ */
 function setSTab(name) {
   document.querySelectorAll('.set-tab').forEach(t => t.classList.remove('on'));
   document.querySelectorAll('.set-pane').forEach(p => p.classList.remove('on'));
@@ -2338,8 +2218,8 @@ async function saveProfileSettings() {
         full_name: full, call_name: call, work_desc: work, instructions: inst
       }).eq('id', session.user.id);
     }
-    toast('✓ تم حفظ الملف الشخصي');
-  } catch (e) { toast('⚠ تعذّر الحفظ في الحساب — تم الحفظ محلياً فقط'); }
+    toast('✓ تم حفظ ملفك الشخصي.');
+  } catch (e) { toast('⚠️ تم حفظ التغييرات محلياً بنجاح.'); }
 }
 
 function loadProfileIntoUI() {
@@ -2383,10 +2263,7 @@ function setNotifPref(on) {
 }
 
 function setLearnPref(on) { localStorage.setItem('zx_learn_enabled', on ? '1' : '0'); }
-function isLearnEnabled() { return localStorage.getItem('zx_learn_enabled') !== '0'; }
-
 function setToolsPref(on) { localStorage.setItem('zx_tools_enabled', on ? '1' : '0'); }
-function isToolsEnabled() { return localStorage.getItem('zx_tools_enabled') !== '0'; }
 
 function getApiKeys() { try { return JSON.parse(localStorage.getItem('zx_api_keys') || '{}'); } catch(e){ return {}; } }
 function getApiKey(name) { return (getApiKeys()[name] || '').trim(); }
@@ -2399,8 +2276,9 @@ function saveApiKeys(showToast) {
     serper:  (document.getElementById('keySerper')||{}).value || ''
   };
   localStorage.setItem('zx_api_keys', JSON.stringify(keys));
-  if (showToast) toast('✓ تم حفظ المفاتيح محلياً فالمتصفح');
+  if (showToast) toast('✓ تم حفظ مفاتيح التشغيل بأمان.');
 }
+
 function loadApiKeysIntoUI() {
   const k = getApiKeys();
   if (document.getElementById('keyHF'))       document.getElementById('keyHF').value = k.hf || '';
@@ -2410,14 +2288,32 @@ function loadApiKeysIntoUI() {
   if (document.getElementById('keySerper'))   document.getElementById('keySerper').value = k.serper || '';
 }
 
+function applyTheme(v) {
+  if (v === 'zalij-dark') document.documentElement.removeAttribute('data-zx-theme');
+  else document.documentElement.setAttribute('data-zx-theme', v);
+}
+function setTheme(v) {
+  zxTheme = v; localStorage.setItem('zx_theme', v); applyTheme(v);
+  _SB.auth.getSession().then(({ data: { session } }) => {
+    if (session) _SB.from('profiles').update({ current_theme: v }).eq('id', session.user.id).then(()=>{}, ()=>{});
+  });
+}
+function setModel(v) {
+  zxModel = v; localStorage.setItem('zx_model', v);
+  const tag = document.querySelector('.model-tag');
+  const names = { lite:'Archon Lite', pro:'Archon Pro', max:'Archon Max' };
+  if (tag) tag.textContent = names[v] || 'Zunexa AI Engine';
+}
+function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); }
+
 function loadAllPrefsIntoUI() {
   loadProfileIntoUI();
   loadApiKeysIntoUI();
   const font = localStorage.getItem('zx_font') || 'rajdhani';
   const motion = localStorage.getItem('zx_reduce_motion') === '1';
   const notif = localStorage.getItem('zx_notif_done') === '1';
-  const learn = isLearnEnabled();
-  const tools = isToolsEnabled();
+  const learn = localStorage.getItem('zx_learn_enabled') !== '0';
+  const tools = localStorage.getItem('zx_tools_enabled') !== '0';
   const pageLang = localStorage.getItem('zx_page_lang') || 'ar';
   const voice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
 
@@ -2438,32 +2334,154 @@ function loadAllPrefsIntoUI() {
   document.documentElement.classList.toggle('zx-reduce-motion', motion);
 }
 
+/* ── CLI Code Previews Setup ── */
+function initCliCodePreviews() {
+  const nodeCli = `// Node.js Terminal CLI - Zunexa Archon AI
+const https = require('https');
+const args = process.argv.slice(2);
+const prompt = args.join(' ');
+
+if (!prompt) {
+  console.log('Usage: node cli.js "Your query here"');
+  process.exit(1);
+}
+
+const data = JSON.stringify({
+  model: 'openai',
+  messages: [{ role: 'user', content: prompt }]
+});
+
+const req = https.request('https://text.pollinations.ai/openai', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' }
+}, res => {
+  let output = '';
+  res.on('data', d => output += d);
+  res.on('end', () => {
+    try { console.log(JSON.parse(output).choices[0].message.content); }
+    catch(e) { console.log('Error output response.'); }
+  });
+});
+req.write(data);
+req.end();`;
+
+  const pythonCli = `# Python CLI Tool - Zunexa Archon AI
+import sys, json, urllib.request
+
+prompt = " ".join(sys.argv[1:])
+if not prompt:
+    print('Usage: python cli.py "Your query here"')
+    sys.exit(1)
+
+req = urllib.request.Request(
+    'https://text.pollinations.ai/openai',
+    data=json.dumps({
+        'model': 'openai',
+        'messages': [{'role': 'user', 'content': prompt}]
+    }).encode('utf-8'),
+    headers={'Content-Type': 'application/json'}
+)
+
+try:
+    with urllib.request.urlopen(req) as r:
+        response = json.loads(r.read().decode('utf-8'))
+        print(response['choices'][0]['message']['content'])
+except Exception as e:
+    print("Execution failed.")`;
+
+  document.getElementById('nodeCliText').value = nodeCli;
+  document.getElementById('pythonCliText').value = pythonCli;
+}
+
+function copyToClipboard(elementId) {
+  const el = document.getElementById(elementId);
+  if (el) {
+    el.select();
+    navigator.clipboard.writeText(el.value).then(() => {
+      toast('✓ تم نسخ الكود بنجاح.');
+    });
+  }
+}
+
+/* ── Custom Blocklist Management ── */
+function renderBlocklistUI() {
+  const container = document.getElementById('blocklistContainer');
+  if (!container) return;
+  let custom = [];
+  try {
+    custom = JSON.parse(localStorage.getItem('zx_blocklist') || '[]');
+  } catch(e){}
+
+  if (custom.length === 0) {
+    container.innerHTML = '<p style="font-size:11px; color:var(--tg); text-align:center; padding:10px;">لا توجد كلمات حظر مخصصة بعد.</p>';
+    return;
+  }
+
+  container.innerHTML = custom.map((word, index) => `
+    <div style="display:flex; align-items:center; justify-content:space-between; background:var(--card2); padding:6px 12px; border-radius:8px; border:1px solid var(--b1); margin-bottom:6px;">
+      <span style="font-family:monospace; font-size:12px; color:var(--tw);">${word}</span>
+      <button style="color:var(--red); font-size:11px; font-weight:700;" onclick="removeBlockWordUI(${index})">إزالة</button>
+    </div>
+  `).join('');
+}
+
+function addBlockWordUI() {
+  const input = document.getElementById('newBlockWord');
+  if (!input) return;
+  const word = input.value.trim().toLowerCase();
+  if (!word) return;
+
+  let custom = [];
+  try {
+    custom = JSON.parse(localStorage.getItem('zx_blocklist') || '[]');
+  } catch(e){}
+
+  if (!custom.includes(word)) {
+    custom.push(word);
+    localStorage.setItem('zx_blocklist', JSON.stringify(custom));
+    input.value = '';
+    renderBlocklistUI();
+    toast('✓ تم إضافة الكلمة لقائمة الحظر.');
+  } else {
+    toast('ℹ الكلمة موجودة بالفعل.');
+  }
+}
+
+function removeBlockWordUI(index) {
+  let custom = [];
+  try {
+    custom = JSON.parse(localStorage.getItem('zx_blocklist') || '[]');
+  } catch(e){}
+
+  custom.splice(index, 1);
+  localStorage.setItem('zx_blocklist', JSON.stringify(custom));
+  renderBlocklistUI();
+  toast('✓ تم إزالة الكلمة بنجاح.');
+}
+
 /* ════════════════════════════════════════════════════════════
-   FILE / PHOTO / PDF ATTACHMENT
+   FILE UPLOAD INTEGRATIONS
 ════════════════════════════════════════════════════════════ */
 let attachedFile = null;
 
 async function onFilePicked(e) {
   const file = e.target.files[0];
   if (!file) return;
-  if (file.size > 8 * 1024 * 1024) { toast('⚠ الملف كبير جداً (الحد 8MB)'); e.target.value=''; return; }
+  if (file.size > 8 * 1024 * 1024) { toast('⚠️ الحد الأقصى للملفات هو 8 ميجابايت.'); e.target.value=''; return; }
 
   const zone = document.getElementById('fileChipZone');
-  toast('⏳ جاري قراءة الملف...');
+  toast('⏳ جاري قراءة الملف المرفق...');
 
   try {
     if (file.type.startsWith('image/')) {
       const dataUrl = await readAsDataURL(file);
       attachedFile = { name: file.name, kind: 'image', dataUrl, textContent: '' };
-    } else if (file.type.startsWith('audio/')) {
-      attachedFile = { name: file.name, kind: 'audio', dataUrl: '', textContent: '' };
-      toast('ℹ الملف الصوتي تم إرفاقه كمرجع فقط — تحويل الصوت لنص غير مفعّل حالياً (يحتاج خدمة خارجية)');
     } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
       const buf = await file.arrayBuffer();
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
       let text = '';
-      const maxPages = Math.min(pdf.numPages, 25);
+      const maxPages = Math.min(pdf.numPages, 20);
       for (let p = 1; p <= maxPages; p++) {
         const page = await pdf.getPage(p);
         const content = await page.getTextContent();
@@ -2480,14 +2498,13 @@ async function onFilePicked(e) {
     document.getElementById('attachBtn').classList.add('has-file');
     zone.innerHTML = `
       <div class="file-chip">
-        ${attachedFile.kind === 'image' ? `<img src="${attachedFile.dataUrl}">` : (attachedFile.kind === 'audio' ? '🎵' : '📄')}
+        ${attachedFile.kind === 'image' ? `<img src="${attachedFile.dataUrl}">` : '📄'}
         <span>${esc(file.name)}</span>
         <span class="fc-x" onclick="clearFile()">✕</span>
       </div>`;
-    toast('✓ تم إرفاق الملف — اسأل عنه الآن');
+    toast('✓ تم إرفاق الملف بنجاح.');
   } catch (err) {
-    console.error(err);
-    toast('⚠ تعذّرت قراءة هذا الملف');
+    toast('⚠️ تعذر تحليل هذا النوع من الملفات.');
     attachedFile = null;
   }
   e.target.value = '';
@@ -2497,7 +2514,6 @@ function readAsDataURL(file) {
   return new Promise((res, rej) => {
     const r = new FileReader();
     r.onload = () => res(r.result);
-    r.onerror = () => rej(r.error);
     r.readAsDataURL(file);
   });
 }
@@ -2505,7 +2521,6 @@ function readAsText(file) {
   return new Promise((res, rej) => {
     const r = new FileReader();
     r.onload = () => res(r.result);
-    r.onerror = () => rej(r.error);
     r.readAsText(file);
   });
 }
@@ -2516,10 +2531,10 @@ function clearFile() {
 }
 
 /* ════════════════════════════════════════════════════════════
-   QUICK-COMMAND TOOLS
+   QUICK TOOLS HANDLERS (FREE WEB APIS)
 ════════════════════════════════════════════════════════════ */
 async function routeQuickCommand(q) {
-  if (!isToolsEnabled()) return null;
+  if (localStorage.getItem('zx_tools_enabled') === '0') return null;
   const m = q.trim();
 
   const weatherMatch = m.match(/^\/(?:طقس|weather)\s+(.+)/i);
@@ -2531,198 +2546,95 @@ async function routeQuickCommand(q) {
   const ghMatch = m.match(/^\/(?:جيت|github)\s+(.+)/i);
   if (ghMatch) return await toolGithub(ghMatch[1].trim());
 
-  const newsMatch = m.match(/^\/(?:اخبار|أخبار|news)\s*(.*)/i);
-  if (newsMatch) return await toolNews(newsMatch[1].trim());
-
   const imgMatch = m.match(/^\/(?:صورة|image)\s+(.+)/i);
   if (imgMatch) return await toolImageGen(imgMatch[1].trim());
-
-  const hfImgMatch = m.match(/^\/(?:صورة_hf|image_hf)\s+(.+)/i);
-  if (hfImgMatch) return await toolImageGenHF(hfImgMatch[1].trim());
-
-  const trMatch = m.match(/^\/(?:ترجم|translate)\s+([a-zA-Z]{2})\s+(.+)/i);
-  if (trMatch) return await toolTranslate(trMatch[1].toUpperCase(), trMatch[2].trim());
-
-  const ttsMatch = m.match(/^\/(?:صوت|tts)\s+(.+)/i);
-  if (ttsMatch) return toolTTS(ttsMatch[1].trim());
-
-  const searchMatch = m.match(/^\/(?:بحث_عميق|بحث|search)\s+(.+)/i);
-  if (searchMatch) return await toolDeepSearch(searchMatch[1].trim());
-
-  const helpMatch = m.match(/^\/(?:مساعدة|help)/i);
-  if (helpMatch) return toolHelp();
 
   return null;
 }
 
 async function toolWeather(city) {
   try {
-    const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=ar`).then(r=>r.json());
+    const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`).then(r=>r.json());
     const loc = geo.results && geo.results[0];
-    if (!loc) return { text: `⚠ لم أجد موقع "${city}".`, src: 'tool', score: 0.3 };
-    const w = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto`).then(r=>r.json());
+    if (!loc) return { text: `⚠️ لم نجد نتائج لـ "${city}".`, src: 'tool', score: 0.3 };
+    const w = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current=temperature_2m,relative_humidity_2m&timezone=auto`).then(r=>r.json());
     const c = w.current || {};
-    const txt = `🌤 **الطقس في ${loc.name}${loc.country ? ', '+loc.country : ''}**\n\n`
-      + `**الحرارة:** ${c.temperature_2m}°C\n`
-      + `**الرطوبة:** ${c.relative_humidity_2m}%\n`
-      + `**سرعة الرياح:** ${c.wind_speed_10m} كم/س\n\n`
-      + `_المصدر: Open-Meteo (بدون مفتاح API)_`;
-    return { text: txt, src: 'tool', score: 0.9 };
-  } catch (e) { return { text: '⚠ تعذّر جلب الطقس حالياً — حاول لاحقاً.', src: 'tool', score: 0.1 }; }
+    const txt = `🌤️ **حالة الطقس لـ ${loc.name}**\n\n**درجة الحرارة:** ${c.temperature_2m}°C\n**الرطوبة:** ${c.relative_humidity_2m}%`;
+    return { text: txt, src: 'tool', score: 0.95 };
+  } catch (e) { return { text: '⚠️ عجزت الخدمات الخارجية عن إمداد الطقس الآن.', src: 'tool', score: 0.1 }; }
 }
 
 async function toolMap(place) {
   try {
-    const geo = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(place)}&format=json&limit=1`, { headers: { 'Accept-Language': 'ar' } }).then(r=>r.json());
+    const geo = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(place)}&format=json&limit=1`).then(r=>r.json());
     const loc = geo && geo[0];
-    if (!loc) return { text: `⚠ لم أجد "${place}" على الخريطة.`, src: 'tool', score: 0.3 };
-    const link = `https://www.openstreetmap.org/?mlat=${loc.lat}&mlon=${loc.lon}#map=15/${loc.lat}/${loc.lon}`;
-    const txt = `📍 **${esc(loc.display_name)}**\n\n**الإحداثيات:** ${parseFloat(loc.lat).toFixed(5)}, ${parseFloat(loc.lon).toFixed(5)}\n\n[افتح على OpenStreetMap](${link})\n\n_المصدر: OpenStreetMap Nominatim (بدون مفتاح API)_`;
-    return { text: txt, src: 'tool', score: 0.9 };
-  } catch (e) { return { text: '⚠ تعذّر جلب الموقع حالياً.', src: 'tool', score: 0.1 }; }
+    if (!loc) return { text: `⚠️ تعذّر العثور على الإحداثيات لـ "${place}".`, src: 'tool', score: 0.3 };
+    const txt = `📍 **موقع: ${esc(loc.display_name)}**\n\n**الإحداثيات:** ${loc.lat}, ${loc.lon}`;
+    return { text: txt, src: 'tool', score: 0.95 };
+  } catch (e) { return { text: '⚠️ فشل الاتصال بخريطة النظام السحابي.', src: 'tool', score: 0.1 }; }
 }
 
 async function toolGithub(query) {
   try {
-    const d = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=5`).then(r=>r.json());
-    if (!d.items || !d.items.length) return { text: `⚠ لا نتائج على GitHub لـ "${query}".`, src: 'tool', score: 0.3 };
-    const txt = `🐙 **أفضل نتائج GitHub لـ "${query}":**\n\n` + d.items.map((r,i) =>
-      `${i+1}. **[${r.full_name}](${r.html_url})** — ⭐ ${r.stargazers_count}\n   ${r.description ? esc(r.description).slice(0,120) : 'بدون وصف'}`
-    ).join('\n\n') + `\n\n_المصدر: GitHub REST API (بدون مفتاح API)_`;
-    return { text: txt, src: 'tool', score: 0.9 };
-  } catch (e) { return { text: '⚠ تعذّر البحث في GitHub حالياً.', src: 'tool', score: 0.1 }; }
-}
-
-async function toolNews(query) {
-  try {
-    const url = query
-      ? `https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(query)}&tags=story&hitsPerPage=5`
-      : `https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=5`;
-    const d = await fetch(url).then(r=>r.json());
-    if (!d.hits || !d.hits.length) return { text: '⚠ لا أخبار متاحة حالياً.', src: 'tool', score: 0.3 };
-    const txt = `📰 **آخر الأخبار${query ? ' عن "'+query+'"' : ''}:**\n\n` + d.hits.map((h,i) =>
-      `${i+1}. **[${esc(h.title||'بدون عنوان')}](${h.url || 'https://news.ycombinator.com/item?id='+h.objectID})** — 👍 ${h.points||0}`
-    ).join('\n\n') + `\n\n_المصدر: Hacker News / Algolia API (بدون مفتاح API)_`;
-    return { text: txt, src: 'tool', score: 0.9 };
-  } catch (e) { return { text: '⚠ تعذّر جلب الأخبار حالياً.', src: 'tool', score: 0.1 }; }
+    const d = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&per_page=3`).then(r=>r.json());
+    if (!d.items || !d.items.length) return { text: `⚠️ لا توجد مستودعات متاحة لـ "${query}".`, src: 'tool', score: 0.3 };
+    const txt = `🐙 **أبرز نتائج GitHub المكتشفة لـ "${query}":**\n\n` + d.items.map((r,i) =>
+      `${i+1}. **[${r.full_name}](${r.html_url})**\n⭐ Stars: ${r.stargazers_count}`
+    ).join('\n\n');
+    return { text: txt, src: 'tool', score: 0.95 };
+  } catch (e) { return { text: '⚠️ خدمات البحث في مستودعات GitHub متوقفة.', src: 'tool', score: 0.1 }; }
 }
 
 async function toolImageGen(prompt) {
-  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=768&nologo=true&seed=${Date.now()%100000}`;
-  return { text: `🎨 **صورة مولّدة بالذكاء الاصطناعي:**\n"${prompt}"\n\n_المصدر: Pollinations.ai (بدون مفتاح API)_`, src: 'tool', score: 0.9, imgUrl: url };
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=768&height=768&nologo=true&seed=${Date.now()%10000}`;
+  return { text: `🎨 **صورة مولدة لطلبك:**\n"${prompt}"`, src: 'tool', score: 0.95, imgUrl: url };
 }
 
-async function toolImageGenHF(prompt) {
-  const key = getApiKey('hf');
-  if (!key) return { text: `⚠ /صورة_hf تحتاج Hugging Face Token مجاني — سجّل فـ huggingface.co/settings/tokens وحطو فالإعدادات ← مفاتيح API. فالوقت الحالي جرّب /صورة (Pollinations، بلا مفتاح).`, src: 'tool', score: 0.3 };
-  try {
-    const res = await fetch('https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ inputs: prompt })
+/* ════════════════════════════════════════════════════════════
+   PARTICLES SYSTEM
+════════════════════════════════════════════════════════════ */
+function initParticles() {
+  const c   = document.getElementById('pCanvas');
+  const ctx2 = c.getContext('2d');
+  let pts   = [];
+  const N   = 40;
+
+  function resize2() { c.width = innerWidth; c.height = innerHeight; }
+  window.addEventListener('resize', resize2); resize2();
+
+  const rand = (a,b) => Math.random()*(b-a)+a;
+  const mkP  = () => ({
+    x: rand(0, c.width), y: rand(0, c.height),
+    r: rand(.3,1.4), vx: rand(-.05,.05), vy: rand(-.15,-.03),
+    a: rand(.04,.25), life: rand(.0004,.001)
+  });
+  for (let i=0;i<N;i++) pts.push(mkP());
+
+  function frame() {
+    ctx2.clearRect(0,0,c.width,c.height);
+    pts.forEach((p,i) => {
+      ctx2.beginPath(); ctx2.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx2.fillStyle = `rgba(212,175,55,${p.a})`; ctx2.fill();
+      p.x+=p.vx; p.y+=p.vy; p.a-=p.life;
+      if (p.a<=0||p.y<-10) { pts[i]=mkP(); pts[i].y=c.height+5; }
     });
-    if (!res.ok) throw new Error('hf http ' + res.status);
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    return { text: `🎨 **صورة مولّدة (Hugging Face · FLUX.1-schnell):**\n"${prompt}"`, src: 'tool', score: 0.9, imgUrl: url };
-  } catch (e) { return { text: '⚠ تعذّر التوليد عبر Hugging Face — قد يكون النموذج كايحمّل (كولد ستارت)، عاود المحاولة بعد ثوانٍ.', src: 'tool', score: 0.1 }; }
-}
-
-async function toolTranslate(targetLang, text) {
-  const key = getApiKey('deepl');
-  if (!key) {
-    return { text: `⚠ الترجمة عبر DeepL تحتاج مفتاح API مجاني — سجّل فـ deepl.com/pro-api وحط المفتاح فـ الإعدادات ← مفاتيح API.`, src: 'tool', score: 0.3 };
+    requestAnimationFrame(frame);
   }
-  try {
-    const host = key.endsWith(':fx') ? 'api-free.deepl.com' : 'api.deepl.com';
-    const res = await fetch(`https://${host}/v2/translate`, {
-      method: 'POST',
-      headers: { 'Authorization': `DeepL-Auth-Key ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: [text], target_lang: targetLang })
-    });
-    const d = await res.json();
-    const out = d.translations && d.translations[0] && d.translations[0].text;
-    if (!out) throw new Error('no translation returned');
-    return { text: `🌍 **الترجمة (${targetLang}):**\n\n${out}\n\n_المصدر: DeepL API_`, src: 'tool', score: 0.9 };
-  } catch (e) { return { text: '⚠ تعذّرت الترجمة — تحقق من صحة مفتاح DeepL.', src: 'tool', score: 0.1 }; }
+  frame();
 }
 
-function toolTTS(text) {
-  const key = getApiKey('voicerss');
-  const voice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
-  const lang = voice.lang || 'ar-sa';
-  if (key) {
-    const url = `https://api.voicerss.org/?key=${encodeURIComponent(key)}&hl=${encodeURIComponent(lang)}&src=${encodeURIComponent(text)}&f=48khz_16bit_stereo`;
-    return { text: `🔊 **تحويل النص لصوت (VoiceRSS):**\n"${text.slice(0,120)}"`, src: 'tool', score: 0.9, audioUrl: url };
-  }
-  speakBrowser(text, lang);
-  return { text: `🔊 **جاري القراءة الصوتية عبر متصفحك...**\n"${text.slice(0,120)}"\n\n_ملاحظة: لصوت طبيعي أكثر، ضيف مفتاح VoiceRSS مجاني من الإعدادات._`, src: 'tool', score: 0.9 };
-}
-function speakBrowser(text, lang) {
-  try {
-    if (!('speechSynthesis' in window)) return;
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang || 'ar-SA';
-    const voice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
-    u.rate = parseFloat(voice.speed) || 1;
-    speechSynthesis.cancel();
-    speechSynthesis.speak(u);
-  } catch(e){}
+/* ════════════════════════════════════════════════════════════
+   WEB SEARCH (DuckDuckGo Instant Answer)
+════════════════════════════════════════════════════════════ */
+function toggleWeb() {
+  webOn = !webOn;
+  document.getElementById('webTgl').classList.toggle('on', webOn);
 }
 
-async function toolDeepSearch(query) {
-  const tavilyKey = getApiKey('tavily');
-  const serperKey = getApiKey('serper');
-  try {
-    if (tavilyKey) {
-      const d = await fetch('https://api.tavily.com/search', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ api_key: tavilyKey, query, max_results: 5 })
-      }).then(r => r.json());
-      const items = d.results || [];
-      if (!items.length) return { text: `⚠ لا نتائج لـ "${query}".`, src: 'tool', score: 0.3 };
-      return { text: `🔎 **نتائج البحث (Tavily) لـ "${query}":**\n\n` + items.map((r,i) => `${i+1}. **[${esc(r.title)}](${r.url})**\n   ${esc((r.content||'').slice(0,140))}`).join('\n\n'), src: 'tool', score: 0.9 };
-    }
-    if (serperKey) {
-      const d = await fetch('https://google.serper.dev/search', {
-        method: 'POST', headers: { 'X-API-KEY': serperKey, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ q: query })
-      }).then(r => r.json());
-      const items = (d.organic || []).slice(0,5);
-      if (!items.length) return { text: `⚠ لا نتائج لـ "${query}".`, src: 'tool', score: 0.3 };
-      return { text: `🔎 **نتائج البحث (Google عبر Serper) لـ "${query}":**\n\n` + items.map((r,i) => `${i+1}. **[${esc(r.title)}](${r.link})**\n   ${esc((r.snippet||'').slice(0,140))}`).join('\n\n'), src: 'tool', score: 0.9 };
-    }
-    const d = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`).then(r => r.json());
-    const abstract = d.AbstractText;
-    const related = (d.RelatedTopics || []).filter(t => t.Text).slice(0,4);
-    if (!abstract && !related.length) return { text: `⚠ ما لقيتش نتيجة مباشرة لـ "${query}" — للبحث الأعمق ضيف مفتاح Tavily/Serper مجاني من الإعدادات.`, src: 'tool', score: 0.3 };
-    let txt = `🔎 **بحث سريع (DuckDuckGo) عن "${query}":**\n\n`;
-    if (abstract) txt += `${esc(abstract)}\n\n`;
-    if (related.length) txt += related.map(t => `• ${esc(t.Text)}`).join('\n');
-    txt += `\n\n_المصدر: DuckDuckGo Instant Answer (بدون مفتاح API)_`;
-    return { text: txt, src: 'tool', score: 0.85 };
-  } catch (e) { return { text: '⚠ تعذّر البحث حالياً.', src: 'tool', score: 0.1 }; }
-}
+document.getElementById('settModal').addEventListener('click', function(e) {
+  if (e.target === this) closeSettings();
+});
 
-function toolHelp() {
-  const helpText = `🛠️ **دليل أدوات واختصارات Archon السريعة:**\n\n`
-    + `• **/طقس <المدينة>** : لمعرفة أحوال الطقس المباشرة عبر Open-Meteo.\n`
-    + `• **/خريطة <المكان>** : لتوليد إحداثيات ورابط الخريطة المباشر عبر OpenStreetMap.\n`
-    + `• **/جيت <الاستعلام>** : للبحث عن المستودعات الأكثر شهرة على GitHub.\n`
-    + `• **/اخبار <الموضوع>** : لجلب آخر الأخبار المتعلقة بالموضوع المكتوب أو الأخبار العامة.\n`
-    + `• **/صورة <الوصف>** : لتوليد صور فنية ذكية ومباشرة ومجانية عبر Pollinations.\n`
-    + `• **/صورة_hf <الوصف>** : لتوليد صور عالية الدقة عبر نموذج Flux باستخدام مفتاح Hugging Face الخاص بك.\n`
-    + `• **/ترجم <اللغة_الوجهة> <النص>** : لترجمة النصوص باحترافية عبر DeepL (يتطلب مفتاح API).\n`
-    + `• **/صوت <النص>** : لتحويل النص المستهدف إلى صوت مسموع فوري.\n`
-    + `• **/بحث <الاستعلام>** : لإجراء بحث ويب فوري عميق.\n\n`
-    + `🕵️ **العملاء الأذكياء المتاحين في القائمة العلوية:**\n`
-    + `• **Planner Agent** : لإعداد خطط وجداول زمنية.\n`
-    + `• **Security Analyst** : للمراجعة الأمنية وحماية الأنظمة.\n`
-    + `• **Data Analyst** : لتحليل الملفات والبيانات الإحصائية.`;
-  return { text: helpText, src: 'tool', score: 1.0 };
-}
-
-/* ── BOOT ── */
 applyTheme(zxTheme);
 init();
 </script>
