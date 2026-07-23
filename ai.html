@@ -1193,6 +1193,25 @@ const _SB = supabase.createClient(
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
+/* ── Storage bucket used for chat attachments (images/PDF/text files).
+ * Must exist in the Supabase project — see ZUNEXA_DB_SETUP.sql for the
+ * bucket + policy statements to run once in the Supabase SQL editor. ── */
+const ZX_BUCKET = 'zunexa-uploads';
+
+/* ── Stable anonymous device id — lets Guest messages/files be traced
+ * and re-associated in Supabase even with no login, and stays stable
+ * across visits on the same browser (unlike the old code, which had
+ * zero identity for guests at all: every guest write in zunexa_messages
+ * was completely anonymous with no way to group a guest's own history). */
+function getDeviceId() {
+  let id = localStorage.getItem('zx_device_id');
+  if (!id) {
+    id = 'dev_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem('zx_device_id', id);
+  }
+  return id;
+}
+
 // Lightweight rate limiter (same pattern as dashboard.html) — the old
 // ai.html had NO throttling at all on its Supabase writes (learnQ /
 // logMsg / incrWeight), so a script could spam the learning queue and
@@ -1831,7 +1850,7 @@ function buildUnknown(q){ return UNKNOWNS[Math.floor(Math.random()*UNKNOWNS.leng
 async function learnQ(q) {
   if (!isLearnEnabled() || tempChatOn) return;
   try {
-    await _SB.from('ai_learning').insert({ question: q, category: detectCat(q), source: 'user_chat', status: 'pending' });
+    await _SB.from('ai_learning').insert({ question: q, category: detectCat(q), source: 'user_chat', status: 'pending', device_id: getDeviceId() });
   } catch(e){}
 }
 
@@ -1845,6 +1864,9 @@ async function logMsg(prompt, response, src, score) {
       tokens_used:  Math.round(score*100),
       platform:     'web',
       chat_id:      currentChatId,
+      device_id:    getDeviceId(),
+      file_url:     (attachedFile && attachedFile.storageUrl) || null,
+      file_name:    (attachedFile && attachedFile.name) || null,
       created_at:   new Date().toISOString()
     });
   } catch(e){}
@@ -2492,6 +2514,26 @@ function loadAllPrefsIntoUI() {
 ════════════════════════════════════════════════════════════ */
 let attachedFile = null; // { name, kind:'image'|'text', textContent, dataUrl }
 
+/* Upload the raw attached file to Supabase Storage so it's kept in the
+ * cloud (not just in-browser memory) and its public URL is what gets
+ * saved on the zunexa_messages row via logMsg(). Best-effort: if the
+ * bucket isn't set up yet, or the upload fails (offline, size limits,
+ * etc.), the chat keeps working on local-only content — it just won't
+ * have a file_url in Supabase for that message. */
+async function uploadFileToSupabase(file) {
+  try {
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const path = `${getDeviceId()}/${Date.now()}_${safeName}`;
+    const { error } = await _SB.storage.from(ZX_BUCKET).upload(path, file, { upsert: false });
+    if (error) throw error;
+    const { data } = _SB.storage.from(ZX_BUCKET).getPublicUrl(path);
+    return (data && data.publicUrl) || null;
+  } catch (e) {
+    console.warn('Zunexa: Supabase Storage upload skipped/failed', e);
+    return null;
+  }
+}
+
 async function onFilePicked(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -2538,6 +2580,23 @@ async function onFilePicked(e) {
         <span class="fc-x" onclick="clearFile()">✕</span>
       </div>`;
     toast('✓ تم إرفاق الملف — اسأل عنه الآن');
+
+    // Mirror the raw file to Supabase Storage (best-effort, doesn't
+    // block the chat if it fails) so it isn't only in browser memory —
+    // works for guests too via getDeviceId(), no login required.
+    uploadFileToSupabase(file).then(url => {
+      if (url && attachedFile) {
+        attachedFile.storageUrl = url;
+        const chip = zone.querySelector('.file-chip');
+        if (chip && !chip.querySelector('.fc-cloud')) {
+          const badge = document.createElement('span');
+          badge.className = 'fc-cloud';
+          badge.title = 'محفوظ في Supabase';
+          badge.textContent = '☁';
+          chip.insertBefore(badge, chip.querySelector('.fc-x'));
+        }
+      }
+    });
   } catch (err) {
     console.error(err);
     toast('⚠ تعذّرت قراءة هذا الملف');
