@@ -1855,6 +1855,36 @@ const EFFORT_CFG = {
   max:      { useBrain: true,  ctxTurns: 12, maxTokens: 1100 }
 };
 
+/* Follow-up detector — the root cause of "can't continue/understand
+ * the context": answer() used to gate the Archon Brain (which is the
+ * ONLY part of the pipeline that ever sees ctx/conversation history)
+ * behind "is the local KB match weak?". A short continuation like
+ * "زيد شرح" or "و بعدها؟" very often DOES score >= 0.14 against some
+ * unrelated KB entry purely on keyword overlap, so the brain was
+ * skipped and the app replied with a canned KB answer that ignored
+ * everything said before it — not because it didn't "understand",
+ * but because the code never gave it the chance to look at ctx at all.
+ * This detector forces the brain (with real ctx) to run for anything
+ * that looks like a continuation, regardless of the KB score. */
+const FOLLOWUP_MARKERS = [
+  // Darija / Arabic
+  'و ', 'وبعد', 'ومن بعد', 'زيد', 'كمل', 'شرح اكثر', 'شرح أكثر', 'وضح',
+  'علاش', 'عﻻش', '3lach', 'كيفاش', 'شنو يعني', 'واش', 'ليش', 'يعني ايش',
+  // French
+  'et ensuite', 'et après', 'pourquoi', 'explique plus', 'continue',
+  'développe', 'et donc', 'c\'est-à-dire',
+  // English
+  'why', 'what about', 'go on', 'continue', 'expand on', 'and then',
+  'what do you mean', 'more details', 'elaborate'
+];
+function isFollowUp(q) {
+  if (!ctx.length) return false;
+  const t = q.trim().toLowerCase();
+  // Very short questions almost always lean on the previous turn.
+  if (tok(t).length <= 4) return true;
+  return FOLLOWUP_MARKERS.some(m => t.startsWith(m) || t.includes(' ' + m));
+}
+
 /* answer() — routes between the pure local KB engine (answerLocal) and
    the Archon Brain, depending on the selected model + effort level,
    the strength of the local match, and any attached file content. */
@@ -1862,14 +1892,19 @@ async function answer(userQ) {
   const local = await answerLocal(userQ);
   const cfg = EFFORT_CFG[zxEffort] || EFFORT_CFG.balanced;
 
-  // Archon Lite never leaves the browser — instant, offline, zero external calls.
+  // Archon Lite never leaves the browser — instant, offline, zero
+  // external calls, so it genuinely cannot have brain-level memory.
+  // That's a deliberate tradeoff for that tier, not a bug — Archon
+  // Pro/Max are what carry real conversation context.
   if (zxModel === 'lite') return local;
 
   const localIsWeak = local.score < 0.14;
+  const followUp = isFollowUp(userQ);
   const shouldUseBrain =
     cfg.useBrain === true ||
     (cfg.useBrain === 'weak' && (localIsWeak || attachedFile)) ||
-    (zxModel === 'max' && (localIsWeak || attachedFile));
+    (zxModel === 'max' && (localIsWeak || attachedFile)) ||
+    followUp; // ← new: continuations always reach the brain + ctx
 
   if (!shouldUseBrain) return local;
 
