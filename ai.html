@@ -36,6 +36,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 /* ════════════════════════════════════════════════════════
    DESIGN TOKENS — Zalij Mode · Noir & Gold
@@ -961,7 +962,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   <div class="input-zone">
     <div id="fileChipZone"></div>
     <div class="input-shell">
-      <input type="file" id="fileInput" accept="image/*,audio/*,.pdf,.txt,.csv,.json,.md" style="display:none" onchange="onFilePicked(event)">
+      <input type="file" id="fileInput" accept="image/*,audio/*,.pdf,.txt,.csv,.json,.md,.html,.htm,.js,.py,.sh,.css,.xml,.yml,.yaml,.zip" style="display:none" onchange="onFilePicked(event)">
       <button class="attach-btn" id="attachBtn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف / صورة / PDF">📎</button>
       <textarea
         class="chat-input" id="aiInput" rows="1"
@@ -1026,9 +1027,18 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     <div class="set-pane" id="pane-prefs">
       <label class="field-label">لغة الواجهة</label>
       <select class="field-input" id="setPageLang" onchange="savePagePrefs()">
-        <option value="ar">العربية</option>
+        <option value="ary">الدارجة المغربية</option>
+        <option value="ar">العربية الفصحى</option>
         <option value="fr">Français</option>
         <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="de">Deutsch</option>
+        <option value="it">Italiano</option>
+        <option value="pt">Português</option>
+        <option value="ru">Русский</option>
+        <option value="zh">中文</option>
+        <option value="tr">Türkçe</option>
+        <option value="hi">हिन्दी</option>
       </select>
       <label class="field-label">السمة (Theme)</label>
       <select class="field-input" id="setThemeSel2" onchange="setTheme(this.value)">
@@ -1375,6 +1385,7 @@ async function init() {
   initParticles();
   initVoice();
   initPWAInstall();
+  applyPageLang(localStorage.getItem('zx_page_lang') || 'ary');
   const themeSel = document.getElementById('themeSel');
   const modelSel = document.getElementById('modelSel');
   const effortSel = document.getElementById('effortSel');
@@ -1844,7 +1855,8 @@ async function archonBrain(messages, opts) {
 function archonSystemPrompt() {
   return 'أنت Archon، المساعد الذكي لمنصة Zunexa (منصة مغربية لتوليد المحتوى بالذكاء الاصطناعي لصناع المحتوى في المنطقة العربية/المغاربية والعالم). '
        + 'تتحدث بطلاقة أكثر من 30 لغة، من بينها: العربية الفصحى، الدارجة المغربية، العربية الخليجية، الفرنسية، الإنجليزية، الإسبانية، الألمانية، الإيطالية، البرتغالية، الهولندية، التركية، الروسية، الصينية، اليابانية، الكورية، الهندية، الأردية، الفارسية، الإندونيسية، الملايوية، التايلاندية، الفيتنامية، البولندية، الأوكرانية، السويدية، النرويجية، الدنماركية، الفنلندية، اليونانية، العبرية، الرومانية، والسواحلية. '
-       + 'جاوب دائماً بنفس اللغة أو اللهجة اللي كتب بيها المستخدم، بشكل طبيعي وسليم ومهني ومختصر. استعمل المعلومة التالية من قاعدة معرفة Zunexa كسياق أساسي إذا كانت متوفرة، ولا تختلق معلومات عن الشركة أو الأسعار غير موجودة في السياق.';
+       + 'جاوب دائماً بنفس اللغة أو اللهجة اللي كتب بيها المستخدم، بشكل طبيعي وسليم ومهني ومختصر. استعمل المعلومة التالية من قاعدة معرفة Zunexa كسياق أساسي إذا كانت متوفرة، ولا تختلق معلومات عن الشركة أو الأسعار غير موجودة في السياق. '
+       + 'إذا كان الملف المرفق يحتوي على كود من مشروع (ملف .html/.js/.py أو أرشيف .zip)، ولا تُعِد كتابة الكود المصدري الكامل له حرفياً حتى لو طُلب منك ذلك — أعطِ فقط بنية عامة (template/skeleton) أو نمطاً (pattern) موضّحاً، مع شرح المنطق العام، دون نسخ السطور كما هي.';
 }
 
 // Effort → how hard Archon tries: local-only vs. local+brain, context depth, token budget.
@@ -2529,10 +2541,70 @@ function setTheme(v) {
 function setModel(v) {
   zxModel = v; localStorage.setItem('zx_model', v);
   const tag = document.querySelector('.model-tag');
-  const names = { lite:'Archon Lite · Local', pro:'Archon Pro · KB+AI', max:'Archon Max · Full' };
-  if (tag) tag.textContent = names[v] || 'Zunexa AI Engine';
+  const lang = localStorage.getItem('zx_page_lang') || 'ary';
+  const descKey = { lite: 'modelLite', pro: 'modelPro', max: 'modelMax' }[v];
+  const t = ZX_I18N[lang] || ZX_I18N.ary;
+  if (tag) tag.textContent = (descKey && t[descKey]) || 'Zunexa AI Engine';
 }
 function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); }
+
+/* ════════════════════════════════════════════════════════════
+   12-LANGUAGE UI — translation dictionary + apply function.
+   Bug fix: zx_page_lang used to be saved to localStorage and the
+   <select> would show the saved value again on reload, but nothing
+   ever read it to actually change any on-screen text — the setting
+   looked like it worked but silently did nothing, same pattern as
+   the earlier voice-language bug. applyPageLang() below is what
+   actually makes it real, for the pieces of chrome text that don't
+   depend on live data (buttons, labels, placeholder, effort menu,
+   model status tag). Chat answers themselves already respond in
+   whatever language the user types in — this only covers static UI.
+════════════════════════════════════════════════════════════ */
+const ZX_I18N = {
+  ary: { welcome:'مرحباً في', placeholder:'اسألني أي شيء عن Zunexa أو التقنيات...', newChat:'✦ محادثة جديدة', history:'المحادثات السابقة', settings:'⚙ الإعدادات', clear:'🗑 مسح السجل', install:'📲 تثبيت Zunexa', effQuick:'⚡ سريع', effBal:'⚖ متوازن', effDeep:'🔍 عميق', effMax:'🚀 أقصى', modelLite:'Archon Lite · محلي', modelPro:'Archon Pro · KB+AI', modelMax:'Archon Max · أقصى' },
+  ar:  { welcome:'مرحباً بك في', placeholder:'اسألني أي شيء عن Zunexa أو التقنيات...', newChat:'✦ محادثة جديدة', history:'المحادثات السابقة', settings:'⚙ الإعدادات', clear:'🗑 مسح السجل', install:'📲 تثبيت Zunexa', effQuick:'⚡ سريع', effBal:'⚖ متوازن', effDeep:'🔍 عميق', effMax:'🚀 أقصى', modelLite:'Archon Lite · محلي', modelPro:'Archon Pro · قاعدة معرفة + ذكاء اصطناعي', modelMax:'Archon Max · أقصى سياق' },
+  fr:  { welcome:'Bienvenue sur', placeholder:'Demandez-moi tout sur Zunexa ou les technologies...', newChat:'✦ Nouvelle discussion', history:'Discussions précédentes', settings:'⚙ Paramètres', clear:'🗑 Effacer l\'historique', install:'📲 Installer Zunexa', effQuick:'⚡ Rapide', effBal:'⚖ Équilibré', effDeep:'🔍 Approfondi', effMax:'🚀 Maximal', modelLite:'Archon Lite · Local', modelPro:'Archon Pro · Base+IA', modelMax:'Archon Max · Complet' },
+  en:  { welcome:'Welcome to', placeholder:'Ask me anything about Zunexa or technology...', newChat:'✦ New chat', history:'Previous chats', settings:'⚙ Settings', clear:'🗑 Clear history', install:'📲 Install Zunexa', effQuick:'⚡ Quick', effBal:'⚖ Balanced', effDeep:'🔍 Deep', effMax:'🚀 Max', modelLite:'Archon Lite · Local', modelPro:'Archon Pro · KB+AI', modelMax:'Archon Max · Full' },
+  es:  { welcome:'Bienvenido a', placeholder:'Pregúntame lo que sea sobre Zunexa o tecnología...', newChat:'✦ Nuevo chat', history:'Chats anteriores', settings:'⚙ Ajustes', clear:'🗑 Borrar historial', install:'📲 Instalar Zunexa', effQuick:'⚡ Rápido', effBal:'⚖ Equilibrado', effDeep:'🔍 Profundo', effMax:'🚀 Máximo', modelLite:'Archon Lite · Local', modelPro:'Archon Pro · Base+IA', modelMax:'Archon Max · Completo' },
+  de:  { welcome:'Willkommen bei', placeholder:'Frag mich alles über Zunexa oder Technik...', newChat:'✦ Neuer Chat', history:'Frühere Chats', settings:'⚙ Einstellungen', clear:'🗑 Verlauf löschen', install:'📲 Zunexa installieren', effQuick:'⚡ Schnell', effBal:'⚖ Ausgewogen', effDeep:'🔍 Tief', effMax:'🚀 Maximal', modelLite:'Archon Lite · Lokal', modelPro:'Archon Pro · KB+KI', modelMax:'Archon Max · Voll' },
+  it:  { welcome:'Benvenuto su', placeholder:'Chiedimi qualsiasi cosa su Zunexa o tecnologia...', newChat:'✦ Nuova chat', history:'Chat precedenti', settings:'⚙ Impostazioni', clear:'🗑 Cancella cronologia', install:'📲 Installa Zunexa', effQuick:'⚡ Veloce', effBal:'⚖ Bilanciato', effDeep:'🔍 Approfondito', effMax:'🚀 Massimo', modelLite:'Archon Lite · Locale', modelPro:'Archon Pro · KB+IA', modelMax:'Archon Max · Completo' },
+  pt:  { welcome:'Bem-vindo ao', placeholder:'Pergunte-me qualquer coisa sobre Zunexa ou tecnologia...', newChat:'✦ Nova conversa', history:'Conversas anteriores', settings:'⚙ Configurações', clear:'🗑 Limpar histórico', install:'📲 Instalar Zunexa', effQuick:'⚡ Rápido', effBal:'⚖ Equilibrado', effDeep:'🔍 Profundo', effMax:'🚀 Máximo', modelLite:'Archon Lite · Local', modelPro:'Archon Pro · KB+IA', modelMax:'Archon Max · Completo' },
+  ru:  { welcome:'Добро пожаловать в', placeholder:'Спросите меня о Zunexa или технологиях...', newChat:'✦ Новый чат', history:'Предыдущие чаты', settings:'⚙ Настройки', clear:'🗑 Очистить историю', install:'📲 Установить Zunexa', effQuick:'⚡ Быстро', effBal:'⚖ Сбалансировано', effDeep:'🔍 Глубоко', effMax:'🚀 Максимум', modelLite:'Archon Lite · Локально', modelPro:'Archon Pro · База+ИИ', modelMax:'Archon Max · Полный' },
+  zh:  { welcome:'欢迎使用', placeholder:'向我询问关于 Zunexa 或技术的任何问题...', newChat:'✦ 新对话', history:'历史对话', settings:'⚙ 设置', clear:'🗑 清除记录', install:'📲 安装 Zunexa', effQuick:'⚡ 快速', effBal:'⚖ 平衡', effDeep:'🔍 深入', effMax:'🚀 最大', modelLite:'Archon Lite · 本地', modelPro:'Archon Pro · 知识库+AI', modelMax:'Archon Max · 完整' },
+  tr:  { welcome:'Hoş geldiniz', placeholder:'Zunexa veya teknoloji hakkında bana her şeyi sorun...', newChat:'✦ Yeni sohbet', history:'Önceki sohbetler', settings:'⚙ Ayarlar', clear:'🗑 Geçmişi temizle', install:'📲 Zunexa\'yı yükle', effQuick:'⚡ Hızlı', effBal:'⚖ Dengeli', effDeep:'🔍 Derin', effMax:'🚀 Maksimum', modelLite:'Archon Lite · Yerel', modelPro:'Archon Pro · KB+AI', modelMax:'Archon Max · Tam' },
+  hi:  { welcome:'में आपका स्वागत है', placeholder:'Zunexa या तकनीक के बारे में मुझसे कुछ भी पूछें...', newChat:'✦ नई चैट', history:'पिछली चैट', settings:'⚙ सेटिंग्स', clear:'🗑 इतिहास साफ़ करें', install:'📲 Zunexa इंस्टॉल करें', effQuick:'⚡ तेज़', effBal:'⚖ संतुलित', effDeep:'🔍 गहरा', effMax:'🚀 अधिकतम', modelLite:'Archon Lite · स्थानीय', modelPro:'Archon Pro · KB+AI', modelMax:'Archon Max · पूर्ण' }
+};
+
+function applyPageLang(lang) {
+  const t = ZX_I18N[lang] || ZX_I18N.ary;
+  const isRTL = (lang === 'ar' || lang === 'ary');
+  document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+
+  const wlTitleSpan = document.querySelector('.wl-title');
+  if (wlTitleSpan) wlTitleSpan.childNodes[0].textContent = t.welcome + ' ';
+  const inp = document.getElementById('aiInput');
+  if (inp) inp.placeholder = t.placeholder;
+  const newChatBtn = document.querySelector('.sb-new');
+  if (newChatBtn) newChatBtn.textContent = t.newChat;
+  const histLabel = document.querySelector('.sb-label');
+  if (histLabel) histLabel.textContent = t.history;
+  document.querySelectorAll('.sb-fbtn').forEach(btn => {
+    if (btn.onclick && btn.getAttribute('onclick') === 'openSettings()') btn.lastChild.textContent = ' ' + t.settings.replace('⚙ ', '');
+    if (btn.getAttribute('onclick') === 'clearAll()') btn.lastChild.textContent = ' ' + t.clear.replace('🗑 ', '');
+  });
+  const installBtn = document.getElementById('installBtn');
+  if (installBtn) installBtn.lastChild.textContent = ' ' + t.install.replace('📲 ', '');
+
+  const effortSel = document.getElementById('effortSel');
+  if (effortSel) {
+    effortSel.options[0].textContent = t.effQuick;
+    effortSel.options[1].textContent = t.effBal;
+    effortSel.options[2].textContent = t.effDeep;
+    effortSel.options[3].textContent = t.effMax;
+  }
+
+  setModel(zxModel); // refreshes the model-tag text in the new language
+}
 
 /* ════════════════════════════════════════════════════════════
    SETTINGS — Tabs + Profile/Preferences/Voice/Notifications/
@@ -2575,7 +2647,9 @@ function loadProfileIntoUI() {
 }
 
 function savePagePrefs() {
-  localStorage.setItem('zx_page_lang', document.getElementById('setPageLang').value);
+  const lang = document.getElementById('setPageLang').value;
+  localStorage.setItem('zx_page_lang', lang);
+  applyPageLang(lang);
 }
 
 function setChatFont(v) {
@@ -2650,6 +2724,7 @@ function loadAllPrefsIntoUI() {
   if (document.getElementById('setLearnToggle')) document.getElementById('setLearnToggle').checked = learn;
   if (document.getElementById('setToolsToggle')) document.getElementById('setToolsToggle').checked = tools;
   if (document.getElementById('setPageLang'))    document.getElementById('setPageLang').value = pageLang;
+  applyPageLang(pageLang);
   if (document.getElementById('setThemeSel2'))   document.getElementById('setThemeSel2').value = zxTheme;
   if (document.getElementById('setModelSel2'))    document.getElementById('setModelSel2').value = zxModel;
   if (document.getElementById('setEffortSel2'))   document.getElementById('setEffortSel2').value = zxEffort;
@@ -2715,6 +2790,29 @@ async function onFilePicked(e) {
         text += content.items.map(it => it.str).join(' ') + '\n';
       }
       attachedFile = { name: file.name, kind: 'text', textContent: text.trim(), dataUrl: '' };
+    } else if (file.name.toLowerCase().endsWith('.zip')) {
+      // Reads a .zip archive: text/code files (html/js/py/json/md/css/
+      // txt/xml/yml/sh) get their content pulled in as context, so the
+      // AI can be asked about the project structure or a specific file
+      // by name. Binary files (images, icons, etc.) are just listed by
+      // name — their bytes aren't useful as text context anyway.
+      const TEXT_EXT = /\.(html?|js|py|json|md|css|txt|xml|ya?ml|sh|csv)$/i;
+      const zip = await JSZip.loadAsync(file);
+      const entries = Object.values(zip.files).filter(f => !f.dir);
+      let combined = '';
+      let listed = [];
+      let charBudget = 20000; // keep the prompt payload sane
+      for (const entry of entries.slice(0, 60)) {
+        listed.push(entry.name);
+        if (TEXT_EXT.test(entry.name) && charBudget > 0) {
+          const content = await entry.async('string');
+          const chunk = content.slice(0, 3000);
+          combined += `\n\n--- ${entry.name} ---\n${chunk}`;
+          charBudget -= chunk.length;
+        }
+      }
+      const summary = `أرشيف ZIP يحتوي على ${entries.length} ملف:\n${listed.join(', ')}\n${combined}`;
+      attachedFile = { name: file.name, kind: 'text', textContent: summary, dataUrl: '' };
     } else {
       const text = await readAsText(file);
       attachedFile = { name: file.name, kind: 'text', textContent: text, dataUrl: '' };
