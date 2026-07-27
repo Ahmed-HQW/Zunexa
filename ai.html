@@ -1973,13 +1973,15 @@ function pickConnector() { return CONNECTORS[Math.floor(Math.random()*CONNECTORS
 
 function buildCtxQ(q) {
   if (!ctx.length) return q;
-  // Carry forward the last exchange (user + bot) for follow-up questions
-  const lastBot  = ctx.filter(c=>c.role==='bot').slice(-1)[0];
-  const lastUser = ctx.filter(c=>c.role==='user').slice(-2,-1)[0];
-  let extra = '';
-  if (lastUser) extra += ' ' + tok(lastUser.text).slice(0,4).join(' ');
-  if (lastBot)  extra += ' ' + tok(lastBot.text).slice(0,6).join(' ');
-  return q + extra;
+  // Extract meaningful topic tokens from the last user turn only —
+  // the previous bot answer often contains generic filler words that
+  // poison the TF-IDF vector and drag scoring toward unrelated entries.
+  // Limit to 5 tokens so a long previous question doesn't swamp the
+  // current one.
+  const lastUser = ctx.filter(c => c.role === 'user').slice(-1)[0];
+  if (!lastUser) return q;
+  const ctxTokens = tok(lastUser.text).slice(0, 5).join(' ');
+  return ctxTokens ? `${q} ${ctxTokens}` : q;
 }
 
 const UNKNOWNS = [
