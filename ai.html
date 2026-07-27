@@ -1492,39 +1492,56 @@ async function loadKB() {
   let local = [];
   let cloud = [];
 
-  // 1. Local knowledge — merged zunexa_qa.json + zunexa_qa_ai.json.
-  // Falls back to loading the two raw files separately + merging in
-  // the browser if the pre-merged file isn't deployed yet, so nothing
-  // ever silently loads empty.
-  try {
-    const r = await fetch('zunexa_qa_merged.json', { cache: 'no-store' });
-    if (!r.ok) throw new Error('merged file missing');
-    const merged = await r.json();
-    local = merged.map(i => ({
-      q:   i.q || (i.kw||[]).join(' '),
-      a:   i.tech ? `${i.a}\n\n${i.tech}` : (i.a || ''),
-      kw:  i.kw || [],
-      src: i.src || 'qa',
-      w:   parseFloat(i.w) || 1.0,
-      cat: i.category || 'general'
-    })).filter(i => i.a);
-  } catch (e) {
-    console.warn('Zunexa: merged KB not found, falling back to raw files', e);
+  // 1. Local knowledge — try the final expanded KB (592 entries,
+  // 5071 keywords) first, then fall back to the previous merged file,
+  // then to the two raw source files. Nothing ever silently loads empty.
+  const KB_FILES = [
+    'zunexa_qa_final.json',    // ← current: 5071 keywords
+    'zunexa_qa_merged.json',   // ← previous merged
+  ];
+
+  let loaded = false;
+  for (const file of KB_FILES) {
+    try {
+      const r = await fetch(file, { cache: 'no-store' });
+      if (!r.ok) continue;
+      const merged = await r.json();
+      local = merged.map(i => ({
+        q:   i.q || (i.kw||[]).join(' '),
+        a:   Array.isArray(i.tech) && i.tech.length
+               ? `${i.a}\n\n${i.tech.join('\n')}`
+               : (i.a || ''),
+        kw:  i.kw || [],
+        src: i.src || 'qa',
+        w:   parseFloat(i.w) || 1.0,
+        cat: i.category || 'general'
+      })).filter(i => i.a);
+      console.log(`Zunexa KB: loaded ${local.length} entries from ${file}`);
+      loaded = true;
+      break;
+    } catch (e) {
+      console.warn(`Zunexa: ${file} failed, trying next fallback`, e);
+    }
+  }
+
+  if (!loaded) {
+    // Last resort: load the two raw source files and merge them in-browser
     try {
       const [r1, r2] = await Promise.all([
-        fetch('zunexa_qa.json', { cache: 'no-store' }),
+        fetch('zunexa_qa.json',    { cache: 'no-store' }),
         fetch('zunexa_qa_ai.json', { cache: 'no-store' })
       ]);
-      const qa = r1.ok ? await r1.json() : [];
+      const qa   = r1.ok ? await r1.json() : [];
       const qaAi = r2.ok ? await r2.json() : [];
       const n = Math.max(qa.length, qaAi.length);
       for (let i = 0; i < n; i++) {
-        const a = qa[i] || {};
+        const a = qa[i]   || {};
         const b = qaAi[i] || {};
-        const kw = a.keywords || [];
-        const core = (b.data && b.data.core_answer) || '';
-        const tech = (b.data && b.data.technical_depth) || '';
-        const answer = core && core.length >= (a.response||'').length ? core : (a.response || core);
+        const kw     = a.keywords || [];
+        const core   = (b.data && b.data.core_answer)      || '';
+        const tech   = (b.data && b.data.technical_depth)  || '';
+        const answer = core && core.length >= (a.response||'').length
+                       ? core : (a.response || core);
         if (!answer) continue;
         local.push({
           q:   kw.join(' '),
@@ -1535,8 +1552,9 @@ async function loadKB() {
           cat: b.category || 'general'
         });
       }
+      console.log(`Zunexa KB: raw fallback loaded ${local.length} entries`);
     } catch (e2) {
-      console.error('Zunexa: both KB files failed to load', e2);
+      console.error('Zunexa: all KB sources failed to load', e2);
     }
   }
 
