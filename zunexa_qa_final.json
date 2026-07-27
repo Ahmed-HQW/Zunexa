@@ -1,6 +1,6 @@
 [
   {
-    "id": "unknown",
+    "id": "orig_0001",
     "category": "general",
     "kw": [
       "مرحبا",
@@ -23,7 +23,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0002",
     "category": "general",
     "kw": [
       "كيف حالك",
@@ -42,7 +42,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0003",
     "category": "general",
     "kw": [
       "المطور",
@@ -64,7 +64,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0004",
     "category": "general",
     "kw": [
       "الألوان",
@@ -88,7 +88,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0005",
     "category": "general",
     "kw": [
       "الاصدار",
@@ -110,7 +110,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0006",
     "category": "general",
     "kw": [
       "ما هي المنصة",
@@ -131,7 +131,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0007",
     "category": "general",
     "kw": [
       "seo",
@@ -151,7 +151,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0008",
     "category": "general",
     "kw": [
       "generator",
@@ -172,7 +172,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0009",
     "category": "general",
     "kw": [
       "لغات البرمجة",
@@ -195,7 +195,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0010",
     "category": "general",
     "kw": [
       "مشكلة",
@@ -219,14 +219,13 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0011",
     "category": "general",
     "kw": [
       "مجاني",
       "مدفوع",
       "اسعار",
       "أسعار",
-      "اشتراك",
       "فلوس",
       "شراء",
       "بكم",
@@ -236,14 +235,14 @@
       "دفع",
       "تكلفة"
     ],
-    "q": "مجاني مدفوع اسعار أسعار اشتراك فلوس شراء بكم سعر المنصة free premium دفع تكلفة",
+    "q": "مجاني مدفوع اسعار أسعار فلوس شراء بكم سعر المنصة free premium دفع تكلفة",
     "a": "منصة **Zunexa** تقدم تجربة Premium فاخرة. يمكنك الاستفادة من الأدوات الأساسية، وتتوفر خطط متقدمة للوصول الشامل لجميع الميزات وأدوات الذكاء الاصطناعي.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0012",
     "category": "general",
     "kw": [
       "هاتف",
@@ -266,7 +265,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0013",
     "category": "general",
     "kw": [
       "ذكاء اصطناعي",
@@ -275,20 +274,19 @@
       "روبوت",
       "بوت",
       "chatgpt",
-      "gemini",
       "هل انت حقيقي",
       "كيف تعمل",
       "من انت",
       "من تكون"
     ],
-    "q": "ذكاء اصطناعي ai مساعد ذكي روبوت بوت chatgpt gemini هل انت حقيقي كيف تعمل من انت من تكون",
+    "q": "ذكاء اصطناعي ai مساعد ذكي روبوت بوت chatgpt هل انت حقيقي كيف تعمل من انت من تكون",
     "a": "أنا المساعد الذكي والمحلي الخاص بمنصة **Zunexa**، تمت برمجتي لأكون دليلك الشامل هنا للإجابة على كافة استفساراتك حول المنصة وأدواتها بسرعة فائقة.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0014",
     "category": "general",
     "kw": [
       "سرعة",
@@ -309,7 +307,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0015",
     "category": "general",
     "kw": [
       "تسجيل الدخول",
@@ -330,7 +328,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0016",
     "category": "general",
     "kw": [
       "المستقبل",
@@ -349,29 +347,25 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0017",
     "category": "general",
     "kw": [
-      "حماية",
       "امان",
-      "أمان",
       "خصوصية",
-      "اختراق",
       "بياناتي",
       "داتا",
       "security",
       "privacy",
-      "تشفير",
       "امنة"
     ],
-    "q": "حماية امان أمان خصوصية اختراق بياناتي داتا security privacy تشفير امنة",
+    "q": "امان خصوصية بياناتي داتا security privacy امنة",
     "a": "أمانك هو أولويتنا في **Zunexa**. النظام مصمم ببروتوكولات صارمة تضمن سرية بياناتك وعزلها التام أثناء استخدامك لأدواتنا التحليلية.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0018",
     "category": "general",
     "kw": [
       "قائمة",
@@ -389,7 +383,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0019",
     "category": "general",
     "kw": [
       "شكرا",
@@ -411,7 +405,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0020",
     "category": "general",
     "kw": [
       "وداعا",
@@ -431,7 +425,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0021",
     "category": "general",
     "kw": [
       "تغيير اللون",
@@ -451,11 +445,10 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0022",
     "category": "general",
     "kw": [
       "api",
-      "ربط",
       "استدعاء",
       "مفاتيح",
       "مبرمجين",
@@ -464,33 +457,32 @@
       "ويب هوك",
       "webhook"
     ],
-    "q": "api ربط استدعاء مفاتيح مبرمجين تكامل integration ويب هوك webhook",
+    "q": "api استدعاء مفاتيح مبرمجين تكامل integration ويب هوك webhook",
     "a": "نظام **Archon Protocol V9** مجهز ليكون بيئة صلبة. يمكنك استخدام أدوات التوليد لدينا لإنشاء الأكواد وربطها مع أنظمتك الخارجية بكل سهولة.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0023",
     "category": "general",
     "kw": [
       "جافاسكريبت",
       "javascript",
       "اكواد",
-      "برمجة",
       "تعديل الكود",
       "سورس كود",
       "الكود المصدري",
       "source code"
     ],
-    "q": "جافاسكريبت javascript اكواد برمجة تعديل الكود سورس كود الكود المصدري source code",
+    "q": "جافاسكريبت javascript اكواد تعديل الكود سورس كود الكود المصدري source code",
     "a": "تم كتابة كود المنصة بأسلوب نظيف ومنظم (Clean Code) باستخدام الجافاسكريبت النقي (Vanilla JS) لضمان الأداء وعدم الاعتماد على مكتبات تثقل المتصفح.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0024",
     "category": "general",
     "kw": [
       "قاعدة بيانات",
@@ -509,7 +501,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0025",
     "category": "general",
     "kw": [
       "لوحة التحكم",
@@ -527,7 +519,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0026",
     "category": "general",
     "kw": [
       "ايش اسمك",
@@ -546,7 +538,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0027",
     "category": "general",
     "kw": [
       "المغرب",
@@ -564,7 +556,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0028",
     "category": "general",
     "kw": [
       "دومين",
@@ -584,7 +576,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0029",
     "category": "general",
     "kw": [
       "وقت",
@@ -601,7 +593,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0030",
     "category": "general",
     "kw": [
       "انميشن",
@@ -621,7 +613,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0031",
     "category": "general",
     "kw": [
       "كيف استخدم",
@@ -639,10 +631,9 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0032",
     "category": "general",
     "kw": [
-      "صور",
       "ايكون",
       "ايقونات",
       "icon",
@@ -651,14 +642,14 @@
       "شعار",
       "اللوجو"
     ],
-    "q": "صور ايكون ايقونات icon svg تصميمات شعار اللوجو",
+    "q": "ايكون ايقونات icon svg تصميمات شعار اللوجو",
     "a": "اللوجو الخاص بـ **Zunexa** والعديد من العناصر المرئية تم تصميمها باستخدام تقنية SVG المدمجة لتكون خفيفة الوزن وتحتفظ بدقتها العالية على جميع الشاشات.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0033",
     "category": "general",
     "kw": [
       "خط",
@@ -676,7 +667,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0034",
     "category": "general",
     "kw": [
       "اقتراح",
@@ -694,7 +685,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0035",
     "category": "general",
     "kw": [
       "نكتة",
@@ -712,7 +703,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0036",
     "category": "general",
     "kw": [
       "هل تفهمني",
@@ -730,7 +721,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0037",
     "category": "general",
     "kw": [
       "موسيقى",
@@ -747,7 +738,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0038",
     "category": "general",
     "kw": [
       "ارباح",
@@ -765,7 +756,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0039",
     "category": "general",
     "kw": [
       "لا اعرف",
@@ -783,7 +774,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0040",
     "category": "general",
     "kw": [
       "من هو احمد",
@@ -798,7 +789,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0041",
     "category": "general",
     "kw": [
       "لوحة القيادة",
@@ -818,7 +809,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0042",
     "category": "general",
     "kw": [
       "كيف احدث",
@@ -835,7 +826,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0043",
     "category": "general",
     "kw": [
       "حذف حسابي",
@@ -852,7 +843,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0044",
     "category": "general",
     "kw": [
       "هل يوجد تطبيق",
@@ -870,7 +861,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0045",
     "category": "general",
     "kw": [
       "الخطوط العربية",
@@ -888,7 +879,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0046",
     "category": "general",
     "kw": [
       "من اخترع",
@@ -906,7 +897,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0047",
     "category": "general",
     "kw": [
       "هل هو مفتوح المصدر",
@@ -923,7 +914,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0048",
     "category": "general",
     "kw": [
       "مستطيلات",
@@ -941,7 +932,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0049",
     "category": "general",
     "kw": [
       "تصدير",
@@ -959,24 +950,23 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0050",
     "category": "general",
     "kw": [
       "سرية",
       "هل بياناتي مشفرة",
-      "تشفير",
       "encryption",
       "secure",
       "حماية البيانات"
     ],
-    "q": "سرية هل بياناتي مشفرة تشفير encryption secure حماية البيانات",
+    "q": "سرية هل بياناتي مشفرة encryption secure حماية البيانات",
     "a": "بالتأكيد! بروتوكول **Archon V9** يضمن معالجة بياناتك عبر طبقات حماية mtdmّة، ولا يتم مشاركتها مع أي أطراف ثالثة إطلاقاً.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0051",
     "category": "general",
     "kw": [
       "اخطاء 404",
@@ -992,7 +982,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0052",
     "category": "general",
     "kw": [
       "كلمات مفتاحية",
@@ -1009,7 +999,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0053",
     "category": "general",
     "kw": [
       "نسخ الكود",
@@ -1025,7 +1015,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0054",
     "category": "general",
     "kw": [
       "شرح بالفيديو",
@@ -1042,10 +1032,9 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0055",
     "category": "general",
     "kw": [
-      "تواصل",
       "اتصل بنا",
       "رقم الهاتف",
       "ايميل",
@@ -1054,14 +1043,14 @@
       "support",
       "دعم"
     ],
-    "q": "تواصل اتصل بنا رقم الهاتف ايميل البريد الالكتروني contact support دعم",
+    "q": "اتصل بنا رقم الهاتف ايميل البريد الالكتروني contact support دعم",
     "a": "يمكنك التواصل مع المطور **ahmed_dev_a** مباشرة عبر خيار (إرسال تقرير) في اللوحة الرئيسية، أو عبر البريد الإلكتروني المرفق في قسم الدعم.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0056",
     "category": "general",
     "kw": [
       "استرجاع كلمة المرور",
@@ -1078,7 +1067,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0057",
     "category": "general",
     "kw": [
       "هل تدعم الفرنسية",
@@ -1096,7 +1085,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0058",
     "category": "general",
     "kw": [
       "ما هو archon",
@@ -1113,7 +1102,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0059",
     "category": "general",
     "kw": [
       "لماذا اللون الاسود",
@@ -1129,7 +1118,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0060",
     "category": "general",
     "kw": [
       "اداة توليد النصوص",
@@ -1145,7 +1134,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0061",
     "category": "general",
     "kw": [
       "شهادة ssl",
@@ -1161,7 +1150,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0062",
     "category": "general",
     "kw": [
       "متى تم الانشاء",
@@ -1177,7 +1166,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0063",
     "category": "general",
     "kw": [
       "باقات",
@@ -1195,7 +1184,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0064",
     "category": "general",
     "kw": [
       "كمبيوتر",
@@ -1213,7 +1202,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0065",
     "category": "general",
     "kw": [
       "ماك",
@@ -1230,7 +1219,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0066",
     "category": "general",
     "kw": [
       "توليد اكواد",
@@ -1246,7 +1235,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0067",
     "category": "general",
     "kw": [
       "كانفاس",
@@ -1263,7 +1252,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0068",
     "category": "general",
     "kw": [
       "هل انت ذكي",
@@ -1279,7 +1268,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0069",
     "category": "general",
     "kw": [
       "دفع الكتروني",
@@ -1298,7 +1287,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0070",
     "category": "general",
     "kw": [
       "استرجاع الاموال",
@@ -1314,7 +1303,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0071",
     "category": "general",
     "kw": [
       "هل تعمل بدون انترنت",
@@ -1329,7 +1318,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0072",
     "category": "general",
     "kw": [
       "سرعة الموقع",
@@ -1345,7 +1334,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0073",
     "category": "general",
     "kw": [
       "صور مصغرة",
@@ -1362,7 +1351,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0074",
     "category": "general",
     "kw": [
       "الاحصائيات خاطئة",
@@ -1378,7 +1367,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0075",
     "category": "general",
     "kw": [
       "ملفات تعريف الارتباط",
@@ -1394,7 +1383,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0076",
     "category": "general",
     "kw": [
       "كم عدد المستخدمين",
@@ -1410,7 +1399,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0077",
     "category": "general",
     "kw": [
       "شهادة",
@@ -1426,7 +1415,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0078",
     "category": "general",
     "kw": [
       "ما هو saas",
@@ -1442,7 +1431,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0079",
     "category": "general",
     "kw": [
       "وظائف",
@@ -1460,7 +1449,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0080",
     "category": "general",
     "kw": [
       "صيغة json",
@@ -1476,7 +1465,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0081",
     "category": "general",
     "kw": [
       "تسجيل خروج",
@@ -1493,7 +1482,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0082",
     "category": "general",
     "kw": [
       "دعم فني سريع",
@@ -1509,7 +1498,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0083",
     "category": "general",
     "kw": [
       "خرائط الموقع",
@@ -1525,7 +1514,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0084",
     "category": "general",
     "kw": [
       "اعلانات",
@@ -1541,7 +1530,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0085",
     "category": "general",
     "kw": [
       "حجم الشاشة",
@@ -1556,7 +1545,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0086",
     "category": "general",
     "kw": [
       "رائع جدا",
@@ -1578,7 +1567,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0087",
     "category": "general",
     "kw": [
       "انت غبي",
@@ -1597,7 +1586,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0088",
     "category": "general",
     "kw": [
       "كيف ابرمج",
@@ -1613,7 +1602,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0089",
     "category": "general",
     "kw": [
       "تغيير الباسورد",
@@ -1629,7 +1618,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0090",
     "category": "general",
     "kw": [
       "ملف الروبوت",
@@ -1645,7 +1634,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0091",
     "category": "general",
     "kw": [
       "كيف حالك",
@@ -1661,7 +1650,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0092",
     "category": "general",
     "kw": [
       "أين أنت",
@@ -1676,7 +1665,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0093",
     "category": "general",
     "kw": [
       "ماذا تفعل",
@@ -1691,7 +1680,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0094",
     "category": "general",
     "kw": [
       "هل نمت جيداً",
@@ -1706,7 +1695,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0095",
     "category": "general",
     "kw": [
       "كيف كان يومك",
@@ -1721,7 +1710,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0096",
     "category": "general",
     "kw": [
       "متى ستصل",
@@ -1736,7 +1725,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0097",
     "category": "general",
     "kw": [
       "هل تحتاج إلى مساعدة",
@@ -1752,7 +1741,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0098",
     "category": "general",
     "kw": [
       "خططك",
@@ -1767,7 +1756,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0099",
     "category": "general",
     "kw": [
       "هل اتصلت بي",
@@ -1782,7 +1771,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0100",
     "category": "general",
     "kw": [
       "هل أكلت",
@@ -1798,7 +1787,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0101",
     "category": "general",
     "kw": [
       "واي فاي",
@@ -1814,7 +1803,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0102",
     "category": "general",
     "kw": [
       "أين هاتفي",
@@ -1829,7 +1818,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0103",
     "category": "general",
     "kw": [
       "شاحن",
@@ -1844,7 +1833,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0104",
     "category": "general",
     "kw": [
       "بطاريتك",
@@ -1859,7 +1848,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0105",
     "category": "general",
     "kw": [
       "رأيت رسالتي",
@@ -1874,7 +1863,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0106",
     "category": "general",
     "kw": [
       "الإنترنت",
@@ -1889,7 +1878,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0107",
     "category": "general",
     "kw": [
       "الرابط",
@@ -1904,7 +1893,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0108",
     "category": "general",
     "kw": [
       "التيلكوماند",
@@ -1919,7 +1908,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0109",
     "category": "general",
     "kw": [
       "كيف أقوم بتشغيل",
@@ -1933,7 +1922,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0110",
     "category": "general",
     "kw": [
       "حسابي مفتوح",
@@ -1947,7 +1936,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0111",
     "category": "general",
     "kw": [
       "متى ينتهي الدوام",
@@ -1962,7 +1951,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0112",
     "category": "general",
     "kw": [
       "أنهيت المهمة",
@@ -1976,7 +1965,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0113",
     "category": "general",
     "kw": [
       "ماذا قال المدير",
@@ -1991,7 +1980,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0114",
     "category": "general",
     "kw": [
       "موعد التسليم",
@@ -2005,7 +1994,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0115",
     "category": "general",
     "kw": [
       "اجتماع",
@@ -2020,7 +2009,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0116",
     "category": "general",
     "kw": [
       "إرسال الملف",
@@ -2035,7 +2024,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0117",
     "category": "general",
     "kw": [
       "حل المشكلة",
@@ -2049,7 +2038,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0118",
     "category": "general",
     "kw": [
       "فهمت الدرس",
@@ -2063,7 +2052,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0119",
     "category": "general",
     "kw": [
       "استراحة",
@@ -2078,7 +2067,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0120",
     "category": "general",
     "kw": [
       "من سيتكلف",
@@ -2092,7 +2081,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0121",
     "category": "general",
     "kw": [
       "ماذا سنأكل",
@@ -2107,7 +2096,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0122",
     "category": "general",
     "kw": [
       "للعشاء",
@@ -2122,7 +2111,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0123",
     "category": "general",
     "kw": [
       "كم سعر",
@@ -2137,7 +2126,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0124",
     "category": "general",
     "kw": [
       "مفاتيحي",
@@ -2151,7 +2140,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0125",
     "category": "general",
     "kw": [
       "الجو بارد",
@@ -2167,7 +2156,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0126",
     "category": "general",
     "kw": [
       "ماذا تشاهد",
@@ -2182,7 +2171,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0127",
     "category": "general",
     "kw": [
       "متى سنخرج",
@@ -2196,7 +2185,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0128",
     "category": "general",
     "kw": [
       "جبتي معاك",
@@ -2210,7 +2199,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0129",
     "category": "general",
     "kw": [
       "صرف",
@@ -2225,7 +2214,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0130",
     "category": "general",
     "kw": [
       "أي طريق",
@@ -2241,7 +2230,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0131",
     "category": "general",
     "kw": [
       "solid",
@@ -2259,7 +2248,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0132",
     "category": "general",
     "kw": [
       "dry",
@@ -2275,7 +2264,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0133",
     "category": "general",
     "kw": [
       "agile",
@@ -2291,7 +2280,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0134",
     "category": "general",
     "kw": [
       "scrum",
@@ -2307,7 +2296,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0135",
     "category": "general",
     "kw": [
       "code review",
@@ -2323,7 +2312,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0136",
     "category": "general",
     "kw": [
       "git rebase",
@@ -2340,7 +2329,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0137",
     "category": "general",
     "kw": [
       "ci/cd",
@@ -2356,7 +2345,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0138",
     "category": "general",
     "kw": [
       "docker",
@@ -2372,7 +2361,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0139",
     "category": "general",
     "kw": [
       "kubernetes",
@@ -2388,7 +2377,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0140",
     "category": "general",
     "kw": [
       "microservices",
@@ -2404,7 +2393,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0141",
     "category": "general",
     "kw": [
       "serverless",
@@ -2420,7 +2409,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0142",
     "category": "general",
     "kw": [
       "rest api",
@@ -2436,7 +2425,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0143",
     "category": "general",
     "kw": [
       "graphql",
@@ -2452,7 +2441,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0144",
     "category": "general",
     "kw": [
       "websockets",
@@ -2469,7 +2458,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0145",
     "category": "general",
     "kw": [
       "jwt",
@@ -2485,7 +2474,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0146",
     "category": "general",
     "kw": [
       "oauth",
@@ -2501,7 +2490,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0147",
     "category": "general",
     "kw": [
       "cors",
@@ -2517,39 +2506,37 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0148",
     "category": "general",
     "kw": [
       "xss",
       "ثغرة",
       "حقن أكواد",
-      "cross-site scripting",
-      "اختراق"
+      "cross-site scripting"
     ],
-    "q": "xss ثغرة حقن أكواد cross-site scripting اختراق",
+    "q": "xss ثغرة حقن أكواد cross-site scripting",
     "a": "ثغرة XSS تحدث عندما يتمكن المهاجم من حقن أكواد جافاسكريبت ضارة في صفحات الويب التي يشاهدها مستخدمون آخرون، لسرقة بياناتهم.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0149",
     "category": "general",
     "kw": [
       "csrf",
       "تزوير الطلبات",
       "هجوم",
-      "حماية",
       "security"
     ],
-    "q": "csrf تزوير الطلبات هجوم حماية security",
+    "q": "csrf تزوير الطلبات هجوم security",
     "a": "هجوم CSRF يجبر المستخدم الموثق على تنفيذ إجراءات غير مرغوب فيها على تطبيق ويب هو مسجل الدخول فيه حالياً دون علمه.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0150",
     "category": "general",
     "kw": [
       "sql injection",
@@ -2564,7 +2551,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0151",
     "category": "general",
     "kw": [
       "caching",
@@ -2580,7 +2567,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0152",
     "category": "general",
     "kw": [
       "redis",
@@ -2596,7 +2583,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0153",
     "category": "general",
     "kw": [
       "cdn",
@@ -2612,23 +2599,22 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0154",
     "category": "general",
     "kw": [
       "lazy loading",
       "تحميل كسول",
       "تأخير التحميل",
-      "صور",
       "تسريع الصفحة"
     ],
-    "q": "lazy loading تحميل كسول تأخير التحميل صور تسريع الصفحة",
+    "q": "lazy loading تحميل كسول تأخير التحميل تسريع الصفحة",
     "a": "تقنية Lazy Loading تقوم بتأخير تحميل الصور أو المكونات غير المرئية على الشاشة حتى يقوم المستخدم بالتمرير إليها، مما يوفر النطاق الترددي ويسرع التحميل الأولي.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0155",
     "category": "general",
     "kw": [
       "ssr",
@@ -2643,7 +2629,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0156",
     "category": "general",
     "kw": [
       "csr",
@@ -2659,7 +2645,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0157",
     "category": "general",
     "kw": [
       "ssg",
@@ -2675,7 +2661,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0158",
     "category": "general",
     "kw": [
       "webpack",
@@ -2691,7 +2677,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0159",
     "category": "general",
     "kw": [
       "virtual dom",
@@ -2707,7 +2693,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0160",
     "category": "general",
     "kw": [
       "state management",
@@ -2722,7 +2708,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0161",
     "category": "general",
     "kw": [
       "redux",
@@ -2738,7 +2724,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0162",
     "category": "general",
     "kw": [
       "context api",
@@ -2754,7 +2740,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0163",
     "category": "general",
     "kw": [
       "sql vs nosql",
@@ -2770,7 +2756,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0164",
     "category": "general",
     "kw": [
       "mongodb",
@@ -2786,7 +2772,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0165",
     "category": "general",
     "kw": [
       "postgresql",
@@ -2802,7 +2788,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0166",
     "category": "general",
     "kw": [
       "database normalization",
@@ -2817,7 +2803,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0167",
     "category": "general",
     "kw": [
       "indexing",
@@ -2833,7 +2819,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0168",
     "category": "general",
     "kw": [
       "acid",
@@ -2849,7 +2835,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0169",
     "category": "general",
     "kw": [
       "orm",
@@ -2864,7 +2850,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0170",
     "category": "general",
     "kw": [
       "prisma",
@@ -2880,7 +2866,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0171",
     "category": "general",
     "kw": [
       "event loop",
@@ -2896,7 +2882,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0172",
     "category": "general",
     "kw": [
       "promises",
@@ -2912,7 +2898,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0173",
     "category": "general",
     "kw": [
       "callbacks",
@@ -2928,7 +2914,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0174",
     "category": "general",
     "kw": [
       "memory leak",
@@ -2944,7 +2930,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0175",
     "category": "general",
     "kw": [
       "garbage collection",
@@ -2960,7 +2946,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0176",
     "category": "general",
     "kw": [
       "multithreading",
@@ -2976,7 +2962,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0177",
     "category": "general",
     "kw": [
       "web workers",
@@ -2992,7 +2978,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0178",
     "category": "general",
     "kw": [
       "service workers",
@@ -3008,7 +2994,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0179",
     "category": "general",
     "kw": [
       "pwa",
@@ -3024,7 +3010,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0180",
     "category": "general",
     "kw": [
       "seo",
@@ -3040,7 +3026,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0181",
     "category": "general",
     "kw": [
       "meta tags",
@@ -3056,7 +3042,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0182",
     "category": "general",
     "kw": [
       "semantic html",
@@ -3072,7 +3058,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0183",
     "category": "general",
     "kw": [
       "accessibility",
@@ -3088,7 +3074,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0184",
     "category": "general",
     "kw": [
       "aria labels",
@@ -3104,7 +3090,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0185",
     "category": "general",
     "kw": [
       "css flexbox",
@@ -3120,7 +3106,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0186",
     "category": "general",
     "kw": [
       "css grid",
@@ -3136,7 +3122,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0187",
     "category": "general",
     "kw": [
       "tailwind css",
@@ -3152,7 +3138,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0188",
     "category": "general",
     "kw": [
       "sass",
@@ -3168,7 +3154,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0189",
     "category": "general",
     "kw": [
       "responsive design",
@@ -3184,7 +3170,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0190",
     "category": "general",
     "kw": [
       "mobile first",
@@ -3199,7 +3185,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0191",
     "category": "general",
     "kw": [
       "ui ux",
@@ -3215,7 +3201,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0192",
     "category": "general",
     "kw": [
       "ab testing",
@@ -3231,7 +3217,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0193",
     "category": "general",
     "kw": [
       "conversion rate",
@@ -3247,7 +3233,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0194",
     "category": "general",
     "kw": [
       "churn rate",
@@ -3263,7 +3249,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0195",
     "category": "general",
     "kw": [
       "mrr",
@@ -3279,23 +3265,22 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0196",
     "category": "general",
     "kw": [
       "cac",
       "تكلفة الاستحواذ",
       "جلب عميل",
-      "تسويق",
       "customer acquisition"
     ],
-    "q": "cac تكلفة الاستحواذ جلب عميل تسويق customer acquisition",
+    "q": "cac تكلفة الاستحواذ جلب عميل customer acquisition",
     "a": "مؤشر CAC (تكلفة الاستحواذ على العميل) يقيس إجمالي ما تنفقه الشركة في التسويق والمبيعات لاكتساب عميل جديد واحد.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0197",
     "category": "general",
     "kw": [
       "ltv",
@@ -3311,7 +3296,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0198",
     "category": "general",
     "kw": [
       "mvp",
@@ -3327,7 +3312,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0199",
     "category": "general",
     "kw": [
       "product market fit",
@@ -3342,7 +3327,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0200",
     "category": "general",
     "kw": [
       "bootstrapping",
@@ -3358,7 +3343,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0201",
     "category": "general",
     "kw": [
       "venture capital",
@@ -3374,7 +3359,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0202",
     "category": "general",
     "kw": [
       "api rate limiting",
@@ -3390,7 +3375,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0203",
     "category": "general",
     "kw": [
       "webhooks",
@@ -3406,7 +3391,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0204",
     "category": "general",
     "kw": [
       "cron jobs",
@@ -3422,7 +3407,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0205",
     "category": "general",
     "kw": [
       "load balancing",
@@ -3438,7 +3423,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0206",
     "category": "general",
     "kw": [
       "reverse proxy",
@@ -3454,7 +3439,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0207",
     "category": "general",
     "kw": [
       "nginx",
@@ -3470,7 +3455,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0208",
     "category": "general",
     "kw": [
       "cloud computing",
@@ -3486,7 +3471,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0209",
     "category": "general",
     "kw": [
       "aws",
@@ -3502,7 +3487,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0210",
     "category": "general",
     "kw": [
       "gcp",
@@ -3518,7 +3503,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0211",
     "category": "general",
     "kw": [
       "firebase",
@@ -3534,7 +3519,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0212",
     "category": "general",
     "kw": [
       "supabase",
@@ -3550,7 +3535,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0213",
     "category": "general",
     "kw": [
       "vercel",
@@ -3566,7 +3551,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0214",
     "category": "general",
     "kw": [
       "github actions",
@@ -3582,7 +3567,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0215",
     "category": "general",
     "kw": [
       "tdd",
@@ -3598,7 +3583,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0216",
     "category": "general",
     "kw": [
       "unit testing",
@@ -3614,7 +3599,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0217",
     "category": "general",
     "kw": [
       "integration testing",
@@ -3630,7 +3615,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0218",
     "category": "general",
     "kw": [
       "e2e testing",
@@ -3646,7 +3631,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0219",
     "category": "general",
     "kw": [
       "jest",
@@ -3662,7 +3647,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0220",
     "category": "general",
     "kw": [
       "debugging",
@@ -3678,7 +3663,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0221",
     "category": "general",
     "kw": [
       "logging",
@@ -3694,7 +3679,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0222",
     "category": "general",
     "kw": [
       "sentry",
@@ -3710,7 +3695,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0223",
     "category": "general",
     "kw": [
       "ai integration",
@@ -3726,7 +3711,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0224",
     "category": "general",
     "kw": [
       "prompt engineering",
@@ -3742,7 +3727,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0225",
     "category": "general",
     "kw": [
       "rag",
@@ -3758,23 +3743,22 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0226",
     "category": "general",
     "kw": [
       "llm",
       "نماذج لغوية كبيرة",
       "chatgpt",
-      "gemini",
       "نماذج الذكاء"
     ],
-    "q": "llm نماذج لغوية كبيرة chatgpt gemini نماذج الذكاء",
+    "q": "llm نماذج لغوية كبيرة chatgpt نماذج الذكاء",
     "a": "النماذج اللغوية الكبيرة (LLMs) هي أنظمة ذكاء اصطناعي مُدربة على كميات هائلة من النصوص لقهم وتوليد اللغة البشرية بأسلوب طبيعي ومترابط.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0227",
     "category": "general",
     "kw": [
       "fine tuning",
@@ -3790,7 +3774,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0228",
     "category": "general",
     "kw": [
       "openai api",
@@ -3805,7 +3789,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0229",
     "category": "general",
     "kw": [
       "machine learning",
@@ -3821,7 +3805,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0230",
     "category": "general",
     "kw": [
       "future web",
@@ -3837,7 +3821,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0231",
     "category": "general",
     "kw": [
       "zunexa",
@@ -3852,7 +3836,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0232",
     "category": "general",
     "kw": [
       "what is zunexa",
@@ -3866,7 +3850,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0233",
     "category": "general",
     "kw": [
       "zunexa",
@@ -3880,7 +3864,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0234",
     "category": "general",
     "kw": [
       "تقنية",
@@ -3896,7 +3880,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0235",
     "category": "general",
     "kw": [
       "tech stack",
@@ -3911,7 +3895,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0236",
     "category": "general",
     "kw": [
       "سوق",
@@ -3926,7 +3910,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0237",
     "category": "general",
     "kw": [
       "target market",
@@ -3940,22 +3924,21 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0238",
     "category": "general",
     "kw": [
       "خطط",
       "plan",
-      "اشتراك",
       "سعر"
     ],
-    "q": "خطط plan اشتراك سعر",
+    "q": "خطط plan سعر",
     "a": "الخطط المتاحة فـ Zunexa هي: Free (500 token)، Plus (3000 token)، Pro (10,000 token)، و Senior (tokens غير محدودة + مميزات متقدمة). كل خطة كاتفتح ليك عدد أكبر من generations والمميزات.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0239",
     "category": "general",
     "kw": [
       "plans",
@@ -3970,7 +3953,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0240",
     "category": "general",
     "kw": [
       "plans",
@@ -3985,7 +3968,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0241",
     "category": "general",
     "kw": [
       "free plan",
@@ -3999,7 +3982,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0242",
     "category": "general",
     "kw": [
       "free plan",
@@ -4013,7 +3996,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0243",
     "category": "general",
     "kw": [
       "pro plan",
@@ -4026,7 +4009,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0244",
     "category": "general",
     "kw": [
       "pro plan",
@@ -4040,7 +4023,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0245",
     "category": "general",
     "kw": [
       "senior plan",
@@ -4054,7 +4037,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0246",
     "category": "general",
     "kw": [
       "senior plan",
@@ -4068,7 +4051,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0247",
     "category": "general",
     "kw": [
       "تغيير خطة",
@@ -4082,7 +4065,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0248",
     "category": "general",
     "kw": [
       "upgrade",
@@ -4097,21 +4080,20 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0249",
     "category": "general",
     "kw": [
       "إلغاء",
-      "cancel",
-      "اشتراك"
+      "cancel"
     ],
-    "q": "إلغاء cancel اشتراك",
+    "q": "إلغاء cancel",
     "a": "نعم، تقدر تلغي الاشتراك ديالك فأي وقت من Billing → Manage Subscription. الإلغاء كيوقف الفوترة المستقبلية لكن الخطة كاتبقى فعالة حتى نهاية الدورة المدفوعة.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0250",
     "category": "general",
     "kw": [
       "cancel subscription",
@@ -4125,7 +4107,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0251",
     "category": "general",
     "kw": [
       "token cost",
@@ -4139,7 +4121,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0252",
     "category": "general",
     "kw": [
       "token cost",
@@ -4153,7 +4135,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0253",
     "category": "general",
     "kw": [
       "تجديد",
@@ -4167,7 +4149,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0254",
     "category": "general",
     "kw": [
       "token renewal",
@@ -4181,7 +4163,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0255",
     "category": "general",
     "kw": [
       "شراء tokens",
@@ -4195,7 +4177,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0256",
     "category": "general",
     "kw": [
       "buy more tokens",
@@ -4209,7 +4191,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0257",
     "category": "general",
     "kw": [
       "invite code",
@@ -4223,7 +4205,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0258",
     "category": "general",
     "kw": [
       "invite code",
@@ -4237,7 +4219,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0259",
     "category": "general",
     "kw": [
       "generator hub",
@@ -4252,7 +4234,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0260",
     "category": "general",
     "kw": [
       "generator hub",
@@ -4266,7 +4248,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0261",
     "category": "general",
     "kw": [
       "seo tool",
@@ -4279,7 +4261,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0262",
     "category": "general",
     "kw": [
       "seo tool",
@@ -4292,21 +4274,20 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0263",
     "category": "general",
     "kw": [
       "image generation",
-      "توليد صور",
-      "صور"
+      "توليد صور"
     ],
-    "q": "image generation توليد صور صور",
+    "q": "image generation توليد صور",
     "a": "تقدر تفعّل image generation مع المحتوى ديالك بزيادة 10 token فوق كلفة الـ generation العادية. خطة Pro كاتمنحك حتى 50 image generation يوميًا.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0264",
     "category": "general",
     "kw": [
       "image generation",
@@ -4320,7 +4301,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0265",
     "category": "general",
     "kw": [
       "video generation",
@@ -4333,7 +4314,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0266",
     "category": "general",
     "kw": [
       "video generation",
@@ -4346,7 +4327,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0267",
     "category": "general",
     "kw": [
       "لغات",
@@ -4361,7 +4342,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0268",
     "category": "general",
     "kw": [
       "supported languages",
@@ -4374,7 +4355,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0269",
     "category": "general",
     "kw": [
       "ربط حساب",
@@ -4388,7 +4369,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0270",
     "category": "general",
     "kw": [
       "connect accounts",
@@ -4402,7 +4383,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0271",
     "category": "general",
     "kw": [
       "api",
@@ -4416,7 +4397,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0272",
     "category": "general",
     "kw": [
       "api access",
@@ -4430,7 +4411,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0273",
     "category": "general",
     "kw": [
       "webhook"
@@ -4442,7 +4423,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0274",
     "category": "general",
     "kw": [
       "webhook",
@@ -4455,7 +4436,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0275",
     "category": "general",
     "kw": [
       "documentation",
@@ -4469,7 +4450,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0276",
     "category": "general",
     "kw": [
       "api documentation",
@@ -4483,7 +4464,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0277",
     "category": "general",
     "kw": [
       "affiliate",
@@ -4497,7 +4478,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0278",
     "category": "general",
     "kw": [
       "affiliate program",
@@ -4511,7 +4492,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0279",
     "category": "general",
     "kw": [
       "payment",
@@ -4525,7 +4506,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0280",
     "category": "general",
     "kw": [
       "payment methods",
@@ -4539,7 +4520,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0281",
     "category": "general",
     "kw": [
       "export data",
@@ -4552,7 +4533,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0282",
     "category": "general",
     "kw": [
       "export my data",
@@ -4565,7 +4546,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0283",
     "category": "general",
     "kw": [
       "cookie preferences",
@@ -4578,21 +4559,20 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0284",
     "category": "general",
     "kw": [
       "security",
-      "أمان",
       "data protection"
     ],
-    "q": "security أمان data protection",
+    "q": "security data protection",
     "a": "البيانات ديالك محمية ومخزنة بشكل آمن عبر Supabase مع تشفير، وZunexa ماكاتبيعش أو تشارك بياناتك الشخصية مع أطراف ثالثة بدون موافقتك.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0285",
     "category": "general",
     "kw": [
       "data security",
@@ -4606,22 +4586,21 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0286",
     "category": "general",
     "kw": [
       "دعم",
       "support",
-      "contact",
-      "تواصل"
+      "contact"
     ],
-    "q": "دعم support contact تواصل",
+    "q": "دعم support contact",
     "a": "تقدر تتواصل مع دعم العملاء عبر mrahmed20101119@gmail.com أو واتساب على +212777364251 لأي سؤال أو مشكل تقني.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0287",
     "category": "general",
     "kw": [
       "contact support",
@@ -4635,7 +4614,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0288",
     "category": "general",
     "kw": [
       "feedback",
@@ -4648,7 +4627,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0289",
     "category": "general",
     "kw": [
       "send feedback",
@@ -4661,7 +4640,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0290",
     "category": "general",
     "kw": [
       "analytics",
@@ -4675,7 +4654,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0291",
     "category": "general",
     "kw": [
       "analytics",
@@ -4689,7 +4668,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0292",
     "category": "general",
     "kw": [
       "history",
@@ -4703,7 +4682,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0293",
     "category": "general",
     "kw": [
       "history page",
@@ -4717,7 +4696,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0294",
     "category": "general",
     "kw": [
       "theme",
@@ -4733,7 +4712,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0295",
     "category": "general",
     "kw": [
       "change theme",
@@ -4747,7 +4726,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0296",
     "category": "general",
     "kw": [
       "font",
@@ -4761,7 +4740,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0297",
     "category": "general",
     "kw": [
       "font size",
@@ -4774,7 +4753,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0298",
     "category": "general",
     "kw": [
       "sidebar",
@@ -4788,7 +4767,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0299",
     "category": "general",
     "kw": [
       "compact sidebar",
@@ -4801,7 +4780,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0300",
     "category": "general",
     "kw": [
       "music",
@@ -4815,7 +4794,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0301",
     "category": "general",
     "kw": [
       "music bar",
@@ -4828,7 +4807,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0302",
     "category": "general",
     "kw": [
       "team management",
@@ -4842,7 +4821,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0303",
     "category": "general",
     "kw": [
       "team management",
@@ -4856,7 +4835,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0304",
     "category": "general",
     "kw": [
       "mobile app",
@@ -4871,7 +4850,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0305",
     "category": "general",
     "kw": [
       "mobile app",
@@ -4885,7 +4864,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0306",
     "category": "general",
     "kw": [
       "forgot password",
@@ -4899,7 +4878,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0307",
     "category": "general",
     "kw": [
       "reset password",
@@ -4912,7 +4891,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0308",
     "category": "general",
     "kw": [
       "e-commerce",
@@ -4930,7 +4909,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0309",
     "category": "general",
     "kw": [
       "مشكل",
@@ -4949,7 +4928,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0310",
     "category": "general",
     "kw": [
       "wordpress",
@@ -4966,7 +4945,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0311",
     "category": "general",
     "kw": [
       "طلبة",
@@ -4984,7 +4963,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0312",
     "category": "general",
     "kw": [
       "طول المقال",
@@ -5001,7 +4980,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0313",
     "category": "general",
     "kw": [
       "تدريب",
@@ -5019,7 +4998,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0314",
     "category": "general",
     "kw": [
       "فريق",
@@ -5037,7 +5016,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0315",
     "category": "general",
     "kw": [
       "حفظ تلقائي",
@@ -5054,7 +5033,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0316",
     "category": "general",
     "kw": [
       "plagiarism",
@@ -5073,7 +5052,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0317",
     "category": "general",
     "kw": [
       "فابور",
@@ -5092,7 +5071,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0318",
     "category": "general",
     "kw": [
       "تقاداو التوكنز",
@@ -5111,7 +5090,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0319",
     "category": "general",
     "kw": [
       "دفع",
@@ -5131,7 +5110,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0320",
     "category": "general",
     "kw": [
       "تليفون",
@@ -5150,7 +5129,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0321",
     "category": "general",
     "kw": [
       "خصوصية",
@@ -5159,17 +5138,16 @@
       "delete account",
       "بيانات",
       "data",
-      "حذف",
-      "حماية"
+      "حذف"
     ],
-    "q": "خصوصية privacy مسح الحساب delete account بيانات data حذف حماية",
+    "q": "خصوصية privacy مسح الحساب delete account بيانات data حذف",
     "a": "الخصوصية ديالك هي الأولوية ديالنا. المحتوى ديالك كيبقى خاص بيك. وتقدر فأي وقت تحذف السجل ديالك (History) أو تمسح الحساب ديالك بصفة نهائية بضغطة زر.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0322",
     "category": "general",
     "kw": [
       "ملكية",
@@ -5187,7 +5165,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0323",
     "category": "general",
     "kw": [
       "قوالب",
@@ -5205,25 +5183,23 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0324",
     "category": "general",
     "kw": [
       "api",
       "مطورين",
       "developers",
-      "ربط",
       "integration",
-      "تطبيقات خارجية",
-      "برمجة"
+      "تطبيقات خارجية"
     ],
-    "q": "api مطورين developers ربط integration تطبيقات خارجية برمجة",
+    "q": "api مطورين developers integration تطبيقات خارجية",
     "a": "حاليًا كنركزو على توفير واجهة مستخدم سهلة، ولكن خدمة الـ API للمطورين والشركات متوفرة عند الطلب. تواصل مع الدعم الفني باش نعطيوك التفاصيل والأسعار المخصصة.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0325",
     "category": "general",
     "kw": [
       "affiliate",
@@ -5242,7 +5218,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0326",
     "category": "general",
     "kw": [
       "يوتيوب",
@@ -5261,7 +5237,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0327",
     "category": "general",
     "kw": [
       "تحديثات جوجل",
@@ -5279,7 +5255,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0328",
     "category": "general",
     "kw": [
       "ترجمة",
@@ -5297,7 +5273,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0329",
     "category": "general",
     "kw": [
       "تحميل",
@@ -5316,7 +5292,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0330",
     "category": "general",
     "kw": [
       "دعم فني",
@@ -5324,38 +5300,35 @@
       "مساعدة",
       "help",
       "مشكل تقني",
-      "تواصل",
       "أولوية"
     ],
-    "q": "دعم فني support مساعدة help مشكل تقني تواصل أولوية",
+    "q": "دعم فني support مساعدة help مشكل تقني أولوية",
     "a": "فريق الدعم ديالنا متواجد ديما باش يعاونك. فالباقات العادية كنجاوبو فظرف 24 ساعة، أما المشتركين فباقة Senior عندهم أولوية الدعم الفني السريع (Priority Support) وكيتم الرد عليهم فالحين.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0331",
     "category": "general",
     "kw": [
       "نبرة الصوت",
       "tone of voice",
       "أسلوب الكتابة",
       "نبرة رسمية",
-      "تسويق",
       "أسلوب",
       "طريقة الكتابة"
     ],
-    "q": "نبرة الصوت tone of voice أسلوب الكتابة نبرة رسمية تسويق أسلوب طريقة الكتابة",
+    "q": "نبرة الصوت tone of voice أسلوب الكتابة نبرة رسمية أسلوب طريقة الكتابة",
     "a": "نعم، Zunexa كيعطيك إمكانية تختار نبرة الكتابة لي بغيتي (رسمية، فكاهية، تسويقية، إخبارية، أكاديمية...) باش المحتوى يكون أقرب للجمهور المستهدف ديالك ويقنعهم كثر.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0332",
     "category": "general",
     "kw": [
-      "صور",
       "images",
       "توليد الصور",
       "ai images",
@@ -5363,17 +5336,16 @@
       "رسومات",
       "ذكاء اصطناعي للصور"
     ],
-    "q": "صور images توليد الصور ai images تصميم رسومات ذكاء اصطناعي للصور",
+    "q": "images توليد الصور ai images تصميم رسومات ذكاء اصطناعي للصور",
     "a": "Zunexa مصمم باش يكون شامل. زيادة على النصوص والبرمجة، المنصة كتوفر أداة لتوليد الصور بالذكاء الاصطناعي بجودة عالية باش ترفقها مع المقالات ديالك أو البوسطات فالسوشيال ميديا.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0333",
     "category": "general",
     "kw": [
-      "برمجة",
       "code",
       "coding",
       "أكواد",
@@ -5382,14 +5354,14 @@
       "debugging",
       "تصحيح الأخطاء"
     ],
-    "q": "برمجة code coding أكواد javascript python debugging تصحيح الأخطاء",
+    "q": "code coding أكواد javascript python debugging تصحيح الأخطاء",
     "a": "أكيد! Zunexa كيقدر يعاونك فكتابة الأكواد، تصحيح الأخطاء (Debugging)، وشرح البرمجيات بمختلف اللغات بحال Python، JavaScript، PHP، و HTML/CSS، وهادشي كيسرع الخدمة ديال المطورين.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0334",
     "category": "general",
     "kw": [
       "إيميل",
@@ -5407,7 +5379,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0335",
     "category": "general",
     "kw": [
       "بحوث",
@@ -5426,7 +5398,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0336",
     "category": "general",
     "kw": [
       "إلغاء الاشتراك",
@@ -5444,7 +5416,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0337",
     "category": "general",
     "kw": [
       "white label",
@@ -5463,26 +5435,22 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0338",
     "category": "general",
     "kw": [
-      "أمان",
       "security",
-      "تشفير",
       "ssl",
-      "اختراق",
-      "حماية",
       "بيانات",
       "privacy"
     ],
-    "q": "أمان security تشفير ssl اختراق حماية بيانات privacy",
+    "q": "security ssl بيانات privacy",
     "a": "حماية البيانات ديالك هي أولوية قصوى عندنا. كنخدمو بأحدث بروتوكولات التشفير (SSL/TLS) وقواعد بيانات محمية فخوادم آمنة باش نضمنو أن معلوماتك الشخصية والخدمة ديالك فآمان تام.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0339",
     "category": "general",
     "kw": [
       "قيود",
@@ -5490,18 +5458,17 @@
       "محتوى غير لائق",
       "فلاتر",
       "safety",
-      "أمان",
       "سياسة الاستخدام",
       "شروط"
     ],
-    "q": "قيود limits محتوى غير لائق فلاتر safety أمان سياسة الاستخدام شروط",
+    "q": "قيود limits محتوى غير لائق فلاتر safety سياسة الاستخدام شروط",
     "a": "Zunexa كيسمح بحرية الإبداع فمختلف المجالات، ولكن كاين فلاتر أمان (Safety Filters) مدمجة كتمنع توليد أي محتوى كيحرض على الكراهية، العنف، الإرهاب، أو أي محتوى غير قانوني كيخالف شروط الاستخدام.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0340",
     "category": "general",
     "kw": [
       "منافسة",
@@ -5520,7 +5487,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0341",
     "category": "general",
     "kw": [
       "حد يومي",
@@ -5538,25 +5505,24 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0342",
     "category": "general",
     "kw": [
       "خطة عمل",
       "business plan",
       "مشروع",
       "دراسة جدوى",
-      "تسويق",
       "أفكار مشاريع",
       "تخطيط"
     ],
-    "q": "خطة عمل business plan مشروع دراسة جدوى تسويق أفكار مشاريع تخطيط",
+    "q": "خطة عمل business plan مشروع دراسة جدوى أفكار مشاريع تخطيط",
     "a": "طبعاً! يكفي تعطي للمنصة فكرة عامة على المشروع ديالك والميزانية، وغادي تولد ليك خطة عمل متكاملة فيها دراسة السوق، خطة التسويق، الفئة المستهدفة، والتحليل المالي الأولي باش تبدا مشروعك على صح.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0343",
     "category": "general",
     "kw": [
       "فاتورة",
@@ -5574,25 +5540,24 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0344",
     "category": "general",
     "kw": [
       "gpt",
       "claude",
-      "gemini",
       "نماذج",
       "ذكاء اصطناعي",
       "models",
       "ai"
     ],
-    "q": "gpt claude gemini نماذج ذكاء اصطناعي models ai",
+    "q": "gpt claude نماذج ذكاء اصطناعي models ai",
     "a": "كنخدمو بأحدث وأقوى النماذج لي كاينة فالسوق (بحال GPT-4، Claude، و Gemini)، والمنصة كتعزل الموديل المناسب بوحدها على حسب نوع الطلب ديالك باش تعطيك أحسن نتيجة.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0345",
     "category": "general",
     "kw": [
       "صوت",
@@ -5610,7 +5575,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0346",
     "category": "general",
     "kw": [
       "bulk",
@@ -5627,7 +5592,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0347",
     "category": "general",
     "kw": [
       "pdf",
@@ -5645,7 +5610,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0348",
     "category": "general",
     "kw": [
       "fiverr",
@@ -5663,7 +5628,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0349",
     "category": "general",
     "kw": [
       "ممنوع",
@@ -5681,7 +5646,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0350",
     "category": "general",
     "kw": [
       "dark mode",
@@ -5699,25 +5664,24 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0351",
     "category": "general",
     "kw": [
       "zapier",
       "make",
       "automation",
       "أتمتة",
-      "ربط",
       "webhooks",
       "أوتوماتيك"
     ],
-    "q": "zapier make automation أتمتة ربط webhooks أوتوماتيك",
+    "q": "zapier make automation أتمتة webhooks أوتوماتيك",
     "a": "نظام الـ Webhooks والربط المباشر مع أدوات الأتمتة بحال Zapier و Make راه قيد التطوير وغادي يتم إطلاقو قريباً باش تقدر تنشر مقالاتك فموقعك أو صفحاتك بشكل أوتوماتيكي.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0352",
     "category": "general",
     "kw": [
       "إحصائيات",
@@ -5735,7 +5699,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0353",
     "category": "general",
     "kw": [
       "شرح",
@@ -5753,25 +5717,23 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0354",
     "category": "general",
     "kw": [
-      "حماية",
       "security",
       "2fa",
       "مصادقة ثنائية",
       "باسورد",
-      "اختراق",
       "أمان الحساب"
     ],
-    "q": "حماية security 2fa مصادقة ثنائية باسورد اختراق أمان الحساب",
+    "q": "security 2fa مصادقة ثنائية باسورد أمان الحساب",
     "a": "حماية حسابك مهمة عندنا. تقدر تفعل ميزة المصادقة الثنائية (2FA) من الإعدادات باش حتى واحد ما يقدر يدخل للحساب ديالك واخا يكون عارف الباسورد.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0355",
     "category": "general",
     "kw": [
       "extension",
@@ -5789,7 +5751,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0356",
     "category": "general",
     "kw": [
       "أفكار",
@@ -5807,7 +5769,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0357",
     "category": "general",
     "kw": [
       "نشر",
@@ -5825,25 +5787,24 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0358",
     "category": "general",
     "kw": [
       "مشاركة الحساب",
       "account sharing",
       "عائلتي",
       "صحابي",
-      "أمان",
       "فريق",
       "team"
     ],
-    "q": "مشاركة الحساب account sharing عائلتي صحابي أمان فريق team",
+    "q": "مشاركة الحساب account sharing عائلتي صحابي فريق team",
     "a": "الحسابات الفردية مخصصة لمستخدم واحد باش نحافظو على الخصوصية وأمان البيانات ديالك. إلى بغيتي تخدم مع ناس خرين، كننصحوك تشترك فخطة Senior لي كتوفر ميزة 'إدارة الفريق' (Team Management).",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0359",
     "category": "general",
     "kw": [
       "صحيحة",
@@ -5861,25 +5822,24 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0360",
     "category": "general",
     "kw": [
       "google drive",
       "dropbox",
       "سحابة",
       "تخزين",
-      "ربط",
       "حفظ",
       "cloud"
     ],
-    "q": "google drive dropbox سحابة تخزين ربط حفظ cloud",
+    "q": "google drive dropbox سحابة تخزين حفظ cloud",
     "a": "هاد الميزة خدامين عليها حالياً. قريباً غادي تولي قادر تسجل المقالات والصور لي ولدتي مباشرة فـ Google Drive أو Dropbox بضغطة زر باش يبقى كلشي منظم.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0361",
     "category": "general",
     "kw": [
       "لغة الواجهة",
@@ -5897,24 +5857,23 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0362",
     "category": "general",
     "kw": [
       "lifetime deal",
       "مدى الحياة",
-      "اشتراك",
       "دفعة واحدة",
       "عروض",
       "ltd"
     ],
-    "q": "lifetime deal مدى الحياة اشتراك دفعة واحدة عروض ltd",
+    "q": "lifetime deal مدى الحياة دفعة واحدة عروض ltd",
     "a": "حالياً، Zunexa كيعتمد على نظام الاشتراكات (شهري وسنوي) باش نضمنو استمرارية التحديثات وتغطية تكاليف الخوادم. ولكن مرة مرة كنديرو عروض استثنائية للمشتركين الأوائل، تابع النشرات ديالنا!",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0363",
     "category": "general",
     "kw": [
       "ترقية",
@@ -5932,7 +5891,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0364",
     "category": "general",
     "kw": [
       "كيوقف",
@@ -5950,7 +5909,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0365",
     "category": "general",
     "kw": [
       "مسح",
@@ -5968,7 +5927,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0366",
     "category": "general",
     "kw": [
       "gdpr",
@@ -5986,7 +5945,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0367",
     "category": "general",
     "kw": [
       "تقييم",
@@ -6004,7 +5963,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0368",
     "category": "general",
     "kw": [
       "csv",
@@ -6022,7 +5981,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0369",
     "category": "general",
     "kw": [
       "uptime",
@@ -6040,7 +5999,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0370",
     "category": "general",
     "kw": [
       "plagiarism",
@@ -6057,7 +6016,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0371",
     "category": "general",
     "kw": [
       "جمعية",
@@ -6075,7 +6034,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0372",
     "category": "general",
     "kw": [
       "ميزاجور",
@@ -6093,7 +6052,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0373",
     "category": "general",
     "kw": [
       "سحب الأرباح",
@@ -6112,7 +6071,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0374",
     "category": "general",
     "kw": [
       "متصفح",
@@ -6131,7 +6090,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0375",
     "category": "general",
     "kw": [
       "تحديث",
@@ -6149,7 +6108,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0376",
     "category": "general",
     "kw": [
       "تبديل الإيميل",
@@ -6166,7 +6125,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0377",
     "category": "general",
     "kw": [
       "html",
@@ -6184,7 +6143,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0378",
     "category": "general",
     "kw": [
       "2fa",
@@ -6202,7 +6161,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0379",
     "category": "general",
     "kw": [
       "وثائق قانونية",
@@ -6220,7 +6179,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0380",
     "category": "general",
     "kw": [
       "سرعة",
@@ -6238,7 +6197,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0381",
     "category": "general",
     "kw": [
       "توقيف الاشتراك",
@@ -6246,17 +6205,16 @@
       "إلغاء مؤقت",
       "cancel",
       "رجوع",
-      "حفظ البيانات",
-      "اشتراك"
+      "حفظ البيانات"
     ],
-    "q": "توقيف الاشتراك pause إلغاء مؤقت cancel رجوع حفظ البيانات اشتراك",
+    "q": "توقيف الاشتراك pause إلغاء مؤقت cancel رجوع حفظ البيانات",
     "a": "حاليًا، تقدر تلغي التجديد التلقائي (Cancel) باش ما يتسحبش منك الرصيد الشهر الجاي، والحساب ديالك غيرجع للباقة المجانية. فاش تبغي ترجع تخدم، تقدر ترقي الحساب (Upgrade) فأي وقت والملفات ديالك غتلقاها باقة محفوظة.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0382",
     "category": "general",
     "kw": [
       "shopify",
@@ -6274,7 +6232,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0383",
     "category": "general",
     "kw": [
       "تغيير الفاتورة",
@@ -6291,7 +6249,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0384",
     "category": "general",
     "kw": [
       "prompts",
@@ -6309,7 +6267,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0385",
     "category": "general",
     "kw": [
       "تبلوكا",
@@ -6327,7 +6285,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0386",
     "category": "general",
     "kw": [
       "مصطلحات طبية",
@@ -6335,17 +6293,16 @@
       "jargon",
       "دقة",
       "مجالات متخصصة",
-      "طب",
-      "برمجة"
+      "طب"
     ],
-    "q": "مصطلحات طبية مصطلحات تقنية jargon دقة مجالات متخصصة طب برمجة",
+    "q": "مصطلحات طبية مصطلحات تقنية jargon دقة مجالات متخصصة طب",
     "a": "نعم، النماذج ديالنا مدربة على كم هائل من البيانات المتخصصة. تقدر تولد مقالات ومحتوى كيحتوي على مصطلحات تقنية فمجالات البرمجة، الطب، القانون، أو الهندسة بدقة عالية وبلغة احترافية.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0387",
     "category": "general",
     "kw": [
       "offline",
@@ -6363,7 +6320,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0388",
     "category": "general",
     "kw": [
       "لغات الدعم",
@@ -6371,17 +6328,16 @@
       "دارجة",
       "عربية",
       "إنجليزية",
-      "فرنسية",
-      "تواصل"
+      "فرنسية"
     ],
-    "q": "لغات الدعم support languages دارجة عربية إنجليزية فرنسية تواصل",
+    "q": "لغات الدعم support languages دارجة عربية إنجليزية فرنسية",
     "a": "فريق الدعم ديالنا كيتواصل باللغة العربية، الدارجة المغربية، الإنجليزية، والفرنسية. اختار اللغة لي كترتاح فيها فاش تصيفط لينا رسالة، وغادي نجاوبوك بنفس اللغة.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0389",
     "category": "general",
     "kw": [
       "api limits",
@@ -6389,17 +6345,16 @@
       "حدود الطلبات",
       "مطورين",
       "documentation",
-      "requests",
-      "برمجة"
+      "requests"
     ],
-    "q": "api limits rate limits حدود الطلبات مطورين documentation requests برمجة",
+    "q": "api limits rate limits حدود الطلبات مطورين documentation requests",
     "a": "نعم، بالنسبة للمطورين لي كيخدمو بالـ API ديال Zunexa، كاين حدود ديال الطلبات فالدقيقة (Requests Per Minute) باش نحافظو على استقرار الخوادم. التفاصيل التقنية ديال هاد الحدود غتلقاها فملف الـ Documentation الخاص بالـ API.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0390",
     "category": "general",
     "kw": [
       "نشر",
@@ -6417,7 +6372,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0391",
     "category": "general",
     "kw": [
       "بيانات خاصة",
@@ -6425,17 +6380,16 @@
       "public models",
       "تدريب الذكاء الاصطناعي",
       "خصوصية",
-      "أمان",
       "privacy"
     ],
-    "q": "بيانات خاصة نماذج عامة public models تدريب الذكاء الاصطناعي خصوصية أمان privacy",
+    "q": "بيانات خاصة نماذج عامة public models تدريب الذكاء الاصطناعي خصوصية privacy",
     "a": "لا نهائياً! البيانات ديالك كتبقى خاصة بيك. Zunexa ما كيستعملش المحتوى لي كتولد باش يدرب الموديلات العامة (Public Models) ديال الذكاء الاصطناعي، وهادشي كيحمي السرية ديال مشاريعك.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0392",
     "category": "general",
     "kw": [
       "رابط عام",
@@ -6453,7 +6407,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0393",
     "category": "general",
     "kw": [
       "مفتوح المصدر",
@@ -6471,7 +6425,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0394",
     "category": "general",
     "kw": [
       "مؤسسة عمومية",
@@ -6489,7 +6443,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0395",
     "category": "general",
     "kw": [
       "أخبار عامة",
@@ -6507,7 +6461,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0396",
     "category": "general",
     "kw": [
       "منتدى",
@@ -6525,10 +6479,9 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0397",
     "category": "general",
     "kw": [
-      "صور",
       "قانون",
       "public domain",
       "royalty free",
@@ -6536,14 +6489,14 @@
       "تجاري",
       "حقوق الصور"
     ],
-    "q": "صور قانون public domain royalty free نشر تجاري حقوق الصور",
+    "q": "قانون public domain royalty free نشر تجاري حقوق الصور",
     "a": "عموماً، الصور لي كتولد بالذكاء الاصطناعي فـ Zunexa خالية من حقوق الملكية الفكرية الكلاسيكية (Royalty-free)، يعني تقدر تنشرها للعموم وتخدم بيها فأغراض تجارية بلا مشاكل قانونية.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0398",
     "category": "general",
     "kw": [
       "بروفايل عام",
@@ -6561,7 +6514,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0399",
     "category": "general",
     "kw": [
       "محركات البحث",
@@ -6579,7 +6532,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0400",
     "category": "general",
     "kw": [
       "قاعدة بيانات",
@@ -6597,7 +6550,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0401",
     "category": "general",
     "kw": [
       "public api",
@@ -6615,7 +6568,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0402",
     "category": "general",
     "kw": [
       "تكلفة",
@@ -6633,25 +6586,24 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0403",
     "category": "general",
     "kw": [
       "google sheets",
       "إكسل",
       "بيانات",
-      "ربط",
       "تصدير",
       "تحليل",
       "جداول"
     ],
-    "q": "google sheets إكسل بيانات ربط تصدير تحليل جداول",
+    "q": "google sheets إكسل بيانات تصدير تحليل جداول",
     "a": "ميزة الربط مع Google Sheets كاينة فخطة المطورين، كتمكنك من تصدير النتائج مباشرة لملفات إكسل سحابية باش تسهل عليك الخدمة الجماعية وتحليل البيانات.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0404",
     "category": "general",
     "kw": [
       "فرق",
@@ -6669,25 +6621,24 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0405",
     "category": "general",
     "kw": [
       "ضمان",
       "استرجاع الأموال",
       "refund",
       "senior",
-      "اشتراك",
       "14 يوم",
       "فلوس"
     ],
-    "q": "ضمان استرجاع الأموال refund senior اشتراك 14 يوم فلوس",
+    "q": "ضمان استرجاع الأموال refund senior 14 يوم فلوس",
     "a": "نعم، كنقدمو ضمان 14 يوم لاسترجاع المبلغ كاملاً إذا ما لقيتيش الخدمة كتوفر ليك القيمة اللي كنتي كتقلب عليها، بدون أي تعقيدات قانونية.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0406",
     "category": "general",
     "kw": [
       "محرر نصوص",
@@ -6705,7 +6656,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0407",
     "category": "general",
     "kw": [
       "جمهور",
@@ -6723,25 +6674,21 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0408",
     "category": "general",
     "kw": [
       "ssl",
-      "تشفير",
-      "أمان",
       "اتصال",
-      "اختراق",
-      "حماية",
       "tls"
     ],
-    "q": "ssl تشفير أمان اتصال اختراق حماية tls",
+    "q": "ssl اتصال tls",
     "a": "تماما، جميع الاتصالات مع منصة Zunexa مشفرة ببروتوكول SSL/TLS عالي المستوى، يعني المعلومات ديالك وسجلاتك محمية من أي تجسس أو اختراق.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0409",
     "category": "general",
     "kw": [
       "إعلانات",
@@ -6759,7 +6706,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0410",
     "category": "general",
     "kw": [
       "product description",
@@ -6777,25 +6724,24 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0411",
     "category": "general",
     "kw": [
       "أفكار محتوى",
       "content ideas",
       "منشورات",
       "مقالات",
-      "تسويق",
       "ابداع",
       "content"
     ],
-    "q": "أفكار محتوى content ideas منشورات مقالات تسويق ابداع content",
+    "q": "أفكار محتوى content ideas منشورات مقالات ابداع content",
     "a": "نعم، تقدر تولد عشرات الأفكار للمقالات، الفيديوهات، المنشورات، والحملات التسويقية حسب المجال والجمهور المستهدف ديالك، باش تبقى ديما عندك محتوى جديد.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0412",
     "category": "general",
     "kw": [
       "email",
@@ -6813,7 +6759,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0413",
     "category": "general",
     "kw": [
       "rewrite",
@@ -6831,25 +6777,24 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0414",
     "category": "general",
     "kw": [
       "prompt",
       "chatgpt",
-      "gemini",
       "claude",
       "ai prompt",
       "برومبت",
       "ذكاء اصطناعي"
     ],
-    "q": "prompt chatgpt gemini claude ai prompt برومبت ذكاء اصطناعي",
+    "q": "prompt chatgpt claude ai prompt برومبت ذكاء اصطناعي",
     "a": "أكيد، Zunexa كتساعدك تولد Prompts موجهة لـ ChatGPT وGemini وClaude وغيرهم، باش تحصل على نتائج أدق وأفضل.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0415",
     "category": "general",
     "kw": [
       "summary",
@@ -6867,7 +6812,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0416",
     "category": "general",
     "kw": [
       "linkedin",
@@ -6885,7 +6830,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0417",
     "category": "general",
     "kw": [
       "instagram",
@@ -6903,7 +6848,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0418",
     "category": "general",
     "kw": [
       "twitter",
@@ -6921,7 +6866,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0419",
     "category": "general",
     "kw": [
       "bio",
@@ -6939,7 +6884,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0420",
     "category": "general",
     "kw": [
       "faq",
@@ -6957,7 +6902,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0421",
     "category": "general",
     "kw": [
       "landing page",
@@ -6975,7 +6920,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0422",
     "category": "general",
     "kw": [
       "اسم شركة",
@@ -6993,25 +6938,24 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0423",
     "category": "general",
     "kw": [
       "slogan",
       "tagline",
       "شعار",
       "عبارة",
-      "تسويق",
       "branding",
       "هوية"
     ],
-    "q": "slogan tagline شعار عبارة تسويق branding هوية",
+    "q": "slogan tagline شعار عبارة branding هوية",
     "a": "نعم، عندك أداة مخصصة لإنشاء Slogans احترافية تعبر على هوية المشروع وتساعد في التسويق وبناء العلامة التجارية.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0424",
     "category": "general",
     "kw": [
       "domain",
@@ -7029,7 +6973,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0425",
     "category": "general",
     "kw": [
       "service description",
@@ -7047,7 +6991,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0426",
     "category": "general",
     "kw": [
       "cta",
@@ -7065,7 +7009,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0427",
     "category": "general",
     "kw": [
       "about us",
@@ -7083,25 +7027,24 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0428",
     "category": "general",
     "kw": [
       "contact us",
       "اتصل بنا",
-      "تواصل",
       "contact",
       "صفحة",
       "website",
       "support"
     ],
-    "q": "contact us اتصل بنا تواصل contact صفحة website support",
+    "q": "contact us اتصل بنا contact صفحة website support",
     "a": "نعم، المنصة كتساعدك تكتب صفحة تواصل احترافية مع رسائل ترحيبية وتعليمات واضحة للزوار.",
     "tech": "",
     "src": "qa",
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0429",
     "category": "general",
     "kw": [
       "meta",
@@ -7119,7 +7062,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0430",
     "category": "general",
     "kw": [
       "keywords",
@@ -7137,7 +7080,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0431",
     "category": "general",
     "kw": [
       "title",
@@ -7155,7 +7098,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0432",
     "category": "general",
     "kw": [
       "reels",
@@ -7173,7 +7116,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0433",
     "category": "general",
     "kw": [
       "app",
@@ -7191,7 +7134,7 @@
     "w": 1.0
   },
   {
-    "id": "unknown",
+    "id": "orig_0434",
     "category": "general",
     "kw": [
       "json",
@@ -7434,7 +7377,6 @@
       "write code",
       "generate code",
       "توليد كود",
-      "برمجة",
       "أكتب لي كود",
       "code generation",
       "code writer",
@@ -7453,7 +7395,7 @@
       "كود لي",
       "code me a"
     ],
-    "q": "كتابة كود write code generate code توليد كود برمجة أكتب لي كود code generation code writer code assistant programming help مساعدة برمجية كتابة سكريبت write script generate script html code css code js code python code اكتب لي برنامج write program كود لي code me a",
+    "q": "كتابة كود write code generate code توليد كود أكتب لي كود code generation code writer code assistant programming help مساعدة برمجية كتابة سكريبت write script generate script html code css code js code python code اكتب لي برنامج write program كود لي code me a",
     "a": "يمكنني كتابة كود بـ: **HTML/CSS** (صفحات ويب، مكوّنات)، **JavaScript** (وظائف، APIs، منطق)، **Python** (سكريبتات، أتمتة، تحليل بيانات)، **Bash/Shell**، وأكثر. أرسل وصفاً واضحاً لما تريد وسأنشئ الكود لك فوراً.",
     "tech": [],
     "src": "generated",
@@ -8614,7 +8556,6 @@
       "security",
       "الأمن السيبراني",
       "hacking",
-      "اختراق",
       "ethical hacking",
       "اختراق أخلاقي",
       "penetration testing",
@@ -8627,7 +8568,7 @@
       "أمن الويب",
       "information security"
     ],
-    "q": "cybersecurity أمن المعلومات security الأمن السيبراني hacking اختراق ethical hacking اختراق أخلاقي penetration testing اختبار الاختراق pentest kali linux security أمن الشبكات network security web security أمن الويب information security",
+    "q": "cybersecurity أمن المعلومات security الأمن السيبراني hacking ethical hacking اختراق أخلاقي penetration testing اختبار الاختراق pentest kali linux security أمن الشبكات network security web security أمن الويب information security",
     "a": "**الأمن السيبراني** يشمل حماية الأنظمة والشبكات والبيانات. المجالات الرئيسية: اختبار الاختراق (Pentest)، تحليل الثغرات، أمن الشبكات، أمن التطبيقات، والتشفير. للبدء: تعلّم الشبكات (TCP/IP)، Linux، ثم Kali Linux وأدواته، ثم المنصات التدريبية (TryHackMe، HackTheBox).",
     "tech": [],
     "src": "generated",
@@ -8666,7 +8607,6 @@
     "category": "security",
     "kw": [
       "encryption",
-      "تشفير",
       "cryptography",
       "التشفير",
       "ssl",
@@ -8689,7 +8629,7 @@
       "password hashing",
       "تشفير كلمة المرور"
     ],
-    "q": "encryption تشفير cryptography التشفير ssl tls https شهادة ssl ssl certificate hash هاش md5 sha256 bcrypt jwt json web token رمز jwt authentication token api security أمان api token based auth password hashing تشفير كلمة المرور",
+    "q": "encryption cryptography التشفير ssl tls https شهادة ssl ssl certificate hash هاش md5 sha256 bcrypt jwt json web token رمز jwt authentication token api security أمان api token based auth password hashing تشفير كلمة المرور",
     "a": "```javascript\n// تشفير كلمات المرور بـ bcrypt\nconst bcrypt = require('bcrypt');\nconst hash = await bcrypt.hash(password, 12); // حفظ هذا في DB\nconst valid = await bcrypt.compare(inputPassword, hash);\n\n// JWT\nconst jwt = require('jsonwebtoken');\nconst token = jwt.sign({ userId: 123 }, process.env.JWT_SECRET, { expiresIn: '7d' });\nconst decoded = jwt.verify(token, process.env.JWT_SECRET);\n\n// HTTPS دائماً في الإنتاج\n// تأكد من أن SSL مفعّل (Vercel/Netlify يفعلانه تلقائياً)\n```",
     "tech": [],
     "src": "generated",
@@ -8733,7 +8673,6 @@
       "gpt-3",
       "claude",
       "claude ai",
-      "gemini",
       "google ai",
       "llm",
       "large language model",
@@ -8749,7 +8688,7 @@
       "open source ai",
       "ai comparison"
     ],
-    "q": "gpt chatgpt openai gpt-4 gpt-3 claude claude ai gemini google ai llm large language model نموذج لغوي كبير ai models نماذج الذكاء groq mistral llama ollama huggingface نماذج مفتوحة open source ai ai comparison",
+    "q": "gpt chatgpt openai gpt-4 gpt-3 claude claude ai google ai llm large language model نموذج لغوي كبير ai models نماذج الذكاء groq mistral llama ollama huggingface نماذج مفتوحة open source ai ai comparison",
     "a": "**أبرز نماذج اللغة الكبيرة (LLMs)**:\n- **GPT-4o** (OpenAI): الأقوى للاستخدام العام\n- **Claude 3.5 Sonnet** (Anthropic): ممتاز للكود والتحليل\n- **Gemini** (Google): متكامل مع خدمات Google\n- **Llama 3.1** (Meta): مفتوح المصدر، يمكن تشغيله محلياً\n- **Mistral**: أوروبي، سريع وفعّال\n- **Groq**: سرعة استجابة خارقة (LPU hardware)",
     "tech": [],
     "src": "generated",
