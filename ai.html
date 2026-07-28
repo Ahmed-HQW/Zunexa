@@ -1877,11 +1877,109 @@ function archonSystemPrompt() {
        + 'إذا كان الملف المرفق يحتوي على كود من مشروع (ملف .html/.js/.py أو أرشيف .zip)، ولا تُعِد كتابة الكود المصدري الكامل له حرفياً حتى لو طُلب منك ذلك — أعطِ فقط بنية عامة (template/skeleton) أو نمطاً (pattern) موضّحاً، مع شرح المنطق العام، دون نسخ السطور كما هي.';
 }
 
+/* ════════════════════════════════════════════════════════════
+   RAG LAYER — Semantic Search via Supabase pgvector
+   ════════════════════════════════════════════════════════════
+   Pipeline:
+     السؤال → embedding (HuggingFace free API) → pgvector cosine
+     search في Supabase → أقرب 5 فقرات → سياق للـ Brain
+
+   لماذا هذا أفضل من الـ KB المحلي؟
+   - لا تحتاج كتابة keywords يدوياً — أي نص يصبح قابلاً للبحث
+   - يفهم المعنى لا الكلمات (semantic not lexical)
+   - يعمل مع العربية والفرنسية والإنجليزية بنفس الدقة
+   - قاعدة المعرفة تكبر بدون لمس الكود
+
+   الـ KB المحلي (zunexa_qa_final.json) يبقى كطبقة أولى سريعة
+   offline — الـ RAG يُثري الإجابة إذا كان الاتصال متاحاً.
+════════════════════════════════════════════════════════════ */
+
+// HuggingFace model — all-MiniLM-L6-v2 (384d، مجاني، يدعم العربية)
+const RAG_EMBED_URL = 'https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2';
+const RAG_HF_TOKEN  = localStorage.getItem('zx_hf_token') || '';  // اختياري
+
+// Cache الـ embeddings في الذاكرة لتجنب استدعاء HF مرتين لنفس السؤال
+const _ragEmbedCache = new Map();
+
+// هل الـ RAG مُفعَّل؟ (يُفعَّل تلقائياً إذا وُجدت إدخالات في Supabase)
+let _ragEnabled = null;  // null = لم يُفحص بعد, true/false بعد الفحص
+
+async function ragCheckEnabled() {
+  if (_ragEnabled !== null) return _ragEnabled;
+  try {
+    const { count } = await _SB
+      .from('zunexa_knowledge')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_active', true);
+    _ragEnabled = (count || 0) > 0;
+    if (_ragEnabled) console.log(`Zunexa RAG: ${count} إدخال في Supabase — RAG مُفعَّل ✅`);
+    else console.log('Zunexa RAG: الجدول فارغ — شغّل zunexa_embed.py أولاً');
+  } catch {
+    _ragEnabled = false;
+  }
+  return _ragEnabled;
+}
+
+async function ragGetEmbedding(text) {
+  const key = text.slice(0, 120);
+  if (_ragEmbedCache.has(key)) return _ragEmbedCache.get(key);
+
+  const headers = { 'Content-Type': 'application/json' };
+  if (RAG_HF_TOKEN) headers['Authorization'] = `Bearer ${RAG_HF_TOKEN}`;
+
+  const res = await fetch(RAG_EMBED_URL, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      inputs: text.slice(0, 500),
+      options: { wait_for_model: true }
+    })
+  });
+  if (!res.ok) throw new Error(`HF embed error ${res.status}`);
+  let vec = await res.json();
+  // HF يرجع أحياناً nested array
+  if (Array.isArray(vec[0])) vec = vec[0];
+  _ragEmbedCache.set(key, vec);
+  return vec;
+}
+
+async function ragSearch(userQ, matchCount = 5) {
+  // 1. توليد الـ embedding
+  const embedding = await ragGetEmbedding(userQ);
+
+  // 2. بحث دلالي في Supabase بـ pgvector
+  const { data, error } = await _SB.rpc('match_zunexa_knowledge', {
+    query_embedding: embedding,
+    match_threshold: 0.45,  // حد أدنى للتشابه (0-1، كلما زاد كلما كان أدق)
+    match_count:     matchCount,
+    filter_category: null   // ابحث في كل الفئات
+  });
+
+  if (error || !data || !data.length) return null;
+
+  // 3. زيادة وزن أفضل نتيجة (best-effort، لا يوقف التدفق إذا فشل)
+  if (data[0]?.id) {
+    _SB.rpc('increment_knowledge_weight', { knowledge_id: data[0].id }).catch(() => {});
+  }
+
+  // 4. بناء الـ context للـ Brain من أقرب النتائج
+  const context = data
+    .map((d, i) => `[${i+1}] ${d.title}\n${d.content}`)
+    .join('\n\n---\n\n');
+
+  return {
+    context,
+    topResult: data[0],
+    similarity: data[0]?.similarity || 0,
+    count: data.length
+  };
+}
+
 // Effort → how hard Archon tries: local-only vs. local+brain, context depth, token budget.
 const EFFORT_CFG = {
-  quick:    { useBrain: false, ctxTurns: 0, maxTokens: 220 },
-  balanced: { useBrain: 'weak', ctxTurns: 4, maxTokens: 420 },
-  deep:     { useBrain: true,  ctxTurns: 8, maxTokens: 700 },
+  quick:    { useBrain: false, ctxTurns: 0,  maxTokens: 220  },
+  balanced: { useBrain: 'weak', ctxTurns: 4, maxTokens: 420  },
+  deep:     { useBrain: true,  ctxTurns: 8,  maxTokens: 700  },
   max:      { useBrain: true,  ctxTurns: 12, maxTokens: 1100 }
 };
 
@@ -1897,52 +1995,75 @@ const EFFORT_CFG = {
  * This detector forces the brain (with real ctx) to run for anything
  * that looks like a continuation, regardless of the KB score. */
 const FOLLOWUP_MARKERS = [
-  // Darija / Arabic
   'و ', 'وبعد', 'ومن بعد', 'زيد', 'كمل', 'شرح اكثر', 'شرح أكثر', 'وضح',
   'علاش', 'عﻻش', '3lach', 'كيفاش', 'شنو يعني', 'واش', 'ليش', 'يعني ايش',
-  // French
   'et ensuite', 'et après', 'pourquoi', 'explique plus', 'continue',
   'développe', 'et donc', 'c\'est-à-dire',
-  // English
   'why', 'what about', 'go on', 'continue', 'expand on', 'and then',
   'what do you mean', 'more details', 'elaborate'
 ];
 function isFollowUp(q) {
   if (!ctx.length) return false;
   const t = q.trim().toLowerCase();
-  // Very short questions almost always lean on the previous turn.
   if (tok(t).length <= 4) return true;
   return FOLLOWUP_MARKERS.some(m => t.startsWith(m) || t.includes(' ' + m));
 }
 
-/* answer() — routes between the pure local KB engine (answerLocal) and
-   the Archon Brain, depending on the selected model + effort level,
-   the strength of the local match, and any attached file content. */
+/* answer() — الـ pipeline الكامل:
+   1. KB محلي (فوري، offline)
+   2. RAG دلالي (Supabase + HuggingFace) — إذا كان مُفعَّلاً
+   3. Archon Brain (LLM) — مع السياق المُجمَّع من 1 و 2
+*/
 async function answer(userQ) {
   const local = await answerLocal(userQ);
-  const cfg = EFFORT_CFG[zxEffort] || EFFORT_CFG.balanced;
+  const cfg   = EFFORT_CFG[zxEffort] || EFFORT_CFG.balanced;
 
-  // Archon Lite never leaves the browser — instant, offline, zero
-  // external calls, so it genuinely cannot have brain-level memory.
-  // That's a deliberate tradeoff for that tier, not a bug — Archon
-  // Pro/Max are what carry real conversation context.
+  // Archon Lite — محلي فقط، لا network calls
   if (zxModel === 'lite') return local;
 
   const localIsWeak = local.score < 0.14;
-  const followUp = isFollowUp(userQ);
+  const followUp    = isFollowUp(userQ);
   const shouldUseBrain =
     cfg.useBrain === true ||
     (cfg.useBrain === 'weak' && (localIsWeak || attachedFile)) ||
     (zxModel === 'max' && (localIsWeak || attachedFile)) ||
-    followUp; // ← new: continuations always reach the brain + ctx
+    followUp;
 
   if (!shouldUseBrain) return local;
 
+  // ── RAG: بحث دلالي في Supabase ────────────────────────────
+  let ragContext = '';
+  try {
+    const ragActive = await ragCheckEnabled();
+    if (ragActive) {
+      const ragResult = await ragSearch(userQ, 5);
+      if (ragResult && ragResult.similarity > 0.45) {
+        ragContext = ragResult.context;
+        console.log(`RAG: ${ragResult.count} نتيجة، أعلى تشابه: ${ragResult.similarity.toFixed(3)}`);
+      }
+    }
+  } catch (e) {
+    // الـ RAG اختياري — إذا فشل يكمل بالـ KB المحلي فقط
+    console.warn('RAG: تخطّي (', e.message, ')');
+  }
+
+  // ── بناء الـ prompt مع السياقين معاً ──────────────────────
   const messages = [{ role: 'system', content: archonSystemPrompt() }];
   const turns = ctx.slice(-cfg.ctxTurns);
-  turns.forEach(c => messages.push({ role: c.role === 'user' ? 'user' : 'assistant', content: c.text }));
+  turns.forEach(c => messages.push({
+    role: c.role === 'user' ? 'user' : 'assistant',
+    content: c.text
+  }));
 
-  let userContent = `سياق من قاعدة معرفة Zunexa (قد يكون فارغاً):\n"""${local.text.slice(0,900)}"""\n\nسؤال المستخدم: ${userQ}`;
+  // دمج السياق: RAG أولاً (أغنى) ثم KB محلي كاحتياطي
+  const kbCtx  = local.text ? local.text.slice(0, 600) : '';
+  const ragCtx = ragContext  ? ragContext.slice(0, 1200) : '';
+  const combinedCtx = [ragCtx, kbCtx].filter(Boolean).join('\n\n───\n\n');
+
+  let userContent = combinedCtx
+    ? `سياق من قاعدة معرفة Zunexa:\n"""\n${combinedCtx}\n"""\n\nسؤال المستخدم: ${userQ}`
+    : `سؤال المستخدم: ${userQ}`;
+
   if (attachedFile && attachedFile.textContent) {
     userContent += `\n\nمحتوى الملف المرفق (${attachedFile.name}):\n"""${attachedFile.textContent.slice(0,3000)}"""`;
   }
@@ -1951,7 +2072,7 @@ async function answer(userQ) {
     messages.push({
       role: 'user',
       content: [
-        { type: 'text', text: userContent + `\n\nحلل الصورة المرفقة وأجب على سؤال المستخدم بخصوصها إن كان متعلقاً بها.` },
+        { type: 'text', text: userContent + '\n\nحلل الصورة المرفقة وأجب على سؤال المستخدم.' },
         { type: 'image_url', image_url: { url: attachedFile.dataUrl } }
       ]
     });
@@ -1960,11 +2081,13 @@ async function answer(userQ) {
   }
 
   const brainTxt = await archonBrain(messages, { maxTokens: cfg.maxTokens });
-  if (!brainTxt) return local; // graceful fallback if Pollinations is unreachable
+  if (!brainTxt) return local;
 
-  await logMsg(userQ, brainTxt, 'ai-brain', Math.max(local.score, 0.5));
-  return { text: brainTxt, src: 'ai-brain', score: Math.max(local.score, 0.5) };
+  const src = ragContext ? 'rag+brain' : 'ai-brain';
+  await logMsg(userQ, brainTxt, src, Math.max(local.score, 0.5));
+  return { text: brainTxt, src, score: Math.max(local.score, 0.5) };
 }
+
 
 const CONNECTORS = [
   'بالإضافة إلى ذلك،', 'وفي سياق متصل،', 'ومن زاوية أخرى،', 'يضاف إلى ذلك أن'
