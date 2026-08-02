@@ -533,6 +533,10 @@ html[data-zx-theme="ocean-dark"]{
   border:1px solid var(--bg);
   border-top-left-radius:3px;color:var(--tw);text-align:right;
 }
+body[data-archon-mode="cli"] .msg.bot .bubble{
+  font-family:'Fira Code','JetBrains Mono',monospace;
+  background:#0a0a0a;border:1px solid var(--gold);color:#c8ffc8;
+}
 .bubble strong{color:var(--gold)}
 .bubble em{color:var(--tg);font-style:normal;font-size:12.5px}
 .bubble code{
@@ -1393,6 +1397,7 @@ async function init() {
   if (modelSel)  modelSel.value  = zxModel;
   if (effortSel) effortSel.value = zxEffort;
   setModel(zxModel);
+  document.body.setAttribute('data-archon-mode', zxArchonMode);
   if (loadThread(currentChatId).length) replayThread(currentChatId);
   document.getElementById('aiInput').focus();
 }
@@ -1878,6 +1883,76 @@ function archonSystemPrompt() {
 }
 
 /* ════════════════════════════════════════════════════════════
+   ARCHON MODES — Cowork / Code / CLI router
+   Detects which "Archon" personality the user wants (explicit
+   /command, or keyword intent) and layers a mode-specific system
+   prompt on top of archonSystemPrompt() — it doesn't replace your
+   language/persona rules, just adds to them. answer() below calls
+   archonModeSystemPrompt() instead of archonSystemPrompt() directly.
+════════════════════════════════════════════════════════════ */
+let zxArchonMode = localStorage.getItem('zx_archon_mode') || 'chat'; // 'chat' | 'cowork' | 'code' | 'cli'
+
+function setArchonMode(mode) {
+  if (mode === zxArchonMode) return;
+  zxArchonMode = mode;
+  localStorage.setItem('zx_archon_mode', mode);
+  document.body.setAttribute('data-archon-mode', mode);
+  const labels = { chat: 'Archon', cowork: 'Cowork Archon', code: 'Code Archon', cli: 'CLI Archon' };
+  toast(`⚡ ${labels[mode] || 'Archon'} — تم التفعيل`);
+}
+
+const ARCHON_MODE_COMMANDS = {
+  '/cowork': 'cowork', '/code': 'code', '/cli': 'cli', '/chat': 'chat',
+};
+
+const ARCHON_MODE_KEYWORDS = {
+  code: [
+    'كود', 'اكتب لي كود', 'دالة', 'function', 'javascript', 'python',
+    'html', 'css', 'sql', 'api', 'debug', 'error', 'خطأ برمجي',
+    'رجع لي الكود', 'اصلح الكود', 'refactor', 'أصلح باغ', 'bug',
+    'كومبايل', 'compile', 'اكتب سكريبت', 'script', 'مكتبة', 'library',
+    'الگوريتم', 'algorithm', 'json', 'array', 'مصفوفة', 'class',
+  ],
+  cli: [
+    'git clone', 'git push', 'npm install', 'terminal', 'طرفية',
+    'سطر الأوامر', 'bash', 'shell', 'command line', 'sudo',
+    'apt install', 'pip install', 'chmod', 'ssh', 'curl', 'wget',
+    'docker', '/repo', '/source', '/cli', 'github',
+  ],
+  cowork: [
+    'ساعدني في مشروعي', 'خطة عمل', 'project plan', 'برنامج عمل',
+    'تعاون', 'workflow', 'خارطة طريق', 'roadmap', 'تنظيم المهام',
+    'todo', 'قائمة مهام', 'اجتماع', 'meeting', 'استراتيجية', 'strategy',
+  ],
+};
+
+function detectArchonMode(userText) {
+  const firstWord = userText.trim().split(/\s+/)[0].toLowerCase();
+  if (ARCHON_MODE_COMMANDS[firstWord]) return ARCHON_MODE_COMMANDS[firstWord];
+  const l = userText.toLowerCase();
+  for (const mode of ['code', 'cli', 'cowork']) {
+    if (ARCHON_MODE_KEYWORDS[mode].some(kw => l.includes(kw.toLowerCase()))) return mode;
+  }
+  return null; // no strong signal — leave zxArchonMode as-is
+}
+
+function archonModeSystemPrompt(userText) {
+  const detected = detectArchonMode(userText);
+  if (detected) setArchonMode(detected);
+  const base = archonSystemPrompt();
+  switch (zxArchonMode) {
+    case 'code':
+      return base + '\n\nأنت الآن في وضع Code Archon: ركّز فقط على الكود. جاوب بكتلة كود واحدة منسّقة (code block) مع تحديد لغة البرمجة، وشرح قصير جداً بعدها (سطر أو سطرين كحد أقصى). لا تشرح بإسهاب.';
+    case 'cli':
+      return base + '\n\nأنت الآن في وضع CLI Archon: جاوب فقط بأوامر طرفية (terminal commands) داخل كتلة كود bash/shell، بدون أي نص حواري قبلها أو بعدها إلا سطر تعليق # عند الحاجة لتوضيح أمر.';
+    case 'cowork':
+      return base + '\n\nأنت الآن في وضع Cowork Archon: تصرف كشريك عمل تفاعلي — اطرح سؤال توضيحي واحد إذا كانت المهمة غامضة، ثم قدّم خطوات عملية مرقمة قابلة للتنفيذ مباشرة.';
+    default:
+      return base;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
    RAG LAYER — Semantic Search via Supabase pgvector
    ════════════════════════════════════════════════════════════
    Pipeline:
@@ -2048,7 +2123,7 @@ async function answer(userQ) {
   }
 
   // ── بناء الـ prompt مع السياقين معاً ──────────────────────
-  const messages = [{ role: 'system', content: archonSystemPrompt() }];
+  const messages = [{ role: 'system', content: archonModeSystemPrompt(userQ) }];
   const turns = ctx.slice(-cfg.ctxTurns);
   turns.forEach(c => messages.push({
     role: c.role === 'user' ? 'user' : 'assistant',
