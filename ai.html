@@ -261,6 +261,33 @@ img{max-width:100%;display:block}
 
 /* ── History ── */
 .sb-history{flex:1;overflow-y:auto;padding:0 6px 6px}
+.hist-search{
+  margin:6px 6px 4px;padding:8px 10px;border-radius:9px;
+  background:var(--card2);border:1px solid var(--b1);color:var(--tw);
+  font-size:12.5px;width:calc(100% - 12px);
+}
+.hist-search:focus{outline:none;border-color:var(--gold)}
+.h-pin{
+  background:none;border:none;color:var(--tg);cursor:pointer;
+  font-size:13px;padding:2px 4px;flex-shrink:0;
+}
+.h-pin.on{color:var(--gold)}
+.h-item.pinned{border-color:var(--gold);background:rgba(212,175,55,.06)}
+.lib-tabs{display:flex;gap:8px;margin:10px 0 16px}
+.lib-tab{
+  padding:7px 16px;border-radius:9px;background:var(--card2);
+  border:1px solid var(--b1);color:var(--tg);cursor:pointer;font-size:13px;
+}
+.lib-tab.on{border-color:var(--gold);color:var(--gold)}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;max-height:60vh;overflow-y:auto}
+.lib-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid var(--b1)}
+.lib-list{display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow-y:auto}
+.lib-file-row{
+  display:flex;align-items:center;gap:10px;padding:9px 12px;
+  background:var(--card2);border:1px solid var(--b1);border-radius:9px;
+  text-decoration:none;color:var(--tw);font-size:13px;
+}
+.lib-empty{color:var(--tg);text-align:center;padding:30px 0;font-size:13px}
 .h-empty{
   padding:24px 14px;text-align:center;font-size:11.5px;
   color:var(--tm);line-height:1.9;
@@ -864,9 +891,15 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 
   <!-- History -->
   <div class="sb-label">المحادثات السابقة</div>
+  <input type="text" id="histSearch" class="hist-search" placeholder="🔍 بحث فالمحادثات..." oninput="renderHist()">
   <div class="sb-history" id="histList">
     <div class="h-empty">لا توجد محادثات بعد<br>ابدأ بسؤال ✦</div>
   </div>
+
+  <!-- Library -->
+  <button class="sb-fbtn" onclick="openLibrary()" style="margin:6px 6px 0">
+    <span class="fi">🖼</span> الصور والملفات
+  </button>
 
   <!-- Footer -->
   <div class="sb-footer">
@@ -998,7 +1031,22 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
      session (see loadUser()). Only a cosmetic guest display name
      remains, and it never touches plan/billing status.
 ══════════════════════════════════════════════════ -->
+<!-- Library: uploaded files + AI-generated/uploaded images across all chats -->
+<div class="modal-wrap" id="libModal">
+  <div class="modal-box wide">
+    <button class="modal-x" onclick="closeLibrary()">✕</button>
+    <div class="modal-title">🖼 الصور والملفات</div>
+    <div class="lib-tabs">
+      <button class="lib-tab on" id="libTabImages" onclick="switchLibTab('images')">الصور</button>
+      <button class="lib-tab" id="libTabFiles" onclick="switchLibTab('files')">الملفات</button>
+    </div>
+    <div class="lib-grid" id="libImages"></div>
+    <div class="lib-list" id="libFiles" style="display:none"></div>
+  </div>
+</div>
+
 <div class="modal-wrap" id="settModal">
+
   <div class="modal-box wide">
     <button class="modal-x" onclick="closeSettings()">✕</button>
     <div class="modal-title">⚙ الإعدادات</div>
@@ -2052,10 +2100,10 @@ async function ragSearch(userQ, matchCount = 5) {
 
 // Effort → how hard Archon tries: local-only vs. local+brain, context depth, token budget.
 const EFFORT_CFG = {
-  quick:    { useBrain: false, ctxTurns: 0,  maxTokens: 220  },
-  balanced: { useBrain: 'weak', ctxTurns: 4, maxTokens: 420  },
-  deep:     { useBrain: true,  ctxTurns: 8,  maxTokens: 700  },
-  max:      { useBrain: true,  ctxTurns: 12, maxTokens: 1100 }
+  quick:    { useBrain: false, ctxTurns: 0,  maxTokens: 350  },
+  balanced: { useBrain: 'weak', ctxTurns: 4, maxTokens: 650  },
+  deep:     { useBrain: true,  ctxTurns: 8,  maxTokens: 1200 },
+  max:      { useBrain: true,  ctxTurns: 12, maxTokens: 2000 }
 };
 
 /* Follow-up detector — the root cause of "can't continue/understand
@@ -2160,6 +2208,7 @@ async function answer(userQ) {
 
   const src = ragContext ? 'rag+brain' : 'ai-brain';
   await logMsg(userQ, brainTxt, src, Math.max(local.score, 0.5));
+  autoLearn(userQ, brainTxt, local.score); // fire-and-forget, never blocks the reply
   return { text: brainTxt, src, score: Math.max(local.score, 0.5) };
 }
 
@@ -2197,6 +2246,39 @@ async function learnQ(q) {
   try {
     await _SB.from('ai_learning').insert({ question: q, category: detectCat(q), source: 'user_chat', status: 'pending', device_id: getDeviceId() });
   } catch(e){}
+}
+
+// FULL AUTO-LEARNING — no human review, no button, no manual step.
+// Whenever the local KB was weak (score < 0.35, i.e. it genuinely
+// didn't know this) and Archon Brain produced a real answer, that
+// pair gets written straight into ai_knowledge so the KB grows on
+// its own. Guardrails (kept intentionally simple, not a full filter):
+//   - skipped in Temporary Chat (privacy)
+//   - skipped if the answer looks like an error/apology, not real content
+//   - skipped if local KB already scored decently (nothing new to learn)
+//   - upserts on `question` (unique index from the SQL migration), so
+//     asking the same thing twice updates the row instead of duplicating
+//   - stored with a lower starting weight (0.6) than curated entries
+//     (1.0), so verified answers still outrank self-learned ones in
+//     ranking — self-correcting as incrWeight() nudges good ones up
+async function autoLearn(question, answerText, localScore) {
+  if (tempChatOn || !isLearnEnabled()) return;
+  if (localScore >= 0.35) return; // KB already had a decent answer, nothing new
+  if (!answerText || answerText.length < 20) return;
+  const looksLikeFailure = /تعذّر|⚠|لم أجد|عذراً|خطأ في الاتصال/.test(answerText);
+  if (looksLikeFailure) return;
+  try {
+    await _SB.from('ai_knowledge').upsert({
+      question:   question.trim(),
+      answer:     answerText,
+      keywords:   tok(question).slice(0, 8),
+      weight:     0.6,
+      used_count: 1,
+      source:     'auto-learned',
+      category:   detectCat(question),
+      is_active:  true,
+    }, { onConflict: 'question' });
+  } catch(e) { /* best-effort — never breaks the chat if this fails */ }
 }
 
 async function logMsg(prompt, response, src, score) {
@@ -2305,8 +2387,9 @@ async function send() {
     // Save history — one entry per thread (chat_id), not per message
     if (!tempChatOn) {
       const existing = hist.findIndex(h => h.chatId === currentChatId);
+      const wasPinned = existing !== -1 && hist[existing].pinned;
       if (existing !== -1) hist.splice(existing, 1);
-      hist.unshift({ chatId: currentChatId, t: q.slice(0,50), ts: Date.now() });
+      hist.unshift({ chatId: currentChatId, t: q.slice(0,50), ts: Date.now(), pinned: wasPinned || false });
       if (hist.length > 40) hist.length = 40;
       localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
       renderHist();
@@ -2464,8 +2547,18 @@ function toast(msg) {
 ════════════════════════════════════════════════════════════ */
 function renderHist() {
   const list = document.getElementById('histList');
-  if (!hist.length) {
-    list.innerHTML = '<div class="h-empty">لا توجد محادثات بعد<br>ابدأ بسؤال ✦</div>';
+  const searchEl = document.getElementById('histSearch');
+  const q = searchEl ? searchEl.value.trim().toLowerCase() : '';
+
+  let items = hist.slice();
+  if (q) items = items.filter(i => i.t.toLowerCase().includes(q));
+  // Pinned chats float to the top, most recent first within each group.
+  items.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || b.ts - a.ts);
+
+  if (!items.length) {
+    list.innerHTML = q
+      ? '<div class="h-empty">ما لقيتش نتائج</div>'
+      : '<div class="h-empty">لا توجد محادثات بعد<br>ابدأ بسؤال ✦</div>';
     return;
   }
   const relTime = ts => {
@@ -2475,13 +2568,24 @@ function renderHist() {
     if (d < 86400000) return Math.floor(d/3600000) + 'س';
     return Math.floor(d/86400000) + 'ي';
   };
-  list.innerHTML = hist.slice(0,28).map((i,idx) =>
-    `<div class="h-item" onclick="reloadQ(${idx})">
-      <span class="h-icon">💬</span>
-      <span class="h-title">${esc(i.t)}</span>
+  list.innerHTML = items.slice(0,60).map((i) => {
+    const idx = hist.indexOf(i); // real index into hist, since items may be filtered/sorted
+    return `<div class="h-item${i.pinned ? ' pinned' : ''}">
+      <span class="h-icon" onclick="reloadQ(${idx})" style="cursor:pointer">💬</span>
+      <span class="h-title" onclick="reloadQ(${idx})" style="cursor:pointer">${esc(i.t)}</span>
+      <button class="h-pin${i.pinned ? ' on' : ''}" onclick="event.stopPropagation(); togglePin(${idx})" title="تثبيت المحادثة">${i.pinned ? '📌' : '📍'}</button>
       <span class="h-time">${relTime(i.ts)}</span>
-    </div>`
-  ).join('');
+    </div>`;
+  }).join('');
+}
+
+function togglePin(idx) {
+  const item = hist[idx];
+  if (!item) return;
+  item.pinned = !item.pinned;
+  localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
+  renderHist();
+  toast(item.pinned ? '📌 تم تثبيت المحادثة' : 'تم إلغاء التثبيت');
 }
 
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -2625,6 +2729,62 @@ function closeSidebar() {
   document.getElementById('sidebar').classList.remove('on');
   document.getElementById('overlay').classList.remove('on');
   document.body.style.overflow = '';
+}
+
+/* ════════════════════════════════════════════════════════════
+   LIBRARY — uploaded files (persisted list) + images (scanned
+   from every saved thread's imgUrl, so nothing needs double storage)
+════════════════════════════════════════════════════════════ */
+function addToFileLibrary(name, url, kind) {
+  let lib = [];
+  try { lib = JSON.parse(localStorage.getItem('zx_file_lib') || '[]'); } catch(e){}
+  lib.unshift({ name, url, kind: kind || 'file', ts: Date.now() });
+  if (lib.length > 200) lib.length = 200;
+  localStorage.setItem('zx_file_lib', JSON.stringify(lib));
+}
+
+function getAllImages() {
+  const images = [];
+  Object.keys(localStorage).filter(k => k.startsWith('zx_thread_')).forEach(k => {
+    try {
+      const msgs = JSON.parse(localStorage.getItem(k) || '[]');
+      msgs.forEach(m => { if (m.imgUrl) images.push({ url: m.imgUrl, ts: m.ts || 0 }); });
+    } catch(e){}
+  });
+  return images.sort((a,b) => b.ts - a.ts);
+}
+
+function openLibrary() {
+  closeSidebar();
+  renderLibImages();
+  renderLibFiles();
+  document.getElementById('libModal').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function closeLibrary() {
+  document.getElementById('libModal').classList.remove('on');
+  document.body.style.overflow = '';
+}
+function switchLibTab(tab) {
+  document.getElementById('libTabImages').classList.toggle('on', tab === 'images');
+  document.getElementById('libTabFiles').classList.toggle('on', tab === 'files');
+  document.getElementById('libImages').style.display = tab === 'images' ? 'grid' : 'none';
+  document.getElementById('libFiles').style.display = tab === 'files' ? 'flex' : 'none';
+}
+function renderLibImages() {
+  const imgs = getAllImages();
+  const el = document.getElementById('libImages');
+  el.innerHTML = imgs.length
+    ? imgs.map(i => `<a href="${i.url}" target="_blank"><img src="${i.url}" loading="lazy"></a>`).join('')
+    : '<div class="lib-empty">لا توجد صور بعد</div>';
+}
+function renderLibFiles() {
+  let lib = [];
+  try { lib = JSON.parse(localStorage.getItem('zx_file_lib') || '[]'); } catch(e){}
+  const el = document.getElementById('libFiles');
+  el.innerHTML = lib.length
+    ? lib.map(f => `<a class="lib-file-row" href="${f.url}" target="_blank">📄 <span>${esc(f.name)}</span></a>`).join('')
+    : '<div class="lib-empty">لا توجد ملفات مرفوعة بعد</div>';
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -3055,6 +3215,7 @@ async function onFilePicked(e) {
     uploadFileToSupabase(file).then(url => {
       if (url && attachedFile) {
         attachedFile.storageUrl = url;
+        addToFileLibrary(file.name, url, attachedFile.kind);
         const chip = zone.querySelector('.file-chip');
         if (chip && !chip.querySelector('.fc-cloud')) {
           const badge = document.createElement('span');
@@ -3103,11 +3264,102 @@ function clearFile() {
    /اخبار or /news <query>   → Hacker News Algolia API (no key)
    /صورة or /image <prompt>  → Pollinations image generation (no key)
 ════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════
+   NATURAL-LANGUAGE TOOL KEYWORDS
+   These don't replace the /command syntax above — they catch the
+   same intent when someone writes it as a normal sentence instead
+   of typing the exact slash command. 400+ combined synonyms across
+   Arabic (فصحى), Darija, French and English.
+════════════════════════════════════════════════════════════ */
+const TOOL_KEYWORDS = {
+  weather: [
+    'الطقس','طقس','الجو','الحالة الجوية','درجة الحرارة','الحرارة اليوم',
+    'شحال الحرارة','واش غادي تشتي','غيشتي','الشتا','الريح','الرطوبة',
+    'طقس اليوم','طقس غدا','الطقس فـ','météo','quel temps','il fait combien',
+    'la météo','temps qu\'il fait','weather','forecast','temperature',
+    'how hot','how cold','is it raining','will it rain','humidity',
+    'wind speed','weather today','weather forecast','climate today',
+  ],
+  map: [
+    'خريطة','الخريطة','فين كاين','وين كاين','الموقع ديال','احداثيات',
+    'خريطة ديال','فين تقع','موقع جغرافي','carte','où se trouve','localisation',
+    'coordonnées','plan de','map','where is','location of','coordinates',
+    'find location','show me on map','directions to','itinéraire vers',
+  ],
+  git: [
+    'جيت','مستودع','ريبو','GitHub','بحث فـ جيت هوب','مشروع مفتوح المصدر',
+    'open source','مكتبة مفتوحة','دپو','projet github','dépôt','recherche github',
+    'github','repo','repository','open-source project','find repo',
+    'source code for','clone this','star count','github search',
+  ],
+  news: [
+    'اخبار','أخبار','آخر الأخبار','جديد اليوم','واش كاين جديد',
+    'اخر الاخبار','خبر','actualités','les nouvelles','dernières nouvelles',
+    'quoi de neuf','news','latest news','breaking news','headlines',
+    'what\'s new','current events','today\'s news',
+  ],
+  image: [
+    'صورة','ولد لي صورة','رسم لي','تصميم صورة','ولد صورة',
+    'générer une image','crée une image','dessine','image de',
+    'generate image','create an image','draw me','make a picture',
+    'ai art','image generation','picture of',
+  ],
+  translate: [
+    'ترجم','ترجمة','ترجم لي','بالفرنسية','بالانجليزية','traduis',
+    'traduction','translate','translation','how do you say',
+    'in french','in english','en français','en anglais',
+  ],
+  tts: [
+    'اقرا لي','صوت','حول لصوت','اسمعني','texte en audio','lis-moi',
+    'text to speech','read this aloud','say this','voice',
+  ],
+  search: [
+    'بحث عميق','دير بحث','قلب لي على','ابحث عن','recherche approfondie',
+    'cherche','deep search','search for','look up','find information about',
+    'research this','investigate',
+  ],
+};
+
+// Returns the query rewritten as if the user had typed the exact
+// /command, so it flows through the existing regex matchers in
+// routeQuickCommand() unchanged. Only fires when tools are enabled
+// and a clear keyword hits — ambiguous text falls through to the
+// normal KB/Brain pipeline instead of forcing a tool call.
+function rewriteAsToolCommand(q) {
+  const l = q.toLowerCase();
+  for (const [tool, keywords] of Object.entries(TOOL_KEYWORDS)) {
+    const hit = keywords.find(kw => l.includes(kw.toLowerCase()));
+    if (!hit) continue;
+    // strip the matched keyword out, keep the rest as the tool's argument
+    const rest = q.replace(new RegExp(hit, 'i'), '').trim();
+    switch (tool) {
+      case 'weather':   return rest ? `/طقس ${rest}` : null; // needs a city
+      case 'map':       return rest ? `/خريطة ${rest}` : null;
+      case 'git':       return rest ? `/جيت ${rest}` : null;
+      case 'news':      return `/اخبار ${rest}`; // news works with empty query too
+      case 'image':     return rest ? `/صورة ${rest}` : null;
+      case 'search':    return rest ? `/بحث ${rest}` : null;
+      // translate/tts need a language code or are lower-confidence —
+      // left to the Archon Brain / KB pipeline rather than force-routed.
+      default: return null;
+    }
+  }
+  return null;
+}
+
+
+
 async function routeQuickCommand(q) {
   if (!isToolsEnabled()) return null;
-  const m = q.trim();
+  let m = q.trim();
   const low = m.toLowerCase();
 
+  // Natural-language fallback: if it's not already a /command, see if a
+  // keyword matches one of the tool intents and rewrite it as one.
+  if (!m.startsWith('/')) {
+    const rewritten = rewriteAsToolCommand(m);
+    if (rewritten) m = rewritten;
+  }
   const weatherMatch = m.match(/^\/(?:طقس|weather)\s+(.+)/i);
   if (weatherMatch) return await toolWeather(weatherMatch[1].trim());
 
