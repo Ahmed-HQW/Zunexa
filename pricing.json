@@ -1,0 +1,54 @@
+{
+  "_source_of_truth": true,
+  "_note": "Single canonical pricing source. KB entries about pricing should reference this object instead of repeating numbers inline, to avoid the orig_0063/orig_0238-style drift where two entries quoted different numbers.",
+  "last_reviewed": "2026-08-02",
+  "plans": {
+    "Free": {
+      "tokens_per_month": 500,
+      "notes": "trial tier, no multi-account social linking, no API access"
+    },
+    "Plus": {
+      "tokens_per_month": 3000,
+      "notes": "NEEDS CONFIRMATION — only appears bundled in one generic entry (orig_0238), no dedicated detail entry existed in the KB"
+    },
+    "Pro": {
+      "tokens_per_month": 10000,
+      "notes": "50 image generations/day, full API access"
+    },
+    "Senior": {
+      "tokens_per_month": null,
+      "notes": "unlimited tokens, full white-label, team management, custom API"
+    }
+  },
+  "cost_per_generation_tokens": 20,
+  "cost_per_image_generation_extra_tokens": 10,
+  "known_conflicts_found_in_kb": [
+    {
+      "entries": [
+        "orig_0241",
+        "orig_0242"
+      ],
+      "issue": "duplicate answer text used for two question phrasings (AR/EN) — intentional retrieval coverage, not a conflict"
+    },
+    {
+      "entries": [
+        "orig_0243",
+        "orig_0244"
+      ],
+      "issue": "duplicate answer text used for two question phrasings (AR/EN) — intentional retrieval coverage, not a conflict"
+    },
+    {
+      "entries": [
+        "orig_0245",
+        "orig_0246"
+      ],
+      "issue": "duplicate answer text used for two question phrasings (AR/EN) — intentional retrieval coverage, not a conflict"
+    },
+    {
+      "entries": [
+        "gen3_0011"
+      ],
+      "issue": "refers to a 'Max' plan tier that does not match the Free/Plus/Pro/Senior naming used everywhere else — likely stale, needs a human check against real current plan names before shipping"
+    }
+  ]
+}
