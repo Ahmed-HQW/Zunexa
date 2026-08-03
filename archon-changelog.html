@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archon AI — سجل التدقيق والتطوير</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#060606; --deep:#090909; --card:#0e0e0e; --card2:#121212; --hover:#171717;
+    --b1:#1a1a1a; --b2:#242424;
+    --gold:#D4AF37; --gold2:#ecc84a; --gold3:#f5d76e; --gglow:rgba(212,175,55,.20); --gtrace:rgba(212,175,55,.06);
+    --tw:#edeae2; --tg:#7a7468; --tm:#3a362e;
+    --green:#3ddc84; --red:#ff4d6d; --blue:#5b8dee; --orange:#f5a623;
+    --r2:11px; --r3:17px; --r4:24px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void); color:var(--tw); font-family:'Tajawal',sans-serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  code, .mono{ font-family:'JetBrains Mono',monospace; }
+  .wrap{ max-width:920px; margin:0 auto; padding:0 24px; }
+
+  /* ── hero ── */
+  .hero{
+    position:relative; padding:100px 0 70px; overflow:hidden;
+    background:
+      radial-gradient(ellipse 700px 400px at 85% -10%, var(--gtrace), transparent 60%),
+      radial-gradient(ellipse 500px 300px at 10% 0%, rgba(212,175,55,.04), transparent 60%);
+    border-bottom:1px solid var(--b1);
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace;
+    font-size:12px; letter-spacing:.06em; color:var(--gold); background:rgba(212,175,55,.08);
+    border:1px solid rgba(212,175,55,.25); padding:6px 14px; border-radius:99px; margin-bottom:28px;
+  }
+  .eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); }
+  h1{
+    font-size:44px; font-weight:900; line-height:1.25; letter-spacing:-.01em;
+    background:linear-gradient(90deg, var(--tw), var(--gold3));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    max-width:680px;
+  }
+  .hero p.sub{ margin-top:18px; font-size:16px; color:var(--tg); max-width:560px; font-weight:400; }
+
+  .statbar{
+    margin-top:52px; display:grid; grid-template-columns:repeat(5,1fr); gap:1px;
+    background:var(--b1); border:1px solid var(--b1); border-radius:var(--r3); overflow:hidden;
+  }
+  .stat{ background:var(--card); padding:22px 18px; text-align:center; }
+  .stat .n{ font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:600; color:var(--gold2); }
+  .stat .l{ font-size:11.5px; color:var(--tg); margin-top:6px; }
+
+  /* ── nav pills ── */
+  .sections-nav{
+    display:flex; flex-wrap:wrap; gap:8px; padding:28px 0; border-bottom:1px solid var(--b1);
+    position:sticky; top:0; background:rgba(6,6,6,.92); backdrop-filter:blur(10px); z-index:10;
+  }
+  .sections-nav a{
+    font-size:12.5px; color:var(--tg); text-decoration:none; padding:7px 14px; border:1px solid var(--b1);
+    border-radius:99px; transition:.2s; font-weight:500;
+  }
+  .sections-nav a:hover{ color:var(--gold2); border-color:rgba(212,175,55,.4); background:var(--gtrace); }
+
+  /* ── sections ── */
+  section.block{ padding:56px 0 20px; border-bottom:1px solid var(--b1); }
+  .block-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:8px; }
+  .letter{
+    font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--gold); background:rgba(212,175,55,.1);
+    border:1px solid rgba(212,175,55,.3); width:34px; height:34px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .block-head h2{ font-size:21px; font-weight:700; color:var(--tw); }
+  .block-desc{ color:var(--tg); font-size:13.5px; margin:6px 0 28px; max-width:640px; }
+
+  .item{
+    display:flex; gap:16px; padding:16px 0; border-top:1px solid var(--b1);
+  }
+  .item:first-of-type{ border-top:none; }
+  .item .num{
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--tm); width:26px; flex-shrink:0;
+    padding-top:2px;
+  }
+  .item .body{ flex:1; min-width:0; }
+  .item .title{ font-size:14.5px; font-weight:500; color:var(--tw); margin-bottom:4px; }
+  .item .desc{ font-size:13px; color:var(--tg); line-height:1.65; }
+  .item .desc code{ background:var(--card2); color:var(--gold3); padding:1px 6px; border-radius:4px; font-size:12px; }
+  .badge{
+    font-family:'JetBrains Mono',monospace; font-size:10px; padding:3px 9px; border-radius:5px;
+    flex-shrink:0; height:fit-content; white-space:nowrap; font-weight:500;
+  }
+  .b-done{ background:rgba(61,220,132,.1); color:var(--green); border:1px solid rgba(61,220,132,.3); }
+  .b-flag{ background:rgba(245,166,35,.1); color:var(--orange); border:1px solid rgba(245,166,35,.3); }
+  .b-need{ background:rgba(255,77,109,.08); color:var(--red); border:1px solid rgba(255,77,109,.28); }
+
+  /* ── found-along-the-way callout ── */
+  .callout{
+    margin:24px 0; padding:18px 20px; background:var(--card); border:1px solid var(--b1);
+    border-right:3px solid var(--gold); border-radius:0 var(--r2) var(--r2) 0;
+  }
+  .callout .k{ font-size:11px; color:var(--gold); font-weight:700; letter-spacing:.03em; margin-bottom:6px; }
+  .callout p{ font-size:13.5px; color:var(--tg); line-height:1.7; }
+
+  /* ── honesty section ── */
+  .honesty{ background:var(--deep); }
+  .honesty .block-desc{ color:var(--tg); }
+
+  /* ── footer ── */
+  footer{ padding:60px 0 80px; text-align:center; }
+  footer .mark{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--tm); }
+  footer .mark strong{ color:var(--gold); }
+
+  @media (max-width:680px){
+    h1{ font-size:30px; }
+    .statbar{ grid-template-columns:repeat(2,1fr); }
+    .stat:nth-child(5){ grid-column:span 2; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="dot"></span> سجل تدقيق مكتمل · 2 أغسطس 2026</div>
+    <h1>Archon — سجل التطوير والتدقيق التقني الكامل</h1>
+    <p class="sub">
+      مساعد ذكاء اصطناعي مبني بالكامل — محرك مطابقة محلي، نظام تعلّم مراقَب، قاعدة معرفة مُنظَّفة،
+      واختبارات آلية. هاذ السجل كيوثّق كل تعديل، بلا تجميل وبلا إخفاء اللي مازال ناقص.
+    </p>
+
+    <div class="statbar">
+      <div class="stat"><div class="n">40</div><div class="l">بند تدقيق</div></div>
+      <div class="stat"><div class="n">14/14</div><div class="l">اختبار آلي ناجح</div></div>
+      <div class="stat"><div class="n">509</div><div class="l">إدخال معرفة مُراجَع</div></div>
+      <div class="stat"><div class="n">100%</div><div class="l">دقة على eval set</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">أشهر عمل فعلي</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="sections-nav">
+    <a href="#a">أ · تنظيف الأوضاع</a>
+    <a href="#b">ب · قاعدة المعرفة</a>
+    <a href="#c">ج · خوارزمية المطابقة</a>
+    <a href="#d">د · الدماغ والتعلّم</a>
+    <a href="#e">هـ · تجربة الأوضاع</a>
+    <a href="#f">و · الأمان</a>
+    <a href="#g">ز · التوثيق والجودة</a>
+    <a href="#h">صادق: اللي بقى ناقص</a>
+  </div>
+
+  <section class="block" id="a">
+    <div class="block-head"><span class="letter">أ</span><h2>تنظيف ملفات الأوضاع</h2></div>
+    <p class="block-desc">التحقق من أن كشف الأوامر الصريحة (/code, /cli...) والتحكم فالوضع الحالي شغالين بشكل صحيح ومختبرين.</p>
+
+    <div class="item"><span class="num">A.3</span><div class="body"><div class="title">توحيد كشف الأوامر (case-insensitive)</div><div class="desc"><code>/code</code> و<code>/Code</code> و<code>/CODE</code> كيعطيو نفس النتيجة — تم التحقق وإضافة اختبار آلي يؤكد الثلاثة.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">A.4</span><div class="body"><div class="title">منع إعادة الكتابة غير الضرورية</div><div class="desc"><code>setArchonMode()</code> ما كيعاودش يكتب فـ localStorage ولا كيبان toast إلا كان الوضع الجديد مختلف فعلاً عن الحالي.</div></div><span class="badge b-done">✓ منجز</span></div>
+  </section>
+
+  <section class="block" id="b">
+    <div class="block-head"><span class="letter">ب</span><h2>تطهير قاعدة المعرفة</h2></div>
+    <p class="block-desc">592 إدخال أصلي → فُحصو وحدة وحدة: التكرار، الأجوبة المكسورة، الصلة بالمنتج، بلوكات الكود.</p>
+
+    <div class="item"><span class="num">5</span><div class="body"><div class="title">إزالة الملفات القديمة من الإنتاج</div><div class="desc">أُرشفت <code>zunexa_qa.json</code> و<code>zunexa_qa_merged.json</code> خارج مسار التشغيل — <code>zunexa_qa_final.json</code> هو المصدر الوحيد الآن.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">6</span><div class="body"><div class="title">تحميل صريح بلا سقوط صامت</div><div class="desc">فشل تحميل القاعدة كيبين تحذير واضح للمستخدم/المطوّر بدل الرجوع الصامت لبيانات قديمة.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">7-8</span><div class="body"><div class="title">فرز المحتوى حسب الصلة الحقيقية</div><div class="desc">73 إدخال (نصائح برمجة عامة بلا علاقة بالمنتج) نُقلو لـ<code>general_dev_tips.json</code> منفصل. الرقم الأصلي "27%" كان قياس خاطئ بمطابقة نصية حرفية — صُحّح بالتحليل الفعلي.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">9</span><div class="body"><div class="title">حذف الأجوبة المكسورة</div><div class="desc">10 إدخالات محذوفة: جواب سعر وهمي واحد + 9 إدخالات كانت كتجاوب كأن الذكاء الاصطناعي عندو حياة شخصية (نام، كلا، جاوب تيليفون).</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">10</span><div class="body"><div class="title">مصدر حقيقة واحد للتسعير</div><div class="desc"><code>pricing.json</code> جديد يجمع كل أرقام الخطط، مع تعليم أي تضارب موجود (خطة "Plus" غير مؤكدة، خطة "Max" غير موجودة أصلاً فالتسمية الرسمية).</div></div><span class="badge b-flag">⚠ يحتاج تأكيد بشري</span></div>
+    <div class="item"><span class="num">11</span><div class="body"><div class="title">فحص تفرّد المعرّفات</div><div class="desc">تحقق: 0 معرّف مكرر، 0 معرّف "unknown" — القاعدة كانت سليمة أصلاً فهاد النقطة.</div></div><span class="badge b-done">✓ تحقق</span></div>
+    <div class="item"><span class="num">12</span><div class="body"><div class="title">كشف التكرار الدلالي</div><div class="desc">سكربت بايثون يعيد بناء نفس محرك <code>tfidf/cosine</code> ديال الكود، وبلّغ عن أي زوج تشابهه > 0.85 للمراجعة.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">13</span><div class="body"><div class="title">فحص صلاحية أكواد المحادثة</div><div class="desc">84 بلوك كود فُحصو (توازن الأقواس + صلاحية JSON)، بلوك واحد فقط مكسور وتم تعليمه.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">14</span><div class="body"><div class="title">حقل المراجعة الدورية</div><div class="desc"><code>last_reviewed</code> و<code>needs_review</code> أُضيفو لكل إدخال، جاهزين لمهمة دورية تعلّم المحتوى القديم تلقائياً.</div></div><span class="badge b-done">✓ منجز</span></div>
+  </section>
+
+  <section class="block" id="c">
+    <div class="block-head"><span class="letter">ج</span><h2>خوارزمية المطابقة</h2></div>
+    <p class="block-desc">rankKB، mergeKB، والعتبات — الجزء اللي كيقرر شنو يبان للمستخدم كجواب.</p>
+
+    <div class="item"><span class="num">15</span><div class="body"><div class="title">وزن محدود بدل مضاعِف حر</div><div class="desc">إدخال شعبي بزاف ما يقدرش يتصدر نتائج بعيدة عن الموضوع — الوزن أصبح معامِل محدود بين 0.85 و1.0.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">16</span><div class="body"><div class="title">خفض سقف الترجيح</div><div class="desc">من 5 إلى 2، متوافق مع الحد الجديد فالنقطة 15. لازال مبني على عدد الاستدعاءات ماشي نجاح/فشل حقيقي — معلّم كخطوة تالية.</div></div><span class="badge b-flag">⚠ يحتاج تحسين لاحق</span></div>
+    <div class="item"><span class="num">17</span><div class="body"><div class="title">دمج مبني على المعرّف الحقيقي</div><div class="desc"><code>mergeKB()</code> كيدير المفتاح على <code>id</code> الثابت بدل أول 55 حرف من السؤال، مع تسجيل أي تصادم فـ console.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">18</span><div class="body"><div class="title">تحديث تلقائي كل 5 دقائق</div><div class="desc">دالة <code>refreshKB()</code> جديدة كتعاود تبني الفهرس (IDF) بلا الحاجة لإعادة تحميل الصفحة.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">19</span><div class="body"><div class="title">كل الأرقام السحرية فمكان واحد</div><div class="desc">كائن <code>THRESHOLDS</code> موثّق يجمع كل عتبات القرار (0.14 / 0.06 / 0.045 / 0.35 / 0.02)، مع سكربت تقييم (<code>eval.js</code>) يُشغَّل بعد أي تعديل.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">20</span><div class="body"><div class="title">إزالة الكود الميت</div><div class="desc">دالة <code>search()</code> القديمة محذوفة بعد التأكد من صفر استدعاء ليها فكامل الملف.</div></div><span class="badge b-done">✓ منجز</span></div>
+  </section>
+
+  <section class="block" id="d">
+    <div class="block-head"><span class="letter">د</span><h2>دماغ Archon والتعلّم التلقائي</h2></div>
+    <p class="block-desc">أخطر جزء فالتدقيق: منع أي جواب من نموذج خارجي غير مُراقَب من الوصول مباشرة للمستخدمين.</p>
+
+    <div class="item"><span class="num">21</span><div class="body"><div class="title">تعطيل التفعيل المباشر</div><div class="desc"><code>autoLearn()</code> كيكتب دائماً <code>is_active:false</code> — الإدخال الجديد ما كيبانش فنتائج البحث حتى تتم مراجعته بشرياً.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">22</span><div class="body"><div class="title">لوحة مراجعة إدارية</div><div class="desc"><code>admin-review.html</code> — واجهة قبول/رفض/تعديل كاملة وشغالة، مربوطة بجلسة Supabase Auth حقيقية.</div></div><span class="badge b-flag">⚠ يحتاج إعداد صلاحيات RLS</span></div>
+    <div class="item"><span class="num">23</span><div class="body"><div class="title">طبقة تعقيم ضد الحقن</div><div class="desc">كل نص من ملف مرفق كيتفحص قبل ما يوصل للدماغ، وأي نمط "تجاهل التعليمات" كيتعوّض.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">24</span><div class="body"><div class="title">توثيق تدفق البيانات الخارجي</div><div class="desc">تعليق واضح فوق <code>archonBrain</code> يوضّح أن الأسئلة كتوصل لخدمة Pollinations الخارجية.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">25</span><div class="body"><div class="title">حد أقصى للاستدعاءات</div><div class="desc">30 استدعاء / 10 دقائق لكل جهاز — حماية أساسية ضد استنزاف الخدمة المجانية.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">26</span><div class="body"><div class="title">تطبيع مفتاح التفرّد</div><div class="desc">مفتاح <code>upsert</code> أصبح النص المُطبَّع (<code>norm()</code>) بدل النص الخام، لتفادي تكرار شبه-متطابق.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">27</span><div class="body"><div class="title">تمييز المصدر: بشري ولا آلي</div><div class="desc">حقول <code>origin_model</code> و<code>review_status</code> جديدة + badges مختلفة بصرياً فالواجهة.</div></div><span class="badge b-done">✓ منجز</span></div>
+  </section>
+
+  <section class="block" id="e">
+    <div class="block-head"><span class="letter">هـ</span><h2>تجربة الأوضاع الخفيفة</h2></div>
+    <p class="block-desc">Lite وQuick — التأكد من أن المستخدم عارف شنو كيستعمل، وشنو حدوده.</p>
+
+    <div class="item"><span class="num">28</span><div class="body"><div class="title">فهم السياق قبل الخروج المبكر</div><div class="desc"><code>isFollowUp()</code> كيتفحص قبل وضع lite، وكيبين رسالة صريحة إلى كان السؤال متابعة تحتاج وضع أعلى.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">29</span><div class="body"><div class="title">تلميحات واضحة فالواجهة</div><div class="desc">Lite وQuick دابا كيوضحو صراحة: "بدون ذكاء اصطناعي توليدي".</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">30</span><div class="body"><div class="title">قائمة اختبار يدوي (4×4×3)</div><div class="desc">جدول اختبار كامل مكتوب لجميع تركيبات الأوضاع والنماذج — يحتاج تشغيل على التطبيق الحي.</div></div><span class="badge b-need">✗ يحتاج تنفيذ يدوي</span></div>
+  </section>
+
+  <section class="block" id="f">
+    <div class="block-head"><span class="letter">و</span><h2>الأمان وتخزين المفاتيح</h2></div>
+    <p class="block-desc">النقط اللي كتحتاج قرارات على مستوى البنية التحتية، ماشي الكود فقط.</p>
+
+    <div class="item"><span class="num">31</span><div class="body"><div class="title">تحذير أمني صريح</div><div class="desc">رسالة واضحة فالإعدادات: مفاتيح API متخزّنة بنص واضح، وأي XSS يقدر يقراها.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">32</span><div class="body"><div class="title">مراجعة سياسات RLS</div><div class="desc">تحتاج الدخول للوحة تحكم Supabase مباشرة — خارج ما يقدر يُنجز من الكود وحدو.</div></div><span class="badge b-need">✗ يحتاج وصول Supabase</span></div>
+    <div class="item"><span class="num">33</span><div class="body"><div class="title">فحص استعمال معرّف الجهاز</div><div class="desc">تأكيد بالكود: لا استعلام حساس كيعتمد على <code>getDeviceId()</code> كبديل مصادقة — التأكيد الكامل يحتاج مراجعة RLS (32).</div></div><span class="badge b-flag">⚠ تحقق جزئي</span></div>
+  </section>
+
+  <section class="block" id="g">
+    <div class="block-head"><span class="letter">ز</span><h2>التوثيق وضمان الجودة</h2></div>
+    <p class="block-desc">الجزء اللي كيخلي هاد السجل نفسو ممكن التحقق منو، ماشي وعد فارغ.</p>
+
+    <div class="item"><span class="num">34</span><div class="body"><div class="title">هاد السجل بالذات</div><div class="desc">CHANGELOG كامل موثّق بند بند، تاريخ التنفيذ، وشنو بقى ناقص بصراحة.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">35</span><div class="body"><div class="title">14 اختبار آلي حقيقي</div><div class="desc">مستخرَجين حرفياً من الكود المصدري نفسو (ماشي إعادة كتابة) — <code>tok</code>، <code>rankKB</code>، <code>mergeKB</code>، <code>detectArchonMode</code>، <code>fmt</code>.</div></div><span class="badge b-done">✓ 14/14 ناجح</span></div>
+    <div class="item"><span class="num">36</span><div class="body"><div class="title">مجموعة تقييم كمية</div><div class="desc">40 سؤال حقيقي بجواب "ذهبي" متوقع — <code>eval.js</code> كيقيس الدقة بعد أي تعديل مستقبلي، دبا 100%.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">37</span><div class="body"><div class="title">تمييز بصري واضح للأجوبة الجزئية</div><div class="desc">بانر واضح فوق الرسالة، ماشي غير badge صغير يمكن يفوت.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">38</span><div class="body"><div class="title">تعليم الادّعاءات غير المُتحقَّقة</div><div class="desc">ادّعاء "30+ لغة" معلّم بوضوح فالكود كـ"غير مُختبَر لغة بلغة" فهاد الجولة.</div></div><span class="badge b-flag">⚠ يحتاج تحقق فعلي</span></div>
+    <div class="item"><span class="num">39</span><div class="body"><div class="title">توضيح تعارض لغة الواجهة</div><div class="desc">تفضيل لغة الواجهة أصبح يُمرَّر كسياق للدماغ بدل ما يتجاهل بصمت.</div></div><span class="badge b-done">✓ منجز</span></div>
+    <div class="item"><span class="num">40</span><div class="body"><div class="title">إعادة التدقيق الكامل بعد التنفيذ</div><div class="desc">يحتاج تشغيل ضد النسخة المنشورة فعلياً بعد ما تُحل نقط "و" أعلاه — تشغيله دابا محلياً غادي يأكد غير نفسو.</div></div><span class="badge b-need">✗ يحتاج بعد النشر</span></div>
+
+    <div class="callout">
+      <div class="k">🔍 اكتُشف أثناء العمل، ماشي فاللائحة الأصلية</div>
+      <p>قوس إغلاق زايد فدالة <code>archonSystemPrompt()</code> كان غادي يكسر كامل السكربت الداخلي للصفحة. اتلقط بفحص صلاحية الكود الكامل قبل ما يُعتبر أي بند منجز — نفس العادة دابا مبنية فسكربتات الاختبار باش ما يتكررش بصمت.</p>
+    </div>
+  </section>
+
+  <section class="block honesty" id="h">
+    <div class="block-head"><span class="letter" style="border-color:rgba(255,77,109,.35); color:var(--red); background:rgba(255,77,109,.08)">!</span><h2>بصراحة: شنو بقى ناقص</h2></div>
+    <p class="block-desc">
+      سجل مصداقية، ماشي سجل بيع. هاد 6 نقط ما قدرش نكملهم من هنا لأنهم كيحتاجو وصول ماعنديش عليه —
+      لوحة تحكم Supabase، أو تشغيل يدوي على التطبيق الحي.
+    </p>
+    <div class="item"><span class="num">A</span><div class="body"><div class="title"><code>archon-modes-patch.js</code></div><div class="desc">الملف هذا ما كانش فالمشروع المرفوع أصلاً — ماكاين والو نحذفو.</div></div><span class="badge b-need">غير قابل للتحقق</span></div>
+    <div class="item"><span class="num">30</span><div class="body"><div class="title">اختبار يدوي على 12 تركيبة</div><div class="desc">القائمة مكتوبة وجاهزة، لكن التنفيذ يحتاج التطبيق الحي، ماشي نسخة ملف ثابتة.</div></div><span class="badge b-need">يحتاج التطبيق الحي</span></div>
+    <div class="item"><span class="num">32-33</span><div class="body"><div class="title">مراجعة RLS كاملة</div><div class="desc">يحتاج دخول مباشر للوحة Supabase ديالك.</div></div><span class="badge b-need">يحتاج وصولك أنت</span></div>
+    <div class="item"><span class="num">40</span><div class="body"><div class="title">إعادة تدقيق بعد النشر</div><div class="desc">قياس حقيقي "قبل/بعد" يحتاج النسخة منشورة فعلياً.</div></div><span class="badge b-need">يحتاج بعد النشر</span></div>
+  </section>
+
+  <footer>
+    <div class="mark">Archon <strong>·</strong> سجل تدقيق تقني — 2 أغسطس 2026</div>
+  </footer>
+</div>
+
+</body>
+</html>
