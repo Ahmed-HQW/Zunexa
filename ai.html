@@ -1058,7 +1058,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <div class="set-tab" onclick="setSTab('notif')" id="tab-notif">الإشعارات</div>
       <div class="set-tab" onclick="setSTab('memory')" id="tab-memory">الذاكرة</div>
       <div class="set-tab" onclick="setSTab('tools')" id="tab-tools">الأدوات</div>
-      <div class="set-tab" onclick="setSTab('apikeys')" id="tab-apikeys">مفاتيح API</div>
       <div class="set-tab" onclick="setSTab('account')" id="tab-account">الحساب</div>
     </div>
 
@@ -1217,28 +1216,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         <div class="set-row-txt"><div class="set-row-title">الأدوات الخارجية</div><div class="set-row-desc">تفعيل الأوامر السريعة /طقس /خريطة /جيت /اخبار /صورة والاتصال بـ APIs مجانية خارجية بدون مفتاح.</div></div>
         <label class="switch"><input type="checkbox" id="setToolsToggle" checked onchange="setToolsPref(this.checked)"><span class="slider"></span></label>
       </div>
-    </div>
-
-    <!-- API KEYS (optional, free-tier — user pastes their own, stored locally only) -->
-    <div class="set-pane" id="pane-apikeys">
-      <p style="font-size:11.5px;color:var(--tg);line-height:1.7;margin-bottom:12px">
-        كلشي فهاد الصفحة خدام دابا بلا أي مفتاح (Pollinations، الطقس، الخرائط، GitHub، الأخبار، البحث عبر DuckDuckGo، والصوت عبر المتصفح). هاد المفاتيح <strong>اختيارية</strong> — كل وحدة عندها Free Tier فابور، تسجل فـ 2 دقيقة وتلصقها هنا باش تزيد جودة/حدود أعلى. كتبقى محفوظة فـ localStorage ديال المتصفح ديالك فقط، ما كتترسلش لأي سيرفر آخر غير مباشرة للـ API ديالها.
-      </p>
-      <p style="font-size:11px;color:var(--danger,#e05555);margin-top:6px">
-        ⚠ تنبيه أمني: هاد المفاتيح متخزنة بنص واضح (غير مشفّرة) فـ localStorage ديال هاد الصفحة. أي كود خبيث يقدر يخدم فنفس الصفحة (XSS) يقدر يقراها. ماتحطش هنا مفاتيح ذات حدود دفع/فوترة مرتفعة — والأفضل نقل المفاتيح الحساسة لطبقة خلفية (Supabase Edge Function) بدل حفظها هنا مباشرة.
-      </p>
-      <label class="field-label">Hugging Face Token <span style="color:var(--tg)">(نماذج صور/نص بديلة)</span></label>
-      <input class="field-input" id="keyHF" placeholder="hf_xxxxxxxxxxxxxxxx" onchange="saveApiKeys()">
-      <label class="field-label">DeepL API Key <span style="color:var(--tg)">(ترجمة احترافية — /ترجم)</span></label>
-      <input class="field-input" id="keyDeepL" placeholder="xxxxxxxx-xxxx-xxxx:fx" onchange="saveApiKeys()">
-      <label class="field-label">Voice RSS API Key <span style="color:var(--tg)">(تحويل نص لصوت طبيعي)</span></label>
-      <input class="field-input" id="keyVoiceRSS" placeholder="your voicerss key" onchange="saveApiKeys()">
-      <label class="field-label">Tavily API Key <span style="color:var(--tg)">(بحث ويب أعمق للـ AI)</span></label>
-      <input class="field-input" id="keyTavily" placeholder="tvly-xxxxxxxx" onchange="saveApiKeys()">
-      <label class="field-label">Serper.ai API Key <span style="color:var(--tg)">(نتائج Google كـ JSON)</span></label>
-      <input class="field-input" id="keySerper" placeholder="your serper key" onchange="saveApiKeys()">
-      <button class="modal-save" onclick="saveApiKeys(true)">✓ حفظ المفاتيح</button>
-      <p style="font-size:11px;color:var(--tg);margin-top:10px">روابط التسجيل الفابور: huggingface.co/settings/tokens · deepl.com/pro-api · voicerss.org · tavily.com · serper.dev</p>
     </div>
 
     <!-- ACCOUNT (existing security-audited content) -->
