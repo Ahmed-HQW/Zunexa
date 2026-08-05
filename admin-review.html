@@ -38,10 +38,15 @@
 
 <div id="panel" style="display:none">
   <h1>⚡ مراجعة المعرفة المُتعلَّمة تلقائياً</h1>
-  <p class="sub">
-    كل مدخل هنا كُتب بواسطة Archon Brain (Pollinations) تلقائياً وهو <strong>غير مفعّل</strong> في نتائج البحث
-    (is_active = false) حتى تراجعه وتوافق عليه. القبول يفعّل المدخل، الرفض يحذفه نهائياً.
-  </p>
+  <p class="sub">...</p>
+  
+  <!-- زر قبول الكل -->
+  <div style="margin-bottom: 20px;">
+    <button class="approve" onclick="approveAll()" style="padding: 10px 18px; font-size: 14px;">
+      ✓ قبول كل المدخلات المعروضة بضغطة واحدة
+    </button>
+  </div>
+
   <div id="list"></div>
 </div>
 
@@ -144,6 +149,31 @@ async function saveEdit(id) {
   alert('تم الحفظ (لازال غير مفعّل، اضغط قبول للتفعيل).');
 }
 
+async function approveAll() {
+  if (!confirm('هل أنت متأكد من قبول وتفعيل جميع المدخلات بانتظار المراجعة؟')) return;
+
+  const list = document.getElementById('list');
+  list.innerHTML = '<p class="empty">جاري قبول وتفعيل جميع العناصر...</p>';
+
+  // تحديث جميع الصفوف التي تنتظر المراجعة مرة واحدة
+  const { error } = await _SB
+    .from('ai_knowledge')
+    .update({
+      is_active: true,
+      review_status: 'approved',
+      weight: 1.0
+    })
+    .eq('review_status', 'pending_review');
+
+  if (error) {
+    alert('حدث خطأ أثناء التحديث: ' + error.message);
+    loadPending(); // إعادة تحميل القائمة
+    return;
+  }
+
+  alert('تم قبول وتفعيل جميع المدخلات بنجاح! 🎉');
+  loadPending(); // إعادة تحديث الصفحات لتظهر فارغة
+}
 checkSession();
 </script>
 </body>
