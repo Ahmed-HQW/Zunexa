@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>إضافة مدخلات جديدة - Archon AI</title>
+<title>التعلم التلقائي المستمر - Archon AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   :root { --bg:#0b0b10; --card:#16161f; --border:#2a2a38; --gold:#d4af37; --text:#eee; --tg:#999; --ok:#4caf50; --danger:#e05555; }
@@ -10,84 +10,93 @@
   body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; margin:0; padding:24px; display: flex; justify-content: center; }
   .container { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px; width: 100%; max-width: 500px; margin-top: 40px; }
   h1 { color:var(--gold); font-size:22px; margin-bottom:10px; text-align: center; }
-  p.sub { color:var(--tg); font-size:14px; text-align: center; margin-bottom:20px; }
+  p.sub { color:var(--tg); font-size:13px; text-align: center; margin-bottom:20px; line-height: 1.6; }
   label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
   input, textarea { width:100%; background:#101018; color:#ddd; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:inherit; font-size:14px; margin-bottom:16px; }
   textarea { min-height: 100px; resize: vertical; }
-  button { width: 100%; background:var(--gold); color:#111; border:none; border-radius:8px; padding:12px; font-size:16px; font-weight:bold; cursor:pointer; }
-  button:hover { opacity: 0.9; }
-  #msg { text-align: center; font-size: 14px; font-weight: bold; margin-top: 15px; }
+  #statusBox { background: #101018; border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; font-size: 13px; color: var(--gold); }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>➕ خلق مدخلات جديدة</h1>
-  <p class="sub">هاد الصفحة غتصيفط المدخلات لقاعدة البيانات بوضعية "في انتظار المراجعة"</p>
+  <h1>⚡ التعلم التلقائي (كل 30 ثانية)</h1>
+  <p class="sub">هذه الصفحة تقوم بتعبئة وإرسال المعلومات تلقائياً إلى قاعدة البيانات بشكل مستمر وبدون أي تدخل منك.</p>
 
-  <label>السؤال أو المعطى:</label>
-  <input type="text" id="qInput" placeholder="اكتب السؤال هنا...">
+  <label>السؤال أو المعطى (تلقائي):</label>
+  <input type="text" id="qInput" readonly placeholder="يتم التعبئة تلقائياً...">
 
-  <label>الجواب:</label>
-  <textarea id="aInput" placeholder="اكتب الجواب هنا..."></textarea>
+  <label>الجواب (تلقائي):</label>
+  <textarea id="aInput" readonly placeholder="يتم التعبئة تلقائياً..."></textarea>
 
-  <label>التصنيف (اختياري):</label>
-  <input type="text" id="catInput" placeholder="مثال: general, math, science..." value="general">
+  <label>التصنيف:</label>
+  <input type="text" id="catInput" value="auto-learning" readonly>
 
-  <button onclick="addEntry()">إرسال إلى المراجعة</button>
-  <div id="msg"></div>
+  <div id="statusBox">جاري بدء التشغيل التلقائي...</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// نفس إعدادات الاتصال ديالك
+// إعدادات الاتصال بـ Supabase
 const _SB = supabase.createClient(
   'https://xrldhfsytysznyyhwjlr.supabase.co',
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
-async function addEntry() {
-  const question = document.getElementById('qInput').value.trim();
-  const answer = document.getElementById('aInput').value.trim();
-  const category = document.getElementById('catInput').value.trim();
-  const msgDiv = document.getElementById('msg');
+// بنك معلومات افتراضي (أو يمكنك ربطه بأي مصدر بيانات آخر تختاره)
+const knowledgeBase = [
+  { q: "ما هو دور الذكاء الاصطناعي في الويب الحديث؟", a: "يساعد الذكاء الاصطناعي في تحسين تجربة المستخدم، وأتمتة المهام، وتحليل البيانات بسرعة كبيرة." },
+  { q: "كيف تعمل قواعد بيانات Supabase؟", a: "تعتمد Supabase على PostgreSQL وتوفر واجهات برمجية جاهزة للتعامل مع قواعد البيانات بأمان وسرعة." },
+  { q: "ما هي أهمية تنظيف البيانات في الأنظمة الذكية؟", a: "يضمن تنظيف البيانات ودقتها حصول النماذج على معلومات صحيحة وتجنب الأخطاء أثناء التوليد." },
+  { q: "كيف يتم تأمين الجداول في قواعد البيانات؟", a: "يتم ذلك عبر تفعيل سياسات الحماية على مستوى الصفوف (Row Level Security - RLS)." },
+  { q: "ما هي ميزة التخزين المؤقت في التطبيقات؟", a: "يقلل التخزين المؤقت من الضغط على الخوادم ويساهم في تسريع استجابة التطبيق للمستخدمين." }
+];
 
-  if (!question || !answer) {
-    msgDiv.style.color = 'var(--danger)';
-    msgDiv.textContent = 'المرجو إدخال السؤال والجواب معاً!';
-    return;
-  }
+let currentIndex = 0;
 
-  msgDiv.style.color = 'var(--text)';
-  msgDiv.textContent = 'جاري الإرسال...';
+async function autoSubmitCycle() {
+  const statusBox = document.getElementById('statusBox');
+  
+  // 1. اختيار معلومة تلقائياً من القائمة (دائرية)
+  const currentItem = knowledgeBase[currentIndex];
+  currentIndex = (currentIndex + 1) % knowledgeBase.length;
 
-  // إرسال البيانات إلى Supabase
-  const { data, error } = await _SB
+  // تعبئة الخانات في الواجهة أمامك لترى ما يتم إرساله
+  document.getElementById('qInput').value = currentItem.q;
+  document.getElementById('aInput').value = currentItem.a;
+
+  statusBox.style.color = 'var(--text)';
+  statusBox.textContent = 'جاري إرسال المدخل تلقائياً...';
+
+  // 2. الإرسال التلقائي إلى Supabase بوضعية pending_review
+  const { error } = await _SB
     .from('ai_knowledge')
     .insert([
       {
-        question: question,
-        answer: answer,
-        category: category,
-        review_status: 'pending_review', // باش يبان في صفحة المراجعة
-        is_active: false,                // باقي ماتفعلش
-        origin_model: 'manual_entry',    // باش تعرف بلي دخلتيه بيدك
-        weight: 0.5
+        question: currentItem.q,
+        answer: currentItem.a,
+        category: 'auto-learning',
+        review_status: 'pending_review',
+        is_active: false,
+        origin_model: 'auto_cron_script',
+        weight: 0.7
       }
     ]);
 
   if (error) {
-    msgDiv.style.color = 'var(--danger)';
-    msgDiv.textContent = 'خطأ: ' + error.message;
+    statusBox.style.color = 'var(--danger)';
+    statusBox.textContent = 'خطأ في الإرسال: ' + error.message;
   } else {
-    msgDiv.style.color = 'var(--ok)';
-    msgDiv.textContent = 'تم إرسال المدخل بنجاح! سير دابا لصفحة المراجعة غتلقاه.';
-    
-    // تفريغ الخانات باش تزيد مدخل آخر يلا بغيتي
-    document.getElementById('qInput').value = '';
-    document.getElementById('aInput').value = '';
+    statusBox.style.color = 'var(--ok)';
+    statusBox.textContent = `تم الإرسال بنجاح! التحديث القادم بعد 30 ثانية... ⏱️`;
   }
 }
+
+// تشغيل الدالة لأول مرة مباشرة عند فتح الصفحة
+autoSubmitCycle();
+
+// جدولة الدالة لتتكرر تلقائياً كل 30 ثانية (30000 ميللي ثانية)
+setInterval(autoSubmitCycle, 300);
 </script>
 </body>
 </html>
