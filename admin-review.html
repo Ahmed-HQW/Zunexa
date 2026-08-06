@@ -29,7 +29,7 @@
 
 <div id="authGate">
   <h1>تسجيل الدخول (مطلوب حساب مسؤول)</h1>
-  <p class="sub">هذه الصفحة تستعمل جلسة Supabase Auth الحقيقية — نفس المصادقة المذكورة في تعليق الأمان بـ ai.html، وليست device_id.</p>
+  <p class="sub">هذه الصفحة تستعمل جلسة Supabase Auth الحقيقية.</p>
   <input id="email" type="email" placeholder="البريد الإلكتروني">
   <input id="password" type="password" placeholder="كلمة المرور">
   <button onclick="doLogin()">دخول</button>
@@ -37,8 +37,8 @@
 </div>
 
 <div id="panel" style="display:none">
-  <h1>⚡ مراجعة المعرفة المُتعلَّمة تلقائياً</h1>
-  <p class="sub">...</p>
+  <h1>⚡ مراجعة المعرفة المُتعلَّمة تلقائياً (غير محدودة)</h1>
+  <p class="sub">يتم تفعيل وقبول جميع المدخلات الجديدة تلقائياً في الخلفية كل 10 دقائق.</p>
   
   <!-- زر قبول الكل -->
   <div style="margin-bottom: 20px;">
@@ -71,6 +71,9 @@ async function checkSession() {
     document.getElementById('authGate').style.display = 'none';
     document.getElementById('panel').style.display = 'block';
     loadPending();
+    
+    // تشغيل التحديث التلقائي كل 10 دقائق (600,000 ميلي ثانية) في الخلفية
+    setInterval(autoApproveAllSilent, 600000);
   }
 }
 
@@ -78,13 +81,12 @@ async function loadPending() {
   const list = document.getElementById('list');
   list.innerHTML = '<p class="empty">جاري التحميل...</p>';
   
-  // درنا حد ديال 1000 باش المتصفح مايتبلوقاش إذا كانو المدخلات بالآلاف
+  // إزالة الحد الأقصى لجلب كافة المدخلات المعلقة بلا حدود
   const { data, error } = await _SB
     .from('ai_knowledge')
     .select('id,question,answer,keywords,category,weight,created_at,origin_model,review_status')
     .eq('review_status', 'pending_review')
-    .order('created_at', { ascending: false })
-    .limit(2000); 
+    .order('created_at', { ascending: false });  
 
   if (error) {
     list.innerHTML = `<p class="empty" style="color:var(--danger);">تعذّر التحميل: ${error.message}</p>`;
@@ -92,7 +94,6 @@ async function loadPending() {
   }
   
   if (!data || !data.length) {
-    // عوض رسالة طويلة، غنديرو غير أيقونة أو نص خفيف بزاف باش تعرف بلي الكود خدام وماكاين والو
     list.innerHTML = '<div style="opacity: 0.3; text-align: center; margin-top: 40px; font-size: 12px;">(0)</div>';
     return;
   }
@@ -130,7 +131,7 @@ async function approve(id) {
     is_active: true,
     review_status: 'approved',
     answer: editedAnswer,
-    weight: 1.0, // approved by a human — treat on par with curated entries
+    weight: 1.0,
   }).eq('id', id);
   if (error) { alert('خطأ: ' + error.message); return; }
   loadPending();
@@ -156,7 +157,6 @@ async function approveAll() {
   const list = document.getElementById('list');
   list.innerHTML = '<p class="empty">جاري قبول وتفعيل جميع العناصر...</p>';
 
-  // تحديث جميع الصفوف التي تنتظر المراجعة مرة واحدة
   const { error } = await _SB
     .from('ai_knowledge')
     .update({
@@ -168,13 +168,30 @@ async function approveAll() {
 
   if (error) {
     alert('حدث خطأ أثناء التحديث: ' + error.message);
-    loadPending(); // إعادة تحميل القائمة
+    loadPending();
     return;
   }
 
   alert('تم قبول وتفعيل جميع المدخلات بنجاح! 🎉');
-  loadPending(); // إعادة تحديث الصفحات لتظهر فارغة
+  loadPending();
 }
+
+// دالة تنفيذ القبول التلقائي كل 10 دقائق بشكل صامت في الخلفية
+async function autoApproveAllSilent() {
+  const { error } = await _SB
+    .from('ai_knowledge')
+    .update({
+      is_active: true,
+      review_status: 'approved',
+      weight: 1.0
+    })
+    .eq('review_status', 'pending_review');
+
+  if (!error) {
+    loadPending();
+  }
+}
+
 checkSession();
 </script>
 </body>
