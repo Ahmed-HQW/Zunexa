@@ -77,25 +77,25 @@ async function checkSession() {
 async function loadPending() {
   const list = document.getElementById('list');
   list.innerHTML = '<p class="empty">جاري التحميل...</p>';
-  // NOTE: this SELECT relies on your RLS policy allowing an authenticated
-  // admin to read is_active=false rows on ai_knowledge — the current
-  // public policy audited in item 32 should NOT allow anonymous read of
-  // these; grant read/update here only to an authenticated admin role.
+  
+  // قمنا بإزالة .limit(200) لجعل جلب المدخلات غير محدود
   const { data, error } = await _SB
     .from('ai_knowledge')
     .select('id,question,answer,keywords,category,weight,created_at,origin_model,review_status')
     .eq('review_status', 'pending_review')
-    .order('created_at', { ascending: false })
-    .limit(200);
+    .order('created_at', { ascending: false });
 
   if (error) {
     list.innerHTML = `<p class="empty">تعذّر التحميل: ${error.message}<br>تأكد أن حسابك عنده صلاحية admin وأن سياسة RLS تسمح بذلك.</p>`;
     return;
   }
+  
   if (!data || !data.length) {
-    list.innerHTML = '<p class="empty">لا توجد مدخلات بانتظار المراجعة حالياً ✓</p>';
+    // تم تفريغ محتوى الرسالة، ولن تظهر "لا توجد مدخلات..." بعد الآن
+    list.innerHTML = '';
     return;
   }
+  
   list.innerHTML = '';
   data.forEach(row => list.appendChild(renderRow(row)));
 }
