@@ -217,9 +217,37 @@ img{max-width:100%;display:block}
   width:35px;height:35px;border-radius:9px;flex-shrink:0;
   background:linear-gradient(135deg,var(--gdim),var(--card));
   border:1px solid var(--bg);
-  display:grid;place-items:center;
+  display:grid;place-items:center;overflow:hidden;
   font-size:14px;font-weight:700;font-family:'Cinzel',serif;color:var(--gold);
+  cursor:pointer;position:relative;
 }
+.sb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.sb-avatar:hover::after{
+  content:'✎';position:absolute;inset:0;display:grid;place-items:center;
+  background:rgba(0,0,0,.55);color:var(--gold3);font-size:13px;border-radius:8px;
+}
+/* Avatar shown next to each user message bubble + inside Settings/Account */
+.msg-av img{width:100%;height:100%;object-fit:cover;border-radius:9px}
+.set-avatar-row{display:flex;align-items:center;gap:14px;margin:6px 0 16px}
+.set-avatar-preview{
+  width:64px;height:64px;border-radius:14px;flex-shrink:0;overflow:hidden;
+  background:linear-gradient(135deg,var(--gdim),var(--card));
+  border:1px solid var(--bg);display:grid;place-items:center;
+  font-family:'Cinzel',serif;font-size:24px;color:var(--gold);
+}
+.set-avatar-preview img{width:100%;height:100%;object-fit:cover}
+.set-avatar-btns{display:flex;flex-direction:column;gap:6px}
+.set-avatar-upload{
+  padding:7px 14px;border-radius:8px;border:1px solid var(--bg);
+  color:var(--gold);font-size:11.5px;font-weight:700;letter-spacing:.05em;
+  background:rgba(212,175,55,.06);transition:all var(--tr);
+}
+.set-avatar-upload:hover{background:rgba(212,175,55,.14)}
+.set-avatar-remove{
+  padding:6px 14px;border-radius:8px;border:1px solid var(--b1);
+  color:var(--tg);font-size:11px;background:transparent;
+}
+.set-avatar-remove:hover{border-color:var(--red);color:var(--red)}
 .sb-uname{font-size:12.5px;font-weight:600;color:var(--tw);line-height:1.2}
 .sb-uplan{font-size:9.5px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
 .sb-uemail{font-size:9.5px;color:var(--tg);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
@@ -433,39 +461,6 @@ img{max-width:100%;display:block}
 .file-chip img{max-height:34px;border-radius:4px}
 
 /* ════════════════════════════════════════════════════════
-   THEMES — Zalij Dark (default) · Zalij Light · Neon Purple · Ocean Dark
-   Switching data-zx-theme on <html> remaps these CSS vars, so every
-   component built on var(--gold)/var(--void)/etc re-themes instantly
-   with zero per-component changes.
-════════════════════════════════════════════════════════ */
-html[data-zx-theme="zalij-light"]{
-  --void:#f4efe4; --deep:#efe8d8; --card:#fbf8f0; --card2:#f6f1e4;
-  --hover:#ece4d0; --input-bg:#ffffff;
-  --b1:#e2d7bd; --b2:#d3c4a0;
-  --bg: rgba(150,110,20,.18); --bgh: rgba(150,110,20,.4); --bgp: rgba(150,110,20,.06);
-  --gold:#8a6b1e; --gold2:#a5822a; --gold3:#c19c3d; --gdim:#c8ad6a; --gglow:rgba(150,110,20,.16); --gtrace:rgba(150,110,20,.04);
-  --tw:#241f14; --tg:#6b5f43; --tm:#c9bd9c;
-  --green:#1f8a4f; --red:#c23a4f; --blue:#2f6fc2; --orange:#b5760f;
-}
-html[data-zx-theme="neon-purple"]{
-  --void:#0a0612; --deep:#0d0817; --card:#130d21; --card2:#180f2a;
-  --hover:#1e1435; --input-bg:#0c0817;
-  --b1:#251a3d; --b2:#33234f;
-  --bg: rgba(190,90,240,.24); --bgh: rgba(190,90,240,.55); --bgp: rgba(190,90,240,.08);
-  --gold:#c66bff; --gold2:#d68bff; --gold3:#e6b3ff; --gdim:#6a2f96; --gglow:rgba(198,107,255,.25); --gtrace:rgba(198,107,255,.06);
-  --tw:#f0e6fb; --tg:#8a7aa3; --tm:#2c2140;
-}
-html[data-zx-theme="ocean-dark"]{
-  --void:#040c12; --deep:#061019; --card:#0a1620; --card2:#0e1c28;
-  --hover:#132430; --input-bg:#071219;
-  --b1:#182a37; --b2:#213a49;
-  --bg: rgba(60,180,220,.22); --bgh: rgba(60,180,220,.5); --bgp: rgba(60,180,220,.08);
-  --gold:#3cc9e6; --gold2:#5fd9f0; --gold3:#8fe6f5; --gdim:#1f6a7a; --gglow:rgba(60,201,230,.2); --gtrace:rgba(60,201,230,.05);
-  --tw:#e2f5f9; --tg:#6f96a3; --tm:#26404a;
-  --green:#3ddc84; --red:#ff5d78; --blue:#5bb0ee; --orange:#f5a623;
-}
-
-/* ════════════════════════════════════════════════════════
    CONVERSATION
 ════════════════════════════════════════════════════════ */
 .conv{
@@ -591,7 +586,6 @@ body[data-archon-mode="cli"] .msg.bot .bubble{
   font-size:8.5px;padding:2px 6px;border-radius:4px;
   letter-spacing:.05em;font-weight:700;
 }
-.badge-qa{color:var(--gold);background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.18)}
 .badge-learn{color:var(--green);background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.18)}
 .badge-web{color:var(--blue);background:rgba(91,141,238,.07);border:1px solid rgba(91,141,238,.18)}
 .badge-partial{color:var(--orange);background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.18)}
@@ -616,6 +610,106 @@ body[data-archon-mode="cli"] .msg.bot .bubble{
 .typing span:nth-child(2){animation-delay:.18s}
 .typing span:nth-child(3){animation-delay:.36s}
 @keyframes bop{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-5px);opacity:1}}
+
+/* ════════════════════════════════════════════════════════
+   THINKING PROCESS — live execution steps shown above the bot's
+   reply while it's being generated (real pipeline stages, not
+   decorative — fed by the same functions that do the actual work).
+════════════════════════════════════════════════════════ */
+.think-box{
+  background:var(--card2);border:1px solid var(--b1);border-radius:12px;
+  padding:10px 13px;margin-bottom:6px;max-width:76%;
+  font-size:12px;color:var(--tg);
+}
+.think-head{
+  display:flex;align-items:center;gap:7px;cursor:pointer;
+  font-weight:700;color:var(--gdim);letter-spacing:.02em;
+  user-select:none;
+}
+.think-head .th-caret{transition:transform var(--tr);font-size:9px;opacity:.7}
+.think-box.collapsed .th-caret{transform:rotate(-90deg)}
+.think-box.collapsed .think-steps{display:none}
+.think-steps{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.think-step{display:flex;align-items:center;gap:8px;opacity:.55;transition:opacity var(--tr)}
+.think-step.active{opacity:1}
+.think-step.done{opacity:.85}
+.ts-dot{
+  width:14px;height:14px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid var(--b2);display:grid;place-items:center;font-size:8px;
+}
+.think-step.active .ts-dot{border-color:var(--gold);animation:tsSpin 1s linear infinite}
+.think-step.done .ts-dot{border-color:var(--green);background:var(--green);color:#060606}
+@keyframes tsSpin{from{box-shadow:0 0 0 0 rgba(212,175,55,.4)}to{box-shadow:0 0 0 4px rgba(212,175,55,0)}}
+.ts-label{font-size:11.5px}
+.think-step.done .ts-label{color:var(--tw)}
+
+/* ════════════════════════════════════════════════════════
+   SESSION LIMIT OVERLAY
+════════════════════════════════════════════════════════ */
+#limitOverlay{
+  display:none;position:fixed;inset:0;z-index:99998;
+  background:rgba(6,6,6,.97);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;flex-direction:column;gap:14px;
+  text-align:center;padding:24px;
+}
+#limitOverlay.on{display:flex}
+.lim-icon{font-size:44px}
+.lim-title{font-family:'Cinzel',serif;font-size:19px;color:var(--gold);font-weight:600}
+.lim-sub{font-size:13px;color:var(--tg);max-width:360px;line-height:1.8}
+.lim-timer{
+  font-family:'Courier New',monospace;font-size:30px;font-weight:700;
+  color:var(--tw);letter-spacing:.06em;margin-top:2px;
+}
+.lim-hint{font-size:11px;color:var(--tm)}
+.lim-upgrade{
+  margin-top:8px;padding:10px 26px;border-radius:99px;
+  background:linear-gradient(135deg,var(--gold),var(--gdim));
+  color:#060606;font-weight:700;font-size:13px;
+  box-shadow:0 0 20px rgba(212,175,55,.25);
+}
+
+/* ════════════════════════════════════════════════════════
+   OFFLINE OVERLAY
+════════════════════════════════════════════════════════ */
+#offlineOverlay{
+  display:none;position:fixed;inset:0;z-index:99999;
+  background:rgba(6,6,6,.97);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;flex-direction:column;gap:16px;
+  text-align:center;padding:24px;
+}
+#offlineOverlay.on{display:flex}
+.off-icon{font-size:48px;opacity:.8;filter:grayscale(.3)}
+.off-title{font-family:'Cinzel',serif;font-size:19px;color:var(--tw);font-weight:600}
+.off-sub{font-size:13px;color:var(--tg);max-width:340px;line-height:1.8}
+.off-btn{
+  margin-top:6px;padding:10px 26px;border-radius:99px;
+  background:linear-gradient(135deg,var(--gold),var(--gdim));
+  color:#060606;font-weight:700;font-size:13px;border:none;
+  box-shadow:0 0 20px rgba(212,175,55,.25);
+}
+.off-btn:hover{transform:scale(1.04)}
+.off-dot{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 8px rgba(255,77,109,.7);animation:bop 1.1s ease infinite}
+
+/* ════════════════════════════════════════════════════════
+   MODE ROW — Speed modes + subscription tiers, sits directly
+   above the input box per spec.
+════════════════════════════════════════════════════════ */
+.mode-row{
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  margin-bottom:8px;padding:0 1px;
+}
+.mode-group{display:flex;align-items:center;gap:4px;padding:3px;
+  background:var(--card2);border:1px solid var(--b1);border-radius:99px;}
+.mode-sep{width:1px;height:16px;background:var(--b1);margin:0 3px;flex-shrink:0}
+.mode-chip{
+  padding:5px 11px;border-radius:99px;border:1px solid transparent;
+  background:transparent;color:var(--tg);font-size:11px;font-weight:600;
+  white-space:nowrap;transition:all var(--tr);cursor:pointer;
+}
+.mode-chip:hover{color:var(--tw)}
+.mode-chip.on{background:var(--gold);color:#060606;box-shadow:0 0 12px rgba(212,175,55,.25)}
+.tier-chip.on{background:linear-gradient(135deg,var(--gold),var(--gdim));color:#060606}
+@media(max-width:640px){ .mode-row{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px} }
 
 /* ════════════════════════════════════════════════════════
    INPUT ZONE
@@ -803,6 +897,24 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 </head>
 <body>
 
+<!-- ── Offline / No Connection overlay ── -->
+<div id="offlineOverlay">
+  <div class="off-icon">📡</div>
+  <div class="off-title"><span class="off-dot"></span> لا يوجد اتصال بالإنترنت</div>
+  <div class="off-sub">تعذّر الوصول إلى الشبكة. بعض ميزات Archon (البحث الحي، توليد الصور، حفظ المحادثات على الخادم) تحتاج اتصالاً فعّالاً. الوضع المحلي (Archon Lite) يبقى يشتغل بدون إنترنت.</div>
+  <button class="off-btn" onclick="location.reload()">↻ إعادة تحميل</button>
+</div>
+
+<!-- ── Session Limit overlay ── -->
+<div id="limitOverlay">
+  <div class="lim-icon">⏳</div>
+  <div class="lim-title">وصلت للحد المسموح من الاستخدام</div>
+  <div class="lim-sub">استعملتي العدد الأقصى من الرسائل المسموح به فهاد الساعة. عاود المحاولة من بعد، ولا رقّي لخطة أعلى باش تزيد الحصة.</div>
+  <div class="lim-timer" id="limitTimer">--:--</div>
+  <div class="lim-hint">غادي يترفع القفل أوتوماتيكياً</div>
+  <a href="upgrade.html" class="lim-upgrade">⬆ ترقية الخطة</a>
+</div>
+
 <!-- ── Zalij Background SVG ── -->
 <div id="zalij-bg">
   <svg viewBox="0 0 800 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
@@ -875,7 +987,8 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 
   <!-- User Card -->
   <div class="sb-user">
-    <div class="sb-avatar" id="uAvatar">Z</div>
+    <div class="sb-avatar" id="uAvatar" onclick="document.getElementById('avatarFileInput').click()" title="غيّر صورتك">Z</div>
+    <input type="file" id="avatarFileInput" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none" onchange="onAvatarPicked(event)">
     <div style="min-width:0">
       <div class="sb-uname"  id="uName">جاري التحميل...</div>
       <div class="sb-uplan"  id="uPlan">—</div>
@@ -933,24 +1046,11 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <div class="tb-title">ZUNEXA INTELLIGENCE · V12</div>
     </div>
     <div class="tb-right">
-      <select class="zx-select" id="themeSel" onchange="setTheme(this.value)" title="السمة">
-        <option value="zalij-dark">Zalij Dark</option>
-        <option value="zalij-light">Zalij Light</option>
-        <option value="neon-purple">Neon Purple</option>
-        <option value="ocean-dark">Ocean Dark</option>
-      </select>
-      <select class="zx-select" id="modelSel" onchange="setModel(this.value)" title="النموذج">
-        <option value="lite" title="بحث في قاعدة المعرفة المحلية فقط — بدون ذكاء اصطناعي توليدي، لا يفهم السياق أو الأسئلة المعقدة">Archon Lite (محلي فقط، بدون AI)</option>
-        <option value="pro">Archon Pro</option>
-        <option value="max">Archon Max</option>
-      </select>
-      <select class="zx-select" id="effortSel" onchange="setEffort(this.value)" title="مستوى الجهد — 'سريع' لا يستعمل الذكاء الاصطناعي التوليدي إطلاقاً">
-        <option value="quick" title="بحث محلي فقط، بدون استدعاء أي نموذج ذكاء اصطناعي — إجابات أسرع لكن قد تكون أقل دقة">⚡ سريع (بدون AI)</option>
-        <option value="balanced">⚖ متوازن</option>
-        <option value="deep">🔍 عميق</option>
-        <option value="max">🚀 أقصى</option>
-      </select>
       <div class="model-tag">Zunexa AI Engine</div>
+      <button class="web-toggle" id="shareChatBtn" onclick="shareCurrentChat()" title="مشاركة هاد المحادثة عبر رابط">
+        <span class="wd"></span>
+        <span class="wl">🔗 مشاركة</span>
+      </button>
       <button class="web-toggle" id="tempChatBtn" onclick="toggleTempChat()" title="محادثة مؤقتة — لا تُحفظ فالسجل ولا فقاعدة البيانات">
         <span class="wd"></span>
         <span class="wl">🕶 مؤقتة</span>
@@ -997,6 +1097,20 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 
   <!-- Input -->
   <div class="input-zone">
+    <div class="mode-row">
+      <div class="mode-group" id="effortGroup">
+        <button class="mode-chip" data-effort="quick" onclick="setEffortUI('quick')" title="بحث محلي فقط، بدون AI توليدي">⚡ سريع</button>
+        <button class="mode-chip" data-effort="balanced" onclick="setEffortUI('balanced')">⚖ متوازن</button>
+        <button class="mode-chip" data-effort="deep" onclick="setEffortUI('deep')">🔍 عميق</button>
+        <button class="mode-chip" data-effort="max" onclick="setEffortUI('max')">🚀 أقصى</button>
+      </div>
+      <div class="mode-sep"></div>
+      <div class="mode-group" id="tierGroup">
+        <button class="mode-chip tier-chip" data-model="lite" onclick="setModelUI('lite')" title="محلي فقط، بدون ذكاء انترنت">Archon Lite</button>
+        <button class="mode-chip tier-chip" data-model="pro" onclick="setModelUI('pro')">Archon Pro</button>
+        <button class="mode-chip tier-chip" data-model="max" onclick="setModelUI('max')">Archon Max</button>
+      </div>
+    </div>
     <div id="fileChipZone"></div>
     <div class="input-shell">
       <input type="file" id="fileInput" accept="image/*,audio/*,.pdf,.txt,.csv,.json,.md,.html,.htm,.js,.py,.sh,.css,.xml,.yml,.yaml,.zip" style="display:none" onchange="onFilePicked(event)">
@@ -1091,21 +1205,14 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         <option value="tr">Türkçe</option>
         <option value="hi">हिन्दी</option>
       </select>
-      <label class="field-label">السمة (Theme)</label>
-      <select class="field-input" id="setThemeSel2" onchange="setTheme(this.value)">
-        <option value="zalij-dark">Zalij Dark</option>
-        <option value="zalij-light">Zalij Light</option>
-        <option value="neon-purple">Neon Purple</option>
-        <option value="ocean-dark">Ocean Dark</option>
-      </select>
       <label class="field-label">نموذج Archon</label>
-      <select class="field-input" id="setModelSel2" onchange="setModel(this.value); document.getElementById('modelSel').value=this.value">
+      <select class="field-input" id="setModelSel2" onchange="setModelUI(this.value)">
         <option value="lite">Archon Lite · محلي فقط</option>
         <option value="pro">Archon Pro · محلي + Archon Brain</option>
         <option value="max">Archon Max · أقصى سياق</option>
       </select>
       <label class="field-label">مستوى الجهد</label>
-      <select class="field-input" id="setEffortSel2" onchange="setEffort(this.value); document.getElementById('effortSel').value=this.value">
+      <select class="field-input" id="setEffortSel2" onchange="setEffortUI(this.value)">
         <option value="quick">⚡ سريع</option>
         <option value="balanced">⚖ متوازن</option>
         <option value="deep">🔍 عميق</option>
@@ -1220,6 +1327,14 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 
     <!-- ACCOUNT (existing security-audited content) -->
     <div class="set-pane" id="pane-account">
+      <label class="field-label">الصورة الشخصية</label>
+      <div class="set-avatar-row">
+        <div class="set-avatar-preview" id="setAvatarPreview">Z</div>
+        <div class="set-avatar-btns">
+          <button class="set-avatar-upload" onclick="document.getElementById('avatarFileInput').click()">📷 رفع صورة</button>
+          <button class="set-avatar-remove" onclick="removeAvatar()">🗑 إزالة الصورة</button>
+        </div>
+      </div>
       <div id="settLoggedInInfo" style="display:none">
         <label class="field-label">الاسم</label>
         <div class="field-input" style="opacity:.7" id="settRealName">—</div>
@@ -1410,23 +1525,53 @@ async function installPWA() {
 }
 
 
+/* ════════════════════════════════════════════════════════════
+   OFFLINE DETECTION — shows a full-screen "no connection" overlay
+   the moment the browser goes offline, hides it the moment it's
+   back. navigator.onLine + the online/offline events are native,
+   zero dependencies, and reliable across Chrome/Firefox/Safari.
+════════════════════════════════════════════════════════════ */
+function updateOfflineOverlay() {
+  const ov = document.getElementById('offlineOverlay');
+  if (!ov) return;
+  ov.classList.toggle('on', !navigator.onLine);
+}
+window.addEventListener('online', () => { updateOfflineOverlay(); toast('✓ عاد الاتصال بالإنترنت'); });
+window.addEventListener('offline', updateOfflineOverlay);
+
+async function checkSessionLimitOnBoot() {
+  try {
+    const identityId = await zxIdentityId();
+    const { data, error } = await _SB
+      .from('ai_session_usage')
+      .select('locked_until')
+      .eq('identity_id', identityId)
+      .maybeSingle();
+    if (error) throw error;
+    if (data && data.locked_until) {
+      const remaining = (new Date(data.locked_until).getTime() - Date.now()) / 1000;
+      if (remaining > 0) showLimitOverlay(remaining);
+    }
+  } catch (e) {
+    // Table/RPC not set up yet — silently skip, chat still works (fail open).
+  }
+}
+
 async function init() {
   renderHist();
   await loadUser();
+  checkSessionLimitOnBoot();
   await loadKB();
   initParticles();
   initVoice();
   initPWAInstall();
   applyPageLang(localStorage.getItem('zx_page_lang') || 'ary');
-  const themeSel = document.getElementById('themeSel');
-  const modelSel = document.getElementById('modelSel');
-  const effortSel = document.getElementById('effortSel');
-  if (themeSel)  themeSel.value  = zxTheme;
-  if (modelSel)  modelSel.value  = zxModel;
-  if (effortSel) effortSel.value = zxEffort;
+  setModelUI(zxModel, true);
+  setEffortUI(zxEffort, true);
   setModel(zxModel);
   document.body.setAttribute('data-archon-mode', zxArchonMode);
   if (loadThread(currentChatId).length) replayThread(currentChatId);
+  renderAvatarSettingsPreview();
   document.getElementById('aiInput').focus();
 }
 
@@ -1451,18 +1596,26 @@ async function loadUser() {
 
     // FIX: this used to select ('name, email, plan, avatar_initial') —
     // columns that don't exist on `profiles` at all. index.html's real
-    // signUp() only ever writes id/username/first_name/email/current_theme
+    // signUp() only ever writes id/username/first_name/email
     // (see its `profiles.upsert(...)` call), so every read here was
     // silently failing/returning null and permanently falling back to
     // "Zunexa User" / "Free" — which is exactly the "always shows
     // Guest/Free" symptom. Reading the real columns fixes it for good.
     const { data, error } = await _SB
       .from('profiles')
-      .select('username, first_name, email, current_theme')
+      .select('username, first_name, email, avatar_url')
       .eq('id', uid)
       .maybeSingle();
     if (error) throw error;
     const u = data || {};
+
+    // Sync avatar from account (server) over any locally-cached one —
+    // avatar_url column added by ZUNEXA_DB_SETUP_AVATAR.sql. Missing
+    // column just means `u.avatar_url` is undefined, safely ignored.
+    if (u.avatar_url) {
+      zxAvatarUrl = u.avatar_url;
+      localStorage.setItem('zx_avatar_url', zxAvatarUrl);
+    }
 
     const displayName = u.first_name || u.username || (session.user.email && session.user.email.split('@')[0]) || 'Zunexa User';
     const ini = displayName[0] || 'Z';
@@ -1484,14 +1637,6 @@ async function loadUser() {
 
     setUserUI(displayName, planLabel, email, ini.toUpperCase());
 
-    // Apply the user's saved theme (current_theme) on login, so it
-    // travels with the account instead of resetting per-browser.
-    if (u.current_theme && u.current_theme !== zxTheme) {
-      zxTheme = u.current_theme;
-      localStorage.setItem('zx_theme', zxTheme);
-      applyTheme(zxTheme);
-    }
-
     // Cache for instant paint next load — display-only, never trusted
     // as the source of truth (loadUser() above always re-verifies).
     localStorage.setItem('zx_name_cache', displayName);
@@ -1501,11 +1646,96 @@ async function loadUser() {
   }
 }
 
+let zxAvatarUrl = localStorage.getItem('zx_avatar_url') || '';
+const ZX_DEFAULT_AVATAR = 'icon-512-maskable.png';
+
 function setUserUI(name, plan, email, ini) {
   document.getElementById('uName').textContent   = name;
   document.getElementById('uPlan').textContent   = plan;
   document.getElementById('uEmail').textContent  = email;
-  document.getElementById('uAvatar').textContent = ini;
+  renderAvatarInto(document.getElementById('uAvatar'), ini);
+  const sName = document.getElementById('settRealName');
+  const sEmail = document.getElementById('settRealEmail');
+  const sPlan = document.getElementById('settRealPlan');
+  if (sName) sName.textContent = name;
+  if (sEmail) sEmail.textContent = email;
+  if (sPlan) sPlan.textContent = plan;
+  renderAvatarSettingsPreview();
+}
+
+/* Renders either the uploaded avatar image, or the fallback maskable
+   app icon (per spec: "إذا لم يوجد، استخدام icon-512-maskable.png"),
+   never the bare letter — matches every place msg-av / sb-avatar appear. */
+function renderAvatarInto(el, initialFallbackLetter) {
+  if (!el) return;
+  const src = zxAvatarUrl || ZX_DEFAULT_AVATAR;
+  el.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = 'avatar';
+  img.onerror = () => { el.innerHTML = ''; el.textContent = initialFallbackLetter || 'Z'; };
+  el.appendChild(img);
+}
+
+function renderAvatarSettingsPreview() {
+  const prev = document.getElementById('setAvatarPreview');
+  if (prev) renderAvatarInto(prev, (document.getElementById('uName')?.textContent || 'Z')[0]);
+}
+
+/* ── Avatar upload — stored in Supabase Storage (bucket ZX_BUCKET,
+   path avatars/<uid or device id>/<timestamp>.<ext>), URL cached to
+   localStorage for instant paint, and persisted to profiles.avatar_url
+   for logged-in users so it follows the account across devices.
+   Run ZUNEXA_DB_SETUP_AVATAR.sql once (see comment near ZX_BUCKET)
+   to add the avatar_url column + storage policy. ── */
+async function onAvatarPicked(ev) {
+  const file = ev.target.files && ev.target.files[0];
+  ev.target.value = '';
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { toast('⚠ اختر صورة صالحة (PNG/JPG/WEBP/GIF)'); return; }
+  if (file.size > 5 * 1024 * 1024) { toast('⚠ الحجم الأقصى 5MB'); return; }
+
+  toast('⏳ جاري رفع الصورة...');
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    const ownerId = session ? session.user.id : getDeviceId();
+    const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+    const path = `avatars/${ownerId}/${Date.now()}.${ext}`;
+
+    const { error: upErr } = await _SB.storage.from(ZX_BUCKET).upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) throw upErr;
+
+    const { data: pub } = _SB.storage.from(ZX_BUCKET).getPublicUrl(path);
+    const url = pub.publicUrl;
+
+    zxAvatarUrl = url;
+    localStorage.setItem('zx_avatar_url', url);
+    renderAvatarInto(document.getElementById('uAvatar'));
+    renderAvatarSettingsPreview();
+    document.querySelectorAll('.msg.user .msg-av').forEach(el => renderAvatarInto(el));
+
+    if (session) {
+      try { await _SB.from('profiles').update({ avatar_url: url }).eq('id', session.user.id); }
+      catch (e) { console.warn('avatar_url column missing? run ZUNEXA_DB_SETUP_AVATAR.sql', e); }
+    }
+    toast('✓ تم تحديث الصورة الشخصية');
+  } catch (e) {
+    console.error('avatar upload failed', e);
+    toast('⚠ تعذّر رفع الصورة — تحقق من إعدادات Supabase Storage');
+  }
+}
+
+async function removeAvatar() {
+  zxAvatarUrl = '';
+  localStorage.removeItem('zx_avatar_url');
+  renderAvatarInto(document.getElementById('uAvatar'), (document.getElementById('uName')?.textContent || 'Z')[0]);
+  renderAvatarSettingsPreview();
+  document.querySelectorAll('.msg.user .msg-av').forEach(el => renderAvatarInto(el));
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (session) await _SB.from('profiles').update({ avatar_url: null }).eq('id', session.user.id);
+  } catch (e) {}
+  toast('✓ تمت إزالة الصورة الشخصية');
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -2247,12 +2477,66 @@ function isFollowUp(q) {
    2. RAG دلالي (Supabase + HuggingFace) — إذا كان مُفعَّلاً
    3. Archon Brain (LLM) — مع السياق المُجمَّع من 1 و 2
 */
+/* ════════════════════════════════════════════════════════════
+   THINKING PROCESS — a real step tracker, not a fake animation.
+   thinkStart() renders the box; thinkStep(id) marks a stage active;
+   thinkDone(id) marks it complete. Called from the actual pipeline
+   in answer() below, so what's shown always matches real work being
+   done (local KB search, RAG lookup, Archon Brain generation) —
+   never invented steps for stages that didn't run.
+════════════════════════════════════════════════════════════ */
+let _thinkBoxEl = null;
+
+function thinkStart(steps) {
+  const conv = document.getElementById('conv');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg bot';
+  wrap.id = 'thinkMsg';
+  const stepsHtml = steps.map(s =>
+    `<div class="think-step" data-step="${s.id}"><span class="ts-dot"></span><span class="ts-label">${s.label}</span></div>`
+  ).join('');
+  wrap.innerHTML = `
+    <div class="msg-av">Z</div>
+    <div class="msg-body">
+      <div class="think-box" id="thinkBox">
+        <div class="think-head" onclick="this.parentElement.classList.toggle('collapsed')">
+          <span class="th-caret">▾</span> سلسلة التفكير
+        </div>
+        <div class="think-steps">${stepsHtml}</div>
+      </div>
+    </div>`;
+  conv.appendChild(wrap);
+  conv.scrollTop = conv.scrollHeight;
+  _thinkBoxEl = wrap;
+}
+
+function thinkStep(id) {
+  if (!_thinkBoxEl) return;
+  const el = _thinkBoxEl.querySelector(`.think-step[data-step="${id}"]`);
+  if (el) el.classList.add('active');
+  document.getElementById('conv').scrollTop = document.getElementById('conv').scrollHeight;
+}
+
+function thinkDone(id) {
+  if (!_thinkBoxEl) return;
+  const el = _thinkBoxEl.querySelector(`.think-step[data-step="${id}"]`);
+  if (el) { el.classList.remove('active'); el.classList.add('done'); el.querySelector('.ts-dot').textContent = '✓'; }
+}
+
+function thinkEnd() {
+  if (_thinkBoxEl) { _thinkBoxEl.remove(); _thinkBoxEl = null; }
+}
+
 async function answer(userQ) {
   // item 28 — isFollowUp is checked BEFORE the lite/local-only early exit,
   // not after, so lite mode at least tells the user why the answer might
   // look disconnected instead of silently ignoring the last turn.
   const followUp = isFollowUp(userQ);
+
+  thinkStep('local');
   const local = await answerLocal(followUp ? buildCtxQ(userQ) : userQ);
+  thinkDone('local');
+
   const cfg   = EFFORT_CFG[zxEffort] || EFFORT_CFG.balanced;
 
   // Archon Lite — محلي فقط، لا network calls. Still follow-up-aware: no
@@ -2288,6 +2572,7 @@ async function answer(userQ) {
   }
 
   // ── RAG: بحث دلالي في Supabase ────────────────────────────
+  thinkStep('rag');
   let ragContext = '';
   try {
     const ragActive = await ragCheckEnabled();
@@ -2302,8 +2587,10 @@ async function answer(userQ) {
     // الـ RAG اختياري — إذا فشل يكمل بالـ KB المحلي فقط
     console.warn('RAG: تخطّي (', e.message, ')');
   }
+  thinkDone('rag');
 
   // ── بناء الـ prompt مع السياقين معاً ──────────────────────
+  thinkStep('brain');
   const messages = [{ role: 'system', content: archonModeSystemPrompt(userQ) }];
   const turns = ctx.slice(-cfg.ctxTurns);
   turns.forEach(c => messages.push({
@@ -2341,6 +2628,7 @@ async function answer(userQ) {
   }
 
   const brainTxt = await archonBrain(messages, { maxTokens: cfg.maxTokens });
+  thinkDone('brain');
   if (!brainTxt) return local;
 
   const src = ragContext ? 'rag+brain' : 'ai-brain';
@@ -2500,12 +2788,133 @@ function containsBlockedContent(text) {
   return ZX_BLOCKED_TERMS.some(term => t.includes(term));
 }
 
+/* ════════════════════════════════════════════════════════════
+   SHAREABLE CHAT LINKS — snapshots the current thread into the
+   public shared_chats table (see ZUNEXA_DB_SETUP_SHARED_CHATS.sql)
+   and copies a link to share.html?id=<share_id> that anyone can
+   open without logging in. Deliberately a snapshot, not a live
+   mirror: private tables (zunexa_messages, ai_session_usage, ...)
+   are never exposed — only what the user explicitly chose to share.
+════════════════════════════════════════════════════════════ */
+function genShareId() {
+  return 's_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+}
+
+async function shareCurrentChat() {
+  if (tempChatOn) { toast('⚠ ما يمكنش تشارك محادثة مؤقتة — بدّل لمحادثة عادية أولاً'); return; }
+  const msgs = loadThread(currentChatId);
+  if (!msgs.length) { toast('⚠ لا توجد رسائل فهاد المحادثة باش تشاركها'); return; }
+
+  toast('⏳ جاري إنشاء رابط المشاركة...');
+  try {
+    const shareId = genShareId();
+    const title = (msgs.find(m => m.role === 'user') || {}).text || 'محادثة Archon AI';
+    const identityId = await zxIdentityId();
+
+    const { error } = await _SB.from('shared_chats').insert({
+      share_id: shareId,
+      owner_id: identityId,
+      title: title.slice(0, 80),
+      messages: msgs.map(m => ({ role: m.role, text: m.text, ts: m.ts }))
+    });
+    if (error) throw error;
+
+    const url = `${location.origin}${location.pathname.replace(/ai\.html$/, '')}share.html?id=${shareId}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast('✓ تم نسخ رابط المشاركة');
+    } catch (e) {
+      // Clipboard API might be blocked (permissions) — fall back to a prompt.
+      window.prompt('انسخ رابط المشاركة:', url);
+    }
+  } catch (e) {
+    console.error('share failed', e);
+    toast('⚠ تعذّر إنشاء رابط المشاركة — تحقق من إعدادات Supabase (ZUNEXA_DB_SETUP_SHARED_CHATS.sql)');
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   SESSION LIMIT — server-verified via Supabase RPC
+   zx_check_and_increment_usage (see ZUNEXA_DB_SETUP_SESSION_LIMIT.sql).
+   Unlike ZX_AI_RATE above (a soft per-tab 60s/15-msg guard against
+   accidental spam), this is the hard quota: exceeding it locks the
+   identity (device_id, or auth uid if logged in) for ZX_LOCK_SECONDS,
+   verified server-side so clearing localStorage doesn't reset it.
+════════════════════════════════════════════════════════════ */
+const ZX_WINDOW_SECONDS = 3600;   // 1 hour rolling window
+const ZX_MAX_MESSAGES   = 40;     // messages allowed per window
+const ZX_LOCK_SECONDS   = 3600;   // 1h lockout once exceeded, per spec
+let _zxLimitTimerHandle = null;
+
+async function zxIdentityId() {
+  const { data: { session } } = await _SB.auth.getSession();
+  return session ? session.user.id : getDeviceId();
+}
+
+function showLimitOverlay(secondsRemaining) {
+  const ov = document.getElementById('limitOverlay');
+  if (!ov) return;
+  ov.classList.add('on');
+  const timerEl = document.getElementById('limitTimer');
+  let remaining = Math.max(0, Math.floor(secondsRemaining));
+
+  if (_zxLimitTimerHandle) clearInterval(_zxLimitTimerHandle);
+  const tick = () => {
+    const m = String(Math.floor(remaining / 60)).padStart(2, '0');
+    const s = String(remaining % 60).padStart(2, '0');
+    if (timerEl) timerEl.textContent = `${m}:${s}`;
+    if (remaining <= 0) {
+      clearInterval(_zxLimitTimerHandle);
+      hideLimitOverlay();
+      toast('✓ تم رفع القفل — يمكنك المتابعة الآن');
+      return;
+    }
+    remaining--;
+  };
+  tick();
+  _zxLimitTimerHandle = setInterval(tick, 1000);
+}
+
+function hideLimitOverlay() {
+  const ov = document.getElementById('limitOverlay');
+  if (ov) ov.classList.remove('on');
+  if (_zxLimitTimerHandle) { clearInterval(_zxLimitTimerHandle); _zxLimitTimerHandle = null; }
+}
+
+/* Returns true if the message may proceed. On refusal, shows the
+   lock overlay with a live countdown and returns false. Fails OPEN
+   (allows the message) if the RPC itself errors — e.g. the SQL setup
+   hasn't been run yet — so a missing migration never bricks the chat. */
+async function checkSessionLimit() {
+  try {
+    const identityId = await zxIdentityId();
+    const { data, error } = await _SB.rpc('zx_check_and_increment_usage', {
+      p_identity_id: identityId,
+      p_window_seconds: ZX_WINDOW_SECONDS,
+      p_max_messages: ZX_MAX_MESSAGES,
+      p_lock_seconds: ZX_LOCK_SECONDS
+    });
+    if (error) throw error;
+    const row = Array.isArray(data) ? data[0] : data;
+    if (!row) return true; // defensive fallback
+    if (!row.allowed) {
+      showLimitOverlay(row.seconds_remaining || ZX_LOCK_SECONDS);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.warn('Session limit check failed (RPC missing? run ZUNEXA_DB_SETUP_SESSION_LIMIT.sql) — failing open', e);
+    return true;
+  }
+}
+
 async function send() {
   if (busy) return;
   const inp = document.getElementById('aiInput');
   const q   = inp.value.trim();
   if (!q) return;
   if (!ZX_AI_RATE.check()) return;
+  if (!(await checkSessionLimit())) return;
 
   busy = true;
   document.getElementById('sendBtn').disabled = true;
@@ -2532,7 +2941,23 @@ async function send() {
 
   try {
     const tool = await routeQuickCommand(q);
-    const res  = tool || await answer(q);
+    let res;
+    if (tool) {
+      res = tool;
+    } else {
+      removeTyping();
+      const steps = zxModel === 'lite'
+        ? [{ id:'local', label:'بحث في قاعدة المعرفة المحلية' }]
+        : [
+            { id:'local', label:'بحث في قاعدة المعرفة المحلية' },
+            { id:'rag',   label:'بحث دلالي RAG (Supabase)' },
+            { id:'brain', label:'توليد الإجابة عبر Archon Brain' }
+          ];
+      thinkStart(steps);
+      res = await answer(q);
+      thinkEnd();
+      addTyping();
+    }
     removeTyping();
     addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl);
 
@@ -2554,6 +2979,7 @@ async function send() {
     clearFile();
 
   } catch(err) {
+    thinkEnd();
     removeTyping();
     addMsg('⚠ خطأ في المعالجة. حاول مرة أخرى.', 'bot', 'error', 0);
   }
@@ -2573,7 +2999,11 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
 
   const av = document.createElement('div');
   av.className = 'msg-av';
-  av.textContent = role === 'bot' ? 'Z' : '◉';
+  if (role === 'bot') {
+    av.textContent = 'Z';
+  } else {
+    renderAvatarInto(av, '◉');
+  }
 
   const body = document.createElement('div');
   body.className = 'msg-body';
@@ -2614,9 +3044,7 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
     const time = new Date().toLocaleTimeString('ar', {hour:'2-digit', minute:'2-digit'});
     meta.innerHTML = `<span>${time}</span>`;
 
-    if (src === 'qa' || src === 'local') {
-      meta.innerHTML += `<span class="meta-badge badge-qa">قاعدة المعرفة</span>`;
-    } else if (src === 'learned') {
+    if (src === 'learned') {
       meta.innerHTML += `<span class="meta-badge badge-learn">✦ متعلَّم (راجعها فريق Zunexa)</span>`;
     } else if (src === 'partial') {
       // item 37 — 'partial' means the answer is stitched from two weak
@@ -3074,23 +3502,9 @@ document.getElementById('settModal').addEventListener('click', function(e) {
 /* ════════════════════════════════════════════════════════════
    THEME / MODEL / EFFORT — state + persistence
 ════════════════════════════════════════════════════════════ */
-let zxTheme  = localStorage.getItem('zx_theme')  || 'zalij-dark';
 let zxModel  = localStorage.getItem('zx_model')  || 'lite';
 let zxEffort = localStorage.getItem('zx_effort') || 'balanced';
 
-function applyTheme(v) {
-  if (v === 'zalij-dark') document.documentElement.removeAttribute('data-zx-theme');
-  else document.documentElement.setAttribute('data-zx-theme', v);
-}
-function setTheme(v) {
-  zxTheme = v; localStorage.setItem('zx_theme', v); applyTheme(v);
-  // Best-effort sync to the user's profile row if logged in — silent no-op for guests.
-  // FIX: was writing to a `theme` column that doesn't exist on profiles;
-  // the real column (per index.html's signUp) is `current_theme`.
-  _SB.auth.getSession().then(({ data: { session } }) => {
-    if (session) _SB.from('profiles').update({ current_theme: v }).eq('id', session.user.id).then(()=>{}, ()=>{});
-  });
-}
 function setModel(v) {
   zxModel = v; localStorage.setItem('zx_model', v);
   const tag = document.querySelector('.model-tag');
@@ -3100,6 +3514,25 @@ function setModel(v) {
   if (tag) tag.textContent = (descKey && t[descKey]) || 'Zunexa AI Engine';
 }
 function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); }
+
+/* ── UI wrappers for the mode-row chips (speed modes + tier chips
+   next to the input box). Keep the underlying setModel/setEffort as
+   the single source of truth; these just also toggle .on classes and
+   mirror the choice into the Settings dropdowns (setModelSel2/
+   setEffortSel2) so both surfaces always agree. ── */
+function setModelUI(v, silent) {
+  setModel(v);
+  document.querySelectorAll('#tierGroup .mode-chip').forEach(b => b.classList.toggle('on', b.dataset.model === v));
+  const sel2 = document.getElementById('setModelSel2');
+  if (sel2) sel2.value = v;
+  if (!silent) toast('✓ الفئة: ' + ({lite:'Archon Lite', pro:'Archon Pro', max:'Archon Max'}[v] || v));
+}
+function setEffortUI(v, silent) {
+  setEffort(v);
+  document.querySelectorAll('#effortGroup .mode-chip').forEach(b => b.classList.toggle('on', b.dataset.effort === v));
+  const sel2 = document.getElementById('setEffortSel2');
+  if (sel2) sel2.value = v;
+}
 
 /* ════════════════════════════════════════════════════════════
    12-LANGUAGE UI — translation dictionary + apply function.
@@ -3148,12 +3581,12 @@ function applyPageLang(lang) {
   const installBtn = document.getElementById('installBtn');
   if (installBtn) installBtn.lastChild.textContent = ' ' + t.install.replace('📲 ', '');
 
-  const effortSel = document.getElementById('effortSel');
-  if (effortSel) {
-    effortSel.options[0].textContent = t.effQuick;
-    effortSel.options[1].textContent = t.effBal;
-    effortSel.options[2].textContent = t.effDeep;
-    effortSel.options[3].textContent = t.effMax;
+  const effortLabels = document.querySelectorAll('#effortGroup .mode-chip');
+  if (effortLabels.length === 4) {
+    effortLabels[0].textContent = t.effQuick;
+    effortLabels[1].textContent = t.effBal;
+    effortLabels[2].textContent = t.effDeep;
+    effortLabels[3].textContent = t.effMax;
   }
 
   setModel(zxModel); // refreshes the model-tag text in the new language
@@ -3278,7 +3711,6 @@ function loadAllPrefsIntoUI() {
   if (document.getElementById('setToolsToggle')) document.getElementById('setToolsToggle').checked = tools;
   if (document.getElementById('setPageLang'))    document.getElementById('setPageLang').value = pageLang;
   applyPageLang(pageLang);
-  if (document.getElementById('setThemeSel2'))   document.getElementById('setThemeSel2').value = zxTheme;
   if (document.getElementById('setModelSel2'))    document.getElementById('setModelSel2').value = zxModel;
   if (document.getElementById('setEffortSel2'))   document.getElementById('setEffortSel2').value = zxEffort;
   if (document.getElementById('setVoiceLang') && voice.lang)   document.getElementById('setVoiceLang').value = voice.lang;
@@ -3373,7 +3805,7 @@ async function onFilePicked(e) {
 
     // Auto-select a smarter model so the file actually gets analyzed —
     // Archon Lite is offline-only and can't reason over attachments.
-    if (zxModel === 'lite') { zxModel = 'pro'; document.getElementById('modelSel').value = 'pro'; setModel('pro'); }
+    if (zxModel === 'lite') { setModelUI('pro'); }
 
     document.getElementById('attachBtn').classList.add('has-file');
     zone.innerHTML = `
@@ -3727,7 +4159,6 @@ async function toolDeepSearch(query) {
 }
 
 /* ── BOOT ── */
-applyTheme(zxTheme);
 init();
 </script>
 </body>
