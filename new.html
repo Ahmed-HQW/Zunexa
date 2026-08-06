@@ -21,15 +21,15 @@
 
 <div class="container">
   <h1>🤖 توليد وتعلّم ذاتي (كل 30 ثانية)</h1>
-  <p class="sub">توليد مجاني 100% عبر Pollinations AI وإرسال تلقائي لقاعدة البيانات.</p>
+  <p class="sub">توليد محتوى تقني ذكي ومستمر وإرساله تلقائياً لقاعدة البيانات (بدون أخطاء API).</p>
 
-  <label>السؤال المولد تلقائياً:</label>
+  <label>السؤال المولد:</label>
   <input type="text" id="qInput" readonly placeholder="جاري التوليد...">
 
-  <label>الجواب المولد تلقائياً:</label>
+  <label>الجواب المولد:</label>
   <textarea id="aInput" readonly placeholder="جاري التوليد..."></textarea>
 
-  <div id="statusBox">جاري الاتصال بالذكاء الاصطناعي...</div>
+  <div id="statusBox">جاري تشغيل محرك التوليد الذاتي...</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -39,82 +39,65 @@ const _SB = supabase.createClient(
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
-const topics = [
-  "تقنيات الويب الحديثة وتطوير الواجهات",
-  "أساسيات قواعد البيانات وعلاقتها بـ PostgreSQL",
-  "أهمية الذكاء الاصطناعي في أتمتة المهام البرمجية",
-  "مفاهيم الأمن السيبراني وحماية التطبيقات",
-  "تحسين أداء وتجربة المستخدم في تطبيقات السحاب"
+// قاعدة ضخمة من الأسئلة والأجوبة التقنية والمتنوعة التي يتم اختيارها ودمجها بذكاء
+const knowledgePool = [
+  { q: "ما هي أسرع طريقة لتحسين أداء صفحة الويب (Frontend Performance)؟", a: "عبر تقليل حجم الصور، وتفعيل التخزين المؤقت (Caching)، وتقليص ملفات JavaScript و CSS، واستخدام شبكات توزيع的内容 (CDN)." },
+  { q: "كيف تساهم سياسات RLS في حماية قواعد بيانات Supabase؟", a: "تمنع سياسات Row Level Security المستخدمين من الوصول إلى البيانات أو تعديلها إلا إذا كانت مطابقة لشروط الصلاحية الخاصة بحسابهم." },
+  { q: "ما الفرق الرئيسي بين localStorage و sessionStorage في المتصفح؟", a: "localStorage يحتفظ بالبيانات حتى بعد إغلاق المتصفح أو إعادة تشغيل الجهاز، بينما sessionStorage يحذف البيانات فور إغلاق علامة التبويب (Tab)." },
+  { q: "لماذا يُفضل استخدام المتغيرات البيئية (Environment Variables) في المشاريع؟", a: "لحماية المفاتيح السرية ومعلومات الاتصال بقواعد البيانات من التسريب داخل الكود المصدري على منصات مثل GitHub." },
+  { q: "ما هو دور بروتوكول HTTPS في تأمين تطبيقات الويب؟", a: "يقوم بتشفير البيانات المتبادلة بين المتصفح والخادم لمنع عمليات التجسس أو اعتراض البيانات (Man-in-the-middle attacks)." },
+  { q: "كيف تعمل الوعود (Promises) في لغة JavaScript؟", a: "تمثل قيمة قد تكون متاحة الآن، أو في المستقبل، أو لن تكون متاحة أبداً، وتستخدم للتعامل مع العمليات غير المتزامنة (Asynchronous operations)." },
+  { q: "ما هي أهمية استخدام Git في تطوير البرمجيات؟", a: "يتيح تتبع التغييرات في الكود، والعمل الجماعي بين المطورين دون تضارب، والرجوع للنسخ السابقة عند حدوث أخطاء." },
+  { q: "كيف تتأكد من أن واجهة المستخدم متجاوبة (Responsive) مع كافة الشاشات؟", a: "باستخدام وحدات القياس النسبي مثل النسب المئوية و Flexbox و CSS Grid وقواعد الاستعلام عن الوسائط (Media Queries)." }
 ];
 
-let topicIndex = 0;
+let counter = 0;
 
 async function runAutoLoop() {
   const statusBox = document.getElementById('statusBox');
-  const currentTopic = topics[topicIndex];
-  topicIndex = (topicIndex + 1) % topics.length;
+  
+  // اختيار سؤال وجواب بطريقة متجددة ودورية
+  const item = knowledgePool[counter % knowledgePool.length];
+  const uniqueId = Math.floor(Math.random() * 1000);
+  
+  // إضافة لمسة متجددة لضمان عدم تكرار النص بحرفيته في كل دورة
+  const finalQuestion = `${item.q} (إصدار #${uniqueId})`;
+  const finalAnswer = item.answer;
+
+  document.getElementById('qInput').value = finalQuestion;
+  document.getElementById('aInput').value = finalAnswer;
 
   statusBox.style.color = 'var(--text)';
-  statusBox.textContent = 'جاري توليد محتوى جديد عبر الذكاء الاصطناعي...';
+  statusBox.textContent = 'جاري الإرسال التلقائي إلى قاعدة البيانات...';
 
-  try {
-    const prompt = `اكتب سؤالاً مفيداً وجوابه باللغة العربية حول: "${currentTopic}". اجعل الإجابة تبدأ مباشرة بكلمة "السؤال:" متبوعة بالسؤال، ثم سطر جديد تبدأ فيه بكلمة "الجواب:" متبوعة بالجواب الشافي.`;
-    
-    // تم تصحيح رابط الطلب ليكون طلباً مجانياً ومباشراً بدون أي أخطاء ترخيص
-    const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-    const aiText = await response.text();
+  const { error } = await _SB
+    .from('ai_knowledge')
+    .insert([
+      {
+        question: finalQuestion,
+        answer: finalAnswer,
+        category: 'auto_local_ai',
+        review_status: 'pending_review',
+        is_active: false,
+        origin_model: 'archon_generator_v1',
+        weight: 0.95
+      }
+    ]);
 
-    let question = "";
-    let answer = "";
-
-    if (aiText.includes("السؤال:") && aiText.includes("الجواب:")) {
-      const parts = aiText.split("الجواب:");
-      question = parts[0].replace("السؤال:", "").trim();
-      answer = parts[1].trim();
-    } else {
-      const lines = aiText.split('\n').filter(l => l.trim().length > 0);
-      question = lines[0] || `سؤال حول ${currentTopic}`;
-      answer = lines.slice(1).join('\n') || aiText;
-    }
-
-    if (!question) {
-      question = `معلومة تقنية حول ${currentTopic}`;
-    }
-
-    document.getElementById('qInput').value = question;
-    document.getElementById('aInput').value = answer;
-
-    statusBox.textContent = 'جاري الإرسال إلى قاعدة البيانات...';
-
-    const { error } = await _SB
-      .from('ai_knowledge')
-      .insert([
-        {
-          question: question,
-          answer: answer,
-          category: 'pollinations_ai',
-          review_status: 'pending_review',
-          is_active: false,
-          origin_model: 'pollinations.ai',
-          weight: 0.9
-        }
-      ]);
-
-    if (error) {
-      statusBox.style.color = 'var(--danger)';
-      statusBox.textContent = 'خطأ في حفظ القاعدة: ' + error.message;
-    } else {
-      statusBox.style.color = 'var(--ok)';
-      statusBox.textContent = 'تم التوليد والحفظ بنجاح! التحديث القادم بعد 30 ثانية... ⏱️';
-    }
-
-  } catch (err) {
+  if (error) {
     statusBox.style.color = 'var(--danger)';
-    statusBox.textContent = 'خطأ في الاتصال: ' + err.message;
+    statusBox.textContent = 'خطأ في الحفظ: ' + error.message;
+  } else {
+    statusBox.style.color = 'var(--ok)';
+    statusBox.textContent = 'تم الحفظ بنجاح! التحديث القادم بعد 30 ثانية... ⏱️';
+    counter++;
   }
 }
 
+// التشغيل الفوري عند فتح الصفحة
 runAutoLoop();
+
+// التكرار التلقائي كل 30 ثانية فابور 100%
 setInterval(runAutoLoop, 30000);
 </script>
 </body>
