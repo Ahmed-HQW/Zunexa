@@ -78,21 +78,22 @@ async function loadPending() {
   const list = document.getElementById('list');
   list.innerHTML = '<p class="empty">جاري التحميل...</p>';
   
-  // قمنا بإزالة .limit(200) لجعل جلب المدخلات غير محدود
+  // درنا حد ديال 1000 باش المتصفح مايتبلوقاش إذا كانو المدخلات بالآلاف
   const { data, error } = await _SB
     .from('ai_knowledge')
     .select('id,question,answer,keywords,category,weight,created_at,origin_model,review_status')
     .eq('review_status', 'pending_review')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(2000); 
 
   if (error) {
-    list.innerHTML = `<p class="empty">تعذّر التحميل: ${error.message}<br>تأكد أن حسابك عنده صلاحية admin وأن سياسة RLS تسمح بذلك.</p>`;
+    list.innerHTML = `<p class="empty" style="color:var(--danger);">تعذّر التحميل: ${error.message}</p>`;
     return;
   }
   
   if (!data || !data.length) {
-    // تم تفريغ محتوى الرسالة، ولن تظهر "لا توجد مدخلات..." بعد الآن
-    list.innerHTML = '';
+    // عوض رسالة طويلة، غنديرو غير أيقونة أو نص خفيف بزاف باش تعرف بلي الكود خدام وماكاين والو
+    list.innerHTML = '<div style="opacity: 0.3; text-align: center; margin-top: 40px; font-size: 12px;">(0)</div>';
     return;
   }
   
