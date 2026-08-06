@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>إضافة مدخلات جديدة - Archon AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root { --bg:#0b0b10; --card:#16161f; --border:#2a2a38; --gold:#d4af37; --text:#eee; --tg:#999; --ok:#4caf50; --danger:#e05555; }
+  * { box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; margin:0; padding:24px; display: flex; justify-content: center; }
+  .container { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px; width: 100%; max-width: 500px; margin-top: 40px; }
+  h1 { color:var(--gold); font-size:22px; margin-bottom:10px; text-align: center; }
+  p.sub { color:var(--tg); font-size:14px; text-align: center; margin-bottom:20px; }
+  label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
+  input, textarea { width:100%; background:#101018; color:#ddd; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:inherit; font-size:14px; margin-bottom:16px; }
+  textarea { min-height: 100px; resize: vertical; }
+  button { width: 100%; background:var(--gold); color:#111; border:none; border-radius:8px; padding:12px; font-size:16px; font-weight:bold; cursor:pointer; }
+  button:hover { opacity: 0.9; }
+  #msg { text-align: center; font-size: 14px; font-weight: bold; margin-top: 15px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>➕ خلق مدخلات جديدة</h1>
+  <p class="sub">هاد الصفحة غتصيفط المدخلات لقاعدة البيانات بوضعية "في انتظار المراجعة"</p>
+
+  <label>السؤال أو المعطى:</label>
+  <input type="text" id="qInput" placeholder="اكتب السؤال هنا...">
+
+  <label>الجواب:</label>
+  <textarea id="aInput" placeholder="اكتب الجواب هنا..."></textarea>
+
+  <label>التصنيف (اختياري):</label>
+  <input type="text" id="catInput" placeholder="مثال: general, math, science..." value="general">
+
+  <button onclick="addEntry()">إرسال إلى المراجعة</button>
+  <div id="msg"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// نفس إعدادات الاتصال ديالك
+const _SB = supabase.createClient(
+  'https://xrldhfsytysznyyhwjlr.supabase.co',
+  'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
+);
+
+async function addEntry() {
+  const question = document.getElementById('qInput').value.trim();
+  const answer = document.getElementById('aInput').value.trim();
+  const category = document.getElementById('catInput').value.trim();
+  const msgDiv = document.getElementById('msg');
+
+  if (!question || !answer) {
+    msgDiv.style.color = 'var(--danger)';
+    msgDiv.textContent = 'المرجو إدخال السؤال والجواب معاً!';
+    return;
+  }
+
+  msgDiv.style.color = 'var(--text)';
+  msgDiv.textContent = 'جاري الإرسال...';
+
+  // إرسال البيانات إلى Supabase
+  const { data, error } = await _SB
+    .from('ai_knowledge')
+    .insert([
+      {
+        question: question,
+        answer: answer,
+        category: category,
+        review_status: 'pending_review', // باش يبان في صفحة المراجعة
+        is_active: false,                // باقي ماتفعلش
+        origin_model: 'manual_entry',    // باش تعرف بلي دخلتيه بيدك
+        weight: 0.5
+      }
+    ]);
+
+  if (error) {
+    msgDiv.style.color = 'var(--danger)';
+    msgDiv.textContent = 'خطأ: ' + error.message;
+  } else {
+    msgDiv.style.color = 'var(--ok)';
+    msgDiv.textContent = 'تم إرسال المدخل بنجاح! سير دابا لصفحة المراجعة غتلقاه.';
+    
+    // تفريغ الخانات باش تزيد مدخل آخر يلا بغيتي
+    document.getElementById('qInput').value = '';
+    document.getElementById('aInput').value = '';
+  }
+}
+</script>
+</body>
+</html>
