@@ -263,7 +263,6 @@ async function runAutoLoop() {
   // اختيار العنصر بشكل دوري متجدد
   const item = knowledgePool[currentIndex % knowledgePool.length];
   
-  // استخدام النصوص الأصلية مباشرة بدون أي زوائد أو مراجع
   const finalQuestion = item.q;
   const finalAnswer = item.a;
   const finalCategory = item.cat || "general_mixed";
@@ -276,10 +275,10 @@ async function runAutoLoop() {
   statusBox.style.color = 'var(--text)';
   statusBox.textContent = 'جاري إرسال المدخل المعرفي إلى قاعدة البيانات...';
 
-  // الإرسال التلقائي إلى Supabase
+  // استخدام upsert بدل insert لمنع خطأ التكرار (Unique Constraint)
   const { error } = await _SB
     .from('ai_knowledge')
-    .insert([
+    .upsert([
       {
         question: finalQuestion,
         answer: finalAnswer,
@@ -289,7 +288,7 @@ async function runAutoLoop() {
         origin_model: 'archon_mega_generator_v2',
         weight: 0.95
       }
-    ]);
+    ], { onConflict: 'question' });
 
   if (error) {
     statusBox.style.color = 'var(--danger)';
@@ -307,7 +306,7 @@ async function runAutoLoop() {
 runAutoLoop();
 
 // التكرار التلقائي كل 30 ثانية فابور 100%
-setInterval(runAutoLoop, 3000);
+setInterval(runAutoLoop, 30000);
 </script>
 </body>
 </html>
