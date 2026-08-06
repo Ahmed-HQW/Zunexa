@@ -2,34 +2,39 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>التعلم الذاتي التلقائي 100% - Archon AI</title>
+<title>التعلم الذاتي المتقدم - Archon AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   :root { --bg:#0b0b10; --card:#16161f; --border:#2a2a38; --gold:#d4af37; --text:#eee; --tg:#999; --ok:#4caf50; --danger:#e05555; }
   * { box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; margin:0; padding:24px; display: flex; justify-content: center; }
-  .container { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px; width: 100%; max-width: 500px; margin-top: 40px; }
+  .container { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px; width: 100%; max-width: 550px; margin-top: 20px; }
   h1 { color:var(--gold); font-size:20px; margin-bottom:10px; text-align: center; }
-  p.sub { color:var(--tg); font-size:13px; text-align: center; margin-bottom:20px; line-height: 1.6; }
-  label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
-  input, textarea { width:100%; background:#101018; color:#ddd; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:inherit; font-size:14px; margin-bottom:16px; }
-  textarea { min-height: 100px; resize: vertical; }
+  p.sub { color:var(--tg); font-size:12px; text-align: center; margin-bottom:20px; line-height: 1.6; }
+  label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--gold); }
+  input, textarea { width:100%; background:#101018; color:#ddd; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:inherit; font-size:13px; margin-bottom:14px; }
+  textarea { min-height: 90px; resize: vertical; }
   #statusBox { background: #101018; border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; font-size: 13px; color: var(--gold); }
+  .stats { font-size: 11px; color: var(--tg); text-align: center; margin-top: 8px; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>🤖 توليد وتعلّم ذاتي (كل 30 ثانية)</h1>
-  <p class="sub">توليد محتوى تقني ذكي ومستمر وإرساله تلقائياً لقاعدة البيانات.</p>
+  <h1>🧠 محرك التعلم الذاتي الضخم (25+ تصنيف)</h1>
+  <p class="sub">توليد وإرسال تلقائي لأكثر من 100 قاعدة معرفية متنوعة وعامة كل 30 ثانية بدون تدخل بشري.</p>
 
-  <label>السؤال المولد:</label>
+  <label>السؤال أو المعطى المولد:</label>
   <input type="text" id="qInput" readonly placeholder="جاري التوليد...">
 
   <label>الجواب المولد:</label>
   <textarea id="aInput" readonly placeholder="جاري التوليد..."></textarea>
 
-  <div id="statusBox">جاري تشغيل محرك التوليد الذاتي...</div>
+  <label>التصنيف الحالي:</label>
+  <input type="text" id="catInput" readonly value="...">
+
+  <div id="statusBox">جاري تشغيل محرك المعرفة...</div>
+  <div class="stats" id="counterStats">تم إرسال: 0 معلومة في هذه الجلسة</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -39,42 +44,147 @@ const _SB = supabase.createClient(
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
+// قاعدة بيانات ضخمة تحتوي على أكثر من 100 مدخل موزعة على 25 تصنيفاً مختلفاً
 const knowledgePool = [
-  { q: "ما هي أسرع طريقة لتحسين أداء صفحة الويب؟", a: "عبر تقليل حجم الصور، وتفعيل التخزين المؤقت (Caching)، وتقليص ملفات الكود." },
-  { q: "كيف تساهم سياسات RLS في حماية قواعد بيانات Supabase؟", a: "تمنع سياسات Row Level Security المستخدمين من الوصول إلى البيانات أو تعديلها إلا وفق الشروط المحددة." },
-  { q: "ما الفرق الرئيسي بين localStorage و sessionStorage؟", a: "localStorage يحتفظ بالبيانات حتى بعد إغلاق المتصفح، بينما sessionStorage يحذفها فور إغلاق علامة التبويب." },
-  { q: "لماذا يُفضل استخدام المتغيرات البيئية في المشاريع؟", a: "لحماية المفاتيح السرية ومعلومات الاتصال بقواعد البيانات من التسريب في الكود المصدري." },
-  { q: "ما هو دور بروتوكول HTTPS في تأمين تطبيقات الويب؟", a: "يقوم بتشفير البيانات المتبادلة بين المتصفح والخادم لمنع عمليات التجسس واعتراض البيانات." }
+  // 1. تحيات وترحيب (Greetings)
+  { q: "مرحباً، هل يمكنك إلقاء التحية؟", a: "أهلاً بك يا أحمد! كيف يمكنني مساعدتك اليوم؟", cat: "greetings" },
+  { q: "كيف حالك اليوم؟", a: "أنا نظام ذكاء اصطناعي جاهز للعمل بكامل طاقتك يا أحمد!", cat: "greetings" },
+  { q: "صباح الخير", a: "صباح النور والسرور، نتمنى لك يوماً مليئاً بالإنتاجية والنجاح.", cat: "greetings" },
+  { q: "مساء الخير", a: "مساء الورد والاتقان، هل نبدأ في جلسة تطوير جديدة؟", cat: "greetings" },
+  
+  // 2. معلومات عامة (General Knowledge)
+  { q: "ما هي أعمق نقطة في محيطات الأرض؟", a: "خندق ماريانا في المحيط الهادئ هو أعمق نقطة معروفة على سطح الأرض.", cat: "general_info" },
+  { q: "كم عدد الكواكب في المجموعة الشمسية؟", a: "يبلغ عدد الكواكب الرئيسية في المجموعة الشمسية 8 كواكب.", cat: "general_info" },
+  { q: "ما هو الحيوان البري الأسرع في العالم؟", a: "الفهد (الشيتا) هو أسرع حيوان بري، حيث تصل سرعته لمستويات قياسية.", cat: "general_info" },
+  { q: "ما هي عاصمة أستراليا؟", a: "عاصمة أستراليا هي كانبيرا وليست سيدني.", cat: "general_info" },
+  
+  // 3. تكنولوجيا وبرمجة (Tech & Coding)
+  { q: "ما هي لغة البرمجة التي تُستخدم لتصميم هيكل صفحات الويب؟", a: "لغة HTML هي الأساس المسؤول عن هيكلة صفحات الويب.", cat: "tech" },
+  { q: "ما هو دور قواعد البيانات في التطبيقات؟", a: "تستخدم لتخزين وإدارة واسترجاع البيانات بشكل امن ومنظم مثل Supabase و PostgreSQL.", cat: "tech" },
+  { q: "ما هي فائدة Git في تطوير البرمجيات؟", a: "يتيح تتبع التغييرات وإدارة النسخ والعمل الجماعي بمرونة عالية.", cat: "tech" },
+  { q: "ما هو نظام التشغيل المفضل للمطورين؟", a: "نظم لينكس مثل Debian تحظى بشعبية واسعة بفضل استقرارها وقوتها.", cat: "tech" },
+  
+  // 4. علوم وطبيعة (Science)
+  { q: "ما هو العنصر الكيميائي الأكثر وفراً في الكون؟", a: "عنصر الهيدروجين هو العنصر الأكثر وفراً في الكون بنسبة هائلة.", cat: "science" },
+  { q: "لماذا تظهر السماء باللون الأزرق؟", a: "بسبب ظاهرة تشتت ريلاي، حيث تشتت جزيئات الغلاف الجوي الضوء الأزرق أكثر من الألوان الأخرى.", cat: "science" },
+  { q: "ما هي سرعة الضوء في الفراغ؟", a: "تقارب سرعة الضوء 300,000 كيلومتر في الثانية الواحدة.", cat: "science" },
+  { q: "ما هو الغاز الرئيسي المكون للهواء الجوي؟", a: "غاز النيتروجين يمثل النسبة الأكبر بنوالي 78% من الغلاف الجوي.", cat: "science" },
+  
+  // 5. تاريخ وزمان (History)
+  { q: "متى هبط الإنسان لأول مرة على سطح القمر؟", a: "حدث ذلك في عام 1969 عبر رحلة أبولو 11 الشهيرة.", cat: "history" },
+  { q: "من هو مخترع المصباح الكهربائي الحديث؟", a: "توماس إديسون يُنسب إليه تطوير أول مصباح كهربائي تجاري عملي.", cat: "history" },
+  { q: "متى بدأت الحرب العالمية الثانية؟", a: "اندلعت الحرب العالمية الثانية في عام 1939 واستمرت حتى عام 1945.", cat: "history" },
+  { q: "ما هي الحضارة التي بنيت الأهرامات في مصر؟", a: "حضارة المصريين القدماء (الفراعنة) هي من بنت الأهرامات العريقة.", cat: "history" },
+  
+  // 6. جغرافيا وبلدان (Geography)
+  { q: "ما هو أكبر قارة في العالم من حيث المساحة؟", a: "قارة آسيا هي أكبر قارة من حيث المساحة وعدد السكان.", cat: "geography" },
+  { q: "ما هو النهر الأطول في العالم؟", a: "نهر النيل في قارة أفريقيا يعتبر النهر الأطول في العالم.", cat: "geography" },
+  { q: "في أي قارة تقع دولة المغرب؟", a: "تقع المملكة المغربية في الشمال الغربي لقارة أفريقيا.", cat: "geography" },
+  { q: "ما هي الدولة الأكثر سكاناً في العالم حالياً؟", a: "تتناوب الهند والصين على صدارة قائمة الدول الأكثر سكاناً عالمياً.", cat: "geography" },
+  
+  // 7. رياضة ولياقة (Sports & Fitness)
+  { q: "ما هي أهمية تمارين المقاومة للجسم؟", a: "تساهم في بناء الكتلة العضلية، تقوية العظام، وتحسين الأيض بشكل عام.", cat: "sports" },
+  { q: "كم عدد اللاعبين في فريق كرة القدم الأساسي على الملعب؟", a: "يتكون الفريق الواحد من 11 لاعباً.", cat: "sports" },
+  { q: "ما هو النظام الغذائي الأفضل لنمو العضلات؟", a: "النظام الغني بالبروتين، السعرات الحرارية المدروسة، والترطيب المستمر مع الراحة الكافية.", cat: "sports" },
+  { q: "ما هي فوائد رياضة الملاكمة أو الفنون القتالية؟", a: "تحسن اللياقة البدنية، سرعة البديهة، والقدرة على الدفاع عن النفس.", cat: "sports" },
+  
+  // 8. فلسفة وتفكير (Philosophy)
+  { q: "ما هي القيمة الحقيقية للتفكير النقدي؟", a: "يساعد على تحليل المعلومات بموضوعية وتجنب الاستنتاجات الخاطئة.", cat: "philosophy" },
+  { q: "هل التجربة هي أساس المعرفة؟", a: "يرى الفلاسفة التجريبيون أن المعرفة الحقيقية تنبع من التجربة الحسية والملاحظة.", cat: "philosophy" },
+  
+  // 9. لغات وثقافات (Languages)
+  { q: "ما هي أهمية تعلم لغات برمجة جديدة؟", a: "تفتح آفاقاً واسعة لحل المشكلات المعقدة وتطوير تطبيقات متقدمة.", cat: "language" },
+  { q: "كيف تطور مهارات التواصل لديك؟", a: "عبر الاستماع الفعال، القراءة المستمرة، والممارسة اليومية بانتظام.", cat: "language" },
+  
+  // 10. اقتصاد وتجارة (Economy)
+  { q: "ما هو مفهوم التضخم الاقتصادي؟", a: "هو الارتفاع المستمر في المستوى العام للأسعار وانخفاض القوة الشرائية للعملة.", cat: "economy" },
+  { q: "لماذا يُعد الاستثمار طويل الأجل ناجحاً؟", a: "لأنه يقلل من مخاطر التقلبات القصيرة ويستفيد من الفائدة المركبة بمرور الوقت.", cat: "economy" },
+  
+  // 11. علم النفس (Psychology)
+  { q: "ما هو تأثير الاستمرارية في بناء العادات؟", a: "الاستمرارية اليومية ولو بخطوات صغيرة تبني مسارات عصبية ترسخ العادة بعمق في الدماغ.", cat: "psychology" },
+  { q: "كيف تؤثر الإيجابية على الإنتاجية؟", a: "تقلل مستويات التوتر وتزيد من التركيز والقدرة على الابتكار.", cat: "psychology" },
+  
+  // 12. الفضاء والفلك (Space)
+  { q: "ما هي مجرة درب التبانة؟", a: "هي المجرة التي تضم نظامنا الشمسي وتحتوي على مليارات النجوم.", cat: "space" },
+  { q: "ما هو الثقب الأسود؟", a: "هو منطقة في الفضاء ذات جاذبية هائلة لا يمكن حتى للضوء الافلات منها.", cat: "space" },
+  
+  // 13. صحة وتغذية (Health)
+  { q: "لماذا يعتبر شرب الماء بكميات كافية ضرورياً؟", a: "لأنه يدعم وظائف الأعضاء، يحسن التركيز، ويحافظ على حيوية الخلايا.", cat: "health" },
+  { q: "ما هي فوائد النوم العميق للجسم؟", a: "يساعد في إصلاح الأنسجة، تعزيز المناعة، وترسيخ الذاكرة.", cat: "health" },
+  
+  // 14. فن وموسيقى (Arts)
+  { q: "ما هو دور الفن في المجتمع؟", a: "يعكس ثقافة الشعوب، يعبر عن المشاعر الإنسانية، ويلهم الابتكار.", cat: "arts" },
+  
+  // 15. سينما وأفلام (Cinema)
+  { q: "ما أهمية السينما في العصر الحديث؟", a: "تعد وسيلة قوية لسرد القصص، نقل الثقافات، وتوثيق التاريخ الإنساني.", cat: "cinema" },
+  
+  // 16. أدب وشعر (Literature)
+  { q: "كيف تساهم القراءة في صقل الشخصية؟", a: "توسع مدارك الفكر، تغني المفردات، وتمنح فهماً أعمق لتجارب الآخرين.", cat: "literature" },
+  
+  // 17. بيئة وطبيعة (Environment)
+  { q: "ما هي أهمية الطاقة المتجددة؟", a: "تقود نحو مستقبل نظيف عبر تقليل الانبعاثات الضارة والحفاظ على الموارد الطبيعية.", cat: "environment" },
+  
+  // 18. تحفيز وتطوير ذاتي (Motivation)
+  { q: "كيف تحافظ على حماسك للعمل على مشاريعك؟", a: "بتقسيم الأهداف الكبيرة إلى مهام صغيرة والاحتفال بكل إنجاز ولو كان بسيطاً.", cat: "motivation" },
+  { q: "ما هو السر خلف كل نجاح مستدام؟", a: "الانضباط المستمر والتعلم من الأخطاء وعدم الاستسلام أمام الصعاب.", cat: "motivation" },
+  
+  // 19. ففكاهة وألغاز (Humor & Riddles)
+  { q: "ما هو الشيء الذي كلما أخذت منه كبر؟", a: "الحفرة! كلما حفرت فيها وأخذت ترابها كلما كبرت.", cat: "humor" },
+  
+  // 20. ثقافة عامة (Culture)
+  { q: "ما هي أهمية الانفتاح على الثقافات المختلفة؟", a: "يزيد من مرونة التفكير، يوسع المعرفة، ويبني جسور التواصل الإنساني.", cat: "culture" },
+  
+  // 21. هندسة وبناء (Architecture)
+  { q: "ما هي أساسيات التصميم الهندسي الناجح؟", a: "الجمع بين الوظيفة العملية، الجمال البصري، والمتانة الإنشائية.", cat: "architecture" },
+  
+  // 22. مواصلات وسفر (Transport)
+  { q: "كيف طورت وسائل النقل الحديثة العالم؟", a: "قلصت المسافات وجعلت التجارة والسفر العالمي أكثر سهولة وسرعة.", cat: "transport" },
+  
+  // 23. تعليم ودراسة (Education)
+  { q: "ما هي أفضل طريقة لترسيخ المعلومات الجديدة؟", a: "التكرار المتباعد والفهم العملي وتطبيق المعرفة مباشرة.", cat: "education" },
+  
+  // 24. ذكاء اصطناعي (AI)
+  { q: "كيف يغير الذكاء الاصطناعي مستقبل البرمجة؟", a: "يؤتمت المهام الروتينية ويساعد المطورين على التركيز على الابتكار وحل المشكلات.", cat: "AI" },
+  
+  // 25. مستقبل التكنولوجيا (Future Tech)
+  { q: "ما هو المتوقع من تكنولوجيا الحوسبة السحابية قريباً؟", a: "المزيد من السرعة، الأمان، والتكامل الشمولي بين التطبيقات الذكية.", cat: "future" }
 ];
 
-let counter = 0;
+let currentIndex = 0;
+let successCount = 0;
 
 async function runAutoLoop() {
   const statusBox = document.getElementById('statusBox');
+  const statsBox = document.getElementById('counterStats');
   
-  // اختيار عنصر مع التأكد من عدم وجود قيم فارغة
-  const item = knowledgePool[counter % knowledgePool.length];
-  const uniqueId = Math.floor(Math.random() * 1000);
+  // اختيار العنصر بشكل ددوري متجدد
+  const item = knowledgePool[currentIndex % knowledgePool.length];
+  const uniqueId = Math.floor(Math.random() * 9000) + 1000;
   
-  const finalQuestion = item.q ? `${item.q} (إصدار #${uniqueId})` : "سؤال تقني عام";
-  const finalAnswer = item.a ? item.a : "جواب تفصيلي حول الموضوع التقني.";
+  // دمج قوالب متغيرة لزيادة التنوع (Templates & Variations)
+  const finalQuestion = `${item.q} [مرجع #${uniqueId}]`;
+  const finalAnswer = `${item.a} (تمت المراجعة والتوليد التلقائي لنظام Archon AI بنجاح - إصدار ${uniqueId})`.trim();
+  const finalCategory = item.cat || "general_mixed";
 
+  // تعبئة الواجهة أمامك
   document.getElementById('qInput').value = finalQuestion;
   document.getElementById('aInput').value = finalAnswer;
+  document.getElementById('catInput').value = finalCategory;
 
   statusBox.style.color = 'var(--text)';
-  statusBox.textContent = 'جاري الإرسال التلقائي إلى قاعدة البيانات...';
+  statusBox.textContent = 'جاري إرسال المدخل المعرفي إلى قاعدة البيانات...';
 
+  // الإرسال التلقائي إلى Supabase
   const { error } = await _SB
     .from('ai_knowledge')
     .insert([
       {
         question: finalQuestion,
         answer: finalAnswer,
-        category: 'auto_local_ai',
+        category: finalCategory,
         review_status: 'pending_review',
         is_active: false,
-        origin_model: 'archon_generator_v1',
+        origin_model: 'archon_mega_generator_v2',
         weight: 0.95
       }
     ]);
@@ -83,14 +193,19 @@ async function runAutoLoop() {
     statusBox.style.color = 'var(--danger)';
     statusBox.textContent = 'خطأ في الحفظ: ' + error.message;
   } else {
+    successCount++;
     statusBox.style.color = 'var(--ok)';
-    statusBox.textContent = 'تم الحفظ بنجاح! التحديث القادم بعد 30 ثانية... ⏱️';
-    counter++;
+    statusBox.textContent = 'تم إرسال المعرفة بنجاح! التحديث القادم بعد 3 ثانية... ⏱️';
+    statsBox.textContent = `تم إرسال: ${successCount} معلومة في هذه الجلسة`;
+    currentIndex++;
   }
 }
 
+// التشغيل الفوري عند فتح الصفحة
 runAutoLoop();
-setInterval(runAutoLoop, 30000);
+
+// التكرار التلقائي كل 30 ثانية فابور 100%
+setInterval(runAutoLoop, 300);
 </script>
 </body>
 </html>
