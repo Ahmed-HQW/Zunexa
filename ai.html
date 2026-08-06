@@ -612,6 +612,37 @@ body[data-archon-mode="cli"] .msg.bot .bubble{
 @keyframes bop{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-5px);opacity:1}}
 
 /* ════════════════════════════════════════════════════════
+   CODE BLOCKS + LIVE SANDBOX — every fenced ```code``` block gets
+   a toolbar (language tag, copy, and — for html/svg/js — a live
+   preview rendered in a sandboxed iframe, expandable inline).
+════════════════════════════════════════════════════════ */
+.code-block{margin-top:8px;border-radius:9px;overflow:hidden;border:1px solid var(--b2)}
+.code-bar{
+  display:flex;align-items:center;gap:8px;
+  background:var(--card2);padding:6px 10px;
+  border-bottom:1px solid var(--b2);
+}
+.code-lang{font-size:10.5px;color:var(--gdim);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.code-bar-btns{margin-right:auto;display:flex;gap:6px}
+.code-btn{
+  padding:3px 10px;border-radius:6px;border:1px solid var(--b1);
+  background:transparent;color:var(--tg);font-size:10.5px;font-weight:600;
+  transition:all var(--tr);
+}
+.code-btn:hover{border-color:var(--gold);color:var(--gold)}
+.code-btn.on{background:var(--gold);color:#060606;border-color:var(--gold)}
+.bubble pre{margin-top:0;border-radius:0;border:none}
+.sandbox-wrap{display:none;border-top:1px solid var(--b2)}
+.sandbox-wrap.on{display:block}
+.sandbox-wrap iframe{
+  width:100%;height:280px;border:none;background:#fff;display:block;
+}
+.sandbox-resize{
+  display:flex;justify-content:center;padding:3px;background:var(--card2);
+  cursor:ns-resize;font-size:9px;color:var(--tm);
+}
+
+/* ════════════════════════════════════════════════════════
    THINKING PROCESS — live execution steps shown above the bot's
    reply while it's being generated (real pipeline stages, not
    decorative — fed by the same functions that do the actual work).
@@ -3094,13 +3125,114 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
   if (!skipSave) saveThreadMsg(role, text, src, score, imgUrl, audioUrl);
 }
 
+/* ── Live-previewable languages: rendered directly (HTML/SVG), or
+   wrapped in a minimal HTML shell that runs the snippet (JS). Any
+   other language still gets syntax-tagged <pre><code> plus a copy
+   button — just no preview button, since there's nothing sane to
+   render for e.g. Python or SQL client-side. ── */
+const ZX_PREVIEWABLE = { html: 'html', htm: 'html', svg: 'html', xml: 'html', js: 'js', javascript: 'js', jsx: 'js' };
+let _zxCodeBlockSeq = 0;
+
+function buildCodeBlockHtml(lang, code) {
+  const id = 'cb_' + (++_zxCodeBlockSeq) + '_' + Date.now().toString(36);
+  const langLabel = (lang || 'text').toLowerCase();
+  const previewKind = ZX_PREVIEWABLE[langLabel];
+  const escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  const previewBtn = previewKind
+    ? `<button class="code-btn" id="${id}_pbtn" onclick="toggleSandboxPreview('${id}')">▶ معاينة حية</button>`
+    : '';
+
+  return `
+    <div class="code-block">
+      <div class="code-bar">
+        <span class="code-lang">${langLabel}</span>
+        <div class="code-bar-btns">
+          ${previewBtn}
+          <button class="code-btn" onclick="copyCodeBlock('${id}')">⧉ نسخ</button>
+        </div>
+      </div>
+      <pre><code id="${id}" data-lang="${langLabel}" data-preview-kind="${previewKind || ''}">${escaped}</code></pre>
+      ${previewKind ? `<div class="sandbox-wrap" id="${id}_sandbox"></div>` : ''}
+    </div>`;
+}
+
 function fmt(text) {
-  return text
+  // Pull fenced ```lang\ncode\n``` blocks out first so their content
+  // never runs through the **/`/newline→<br> rules meant for prose —
+  // otherwise indentation and literal markdown chars inside code get
+  // mangled. Blocks are swapped back in as real HTML after.
+  const blocks = [];
+  let working = text.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+    blocks.push(buildCodeBlockHtml(lang.trim(), code.replace(/\n$/, '')));
+    return `\u0000CODEBLOCK${blocks.length - 1}\u0000`;
+  });
+
+  working = working
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
     .replace(/_(.*?)_/g,'<em>$1</em>')
     .replace(/`([^`]+)`/g,'<code>$1</code>')
     .replace(/\n/g,'<br>');
+
+  // Restore code blocks (their HTML is already safe — built from the
+  // escaped `code` var above, never re-escaped or br-substituted).
+  working = working.replace(/\u0000CODEBLOCK(\d+)\u0000/g, (_, i) => blocks[Number(i)]);
+  return working;
+}
+
+/* ── Sandbox actions — copy button + live preview toggle. Preview
+   renders in a sandboxed, srcdoc-based iframe (sandbox="allow-scripts"
+   only — no allow-same-origin, no network/storage access to the real
+   page), so untrusted AI-generated code can never touch Zunexa's own
+   session, Supabase client, or localStorage. ── */
+function copyCodeBlock(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(
+    () => toast('✓ تم نسخ الكود'),
+    () => toast('⚠ تعذّر النسخ')
+  );
+}
+
+function toggleSandboxPreview(id) {
+  const codeEl = document.getElementById(id);
+  const wrap = document.getElementById(id + '_sandbox');
+  const btn = document.getElementById(id + '_pbtn');
+  if (!codeEl || !wrap) return;
+
+  const isOn = wrap.classList.contains('on');
+  if (isOn) {
+    wrap.classList.remove('on');
+    wrap.innerHTML = '';
+    if (btn) { btn.classList.remove('on'); btn.textContent = '▶ معاينة حية'; }
+    return;
+  }
+
+  const kind = codeEl.dataset.previewKind;
+  const rawCode = codeEl.textContent;
+  let srcdoc;
+  if (kind === 'html') {
+    srcdoc = rawCode;
+  } else if (kind === 'js') {
+    srcdoc = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:sans-serif;padding:12px;color:#111}</style></head><body>
+      <script>
+        window.onerror = function(msg){ document.body.innerHTML += '<pre style="color:#c0392b;white-space:pre-wrap">⚠ ' + msg + '</pre>'; };
+        console.log = function(...args){ document.body.innerHTML += '<pre style="white-space:pre-wrap">' + args.map(String).join(' ') + '</pre>'; };
+      <\/script>
+      <script>${rawCode}<\/script>
+    </body></html>`;
+  } else {
+    return;
+  }
+
+  const iframe = document.createElement('iframe');
+  iframe.sandbox = 'allow-scripts';
+  iframe.srcdoc = srcdoc;
+  wrap.innerHTML = '';
+  wrap.appendChild(iframe);
+  wrap.classList.add('on');
+  if (btn) { btn.classList.add('on'); btn.textContent = '✕ إخفاء المعاينة'; }
 }
 
 function addTyping() {
