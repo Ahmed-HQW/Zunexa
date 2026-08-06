@@ -40,7 +40,6 @@ const _SB = supabase.createClient(
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
-// مواضيع مختلفة لضمان تنوع الأسئلة في كل دورة
 const topics = [
   "تقنيات الويب الحديثة وتطوير الواجهات",
   "أساسيات قواعد البيانات وعلاقتها بـ PostgreSQL",
@@ -60,39 +59,45 @@ async function runAutoLoop() {
   statusBox.textContent = 'جاري توليد محتوى جديد عبر الذكاء الاصطناعي...';
 
   try {
-    // 1. طلب توليد سؤال وجواب من Pollinations AI مجاناً
-    const prompt = `اعطني سؤالاً تقنياً وجوابه المفصل باللغة العربية حول موضوع: "${currentTopic}". اجعل النتيجة بصيغة JSON على الشكل التالي فقط دون أي كلام زائد: {"question": "...", "answer": "..."}`;
+    const prompt = `اكتب سؤالاً مفيداً وجوابه باللغة العربية حول: "${currentTopic}". اجعل الإجابة تبدأ مباشرة بكلمة "السؤال:" متبوعة بالسؤال، ثم سطر جديد تبدأ فيه بكلمة "الجواب:" متبوعة بالجواب الشافي.`;
     
-    const aiRes = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
-    const aiText = await aiRes.text();
+    const aiRes = `https://text.pollinations.ai/${encodeURIComponent(prompt)}`;
+    const response = await fetch(aiRes);
+    const aiText = await response.text();
 
-    // استخراج JSON من رد الذكاء الاصطناعي
-    let parsedData;
-    try {
-      // محاولة البحث عن كود الـ JSON داخل الرد
-      const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-      parsedData = JSON.parse(jsonMatch ? jsonMatch[0] : aiText);
-    } catch (parseErr) {
-      // كحل بديل إذا لم يرجع JSON مضبوطاً، نأخذ النص كاملاً كجواب
-      parsedData = {
-        question: `سؤال تلقائي حول: ${currentTopic}`,
-        answer: aiText
-      };
+    let question = "";
+    let answer = "";
+
+    // استخراج السؤال والجواب بطريقة ذكية وآمنة
+    if (aiText.includes("السؤال:") && aiText.includes("الجواب:")) {
+      const parts = aiText.split("الجواب:");
+      question = parts[0].replace("السؤال:", "").trim();
+      answer = parts[1].trim();
+    } else {
+      // حل احتياطي إذا جاء النص حراً
+      const lines = aiText.split('\n').filter(l => l.trim().length > 0);
+      question = lines[0] || `سؤال حول ${currentTopic}`;
+      answer = lines.slice(1).join('\n') || aiText;
     }
 
-    // عرض المحتوى في الواجهة أمامك
-    document.getElementById('qInput').value = parsedData.question;
-    document.getElementById('aInput').value = parsedData.answer;
+    // التأكد من أن السؤال ليس فارغاً لتجنب أي خطأ
+    if (!question) {
+      question = `معلومة تقنية حول ${currentTopic}`;
+    }
+
+    // عرض المحتوى في الواجهة
+    document.getElementById('qInput').value = question;
+    document.getElementById('aInput').value = answer;
 
     statusBox.textContent = 'جاري الإرسال إلى قاعدة البيانات...';
 
-    // 2. الإرسال التلقائي إلى Supabase بوضعية pending_review
+    // الإرسال إلى Supabase بوضعية pending_review
     const { error } = await _SB
       .from('ai_knowledge')
       .insert([
         {
-          question: parsedData.question,
-          answer: parsedData.answer,
+          question: question,
+          answer: answer,
           category: 'pollinations_ai',
           review_status: 'pending_review',
           is_active: false,
@@ -115,11 +120,8 @@ async function runAutoLoop() {
   }
 }
 
-// تشغيل الدالة فور فتح الصفحة
 runAutoLoop();
-
-// تكرار العملية تلقائياً كل 30 ثانية
-setInterval(runAutoLoop, 300000);
+setInterval(runAutoLoop, 30000);
 </script>
 </body>
 </html>
