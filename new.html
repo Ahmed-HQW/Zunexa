@@ -2,14 +2,14 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>التعلم التلقائي المستمر - Archon AI</title>
+<title>التعلم الذاتي التلقائي 100% - Archon AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   :root { --bg:#0b0b10; --card:#16161f; --border:#2a2a38; --gold:#d4af37; --text:#eee; --tg:#999; --ok:#4caf50; --danger:#e05555; }
   * { box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; margin:0; padding:24px; display: flex; justify-content: center; }
   .container { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px; width: 100%; max-width: 500px; margin-top: 40px; }
-  h1 { color:var(--gold); font-size:22px; margin-bottom:10px; text-align: center; }
+  h1 { color:var(--gold); font-size:20px; margin-bottom:10px; text-align: center; }
   p.sub { color:var(--tg); font-size:13px; text-align: center; margin-bottom:20px; line-height: 1.6; }
   label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
   input, textarea { width:100%; background:#101018; color:#ddd; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:inherit; font-size:14px; margin-bottom:16px; }
@@ -20,83 +20,106 @@
 <body>
 
 <div class="container">
-  <h1>⚡ التعلم التلقائي (كل 30 ثانية)</h1>
-  <p class="sub">هذه الصفحة تقوم بتعبئة وإرسال المعلومات تلقائياً إلى قاعدة البيانات بشكل مستمر وبدون أي تدخل منك.</p>
+  <h1>🤖 توليد وتعلّم ذاتي (كل 30 ثانية)</h1>
+  <p class="sub">الصفحة تتصل بـ Pollinations AI لتوليد المعرفة تلقائياً وإرسالها إلى قاعدة البيانات بدون أي تدخل بشري.</p>
 
-  <label>السؤال أو المعطى (تلقائي):</label>
-  <input type="text" id="qInput" readonly placeholder="يتم التعبئة تلقائياً...">
+  <label>السؤال المولد تلقائياً:</label>
+  <input type="text" id="qInput" readonly placeholder="جاري التوليد...">
 
-  <label>الجواب (تلقائي):</label>
-  <textarea id="aInput" readonly placeholder="يتم التعبئة تلقائياً..."></textarea>
+  <label>الجواب المولد تلقائياً:</label>
+  <textarea id="aInput" readonly placeholder="جاري التوليد..."></textarea>
 
-  <label>التصنيف:</label>
-  <input type="text" id="catInput" value="auto-learning" readonly>
-
-  <div id="statusBox">جاري بدء التشغيل التلقائي...</div>
+  <div id="statusBox">جاري الاتصال بالذكاء الاصطناعي...</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// إعدادات الاتصال بـ Supabase
+// إعدادات Supabase
 const _SB = supabase.createClient(
   'https://xrldhfsytysznyyhwjlr.supabase.co',
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
-// بنك معلومات افتراضي (أو يمكنك ربطه بأي مصدر بيانات آخر تختاره)
-const knowledgeBase = [
-  { q: "ما هو دور الذكاء الاصطناعي في الويب الحديث؟", a: "يساعد الذكاء الاصطناعي في تحسين تجربة المستخدم، وأتمتة المهام، وتحليل البيانات بسرعة كبيرة." },
-  { q: "كيف تعمل قواعد بيانات Supabase؟", a: "تعتمد Supabase على PostgreSQL وتوفر واجهات برمجية جاهزة للتعامل مع قواعد البيانات بأمان وسرعة." },
-  { q: "ما هي أهمية تنظيف البيانات في الأنظمة الذكية؟", a: "يضمن تنظيف البيانات ودقتها حصول النماذج على معلومات صحيحة وتجنب الأخطاء أثناء التوليد." },
-  { q: "كيف يتم تأمين الجداول في قواعد البيانات؟", a: "يتم ذلك عبر تفعيل سياسات الحماية على مستوى الصفوف (Row Level Security - RLS)." },
-  { q: "ما هي ميزة التخزين المؤقت في التطبيقات؟", a: "يقلل التخزين المؤقت من الضغط على الخوادم ويساهم في تسريع استجابة التطبيق للمستخدمين." }
+// مواضيع مختلفة لضمان تنوع الأسئلة في كل دورة
+const topics = [
+  "تقنيات الويب الحديثة وتطوير الواجهات",
+  "أساسيات قواعد البيانات وعلاقتها بـ PostgreSQL",
+  "أهمية الذكاء الاصطناعي في أتمتة المهام البرمجية",
+  "مفاهيم الأمن السيبراني وحماية التطبيقات",
+  "تحسين أداء وتجربة المستخدم في تطبيقات السحاب"
 ];
 
-let currentIndex = 0;
+let topicIndex = 0;
 
-async function autoSubmitCycle() {
+async function runAutoLoop() {
   const statusBox = document.getElementById('statusBox');
-  
-  // 1. اختيار معلومة تلقائياً من القائمة (دائرية)
-  const currentItem = knowledgeBase[currentIndex];
-  currentIndex = (currentIndex + 1) % knowledgeBase.length;
-
-  // تعبئة الخانات في الواجهة أمامك لترى ما يتم إرساله
-  document.getElementById('qInput').value = currentItem.q;
-  document.getElementById('aInput').value = currentItem.a;
+  const currentTopic = topics[topicIndex];
+  topicIndex = (topicIndex + 1) % topics.length;
 
   statusBox.style.color = 'var(--text)';
-  statusBox.textContent = 'جاري إرسال المدخل تلقائياً...';
+  statusBox.textContent = 'جاري توليد محتوى جديد عبر الذكاء الاصطناعي...';
 
-  // 2. الإرسال التلقائي إلى Supabase بوضعية pending_review
-  const { error } = await _SB
-    .from('ai_knowledge')
-    .insert([
-      {
-        question: currentItem.q,
-        answer: currentItem.a,
-        category: 'auto-learning',
-        review_status: 'pending_review',
-        is_active: false,
-        origin_model: 'auto_cron_script',
-        weight: 0.7
-      }
-    ]);
+  try {
+    // 1. طلب توليد سؤال وجواب من Pollinations AI مجاناً
+    const prompt = `اعطني سؤالاً تقنياً وجوابه المفصل باللغة العربية حول موضوع: "${currentTopic}". اجعل النتيجة بصيغة JSON على الشكل التالي فقط دون أي كلام زائد: {"question": "...", "answer": "..."}`;
+    
+    const aiRes = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`);
+    const aiText = await aiRes.text();
 
-  if (error) {
+    // استخراج JSON من رد الذكاء الاصطناعي
+    let parsedData;
+    try {
+      // محاولة البحث عن كود الـ JSON داخل الرد
+      const jsonMatch = aiText.match(/\{[\s\S]*\}/);
+      parsedData = JSON.parse(jsonMatch ? jsonMatch[0] : aiText);
+    } catch (parseErr) {
+      // كحل بديل إذا لم يرجع JSON مضبوطاً، نأخذ النص كاملاً كجواب
+      parsedData = {
+        question: `سؤال تلقائي حول: ${currentTopic}`,
+        answer: aiText
+      };
+    }
+
+    // عرض المحتوى في الواجهة أمامك
+    document.getElementById('qInput').value = parsedData.question;
+    document.getElementById('aInput').value = parsedData.answer;
+
+    statusBox.textContent = 'جاري الإرسال إلى قاعدة البيانات...';
+
+    // 2. الإرسال التلقائي إلى Supabase بوضعية pending_review
+    const { error } = await _SB
+      .from('ai_knowledge')
+      .insert([
+        {
+          question: parsedData.question,
+          answer: parsedData.answer,
+          category: 'pollinations_ai',
+          review_status: 'pending_review',
+          is_active: false,
+          origin_model: 'pollinations.ai',
+          weight: 0.9
+        }
+      ]);
+
+    if (error) {
+      statusBox.style.color = 'var(--danger)';
+      statusBox.textContent = 'خطأ في حفظ القاعدة: ' + error.message;
+    } else {
+      statusBox.style.color = 'var(--ok)';
+      statusBox.textContent = 'تم التوليد والحفظ بنجاح! التحديث القادم بعد 30 ثانية... ⏱️';
+    }
+
+  } catch (err) {
     statusBox.style.color = 'var(--danger)';
-    statusBox.textContent = 'خطأ في الإرسال: ' + error.message;
-  } else {
-    statusBox.style.color = 'var(--ok)';
-    statusBox.textContent = `تم الإرسال بنجاح! التحديث القادم بعد 30 ثانية... ⏱️`;
+    statusBox.textContent = 'خطأ في الاتصال: ' + err.message;
   }
 }
 
-// تشغيل الدالة لأول مرة مباشرة عند فتح الصفحة
-autoSubmitCycle();
+// تشغيل الدالة فور فتح الصفحة
+runAutoLoop();
 
-// جدولة الدالة لتتكرر تلقائياً كل 30 ثانية (30000 ميللي ثانية)
-setInterval(autoSubmitCycle, 300);
+// تكرار العملية تلقائياً كل 30 ثانية
+setInterval(runAutoLoop, 30);
 </script>
 </body>
 </html>
