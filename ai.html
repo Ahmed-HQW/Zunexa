@@ -612,6 +612,40 @@ body[data-archon-mode="cli"] .msg.bot .bubble{
 @keyframes bop{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-5px);opacity:1}}
 
 /* ════════════════════════════════════════════════════════
+   PERSONAS — custom system-prompt profiles the user can create,
+   switch between, and delete. Layered on top of the base Archon
+   system prompt, same pattern as ARCHON MODES (chat/cowork/code/cli)
+   — never replaces the language/safety rules, only adds persona
+   flavor on top.
+════════════════════════════════════════════════════════ */
+.persona-list{display:flex;flex-direction:column;gap:8px}
+.persona-card{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;
+  border-radius:10px;border:1px solid var(--b1);background:var(--card2);
+  cursor:pointer;transition:all var(--tr);
+}
+.persona-card:hover{border-color:var(--b2)}
+.persona-card.on{border-color:var(--gold);background:rgba(212,175,55,.06)}
+.persona-icon{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  display:grid;place-items:center;font-size:16px;
+  background:var(--card);border:1px solid var(--b1);
+}
+.persona-card.on .persona-icon{border-color:var(--gold)}
+.persona-info{flex:1;min-width:0}
+.persona-name{font-size:12.5px;font-weight:700;color:var(--tw)}
+.persona-desc{font-size:10.5px;color:var(--tg);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.persona-badge{font-size:9px;color:var(--gold);letter-spacing:.05em}
+.persona-actions{display:flex;gap:4px;flex-shrink:0}
+.persona-act-btn{
+  width:26px;height:26px;border-radius:6px;border:1px solid var(--b1);
+  background:transparent;color:var(--tg);font-size:11px;
+}
+.persona-act-btn:hover{border-color:var(--gold);color:var(--gold)}
+.persona-act-btn.del:hover{border-color:var(--red);color:var(--red)}
+.persona-editor{margin-top:14px;padding-top:14px;border-top:1px solid var(--b1)}
+
+/* ════════════════════════════════════════════════════════
    CODE BLOCKS + LIVE SANDBOX — every fenced ```code``` block gets
    a toolbar (language tag, copy, and — for html/svg/js — a live
    preview rendered in a sandboxed iframe, expandable inline).
@@ -1198,6 +1232,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 
     <div class="set-tabs">
       <div class="set-tab on" onclick="setSTab('profile')" id="tab-profile">الملف الشخصي</div>
+      <div class="set-tab" onclick="setSTab('personas')" id="tab-personas">الشخصيات</div>
       <div class="set-tab" onclick="setSTab('prefs')" id="tab-prefs">التفضيلات</div>
       <div class="set-tab" onclick="setSTab('voice')" id="tab-voice">الصوت</div>
       <div class="set-tab" onclick="setSTab('notif')" id="tab-notif">الإشعارات</div>
@@ -1217,6 +1252,31 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <label class="field-label">تعليمات لـ Archon (كيبقاها فبالو فكل محادثة)</label>
       <textarea class="field-input" id="setInstructions" placeholder="مثلاً: نخدم بلغة Python وDarija، جاوبني بإيجاز، ديما قترح حلول عملية..."></textarea>
       <button class="modal-save" onclick="saveProfileSettings()">✓ حفظ الملف الشخصي</button>
+    </div>
+
+    <!-- PERSONAS -->
+    <div class="set-pane" id="pane-personas">
+      <p style="font-size:11px;color:var(--tg);line-height:1.7;margin-bottom:12px">
+        اختار أو أنشئ شخصية لـ Archon — كل شخصية عندها أسلوبها وتعليماتها الخاصة، وتبقى مفعّلة فكل المحادثات الجديدة حتى تبدّلها.
+      </p>
+      <div id="personaList" class="persona-list"></div>
+
+      <div class="persona-editor" id="personaEditor" style="display:none">
+        <label class="field-label">اسم الشخصية</label>
+        <input class="field-input" id="pEditName" placeholder="مثلاً: مساعد SEO">
+        <label class="field-label">وصف قصير</label>
+        <input class="field-input" id="pEditDesc" placeholder="مثلاً: متخصص فتحسين محركات البحث">
+        <label class="field-label">أيقونة (emoji واحد)</label>
+        <input class="field-input" id="pEditIcon" placeholder="🧠" maxlength="4" style="max-width:80px">
+        <label class="field-label">تعليمات النظام (System Prompt)</label>
+        <textarea class="field-input" id="pEditPrompt" style="min-height:110px" placeholder="مثلاً: أنت خبير SEO، جاوب دائماً بخطوات عملية مرقمة، ركّز على الكلمات المفتاحية والنية من البحث..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="modal-save" style="margin-top:0" onclick="savePersonaFromEditor()">✓ حفظ الشخصية</button>
+          <button class="modal-save" style="margin-top:0;background:transparent;border:1px solid var(--b1);color:var(--tg)" onclick="closePersonaEditor()">إلغاء</button>
+        </div>
+      </div>
+
+      <button class="modal-save" style="margin-top:14px;background:transparent;border:1px solid var(--bg);color:var(--gold)" onclick="openPersonaEditor(null)">＋ شخصية جديدة</button>
     </div>
 
     <!-- PREFERENCES -->
@@ -1603,6 +1663,7 @@ async function init() {
   document.body.setAttribute('data-archon-mode', zxArchonMode);
   if (loadThread(currentChatId).length) replayThread(currentChatId);
   renderAvatarSettingsPreview();
+  renderPersonaList();
   document.getElementById('aiInput').focus();
 }
 
@@ -2359,17 +2420,139 @@ function archonModeSystemPrompt(userText) {
   if (detected) setArchonMode(detected);
   const uiLangHint = (typeof localStorage !== 'undefined' && localStorage.getItem('zx_page_lang')) || null;
   const base = archonSystemPrompt(uiLangHint);
+  let withMode;
   switch (zxArchonMode) {
     case 'code':
-      return base + '\n\nأنت الآن في وضع Code Archon: ركّز فقط على الكود. جاوب بكتلة كود واحدة منسّقة (code block) مع تحديد لغة البرمجة، وشرح قصير جداً بعدها (سطر أو سطرين كحد أقصى). لا تشرح بإسهاب.';
+      withMode = base + '\n\nأنت الآن في وضع Code Archon: ركّز فقط على الكود. جاوب بكتلة كود واحدة منسّقة (code block) مع تحديد لغة البرمجة، وشرح قصير جداً بعدها (سطر أو سطرين كحد أقصى). لا تشرح بإسهاب.';
+      break;
     case 'cli':
-      return base + '\n\nأنت الآن في وضع CLI Archon: جاوب فقط بأوامر طرفية (terminal commands) داخل كتلة كود bash/shell، بدون أي نص حواري قبلها أو بعدها إلا سطر تعليق # عند الحاجة لتوضيح أمر.';
+      withMode = base + '\n\nأنت الآن في وضع CLI Archon: جاوب فقط بأوامر طرفية (terminal commands) داخل كتلة كود bash/shell، بدون أي نص حواري قبلها أو بعدها إلا سطر تعليق # عند الحاجة لتوضيح أمر.';
+      break;
     case 'cowork':
-      return base + '\n\nأنت الآن في وضع Cowork Archon: تصرف كشريك عمل تفاعلي — اطرح سؤال توضيحي واحد إذا كانت المهمة غامضة، ثم قدّم خطوات عملية مرقمة قابلة للتنفيذ مباشرة.';
+      withMode = base + '\n\nأنت الآن في وضع Cowork Archon: تصرف كشريك عمل تفاعلي — اطرح سؤال توضيحي واحد إذا كانت المهمة غامضة، ثم قدّم خطوات عملية مرقمة قابلة للتنفيذ مباشرة.';
+      break;
     default:
-      return base;
+      withMode = base;
   }
+  // Layer the active custom persona (if any) on top — same pattern as
+  // modes above: additive, never replaces the base safety/language
+  // rules baked into archonSystemPrompt().
+  const persona = getActivePersona();
+  if (persona && persona.prompt) {
+    withMode += `\n\nتعليمات الشخصية النشطة "${persona.name}": ${persona.prompt}`;
+  }
+  return withMode;
 }
+
+/* ════════════════════════════════════════════════════════════
+   CUSTOM PERSONAS — user-created system-prompt profiles, stored
+   locally (zx_personas) with one active at a time (zx_active_persona).
+   CRUD lives entirely client-side; layered into the prompt via
+   archonModeSystemPrompt() above.
+════════════════════════════════════════════════════════════ */
+const ZX_BUILTIN_PERSONAS = [
+  { id: '_default', builtin: true, icon: '✦', name: 'Archon (افتراضي)', desc: 'المساعد العام لـ Zunexa', prompt: '' }
+];
+
+function loadPersonas() {
+  try {
+    const custom = JSON.parse(localStorage.getItem('zx_personas') || '[]');
+    return [...ZX_BUILTIN_PERSONAS, ...custom];
+  } catch (e) { return ZX_BUILTIN_PERSONAS; }
+}
+function saveCustomPersonas(list) {
+  const custom = list.filter(p => !p.builtin);
+  localStorage.setItem('zx_personas', JSON.stringify(custom));
+}
+function getActivePersonaId() { return localStorage.getItem('zx_active_persona') || '_default'; }
+function getActivePersona() {
+  const id = getActivePersonaId();
+  return loadPersonas().find(p => p.id === id) || null;
+}
+
+function renderPersonaList() {
+  const wrap = document.getElementById('personaList');
+  if (!wrap) return;
+  const activeId = getActivePersonaId();
+  const list = loadPersonas();
+  wrap.innerHTML = list.map(p => `
+    <div class="persona-card ${p.id === activeId ? 'on' : ''}" onclick="activatePersona('${p.id}')">
+      <div class="persona-icon">${p.icon || '🤖'}</div>
+      <div class="persona-info">
+        <div class="persona-name">${esc(p.name)}${p.id === activeId ? ' <span class="persona-badge">· نشطة</span>' : ''}</div>
+        <div class="persona-desc">${esc(p.desc || 'بدون وصف')}</div>
+      </div>
+      <div class="persona-actions" onclick="event.stopPropagation()">
+        ${!p.builtin ? `<button class="persona-act-btn" onclick="openPersonaEditor('${p.id}')" title="تعديل">✎</button>
+        <button class="persona-act-btn del" onclick="deletePersona('${p.id}')" title="حذف">🗑</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function activatePersona(id) {
+  localStorage.setItem('zx_active_persona', id);
+  renderPersonaList();
+  const p = loadPersonas().find(x => x.id === id);
+  toast('✓ الشخصية النشطة: ' + (p ? p.name : 'Archon'));
+}
+
+let _personaEditingId = null;
+function openPersonaEditor(id) {
+  _personaEditingId = id;
+  const editor = document.getElementById('personaEditor');
+  editor.style.display = 'block';
+  if (id) {
+    const p = loadPersonas().find(x => x.id === id);
+    document.getElementById('pEditName').value = p ? p.name : '';
+    document.getElementById('pEditDesc').value = p ? p.desc : '';
+    document.getElementById('pEditIcon').value = p ? p.icon : '';
+    document.getElementById('pEditPrompt').value = p ? p.prompt : '';
+  } else {
+    document.getElementById('pEditName').value = '';
+    document.getElementById('pEditDesc').value = '';
+    document.getElementById('pEditIcon').value = '';
+    document.getElementById('pEditPrompt').value = '';
+  }
+  editor.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function closePersonaEditor() {
+  _personaEditingId = null;
+  document.getElementById('personaEditor').style.display = 'none';
+}
+
+function savePersonaFromEditor() {
+  const name = document.getElementById('pEditName').value.trim();
+  const desc = document.getElementById('pEditDesc').value.trim();
+  const icon = document.getElementById('pEditIcon').value.trim();
+  const prompt = document.getElementById('pEditPrompt').value.trim();
+  if (!name) { toast('⚠ لازم اسم للشخصية'); return; }
+  if (!prompt) { toast('⚠ لازم تعليمات نظام للشخصية'); return; }
+
+  const list = loadPersonas();
+  if (_personaEditingId) {
+    const idx = list.findIndex(p => p.id === _personaEditingId);
+    if (idx !== -1) list[idx] = { ...list[idx], name, desc, icon, prompt };
+  } else {
+    list.push({ id: 'p_' + Date.now().toString(36), builtin: false, name, desc, icon, prompt });
+  }
+  saveCustomPersonas(list);
+  renderPersonaList();
+  closePersonaEditor();
+  toast('✓ تم حفظ الشخصية');
+}
+
+function deletePersona(id) {
+  let list = loadPersonas().filter(p => p.id !== id);
+  saveCustomPersonas(list);
+  if (getActivePersonaId() === id) {
+    localStorage.setItem('zx_active_persona', '_default');
+  }
+  renderPersonaList();
+  toast('🗑 تم حذف الشخصية');
+}
+
+
 
 /* ════════════════════════════════════════════════════════════
    RAG LAYER — Semantic Search via Supabase pgvector
@@ -3735,6 +3918,7 @@ function setSTab(name) {
   document.querySelectorAll('.set-pane').forEach(p => p.classList.remove('on'));
   document.getElementById('tab-' + name).classList.add('on');
   document.getElementById('pane-' + name).classList.add('on');
+  if (name === 'personas') renderPersonaList();
 }
 
 async function saveProfileSettings() {
