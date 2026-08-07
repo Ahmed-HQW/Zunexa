@@ -371,6 +371,20 @@ img{max-width:100%;display:block}
   -webkit-backdrop-filter:blur(18px);
   border-bottom:1px solid var(--b1);gap:10px;
   position:relative;
+  transform:translateZ(0);-webkit-transform:translateZ(0);
+  isolation:isolate;will-change:backdrop-filter;
+}
+/* Blur قوي (18px) غالي بزاف على GPU ديال الهواتف — كايدير lag/scroll jank،
+   خصوصاً فوق canvas ديال particles اللي كيتحرّك بلا وقفة (initParticles).
+   نخفّضو القيمة فـ mobile بلا ما نمسحوه، باش يبقى الأثر البصري موجود
+   بلا ما يخنق الـ GPU. */
+@media(max-width:768px){
+  .topbar{backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+}
+/* fallback نظيف للمتصفحات اللي ما كيدعموش backdrop-filter أصلاً
+   (بعض متصفحات Android القديمة) — بلا شفافية نصف-شفافة بلا بلور. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .topbar{background:rgba(6,6,6,.98)}
 }
 .topbar::after{
   content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
@@ -749,9 +763,10 @@ body[data-archon-mode="cli"] .msg.bot .bubble{
 ════════════════════════════════════════════════════════ */
 #limitOverlay{
   display:none;position:fixed;inset:0;z-index:99998;
-  background:rgba(6,6,6,.97);backdrop-filter:blur(10px);
+  background:rgba(6,6,6,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   align-items:center;justify-content:center;flex-direction:column;gap:14px;
   text-align:center;padding:24px;
+  transform:translateZ(0);-webkit-transform:translateZ(0);isolation:isolate;
 }
 #limitOverlay.on{display:flex}
 .lim-icon{font-size:44px}
@@ -774,9 +789,10 @@ body[data-archon-mode="cli"] .msg.bot .bubble{
 ════════════════════════════════════════════════════════ */
 #offlineOverlay{
   display:none;position:fixed;inset:0;z-index:99999;
-  background:rgba(6,6,6,.97);backdrop-filter:blur(10px);
+  background:rgba(6,6,6,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   align-items:center;justify-content:center;flex-direction:column;gap:16px;
   text-align:center;padding:24px;
+  transform:translateZ(0);-webkit-transform:translateZ(0);isolation:isolate;
 }
 #offlineOverlay.on{display:flex}
 .off-icon{font-size:48px;opacity:.8;filter:grayscale(.3)}
@@ -820,6 +836,18 @@ body[data-archon-mode="cli"] .msg.bot .bubble{
   background:rgba(6,6,6,.9);backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);
   border-top:1px solid var(--b1);
+  transform:translateZ(0);-webkit-transform:translateZ(0);
+  isolation:isolate;will-change:backdrop-filter;
+}
+/* هادي أكثر منطقة كتعاني: كل ضغطة فالكيبورد (resize(this) فالـ
+   textarea) كتعاود ترسم البلور تحتها لو ما كانتش معزولة فطبقة GPU
+   خاصة بها (transform/isolation فوق). فـ mobile كنخفّضو القيمة
+   زيادة على ذلك باش الكيبورد الظاهر ما يخليش jank محسوس. */
+@media(max-width:768px){
+  .input-zone{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .input-zone{background:rgba(6,6,6,.98)}
 }
 .input-shell{
   display:flex;align-items:flex-end;gap:7px;
@@ -889,6 +917,10 @@ body[data-archon-mode="cli"] .msg.bot .bubble{
   background:rgba(0,0,0,.82);backdrop-filter:blur(6px);
   -webkit-backdrop-filter:blur(6px);
   align-items:center;justify-content:center;padding:16px;
+  transform:translateZ(0);-webkit-transform:translateZ(0);isolation:isolate;
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .modal-wrap{background:rgba(0,0,0,.94)}
 }
 .modal-wrap.on{display:flex}
 .modal-box{
@@ -955,6 +987,27 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 ════════════════════════════════════════════════════════ */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .zx-reduce-motion *{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}
+/* "تقليل الحركة" كتقفل البلور نهائياً — أثقل حاجة على الـ GPU فالهواتف
+   الضعيفة، وكتبدّلو بخلفية صمّاء باش يبقى النص مقروء بلا أي أثر على
+   الأداء. */
+.zx-reduce-motion .topbar,
+.zx-reduce-motion .input-zone,
+.zx-reduce-motion .modal-wrap,
+.zx-reduce-motion #limitOverlay,
+.zx-reduce-motion #offlineOverlay{
+  backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  background:rgba(6,6,6,.98)!important;
+}
+.zx-reduce-motion #pCanvas{display:none} /* particles animation — كتخدم على الدوام فالخلفية */
+
+/* احترام تلقائي لإعداد النظام "تقليل الحركة" (accessibility) حتى قبل
+   ما المستخدم يدخل للإعدادات ويفعّلها يدوياً — نفس التخفيف. */
+@media (prefers-reduced-motion: reduce){
+  .topbar,.input-zone,.modal-wrap,#limitOverlay,#offlineOverlay{
+    backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+    background:rgba(6,6,6,.98)!important;
+  }
+}
 
 /* ════════════════════════════════════════════════════════
    RESPONSIVE — MOBILE FIRST
