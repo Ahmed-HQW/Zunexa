@@ -1789,6 +1789,181 @@ td .preview-text { max-width: 200px; white-space: nowrap; overflow: hidden; text
   .page { padding: 32px 40px 80px; }
 }
 
+	/* ─── ZUNEXA SPLASH SCREEN (WELCOME PAGE) ────────────────────── */
+.zx-splash-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-void);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s;
+    overflow: hidden;
+}
+
+.zx-splash-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cg fill='none' stroke='%23D4AF3712' stroke-width='.8'%3E%3Cpolygon points='30,2 57,17 57,43 30,58 3,43 3,17'/%3E%3Cpolygon points='30,10 50,21 50,39 30,50 10,39 10,21'/%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.4;
+    animation: zxSpin 120s linear infinite;
+}
+
+.zx-splash-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.zx-splash-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    animation: zxFadeUp 0.6s ease both;
+}
+
+.zx-splash-logo .logo-icon {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    color: #000;
+    box-shadow: var(--shadow-gold);
+}
+
+.zx-splash-logo .logo-text {
+    font-family: 'Cinzel', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: .06em;
+}
+
+.zx-splash-title {
+    font-family: 'Amiri', serif;
+    font-size: 36px;
+    color: var(--text-white);
+    margin-bottom: 8px;
+    animation: zxFadeUp 0.6s ease 0.1s both;
+}
+
+.zx-splash-title span {
+    font-family: 'Cinzel', serif;
+    color: var(--gold);
+}
+
+.zx-splash-sub {
+    font-size: 16px;
+    color: var(--text-grey);
+    margin-bottom: 44px;
+    animation: zxFadeUp 0.6s ease 0.2s both;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.zx-splash-cards {
+    display: flex;
+    gap: 24px;
+    animation: zxFadeUp 0.6s ease 0.3s both;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.zx-splash-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 40px;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all var(--trans);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.zx-splash-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top center, rgba(212,175,55,0.1), transparent 60%);
+    opacity: 0;
+    transition: opacity var(--trans);
+}
+
+.zx-splash-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(212,175,55,0.15);
+}
+
+.zx-splash-card:hover::before {
+    opacity: 1;
+}
+
+.zx-splash-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-gold);
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    color: var(--gold);
+    transition: all var(--trans);
+}
+
+.zx-splash-card:hover .zx-splash-icon {
+    transform: scale(1.1) rotate(5deg);
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    color: #000;
+    border-color: transparent;
+    box-shadow: 0 4px 20px rgba(212,175,55,0.4);
+}
+
+.zx-splash-card h3 {
+    font-size: 20px;
+    color: var(--text-white);
+    font-weight: 600;
+    margin: 0;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.zx-splash-card p {
+    font-size: 14px;
+    color: var(--text-grey);
+    margin: 0;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.zx-splash-card.gold-edition {
+    border-color: rgba(212,175,55,0.3);
+    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-deep) 100%);
+}
+
+.zx-splash-card.gold-edition:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 50px rgba(212,175,55,0.25);
+}
+
+@media(max-width: 650px) {
+    .zx-splash-cards { flex-direction: column; gap: 16px; }
+    .zx-splash-card { width: 100%; max-width: 320px; padding: 24px 30px; }
+}
 /* ─── CSS END ─── */
  </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -1846,6 +2021,43 @@ const ZX_RATE = (function(){
 </script>
 </head>
 <body>
+	<!-- ==========================================
+     ZUNEXA ENTRY SPLASH SCREEN
+=========================================== -->
+<div id="zx-splash" class="zx-splash-overlay">
+    <div class="zx-splash-bg"></div>
+    <div class="zx-splash-content">
+        
+        <div class="zx-splash-logo">
+            <div class="logo-icon">Z</div>
+            <div class="logo-text">ZUNEXA</div>
+        </div>
+        
+        <h1 class="zx-splash-title">مرحباً بك في منصة <span>ZUNEXA</span></h1>
+        <p class="zx-splash-sub">يرجى تحديد واجهتك للمتابعة</p>
+        
+        <div class="zx-splash-cards">
+            <!-- الزر الأول: المتابعة إلى لوحة التحكم الحالية -->
+            <div class="zx-splash-card" onclick="closeZunexaSplash()">
+                <div class="zx-splash-icon">
+                    <i data-lucide="layout-dashboard"></i>
+                </div>
+                <h3>لوحة التحكم</h3>
+                <p>المتابعة إلى Dashboard</p>
+            </div>
+
+            <!-- الزر الثاني: المتابعة إلى رابط الذكاء الاصطناعي -->
+            <a href="https://zunexa.vercel.app/ai" class="zx-splash-card gold-edition">
+                <div class="zx-splash-icon">
+                    <i data-lucide="cpu"></i>
+                </div>
+                <h3>الذكاء الاصطناعي</h3>
+                <p>المتابعة إلى Zunexa AI</p>
+            </a>
+        </div>
+        
+    </div>
+</div>
 	<div id="archon-changelog-bar" style="background:linear-gradient(90deg,#0a0a0a,#111);color:#d4af37;text-align:center;padding:8px 16px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.06em;border-bottom:1px solid rgba(212,175,55,.3);z-index:10000;position:fixed;top:0;left:0;right:0;height:36px;display:flex;align-items:center;justify-content:center;gap:14px;">
   <span style="font-weight:700">⚡ ZUNEXA V10.2 — Archon Protocol</span>
   <a href="changelog.html" style="color:#000;background:linear-gradient(135deg,#D4AF37,#8a7022);padding:3px 12px;text-decoration:none;font-weight:700;border-radius:3px;font-size:11px;letter-spacing:.08em">VIEW CHANGELOG</a>
@@ -4735,6 +4947,24 @@ window.getRandomTemplate = () => {
 window.generateLocalContent = async (prompt) => {
   return window.generateSmartContent(prompt);
 };
+</script>
+	<script>
+    // تفعيل أيقونات Lucide الموجودة داخل Splash Screen
+    lucide.createIcons();
+
+    // دالة إخفاء الشاشة الترحيبية عند اختيار لوحة التحكم
+    function closeZunexaSplash() {
+        const splash = document.getElementById('zx-splash');
+        if (splash) {
+            // إخفاء تدريجي شفاف
+            splash.style.opacity = '0';
+            // إزالة العنصر من الشاشة بعد انتهاء الحركة (600ms)
+            setTimeout(() => {
+                splash.style.visibility = 'hidden';
+                splash.style.display = 'none';
+            }, 600);
+        }
+    }
 </script>
 </body>
 </html>
