@@ -2,39 +2,89 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>محرك المعرفة الشامل والأكواد اللا متناهية - Archon AI</title>
+<title>لوحة التحكم بمحرك المعرفة - Archon AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  :root { --bg:#0b0b10; --card:#16161f; --border:#2a2a38; --gold:#d4af37; --text:#eee; --tg:#999; --ok:#4caf50; --danger:#e05555; }
+  :root { 
+    --bg:#0b0b10; 
+    --card:#16161f; 
+    --border:#2a2a38; 
+    --gold:#d4af37; 
+    --text:#eee; 
+    --tg:#999; 
+    --ok:#4caf50; 
+    --danger:#e05555; 
+    --warning:#ff9800;
+  }
   * { box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; margin:0; padding:24px; display: flex; justify-content: center; }
-  .container { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px; width: 100%; max-width: 680px; margin-top: 10px; }
-  h1 { color:var(--gold); font-size:19px; margin-bottom:10px; text-align: center; }
+  .container { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; width: 100%; max-width: 720px; margin-top: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+  h1 { color:var(--gold); font-size:20px; margin-bottom:6px; text-align: center; }
   p.sub { color:var(--tg); font-size:12px; text-align: center; margin-bottom:20px; line-height: 1.6; }
+  
+  /* Control Panel & Buttons */
+  .control-panel { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+  button { background: #1f1f2e; border: 1px solid var(--border); color: #fff; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; transition: all 0.2s ease; }
+  button:hover { background: var(--border); }
+  button.btn-start { background: #1b5e20; border-color: var(--ok); color: #fff; }
+  button.btn-start:hover { background: #2e7d32; }
+  button.btn-pause { background: #e65100; border-color: var(--warning); color: #fff; }
+  button.btn-pause:hover { background: #f57c00; }
+  
+  /* Settings Bar */
+  .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: #101018; padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
+  .setting-item label { display: block; font-size: 11px; color: var(--tg); margin-bottom: 4px; text-align: right; }
+  .setting-item input { width: 100%; background: #16161f; color: var(--gold); border: 1px solid var(--border); padding: 6px; border-radius: 6px; text-align: center; font-weight: bold; }
+
   label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--gold); }
   input, textarea { width:100%; background:#101018; color:#ddd; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:monospace; font-size:12px; margin-bottom:14px; direction: ltr; text-align: left; }
-  textarea { min-height: 110px; resize: vertical; }
+  textarea { min-height: 90px; resize: vertical; }
   .ar-text { font-family: system-ui, sans-serif; direction: rtl; text-align: right; }
-  #statusBox { background: #101018; border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; font-size: 13px; color: var(--gold); font-family: system-ui, sans-serif; }
-  .stats { font-size: 11px; color: var(--tg); text-align: center; margin-top: 8px; font-family: system-ui, sans-serif; }
+  
+  #statusBox { background: #101018; border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; font-size: 13px; color: var(--gold); font-family: system-ui, sans-serif; font-weight: bold; }
+  .stats { font-size: 12px; color: var(--tg); text-align: center; margin-top: 10px; font-family: system-ui, sans-serif; }
+  .status-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; margin-right: 6px; }
+  .badge-active { background: rgba(76, 175, 80, 0.2); color: var(--ok); border: 1px solid var(--ok); }
+  .badge-paused { background: rgba(255, 152, 0, 0.2); color: var(--warning); border: 1px solid var(--warning); }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>⚙️ محرك الأكواد والمعرفة الضخم (توليد متوازي صاروخي)</h1>
-  <p class="sub">يتم توليد وإرسال 30 قالب متنوع (لغات برمجة، تحفيز، ترحيب، إدارة وقت) كل نصف ثانية في نفس اللحظة بنصوص صافية تماماً.</p>
+  <h1>⚙️ لوحة التحكم في حقن البيانات - Archon AI</h1>
+  <p class="sub">يمكنك التحكم في سرعة الإرسال أو إيقاف المحرك مؤقتاً لتخفيف الضغط على قاعدة بيانات Supabase.</p>
+
+  <!-- أزرار التحكم -->
+  <div class="control-panel">
+    <button class="btn-start" onclick="startEngine()">▶️ تشغيل / استئناف</button>
+    <button class="btn-pause" onclick="pauseEngine()">⏸️ إيقاف مؤقت (إراحة Supabase)</button>
+    <button onclick="resetStats()">🔄 إعادة ضبط العداد</button>
+  </div>
+
+  <!-- خيارات التحكم في الضغط -->
+  <div class="settings-grid">
+    <div class="setting-item">
+      <label class="ar-text">حجم الدفعة (عدد الطلبات في اللحظة):</label>
+      <input type="number" id="batchSizeInput" value="30" min="1" max="50">
+    </div>
+    <div class="setting-item">
+      <label class="ar-text">التأخير الزمني بين الدفعات (بالملي ثانية):</label>
+      <input type="number" id="delayInput" value="500" min="100" step="100">
+    </div>
+  </div>
 
   <label class="ar-text">السؤال أو الطلب المولد مؤخراً:</label>
-  <input type="text" id="qInput" class="ar-text" readonly placeholder="جاري التوليد...">
+  <input type="text" id="qInput" class="ar-text" readonly placeholder="في انتظار التشغيل...">
 
   <label class="ar-text">القالب أو الكود البرمجي المولد مؤخراً:</label>
-  <textarea id="aInput" readonly placeholder="جاري التوليد..."></textarea>
+  <textarea id="aInput" readonly placeholder="في انتظار التشغيل..."></textarea>
 
   <label class="ar-text">التصنيف المعرفي / البرمجي:</label>
   <input type="text" id="catInput" readonly value="...">
 
-  <div id="statusBox">جاري تشغيل محرك المعرفة السريع...</div>
+  <div id="statusBox">
+    الحالة: <span id="badge" class="status-badge badge-paused">🟡 متوقف مؤقتاً</span>
+  </div>
   <div class="stats" id="counterStats">تم إرسال: 0 معلومة في هذه الجلسة</div>
 </div>
 
@@ -45,18 +95,15 @@ const _SB = supabase.createClient(
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
-// قاعدة بيانات أساسية
 const megaPool = [
-  { q: "أهلاً، أنا مطور، ما هي أفضل طريقة للبدء في مشروع تقني جديد اليوم؟", a: "أهلاً بك! ابدأ بتحديد المتطلبات الأساسية، تقسيم المهام إلى أجزاء صغيرة، واختيار التقنيات المناسبة لضمان سرعة التطوير.", cat: "personal_greeting" },
-  { q: "لنتذكر معاً، نحن نعمل على مشروع باستخدام التقنيات الحديثة. ما هي الخطوة التالية؟", a: "الخطوة التالية هي مراجعة الكود الحالي (Code Review)، اختبار أداء قاعدة البيانات، وتحسين واجهة المستخدم.", cat: "context_reset" },
-  { q: "أشعر بالتعب والملل في العمل على مشروعي التقني، أعطني كلمات تحفيزية سريعة وخطة عمل لـ 30 دقيقة.", a: "خذ استراحة قصيرة لمدة 5 دقائق، اشرب ماء، ثم عد لتبدأ بـ Pomodoro لمدة 25 دقيقة لإنجاز أصغر مهمة معلقة.", cat: "motivation" },
-  { q: "اليوم يوم طويل وشاق، أريد محادثة خفيفة ومريحة لنأخذ استراحة من الأكواد.", a: "لا بأس يا صديقي، الاستراحة ضرورية لشحن الطاقة العقلية. خذ وقتاً للاسترخاء وسنعود أقوى لاحقاً.", cat: "check_in" },
-  { q: "لدي مشكلة طارئة في النظام، أريد حلاً مباشراً ودقيقاً بدون تفاصيل طويلة.", a: "افحص سجلات الأخطاء (Logs) فوراً، حدد الخطوط البرمجية المسؤولة عن الاستثناء (Exception)، وقم بتطبيق رقعة تصحيح سريعة.", cat: "sos_help" },
-  { q: "رتب مهامي اليومية واضع لها جدولاً زمنياً منظماً.", a: "1. المهام الحرجة (صباحاً)\n2. البرمجة والتطوير (ظهراً)\n3. الاختبار ومراجعة الأخطاء (مساءً)", cat: "productivity" },
-  { q: "أريد بناء تطبيق ويب متكامل. كيف أقسّمه إلى مراحل؟", a: "المرحلة الأولى: الهيكل وقاعدة البيانات (Supabase). المرحلة الثانية: الواجهة الأمامية (Frontend). المرحلة الثالثة: الاختبار والنشر (Vercel).", cat: "productivity" }
+  { q: "أهلاً، أنا مطور، ما هي أفضل طريقة للبدء في مشروع تقني جديد اليوم؟", a: "أهلاً بك! ابدأ بتحديد المتطلبات الأساسية، تقسيم المهام إلى أجزاء صغيرة، وااختيار التقنيات المناسبة.", cat: "personal_greeting" },
+  { q: "لنتذكر معاً، نحن نعمل على مشروع باستخدام التقنيات الحديثة. ما هي الخطوة التالية؟", a: "الخطوة التالية هي مراجعة الكود الحالي (Code Review)، اختبار أداء قاعدة البيانات، وتحسين الواجهة.", cat: "context_reset" },
+  { q: "أشعر بالتعب والملل في العمل على مشروعي التقني، أعطني كلمات تحفيزية سريعة.", a: "خذ استراحة قصيرة لمدة 5 دقائق، اشرب ماء، ثم عد لتبدأ بـ Pomodoro لمدة 25 دقيقة.", cat: "motivation" },
+  { q: "اليوم يوم طويل وشاق، أريد محادثة خفيفة ومريحة لنأخذ استراحة من الأكواد.", a: "لا بأس يا صديقي، الاستراحة ضرورية لشحن الطاقة العقلية. خذ وقتاً للاسترخاء وسنعود أقوى.", cat: "check_in" },
+  { q: "لدي مشكلة طارئة في النظام، أريد حلاً مباشراً ودقيقاً بدون تفاصيل طويلة.", a: "افحص سجلات الأخطاء (Logs) فوراً، حدد الخطوط البرمجية المسؤولة، وقم بتطبيق رقعة تصحيح سريعة.", cat: "sos_help" },
+  { q: "رتب مهامي اليومية واضع لها جدولاً زمنياً منظماً.", a: "1. المهام الحرجة (صباحاً)\n2. البرمجة والتطوير (ظهراً)\n3. الاختبار ومراجعة الأخطاء (مساءً)", cat: "productivity" }
 ];
 
-// دالة لإضافة مئات القوالب بشكل نظيف وبدون أرقام ظاهرة
 function inject200Templates() {
   const extraLangs = ['Python', 'JavaScript', 'C++', 'Java', 'PHP', 'Ruby', 'Swift', 'Go', 'Rust', 'Dart'];
   const extraTasks = [
@@ -78,32 +125,18 @@ function inject200Templates() {
       }
     }
   }
-
-  for (let i = 1; i <= 25; i++) {
-    megaPool.push({
-      q: `مرحباً، هل يمكنك تذكيري بخطوة لزيادة التركيز اليوم؟`,
-      a: `بالتأكيد! حاول الابتعاد عن هاتفك المحمول قليلاً وركز على سطر برمجي واحد فقط، ستلاحظ الفرق فوراً.`,
-      cat: 'motivation'
-    });
-    megaPool.push({
-      q: `أهلاً، أريد رسالة ترحيبية لبدء يومي كمطور.`,
-      a: `صباح الخير أيها المطور المبدع! الأكواد بانتظارك، وتذكر أن كل خطأ برمجي (Bug) هو فرصة لتعلم شيء جديد. انطلق!`,
-      cat: 'salutation'
-    });
-  }
 }
-
 inject200Templates();
 
 let currentIndex = 0;
 let successCount = 0;
+let isRunning = false;
+let loopTimeout = null;
 
-// دالة سحرية تضيف مسافات صفرية العرض (لا تظهر أبداً) لجعل النص فريداً لقاعدة البيانات
 function makeUniqueInvisible(text, id) {
   let suffix = '';
   let n = id;
   do {
-    // هذه الرموز مخفية تماماً ولكنها تعتبر حروفاً مختلفة برمجياً
     suffix += (n % 2 === 0) ? '\u200B' : '\u200C';
     n = Math.floor(n / 2);
   } while (n > 0);
@@ -113,7 +146,7 @@ function makeUniqueInvisible(text, id) {
 function generateInfiniteItem(index) {
   const base = megaPool[index % megaPool.length];
   return {
-    q: makeUniqueInvisible(base.q, index), // نص صافي ظاهرياً وفريد برمجياً
+    q: makeUniqueInvisible(base.q, index),
     a: base.a,
     cat: base.cat
   };
@@ -140,15 +173,16 @@ async function sendSingleItem() {
   return { error, item };
 }
 
-async function runParallelBatch() {
+async function runBatchCycle() {
+  if (!isRunning) return;
+
   const statusBox = document.getElementById('statusBox');
   const statsBox = document.getElementById('counterStats');
-  
-  statusBox.style.color = 'var(--text)';
-  statusBox.textContent = 'جاري إرسال 30 قالب دفعة واحدة... ⚡';
+  const batchSize = parseInt(document.getElementById('batchSizeInput').value) || 10;
+  const delaySpeed = parseInt(document.getElementById('delayInput').value) || 1000;
 
   const promises = [];
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < batchSize; i++) {
     promises.push(sendSingleItem());
   }
 
@@ -166,8 +200,7 @@ async function runParallelBatch() {
   });
 
   if (batchSuccess > 0) {
-    statusBox.style.color = 'var(--ok)';
-    statusBox.textContent = `تم إرسال ${batchSuccess} قالب بنجاح من أصل 30! الدفعة التالية خلال نصف ثانية... 🚀`;
+    statusBox.innerHTML = `الحالة: <span class="status-badge badge-active">🟢 يعمل الآن</span> (تم إرسال ${batchSuccess} عنصر بنجاح)`;
     statsBox.textContent = `الإجمالي المرسل: ${successCount} معلومة في هذه الجلسة`;
     
     if (lastItem) {
@@ -176,15 +209,32 @@ async function runParallelBatch() {
       document.getElementById('catInput').value = lastItem.cat;
     }
   } else {
-    statusBox.style.color = 'var(--danger)';
-    statusBox.textContent = 'حدث خطأ أثناء إرسال الدفعة. يرجى التحقق من الشبكة أو قاعدة البيانات.';
+    statusBox.innerHTML = `الحالة: <span style="color:var(--danger)">🔴 خطأ في الاتصال بالسيرفر!</span>`;
+  }
+
+  // جدولة الدفعة القادمة بناءً على السرعة المحددة
+  if (isRunning) {
+    loopTimeout = setTimeout(runBatchCycle, delaySpeed);
   }
 }
 
-// تشغيل متوازي كل نصف ثانية
-runParallelBatch();
-setInterval(runParallelBatch, 5);
+function startEngine() {
+  if (isRunning) return;
+  isRunning = true;
+  document.getElementById('statusBox').innerHTML = `الحالة: <span class="status-badge badge-active">🟢 جاري التشغيل...</span>`;
+  runBatchCycle();
+}
 
+function pauseEngine() {
+  isRunning = false;
+  if (loopTimeout) clearTimeout(loopTimeout);
+  document.getElementById('statusBox').innerHTML = `الحالة: <span class="status-badge badge-paused">🟡 متوقف مؤقتاً (Supabase مرتاح الآن)</span>`;
+}
+
+function resetStats() {
+  successCount = 0;
+  document.getElementById('counterStats').textContent = `تم إرسال: 0 معلومة في هذه الجلسة`;
+}
 </script>
 </body>
 </html>
