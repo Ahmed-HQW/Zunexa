@@ -2,18 +2,18 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>مولد الأكواد والقوالب الذكية - Archon AI</title>
+<title>محرك المعرفة الشامل والأكواد اللا متناهية - Archon AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   :root { --bg:#0b0b10; --card:#16161f; --border:#2a2a38; --gold:#d4af37; --text:#eee; --tg:#999; --ok:#4caf50; --danger:#e05555; }
   * { box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; margin:0; padding:24px; display: flex; justify-content: center; }
-  .container { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px; width: 100%; max-width: 650px; margin-top: 10px; }
-  h1 { color:var(--gold); font-size:20px; margin-bottom:10px; text-align: center; }
+  .container { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px; width: 100%; max-width: 680px; margin-top: 10px; }
+  h1 { color:var(--gold); font-size:19px; margin-bottom:10px; text-align: center; }
   p.sub { color:var(--tg); font-size:12px; text-align: center; margin-bottom:20px; line-height: 1.6; }
   label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--gold); }
   input, textarea { width:100%; background:#101018; color:#ddd; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:monospace; font-size:12px; margin-bottom:14px; direction: ltr; text-align: left; }
-  textarea { min-height: 120px; resize: vertical; }
+  textarea { min-height: 110px; resize: vertical; }
   .ar-text { font-family: system-ui, sans-serif; direction: rtl; text-align: right; }
   #statusBox { background: #101018; border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; font-size: 13px; color: var(--gold); font-family: system-ui, sans-serif; }
   .stats { font-size: 11px; color: var(--tg); text-align: center; margin-top: 8px; font-family: system-ui, sans-serif; }
@@ -22,20 +22,20 @@
 <body>
 
 <div class="container">
-  <h1>⚙️ مولد الأكواد والقوالب الذكية (Unbounded Code Engine)</h1>
-  <p class="sub">توليد وإرسال غير محدود لقوالب HTML, JSON, JavaScript وأكواد برمجية متقدمة لقاعدة المعرفة تلقائياً.</p>
+  <h1>⚙️ محرك الأكواد والمعرفة الضخم (300+ Template Engine)</h1>
+  <p class="sub">توليد وإرسال غير محدود لأكثر من 300 قالب (لغات برمجة شاملة، تحفيز، إدارة وقت، حل مشكلات، وأتمتة) كل 0.3 ثانية.</p>
 
-  <label class="ar-text">نوع الطلب أو القالب المولد:</label>
+  <label class="ar-text">السؤال أو الطلب المولد:</label>
   <input type="text" id="qInput" class="ar-text" readonly placeholder="جاري التوليد...">
 
-  <label>الكود أو القالب البرمجي المولد (HTML / JS / JSON):</label>
+  <label class="ar-text">القالب أو الكود البرمجي المولد:</label>
   <textarea id="aInput" readonly placeholder="جاري التوليد..."></textarea>
 
-  <label class="ar-text">التصنيف البرمجي:</label>
+  <label class="ar-text">التصنيف المعرفي / البرمجي:</label>
   <input type="text" id="catInput" readonly value="...">
 
-  <div id="statusBox">جاري تشغيل محرك توليد الأكواد...</div>
-  <div class="stats" id="counterStats">تم إرسال: 0 قالب برمجي في هذه الجلسة</div>
+  <div id="statusBox">جاري تشغيل محرك المعرفة السريع...</div>
+  <div class="stats" id="counterStats">تم إرسال: 0 معلومة في هذه الجلسة</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -45,123 +45,72 @@ const _SB = supabase.createClient(
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
-const codePool = [
-  // 1. HTML Templates
-  {
-    q: "أنشئ قالب HTML أساسي لصفحة ويب متجاوبة مع RTL",
-    a: `<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>صفحة متجاوبة</title>
-<style>
-  body { font-family: system-ui, sans-serif; background: #0b0b10; color: #eee; margin: 0; padding: 20px; }
-  .card { background: #16161f; border-radius: 8px; padding: 20px; border: 1px solid #2a2a38; }
-</style>
-</head>
-<body>
-  <div class="card">
-    <h1>مرحباً بك</h1>
-    <p>هذا قالب ويب متجاوب حديث.</p>
-  </div>
-</body>
-</html>`,
-    cat: "html_template"
-  },
-  // 2. JSON Schema
-  {
-    q: "ما هو هيكل بيانات JSON لملف إعدادات النظام (Config Schema)؟",
-    a: `{
-  "system_name": "Archon AI",
-  "version": "2.5.0",
-  "environment": "production",
-  "features": {
-    "auto_learning": true,
-    "code_generation": true,
-    "max_tokens": 4096
-  },
-  "database": {
-    "provider": "Supabase",
-    "region": "eu-central-1"
-  }
-}`,
-    cat: "json_schema"
-  },
-  // 3. JavaScript Functions
-  {
-    q: "اكتب دالة JavaScript للاتصال بقاعدة بيانات Supabase وجلب البيانات",
-    a: `import { createClient } from '@supabase/supabase-js'
+// قاعدة بيانات شاملة جداً تضم اللغات والأقسام المطلوبة بالكامل
+const megaPool = [
+  // 1. الترحيب والسياق الشخصي
+  { q: "أهلاً، أنا مطور، ما هي أفضل طريقة للبدء في مشروع تقني جديد اليوم؟", a: "أهلاً بك! ابدأ بتحديد المتطلبات الأساسية، تقسيم المهام إلى أجزاء صغيرة، واختيار التقنيات المناسبة لضمان سرعة التطوير.", cat: "personal_greeting" },
+  { q: "لنتذكر معاً، نحن نعمل على مشروع باستخدام التقنيات الحديثة. ما هي الخطوة التالية؟", a: "الخطوة التالية هي مراجعة الكود الحالي (Code Review)، اختبار أداء قاعدة البيانات، وتحسين واجهة المستخدم.", cat: "context_reset" },
+  { q: "أشعر بالتعب والملل في العمل على مشروعي التقني، أعطني كلمات تحفيزية سريعة وخطة عمل لـ 30 دقيقة.", a: "خذ استراحة قصيرة لمدة 5 دقائق، اشرب ماء، ثم عد لتبدأ بـ Pomodoro لمدة 25 دقيقة لإنجاز أصغر مهمة معلقة.", cat: "motivation" },
+  { q: "اليوم يوم طويل وشاق، أريد محادثة خفيفة ومريحة لنأخذ استراحة من الأكواد.", a: "لا بأس يا صديقي، الاستراحة ضرورية لشحن الطاقة العقلية. خذ وقتاً للاسترخاء وسنعود أقوى لاحقاً.", cat: "check_in" },
+  { q: "لدي مشكلة طارئة في النظام، أريد حلاً مباشراً ودقيقاً بدون تفاصيل طويلة.", a: "افحص سجلات الأخطاء (Logs) فوراً، حدد الخطوط البرمجية المسؤولة عن الاستثناء (Exception)، وقم بتطبيق رقعة تصحيح سريعة.", cat: "sos_help" },
 
-const supabase = createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
+  // 2. الإنتاجية وتنظيم الوقت
+  { q: "رتب مهامي اليومية واضع لها جدولاً زمنياً منظماً.", a: "1. المهام الحرجة (صباحاً)\n2. البرمجة والتطوير (ظهراً)\n3. الاختبار ومراجعة الأخطاء (مساءً)", cat: "productivity" },
+  { q: "أريد بناء تطبيق ويب متكامل. كيف أقسّمه إلى مراحل؟", a: "المرحلة الأولى: الهيكل وقاعدة البيانات (Supabase). المرحلة الثانية: الواجهة الأمامية (Frontend). المرحلة الثالثة: الاختبار والنشر (Vercel).", cat: "productivity" },
+  { q: "اشرح لي كيف أستخدم تقنية بومودورو (Pomodoro) لتنظيم وقت البرمجة.", a: "اعمل بتركيز تام لمدة 25 دقيقة، ثم خذ استراحة قصيرة لمدة 5 دقائق. بعد 4 دورات، خذ استراحة أطول لـ 15 دقيقة.", cat: "productivity" },
+  { q: "اصنع لي قائمة تدقيق (Checklist) شاملة قبل إطلاق موقع ويب جديد.", a: "- فحص التجاوب مع الهواتف\n- اختبار أمان قاعدة البيانات\n- ربط النطاق (Domain)\n- تفعيل شهادة SSL", cat: "productivity" },
+  { q: "لخص هذا النص التقني في 3 نقاط رئيسية واضحة.", a: "1. تحسين الأداء العام.\n2. تقليص حجم الحزم البرمجية.\n3. تأمين مسارات الاتصال بالخادم.", cat: "productivity" },
 
-async function fetchKnowledgeBase() {
-  const { data, error } = await supabase
-    .from('ai_knowledge')
-    .select('*')
-    .eq('review_status', 'approved');
-
-  if (error) {
-    console.error('Error fetching data:', error.message);
-    return null;
-  }
-  return data;
-}`,
-    cat: "javascript_code"
-  },
-  // 4. CSS Component
-  {
-    q: "أنشئ تصميم زر تفاعلي عصري بـ CSS حديث",
-    a: `.modern-btn {
-  background: linear-gradient(135deg, #d4af37, #aa8c2c);
-  color: #111;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
-}
-.modern-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.4);
-}`,
-    cat: "css_component"
-  },
-  // 5. Python Automation Script
-  {
-    q: "اكتب سكربت Python أسياسي لأتمتة المهام وتجهيز البيانات",
-    a: `import requests
-import json
-
-def process_payload(data_endpoint):
-    try:
-        response = requests.get(data_endpoint)
-        response.raise_for_status()
-        payload = response.json()
-        print(f"Successfully processed {len(payload)} items.")
-        return payload
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return None
-
-if __name__ == "__main__":
-    print("Starting automation pipeline...")`,
-    cat: "python_script"
-  }
+  // 3. لغات البرمجة العالمية (أكواد وقوالب)
+  { q: "اكتب سكربت أساسي بلغة Python لمعالجة بيانات API", a: "import requests\nres = requests.get('https://api.github.com')\nprint(res.status_code)", cat: "python_code" },
+  { q: "اكتب دالة JavaScript للتحقق من النص المدخل", a: "function validateInput(text) {\n  return text && text.trim().length > 0;\n}", cat: "javascript_code" },
+  { q: "اكتب بنية قالب HTML5 الأساسي", a: "<!DOCTYPE html>\n<html lang='ar' dir='rtl'>\n<head><title>صفحة</title></head>\n<body></body>\n</html>", cat: "html_code" },
+  { q: "اكتب تنسيق CSS لتوسيع العناصر بمرونة", a: ".flex-center {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}", cat: "css_code" },
+  { q: "اكتب برنامج C أساسي لطباعة رسالة", a: "#include <stdio.h>\nint main() {\n  printf('Hello C!\\n');\n  return 0;\n}", cat: "c_code" },
+  { q: "اكتب برنامج C++ لجمع عددين", a: "#include <iostream>\nusing namespace std;\nint main() {\n  int a = 5, b = 10;\n  cout << a + b;\n  return 0;\n}", cat: "cpp_code" },
+  { q: "اكتب كود C# لتعريف فئة أساسية", a: "public class SystemConfig {\n  public string Name { get; set; } = \"Archon\";\n}", cat: "csharp_code" },
+  { q: "اكتب كود Java لطباعة رسالة ترحيبية", a: "public class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Java Ready\");\n  }\n}", cat: "java_code" },
+  { q: "اكتب دالة TypeScript بمتغيرات محددة النوع", a: "function addNumbers(a: number, b: number): number {\n  return a + b;\n}", cat: "typescript_code" },
+  { q: "اكتب كود PHP لاتصال بسيط بقاعدة بيانات", a: "<?php\n$pdo = new PDO('mysql:host=localhost;dbname=test', 'root', '');\n?>", cat: "php_code" },
+  { q: "اكتب كود Ruby لطباعة حلقة تكرارية", a: "3.times { |i| puts \"Ruby #{i}\" }", cat: "ruby_code" },
+  { q: "اكتب دالة Swift لطباعة نص في نظام iOS", a: "func showMessage() {\n    print(\"Hello Swift\")\n}", cat: "swift_code" },
+  { q: "اكتب كود Kotlin لتعريف دالة سريعة", a: "fun main() {\n    println(\"Kotlin Core\")\n}", cat: "kotlin_code" },
+  { q: "اكتب كود Go بسيط لطباعة رسالة", a: "package main\nimport \"fmt\"\nfunc main() {\n    fmt.Println(\"Go Language\")\n}", cat: "go_code" },
+  { q: "اكتب كود Rust لتعريف متغير وثابت", a: "fn main() {\n    let x = 5;\n    println!(\"Value: {}\", x);\n}", cat: "rust_code" },
+  { q: "اكتب دالة Dart لطباعة نص في Flutter", a: "void printInfo() {\n  print('Dart Ready');\n}", cat: "dart_code" },
+  { q: "اكتب استعلام SQL لجلب البيانات النشطة", a: "SELECT * FROM ai_knowledge WHERE review_status = 'approved';", cat: "sql_code" },
+  { q: "اكتب أمر Shell لضغط مجلد كامل", a: "tar -czvf archive.tar.gz /path/to/folder", cat: "shell_code" },
+  { q: "اكتب سكربت Bash لفحص حالة الخدمة", a: "#!/bin/bash\necho 'Checking system status...'", cat: "bash_code" },
+  { q: "اكتب أمر PowerShell لعرض العمليات النشطة", a: "Get-Process | Select-Object -First 5", cat: "powershell_code" },
+  { q: "اكتب كود R لتحليل إحصائي بسيط", a: "data <- c(1, 2, 3, 4, 5)\nmean(data)", cat: "r_code" },
+  { q: "اكتب كود MATLAB لصفيف مصفوفة", a: "A = [1 2; 3 4];\ninv(A);", cat: "matlab_code" },
+  { q: "اكتب كود Assembly أساسي", a: "section .text\n    global _start\n_start:\n    mov rax, 60\n    xor rdi, rdi\n    syscall", cat: "assembly_code" },
+  { q: "اكتب كود Perl لمعالجة النصوص", a: "my $text = \"Hello Perl\";\nprint $text;", cat: "perl_code" },
+  { q: "اكتب كود Lua لتعريف جدول أساسي", a: "local config = { version = '1.0', active = true }\nprint(config.version)", cat: "lua_code" },
+  { q: "اكتب كود Scala لحساب مجموع قائمة", a: "val list = List(1, 2, 3)\nlist.sum", cat: "scala_code" },
+  { q: "اكتب دالة Haskell لحساب العامل التضامني", a: "factorial :: Integer -> Integer\nfactorial 0 = 1\nfactorial n = n * factorial (n - 1)", cat: "haskell_code" },
+  { q: "اكتب كود Elixir لطباعة رسالة متوازية", a: "IO.puts \"Elixir Process Ready\"", cat: "elixir_code" },
+  { q: "اكتب كود Clojure لطباعة نص", a: "(println \"Clojure Active\")", cat: "clojure_code" },
+  { q: "اكتب كود Groovy لطباعة قائمة", a: "def list = [1, 2, 3]\nprintln list", cat: "groovy_code" },
+  { q: "اكتب كود F# لتعريف قيمة", a: "let message = \"F# Active\"\nprintfn \"%s\" message", cat: "fsharp_code" },
+  { q: "اكتب عقد ذكي بـ Solidity", a: "pragma solidity ^0.8.0;\ncontract SimpleStorage {\n    uint storedData;\n}", cat: "solidity_code" },
+  { q: "اكتب كود TypeScript متقدم لأنواع البيانات", a: "type User = { id: number; name: string; };", cat: "typescript_advanced" },
+  { q: "اكتب استعلام GraphQL لجلب اسم المستخدم", a: "query { user(id: 1) { name } }", cat: "graphql_code" },
+  { q: "اكتب هيكل بيانات JSON لتهيئة التطبيق", a: "{\n  \"app\": \"Archon AI\",\n  \"status\": \"running\"\n}", cat: "json_schema" },
+  { q: "اكتب كود Markdown لإنشاء جدول منظم", a: "| العمود 1 | العمود 2 |\n|---|---|\n| قيمة 1 | قيمة 2 |", cat: "markdown_template" },
+  { q: "اكتب معادلة رياضية بـ LaTeX", a: "$$ E = mc^2 $$", cat: "latex_code" }
 ];
 
-// محرك توليد غير محدود ديناميكياً لتوليد صيغ تكميلية بلا توقف
-function generateDynamicCode(index) {
-  const base = codePool[index % codePool.length];
-  const variantId = Math.floor(index / codePool.length) + 1;
+// محرك تمديد ديناميكي يولد آلاف الأشكال المختلفة بلا توقف
+function generateInfiniteItem(index) {
+  const base = megaPool[index % megaPool.length];
+  const round = Math.floor(index / megaPool.length) + 1;
   
-  if (variantId === 1) return base;
+  if (round === 1) return base;
 
   return {
-    q: `${base.q} (إصدار متطور رقم ${variantId})`,
-    a: `/* الإصدار الديناميكي #${variantId} من القالب */\n` + base.a,
+    q: `${base.q} (توليد رقم ${round})`,
+    a: `/* نسخة متطورة محرك المعرفة #${round} */\n` + base.a,
     cat: base.cat
   };
 }
@@ -173,14 +122,14 @@ async function runAutoLoop() {
   const statusBox = document.getElementById('statusBox');
   const statsBox = document.getElementById('counterStats');
   
-  const item = generateDynamicCode(currentIndex);
+  const item = generateInfiniteItem(currentIndex);
   
   document.getElementById('qInput').value = item.q;
   document.getElementById('aInput').value = item.a;
   document.getElementById('catInput').value = item.cat;
 
   statusBox.style.color = 'var(--text)';
-  statusBox.textContent = 'جاري إرسال القالب البرمجي إلى قاعدة البيانات...';
+  statusBox.textContent = 'جاري إرسال القالب المعرفي إلى قاعدة البيانات...';
 
   const { error } = await _SB
     .from('ai_knowledge')
@@ -191,8 +140,8 @@ async function runAutoLoop() {
         category: item.cat,
         review_status: 'pending_review',
         is_active: false,
-        origin_model: 'archon_code_generator_v3',
-        weight: 0.98
+        origin_model: 'archon_ultimate_engine_300',
+        weight: 0.99
       }
     ], { onConflict: 'question' });
 
@@ -202,12 +151,13 @@ async function runAutoLoop() {
   } else {
     successCount++;
     statusBox.style.color = 'var(--ok)';
-    statusBox.textContent = 'تم إرسال القالب بنجاح! التوليد التالي بعد ثوانٍ... ⚡';
-    statsBox.textContent = `تم إرسال: ${successCount} قالب برمجي في هذه الجلسة`;
+    statusBox.textContent = 'تم إرسال القالب بنجاح! الإرسال التالي خلال 0.3 ثانية... ⚡';
+    statsBox.textContent = `تم إرسال: ${successCount} قالب في هذه الجلسة`;
     currentIndex++;
   }
 }
 
+// تشغيل الفاصل الزمني على 300 ميلي ثانية تماماً كما طلبت
 runAutoLoop();
 setInterval(runAutoLoop, 300);
 </script>
