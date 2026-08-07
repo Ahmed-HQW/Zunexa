@@ -2,238 +2,366 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>لوحة التحكم بمحرك المعرفة - Archon AI</title>
+<title>مولّد قاعدة المعرفة - Archon AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  :root { 
-    --bg:#0b0b10; 
-    --card:#16161f; 
-    --border:#2a2a38; 
-    --gold:#d4af37; 
-    --text:#eee; 
-    --tg:#999; 
-    --ok:#4caf50; 
-    --danger:#e05555; 
-    --warning:#ff9800;
+  :root {
+    --bg:#0b0b10; --card:#16161f; --border:#2a2a38; --gold:#d4af37;
+    --text:#eee; --tg:#999; --ok:#4caf50; --danger:#e05555; --warning:#ff9800;
   }
   * { box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; margin:0; padding:24px; display: flex; justify-content: center; }
-  .container { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; width: 100%; max-width: 720px; margin-top: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-  h1 { color:var(--gold); font-size:20px; margin-bottom:6px; text-align: center; }
-  p.sub { color:var(--tg); font-size:12px; text-align: center; margin-bottom:20px; line-height: 1.6; }
-  
-  /* Control Panel & Buttons */
-  .control-panel { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
-  button { background: #1f1f2e; border: 1px solid var(--border); color: #fff; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; transition: all 0.2s ease; }
-  button:hover { background: var(--border); }
-  button.btn-start { background: #1b5e20; border-color: var(--ok); color: #fff; }
-  button.btn-start:hover { background: #2e7d32; }
-  button.btn-pause { background: #e65100; border-color: var(--warning); color: #fff; }
-  button.btn-pause:hover { background: #f57c00; }
-  
-  /* Settings Bar */
-  .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: #101018; padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
-  .setting-item label { display: block; font-size: 11px; color: var(--tg); margin-bottom: 4px; text-align: right; }
-  .setting-item input { width: 100%; background: #16161f; color: var(--gold); border: 1px solid var(--border); padding: 6px; border-radius: 6px; text-align: center; font-weight: bold; }
+  body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; margin:0; padding:24px; display:flex; justify-content:center; }
+  .container { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; width:100%; max-width:820px; margin-top:10px; box-shadow:0 8px 24px rgba(0,0,0,.5); }
+  h1 { color:var(--gold); font-size:20px; margin-bottom:6px; text-align:center; }
+  p.sub { color:var(--tg); font-size:12px; text-align:center; margin-bottom:20px; line-height:1.6; }
 
-  label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--gold); }
-  input, textarea { width:100%; background:#101018; color:#ddd; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:monospace; font-size:12px; margin-bottom:14px; direction: ltr; text-align: left; }
-  textarea { min-height: 90px; resize: vertical; }
-  .ar-text { font-family: system-ui, sans-serif; direction: rtl; text-align: right; }
-  
-  #statusBox { background: #101018; border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; font-size: 13px; color: var(--gold); font-family: system-ui, sans-serif; font-weight: bold; }
-  .stats { font-size: 12px; color: var(--tg); text-align: center; margin-top: 10px; font-family: system-ui, sans-serif; }
-  .status-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; margin-right: 6px; }
-  .badge-active { background: rgba(76, 175, 80, 0.2); color: var(--ok); border: 1px solid var(--ok); }
-  .badge-paused { background: rgba(255, 152, 0, 0.2); color: var(--warning); border: 1px solid var(--warning); }
+  .control-panel { display:flex; gap:10px; justify-content:center; margin-bottom:16px; flex-wrap:wrap; }
+  button { background:#1f1f2e; border:1px solid var(--border); color:#fff; padding:10px 18px; border-radius:8px; cursor:pointer; font-weight:bold; font-size:13px; transition:.2s; }
+  button:hover { background:var(--border); }
+  button:disabled { opacity:.4; cursor:not-allowed; }
+  button.btn-start { background:#1b5e20; border-color:var(--ok); }
+  button.btn-start:hover { background:#2e7d32; }
+  button.btn-stop { background:#7a1f1f; border-color:var(--danger); }
+  button.btn-stop:hover { background:#962828; }
+
+  .settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; background:#101018; padding:12px; border-radius:8px; border:1px solid var(--border); }
+  .setting-item label { display:block; font-size:11px; color:var(--tg); margin-bottom:4px; text-align:right; }
+  .setting-item input, .setting-item select { width:100%; background:#16161f; color:var(--gold); border:1px solid var(--border); padding:6px; border-radius:6px; text-align:center; font-weight:bold; }
+
+  #statusBox { background:#101018; border:1px solid var(--border); border-radius:8px; padding:12px; text-align:center; font-size:13px; color:var(--gold); font-weight:bold; margin-bottom:12px; }
+  .stats { font-size:12px; color:var(--tg); text-align:center; margin-bottom:16px; }
+  .status-badge { display:inline-block; padding:3px 8px; border-radius:12px; font-size:11px; margin-right:6px; }
+  .badge-active { background:rgba(76,175,80,.2); color:var(--ok); border:1px solid var(--ok); }
+  .badge-idle { background:rgba(255,152,0,.2); color:var(--warning); border:1px solid var(--warning); }
+
+  .review-panel { background:#101018; border:1px solid var(--border); border-radius:8px; padding:12px; max-height:420px; overflow-y:auto; }
+  .review-panel h3 { color:var(--gold); font-size:14px; margin:0 0 10px; text-align:right; }
+  .item-card { background:#16161f; border:1px solid var(--border); border-radius:8px; padding:10px; margin-bottom:8px; text-align:right; }
+  .item-card .q { color:#fff; font-size:13px; font-weight:600; margin-bottom:4px; }
+  .item-card .a { color:#ccc; font-size:12px; white-space:pre-wrap; margin-bottom:6px; font-family:monospace; direction:ltr; text-align:left; background:#0b0b10; padding:6px; border-radius:6px; }
+  .item-card .meta { display:flex; justify-content:space-between; align-items:center; }
+  .item-card .cat { font-size:10px; color:var(--gold); background:rgba(212,175,55,.1); padding:2px 8px; border-radius:10px; }
+  .item-actions button { padding:4px 10px; font-size:11px; margin-right:4px; }
+  .btn-approve { background:#1b5e20 !important; border-color:var(--ok) !important; }
+  .btn-reject { background:#7a1f1f !important; border-color:var(--danger) !important; }
+  .empty-note { color:var(--tg); font-size:12px; text-align:center; padding:20px; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>⚙️ لوحة التحكم في حقن البيانات - Archon AI</h1>
-  <p class="sub">يمكنك التحكم في سرعة الإرسال أو إيقاف المحرك مؤقتاً لتخفيف الضغط على قاعدة بيانات Supabase.</p>
+  <h1>📚 مولّد قاعدة المعرفة - Archon AI</h1>
+  <p class="sub">توليد دفعات محدودة من أسئلة/أجوبة بقوالب واضحة، لمراجعتها والموافقة عليها يدوياً قبل التفعيل فـ قاعدة البيانات.</p>
 
-  <!-- أزرار التحكم -->
   <div class="control-panel">
-    <button class="btn-start" onclick="startEngine()">▶️ تشغيل / استئناف</button>
-    <button class="btn-pause" onclick="pauseEngine()">⏸️ إيقاف مؤقت (إراحة Supabase)</button>
-    <button onclick="resetStats()">🔄 إعادة ضبط العداد</button>
+    <button class="btn-start" id="startBtn" onclick="generateBatch()">▶️ توليد دفعة جديدة</button>
+    <button class="btn-stop" id="stopBtn" onclick="clearPending()" disabled>🗑️ مسح المعاينة الحالية</button>
   </div>
 
-  <!-- خيارات التحكم في الضغط -->
   <div class="settings-grid">
     <div class="setting-item">
-      <label class="ar-text">حجم الدفعة (عدد الطلبات في اللحظة):</label>
-      <input type="number" id="batchSizeInput" value="30" min="1" max="50">
+      <label>حجم الدفعة (عدد العناصر):</label>
+      <input type="number" id="batchSizeInput" value="25" min="1" max="50">
     </div>
     <div class="setting-item">
-      <label class="ar-text">التأخير الزمني بين الدفعات (بالملي ثانية):</label>
-      <input type="number" id="delayInput" value="500" min="100" step="100">
+      <label>التصنيف:</label>
+      <select id="categoryFilter">
+        <option value="">كل التصنيفات (عشوائي)</option>
+      </select>
     </div>
   </div>
 
-  <label class="ar-text">السؤال أو الطلب المولد مؤخراً:</label>
-  <input type="text" id="qInput" class="ar-text" readonly placeholder="في انتظار التشغيل...">
-
-  <label class="ar-text">القالب أو الكود البرمجي المولد مؤخراً:</label>
-  <textarea id="aInput" readonly placeholder="في انتظار التشغيل..."></textarea>
-
-  <label class="ar-text">التصنيف المعرفي / البرمجي:</label>
-  <input type="text" id="catInput" readonly value="...">
-
   <div id="statusBox">
-    الحالة: <span id="badge" class="status-badge badge-paused">🟡 متوقف مؤقتاً</span>
+    الحالة: <span id="badge" class="status-badge badge-idle">🟡 جاهز - بانتظار الأمر</span>
   </div>
-  <div class="stats" id="counterStats">تم إرسال: 0 معلومة في هذه الجلسة</div>
+  <div class="stats" id="counterStats">تم إرسال (بعد الموافقة): 0 معلومة في هذه الجلسة</div>
+
+  <div class="review-panel">
+    <h3>🔍 معاينة قبل الإرسال — راجع وأضغط "موافقة" لكل عنصر</h3>
+    <div id="reviewList"><div class="empty-note">ولّد دفعة جديدة باش تبدا المعاينة...</div></div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ============================================================
+// Supabase client
+// ============================================================
 const _SB = supabase.createClient(
   'https://xrldhfsytysznyyhwjlr.supabase.co',
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
-const megaPool = [
-  { q: "أهلاً، أنا مطور، ما هي أفضل طريقة للبدء في مشروع تقني جديد اليوم؟", a: "أهلاً بك! ابدأ بتحديد المتطلبات الأساسية، تقسيم المهام إلى أجزاء صغيرة، وااختيار التقنيات المناسبة.", cat: "personal_greeting" },
-  { q: "لنتذكر معاً، نحن نعمل على مشروع باستخدام التقنيات الحديثة. ما هي الخطوة التالية؟", a: "الخطوة التالية هي مراجعة الكود الحالي (Code Review)، اختبار أداء قاعدة البيانات، وتحسين الواجهة.", cat: "context_reset" },
-  { q: "أشعر بالتعب والملل في العمل على مشروعي التقني، أعطني كلمات تحفيزية سريعة.", a: "خذ استراحة قصيرة لمدة 5 دقائق، اشرب ماء، ثم عد لتبدأ بـ Pomodoro لمدة 25 دقيقة.", cat: "motivation" },
-  { q: "اليوم يوم طويل وشاق، أريد محادثة خفيفة ومريحة لنأخذ استراحة من الأكواد.", a: "لا بأس يا صديقي، الاستراحة ضرورية لشحن الطاقة العقلية. خذ وقتاً للاسترخاء وسنعود أقوى.", cat: "check_in" },
-  { q: "لدي مشكلة طارئة في النظام، أريد حلاً مباشراً ودقيقاً بدون تفاصيل طويلة.", a: "افحص سجلات الأخطاء (Logs) فوراً، حدد الخطوط البرمجية المسؤولة، وقم بتطبيق رقعة تصحيح سريعة.", cat: "sos_help" },
-  { q: "رتب مهامي اليومية واضع لها جدولاً زمنياً منظماً.", a: "1. المهام الحرجة (صباحاً)\n2. البرمجة والتطوير (ظهراً)\n3. الاختبار ومراجعة الأخطاء (مساءً)", cat: "productivity" }
-];
+// ============================================================
+// Template library — 20 categories, real generator logic
+// (varies subject/language/number so questions genuinely differ,
+//  no hidden characters, no fake-uniqueness tricks)
+// ============================================================
 
-function inject200Templates() {
-  const extraLangs = ['Python', 'JavaScript', 'C++', 'Java', 'PHP', 'Ruby', 'Swift', 'Go', 'Rust', 'Dart'];
-  const extraTasks = [
-    { t: 'عكس مصفوفة', code: 'arr.reverse()' },
-    { t: 'فرز بيانات', code: 'data.sort()' },
-    { t: 'طباعة الوقت الحالي', code: 'print(Time.now)' },
-    { t: 'قراءة ملف نصي', code: 'readFile("data.txt")' },
-    { t: 'تشفير كلمة مرور', code: 'hash(password)' }
-  ];
+const LANGS = ['Python','JavaScript','TypeScript','PHP','Java','C++','Go','Rust','Bash','SQL'];
+const DS = ['مصفوفة (Array)','قائمة مرتبطة (Linked List)','شجرة ثنائية (Binary Tree)','جدول هاش (Hash Table)','كومة (Stack)','طابور (Queue)','رسم بياني (Graph)'];
+const TOPICS_SCI = ['الجاذبية','الضوء','الذرة','الخلية الحية','الطاقة الشمسية','الحمض النووي','الكهرباء الساكنة','الأمواج الصوتية'];
+const COUNTRIES = ['المغرب','مصر','فرنسا','اليابان','البرازيل','ألمانيا','كندا','إسبانيا'];
+const TOOLS_GIT = ['git rebase','git cherry-pick','git stash','git bisect','git reflog','git submodule'];
+const LINUX_CMD = ['grep','awk','sed','systemctl','crontab','rsync','chmod','find'];
+const HEALTH_TOPICS = ['النوم الجيد','شرب الماء','التمارين الخفيفة','التوتر والعمل','الجلوس الطويل أمام الشاشة'];
+const UIUX_TOPICS = ['التباين اللوني (Contrast)','المسافات (Whitespace)','التسلسل البصري (Visual Hierarchy)','قابلية الوصول (Accessibility)'];
 
-  for (let i = 0; i < extraLangs.length; i++) {
-    for (let j = 0; j < extraTasks.length; j++) {
-      for (let k = 1; k <= 3; k++) {
-        megaPool.push({
-          q: `اكتب كود ${extraLangs[i]} سريع لـ ${extraTasks[j].t}`,
-          a: `// لغة: ${extraLangs[i]}\n// المهمة: ${extraTasks[j].t}\nfunction task() {\n  return ${extraTasks[j].code};\n}`,
-          cat: `${extraLangs[i].toLowerCase()}_code`
-        });
-      }
-    }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function pickTwo(arr){
+  const a = pick(arr); let b = pick(arr);
+  while(b===a && arr.length>1) b = pick(arr);
+  return [a,b];
+}
+
+// Each category = a function returning {q, a} using real varying inputs
+const GENERATORS = {
+
+  general_science_facts: () => {
+    const t = pick(TOPICS_SCI);
+    return { q:`اشرح ليا بشكل مبسط: كيفاش كتخدم ظاهرة ${t}؟`,
+      a:`${t} هي ظاهرة طبيعية أساسية. باختصار: كتعتمد على قوانين فيزيائية/بيولوجية ثابتة يمكن ملاحظتها وقياسها تجريبياً. (هادا placeholder عام - خاصو يتعوض بجواب علمي دقيق من مصدر موثوق قبل التفعيل).` };
+  },
+
+  history_geography: () => {
+    const c = pick(COUNTRIES);
+    return { q:`شنو أهم حدث تاريخي أو معلم جغرافي مميز فـ ${c}؟`,
+      a:`${c} عندها تاريخ وجغرافيا غنية. (placeholder - خاص التعويض بمعلومة تاريخية/جغرافية دقيقة قبل التفعيل).` };
+  },
+
+  daily_life_productivity: () => {
+    const items = ['تنظيم اليوم','تقنية Pomodoro','التخلص من التسويف','ترتيب الأولويات'];
+    const t = pick(items);
+    return { q:`عطيني نصيحة عملية باش نحسن ${t} ديالي.`,
+      a:`لتحسين ${t}: ابدأ بخطوة صغيرة قابلة للتنفيذ، حدد وقت محدد لها، وقيّم النتيجة بعد أسبوع.` };
+  },
+
+  business_finance_basics: () => {
+    const terms = ['هامش الربح','التدفق النقدي','رأس المال العامل','نقطة التعادل'];
+    const t = pick(terms);
+    return { q:`شنو معنى ${t} فـ عالم الأعمال، وعلاش مهم؟`,
+      a:`${t} هو مؤشر مالي أساسي كيساعد صاحب المشروع يفهم وضعية الشركة المالية ويتخذ قرارات مبنية على أرقام حقيقية.` };
+  },
+
+  health_wellness_tips: () => {
+    const t = pick(HEALTH_TOPICS);
+    return { q:`كيفاش نأثر إيجابياً على صحتي عن طريق ${t}؟`,
+      a:`بخصوص ${t}: (placeholder - هاد الفئة كتلمس الصحة، خاص المحتوى يتراجع من مصدر طبي موثوق قبل أي تفعيل، وما خاصش يتعتبر نصيحة طبية نهائية).` };
+  },
+
+  languages_translation: () => {
+    const [l1,l2] = pickTwo(['الإنجليزية','الفرنسية','الإسبانية','الألمانية']);
+    return { q:`شنو الفرق الأساسي بين قواعد الجملة فـ ${l1} و ${l2}؟`,
+      a:`كل لغة عندها بنية جملة خاصة بيها (ترتيب الفعل/الفاعل/المفعول يختلف). (placeholder - خاص التعويض بمقارنة لغوية دقيقة).` };
+  },
+
+  frontend_web_dev: () => {
+    const t = pick(['CSS Grid','Flexbox','Web Components','Lazy Loading','Responsive Design']);
+    return { q:`فـ شي حالة نستعمل ${t} فـ تطوير الواجهة الأمامية؟`,
+      a:`${t} كيستعمل خصوصاً pour بناء واجهات مرنة وسريعة، بحال:\n1. تنظيم العناصر بشكل ديناميكي\n2. تحسين الأداء\n3. دعم مختلف أحجام الشاشات` };
+  },
+
+  backend_web_dev: () => {
+    const t = pick(['REST API','GraphQL','Middleware','Rate Limiting','Caching','WebSockets']);
+    return { q:`شنو دور ${t} فـ بنية سيرفر backend حديث؟`,
+      a:`${t} كيلعب دور مهم فـ:\n- تنظيم تدفق البيانات\n- تحسين الأداء والأمان\n- تسهيل التواصل بين الخدمات المختلفة` };
+  },
+
+  algorithms_data_structures: () => {
+    const d = pick(DS);
+    return { q:`فين نستعمل ${d} فـ الحياة العملية (real-world use case)؟`,
+      a:`${d} كتستعمل فـ حالات بحال: تخزين وتنظيم البيانات بشكل يسمح بالوصول أو التعديل السريع، حسب خصائصها (ترتيب، سرعة بحث، إلخ).` };
+  },
+
+  clean_code_debugging: () => {
+    const l = pick(LANGS);
+    return { q:`شنو أهم عادة كتنصح بيها لكتابة كود نظيف فـ ${l}؟`,
+      a:`فـ ${l}: سمي المتغيرات بأسماء واضحة، خلي كل دالة تدير حاجة وحدة (Single Responsibility)، وكتب اختبارات (tests) قبل ما تعتبر الكود جاهز.` };
+  },
+
+  git_devops_tools: () => {
+    const g = pick(TOOLS_GIT);
+    return { q:`إمتى نستعمل ${g} وشنو الفرق عن الأوامر العادية؟`,
+      a:`${g} كيستعمل فـ حالات خاصة (بحال تنظيف التاريخ، أو تصحيح مشكل معين)، وكيختلف عن الأوامر العادية فـ أنه كيأثر على تاريخ الـ commits أو الـ working directory بطريقة مختلفة.` };
+  },
+
+  mobile_app_dev: () => {
+    const t = pick(['React Native','Flutter','Native Android (Kotlin)','Native iOS (Swift)']);
+    return { q:`شنو أهم اعتبار عند اختيار ${t} لتطوير تطبيق موبايل؟`,
+      a:`عند اختيار ${t} خاصك تحسب: الأداء المطلوب، حجم الفريق وخبرته، وحاجتك لميزات native خاصة بكل منصة.` };
+  },
+
+  ai_prompt_engineering: () => {
+    const t = pick(['Few-shot prompting','Chain of thought','System prompts','Prompt chaining']);
+    return { q:`كيفاش نستعمل تقنية ${t} باش نحسن جواب نموذج AI؟`,
+      a:`${t} كتساعد فـ توجيه النموذج بشكل أدق عن طريق إعطائه سياق أو أمثلة إضافية قبل الطلب الأساسي.` };
+  },
+
+  cybersecurity_privacy: () => {
+    const t = pick(['SQL Injection','XSS','CSRF','Rate limiting','2FA','Encryption at rest']);
+    return { q:`شنو هو ${t} وكيفاش نحمي منو تطبيق ويب؟`,
+      a:`${t} هو مفهوم أمني أساسي. الحماية منو كتتطلب: validation صارم للمدخلات، تحديث المكتبات باستمرار، ومراجعة أمنية دورية للكود.` };
+  },
+
+  linux_sysadmin_cmd: () => {
+    const c = pick(LINUX_CMD);
+    return { q:`فيمَ نستعمل أمر ${c} فـ Linux، وعطيني مثال بسيط؟`,
+      a:`أمر ${c} كيستعمل فـ إدارة النظام. مثال أساسي:\n$ ${c} [options]\n(هادا مثال عام - خاص التعويض بمثال دقيق ومختبر قبل التفعيل).` };
+  },
+
+  saas_product_architecture: () => {
+    const t = pick(['Multi-tenancy','Subscription billing','Usage-based pricing','Onboarding flow']);
+    return { q:`كيفاش نصمم ${t} فـ منتج SaaS بشكل قابل للتوسع؟`,
+      a:`تصميم ${t} كيتطلب: فصل واضح للمسؤوليات فـ البنية، تخطيط للنمو من البداية، ومراقبة مستمرة للأداء والتكلفة.` };
+  },
+
+  ui_ux_design_concepts: () => {
+    const t = pick(UIUX_TOPICS);
+    return { q:`علاش ${t} مهم فـ تصميم واجهة مستخدم ناجحة؟`,
+      a:`${t} كيأثر مباشرة على تجربة المستخدم: كيسهل الفهم، كيقلل الجهد الذهني، وكيخلي الواجهة أسهل فـ الاستعمال.` };
+  },
+
+  hardware_tech_news: () => {
+    const t = pick(['المعالجات ARM','الذاكرة SSD NVMe','بطاقات الرسوميات','الحوسبة الطرفية (Edge Computing)']);
+    return { q:`شنو التطور الحالي فـ مجال ${t}؟`,
+      a:`(placeholder - هاد الفئة كتتطلب معلومة محدثة، خاص التعويض بخبر تقني حقيقي ومصدره قبل أي تفعيل).` };
+  },
+
+  content_creation_ai: () => {
+    const t = pick(['كتابة المقالات','تحرير الفيديو','توليد الصور','كتابة السكريبتات']);
+    return { q:`كيفاش نستعمل أدوات AI باش نسهل ${t}؟`,
+      a:`أدوات AI فـ ${t} كتساعد فـ: تسريع المسودة الأولى، اقتراح تحسينات، بصح خاص المراجعة البشرية ديما تبقى فـ الوسط قبل النشر.` };
+  },
+
+  general_tech_qa: () => {
+    const t = pick(['الفرق بين HTTP و HTTPS','شنو هو DNS','شنو هو CDN','شنو هو API']);
+    return { q:t + '؟',
+      a:`جواب مبسط: (placeholder - خاص التعويض بشرح تقني دقيق قبل التفعيل).` };
   }
+};
+
+const CATEGORIES = Object.keys(GENERATORS);
+
+// populate category dropdown
+const catSelect = document.getElementById('categoryFilter');
+CATEGORIES.forEach(c=>{
+  const opt = document.createElement('option');
+  opt.value = c; opt.textContent = c;
+  catSelect.appendChild(opt);
+});
+
+// ============================================================
+// State
+// ============================================================
+let pendingItems = []; // {q, a, cat, id}
+let sentCount = 0;
+let idCounter = 0;
+
+function makeItem(catOverride){
+  const cat = catOverride || pick(CATEGORIES);
+  const gen = GENERATORS[cat];
+  const {q,a} = gen();
+  idCounter++;
+  return { id: idCounter, q, a, cat };
 }
-inject200Templates();
 
-let currentIndex = 0;
-let successCount = 0;
-let isRunning = false;
-let loopTimeout = null;
+// ============================================================
+// Batch generation (bounded, manual trigger only — no auto-loop)
+// ============================================================
+function generateBatch(){
+  const batchSize = Math.min(50, Math.max(1, parseInt(document.getElementById('batchSizeInput').value)||25));
+  const catFilter = document.getElementById('categoryFilter').value;
 
-function makeUniqueInvisible(text, id) {
-  let suffix = '';
-  let n = id;
-  do {
-    suffix += (n % 2 === 0) ? '\u200B' : '\u200C';
-    n = Math.floor(n / 2);
-  } while (n > 0);
-  return text + suffix;
+  const seen = new Set(pendingItems.map(it=>it.q));
+  let attempts = 0;
+  let added = 0;
+
+  while (added < batchSize && attempts < batchSize*5) {
+    attempts++;
+    const item = makeItem(catFilter || undefined);
+    if (seen.has(item.q)) continue; // real duplicate check, no hidden chars
+    seen.add(item.q);
+    pendingItems.push(item);
+    added++;
+  }
+
+  document.getElementById('badge').innerHTML = '🟢 تم توليد ' + added + ' عنصر — راجعهم تحت';
+  document.getElementById('badge').className = 'status-badge badge-active';
+  document.getElementById('stopBtn').disabled = false;
+  renderReviewList();
 }
 
-function generateInfiniteItem(index) {
-  const base = megaPool[index % megaPool.length];
-  return {
-    q: makeUniqueInvisible(base.q, index),
-    a: base.a,
-    cat: base.cat
-  };
+function clearPending(){
+  pendingItems = [];
+  renderReviewList();
+  document.getElementById('badge').textContent = '🟡 جاهز - بانتظار الأمر';
+  document.getElementById('badge').className = 'status-badge badge-idle';
+  document.getElementById('stopBtn').disabled = true;
 }
 
-async function sendSingleItem() {
-  const item = generateInfiniteItem(currentIndex);
-  currentIndex++; 
+function renderReviewList(){
+  const list = document.getElementById('reviewList');
+  if (pendingItems.length === 0){
+    list.innerHTML = '<div class="empty-note">ولّد دفعة جديدة باش تبدا المعاينة...</div>';
+    return;
+  }
+  list.innerHTML = pendingItems.map(it => `
+    <div class="item-card" id="item-${it.id}">
+      <div class="q">${escapeHtml(it.q)}</div>
+      <div class="a">${escapeHtml(it.a)}</div>
+      <div class="meta">
+        <span class="cat">${it.cat}</span>
+        <span class="item-actions">
+          <button class="btn-approve" onclick="approveItem(${it.id})">✅ موافقة وإرسال</button>
+          <button class="btn-reject" onclick="rejectItem(${it.id})">❌ رفض</button>
+        </span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function rejectItem(id){
+  pendingItems = pendingItems.filter(it=>it.id!==id);
+  renderReviewList();
+}
+
+// ============================================================
+// Send ONE approved item to Supabase (still pending_review/inactive
+// on the DB side — final activation stays a separate deliberate step)
+// ============================================================
+async function approveItem(id){
+  const item = pendingItems.find(it=>it.id===id);
+  if (!item) return;
+
+  const card = document.getElementById('item-'+id);
+  if (card) card.style.opacity = '0.5';
 
   const { error } = await _SB
     .from('ai_knowledge')
-    .upsert([
-      {
-        question: item.q,
-        answer: item.a,
-        category: item.cat,
-        review_status: 'pending_review',
-        is_active: false,
-        origin_model: 'archon_ultimate_engine_300',
-        weight: 0.99
-      }
-    ], { onConflict: 'question' });
+    .insert([{
+      question: item.q,
+      answer: item.a,
+      category: item.cat,
+      review_status: 'human_approved',
+      is_active: false,
+      origin_model: 'archon_manual_review_v1'
+    }]);
 
-  return { error, item };
-}
-
-async function runBatchCycle() {
-  if (!isRunning) return;
-
-  const statusBox = document.getElementById('statusBox');
-  const statsBox = document.getElementById('counterStats');
-  const batchSize = parseInt(document.getElementById('batchSizeInput').value) || 10;
-  const delaySpeed = parseInt(document.getElementById('delayInput').value) || 1000;
-
-  const promises = [];
-  for (let i = 0; i < batchSize; i++) {
-    promises.push(sendSingleItem());
+  if (error) {
+    document.getElementById('badge').textContent = '🔴 خطأ فـ الإرسال: ' + error.message;
+    document.getElementById('badge').className = 'status-badge badge-idle';
+    if (card) card.style.opacity = '1';
+    return;
   }
 
-  const results = await Promise.all(promises);
-
-  let batchSuccess = 0;
-  let lastItem = null;
-
-  results.forEach(res => {
-    if (!res.error) {
-      batchSuccess++;
-      successCount++;
-      lastItem = res.item;
-    }
-  });
-
-  if (batchSuccess > 0) {
-    statusBox.innerHTML = `الحالة: <span class="status-badge badge-active">🟢 يعمل الآن</span> (تم إرسال ${batchSuccess} عنصر بنجاح)`;
-    statsBox.textContent = `الإجمالي المرسل: ${successCount} معلومة في هذه الجلسة`;
-    
-    if (lastItem) {
-      document.getElementById('qInput').value = lastItem.q;
-      document.getElementById('aInput').value = lastItem.a;
-      document.getElementById('catInput').value = lastItem.cat;
-    }
-  } else {
-    statusBox.innerHTML = `الحالة: <span style="color:var(--danger)">🔴 خطأ في الاتصال بالسيرفر!</span>`;
-  }
-
-  // جدولة الدفعة القادمة بناءً على السرعة المحددة
-  if (isRunning) {
-    loopTimeout = setTimeout(runBatchCycle, delaySpeed);
-  }
-}
-
-function startEngine() {
-  if (isRunning) return;
-  isRunning = true;
-  document.getElementById('statusBox').innerHTML = `الحالة: <span class="status-badge badge-active">🟢 جاري التشغيل...</span>`;
-  runBatchCycle();
-}
-
-function pauseEngine() {
-  isRunning = false;
-  if (loopTimeout) clearTimeout(loopTimeout);
-  document.getElementById('statusBox').innerHTML = `الحالة: <span class="status-badge badge-paused">🟡 متوقف مؤقتاً (Supabase مرتاح الآن)</span>`;
-}
-
-function resetStats() {
-  successCount = 0;
-  document.getElementById('counterStats').textContent = `تم إرسال: 0 معلومة في هذه الجلسة`;
+  sentCount++;
+  document.getElementById('counterStats').textContent = `تم إرسال (بعد الموافقة): ${sentCount} معلومة في هذه الجلسة`;
+  pendingItems = pendingItems.filter(it=>it.id!==id);
+  renderReviewList();
 }
 </script>
 </body>
