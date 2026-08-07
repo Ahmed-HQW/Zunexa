@@ -711,6 +711,40 @@ body[data-archon-mode="cli"] .msg.bot .bubble{
 .think-step.done .ts-label{color:var(--tw)}
 
 /* ════════════════════════════════════════════════════════
+   THINKING PROCESS V2 — ديناميكي، متدرّج زمنياً، وواعٍ باللغة
+════════════════════════════════════════════════════════ */
+.think-dynamic{
+  display:flex;align-items:center;gap:9px;
+  min-height:18px;
+}
+.think-dynamic .td-text{
+  font-size:12px;color:var(--tg);
+  animation:tdFadeIn .35s ease;
+  transition:opacity .25s ease;
+}
+.think-dynamic .td-text.out{opacity:0;transform:translateY(-3px)}
+@keyframes tdFadeIn{
+  from{opacity:0;transform:translateY(3px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.td-dots{display:inline-flex;gap:3px;margin-inline-start:2px}
+.td-dots span{
+  width:4px;height:4px;border-radius:50%;background:var(--gold);
+  animation:tdBop 1.1s ease infinite;opacity:.5;
+}
+.td-dots span:nth-child(2){animation-delay:.18s}
+.td-dots span:nth-child(3){animation-delay:.36s}
+@keyframes tdBop{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+
+.think-box.finishing{
+  animation:thinkCollapse .38s ease forwards;
+}
+@keyframes thinkCollapse{
+  0%{opacity:1;max-height:200px;margin-bottom:6px;padding-top:10px;padding-bottom:10px}
+  100%{opacity:0;max-height:0;margin-bottom:0;padding-top:0;padding-bottom:0;overflow:hidden}
+}
+
+/* ════════════════════════════════════════════════════════
    SESSION LIMIT OVERLAY
 ════════════════════════════════════════════════════════ */
 #limitOverlay{
@@ -2855,23 +2889,102 @@ function isFollowUp(q) {
    3. Archon Brain (LLM) — مع السياق المُجمَّع من 1 و 2
 */
 /* ════════════════════════════════════════════════════════════
-   THINKING PROCESS — a real step tracker, not a fake animation.
-   thinkStart() renders the box; thinkStep(id) marks a stage active;
-   thinkDone(id) marks it complete. Called from the actual pipeline
-   in answer() below, so what's shown always matches real work being
-   done (local KB search, RAG lookup, Archon Brain generation) —
-   never invented steps for stages that didn't run.
+   THINKING PROCESS V2
+   - مكتبة من أكثر من 30 قالب تفكير حقيقي، مقسّمة حسب نوع المهمة
+     وحسب لغة/لهجة المستخدم (يتم اكتشافها تلقائياً من نص السؤال).
+   - عرض متدرّج زمنياً (كل ~450-750ms) بدل القفزة الفورية.
+   - إنهاء سلس (fade + collapse) عند وصول الجواب النهائي.
 ════════════════════════════════════════════════════════════ */
 let _thinkBoxEl = null;
 
-function thinkStart(steps) {
+/* ── اكتشاف اللغة/اللهجة من نص المستخدم ── */
+function detectUserLang(text) {
+  const t = (text || '').trim();
+  if (!t) return 'ary';
+  const hasArabic = /[\u0621-\u064A]/.test(t);
+  if (hasArabic) {
+    const daridaMarkers = /(واش|بغيت|كيفاش|دابا|غادي|ديال|زعما|فين|علاش|مزيان|بزاف|شحال)/;
+    return daridaMarkers.test(t) ? 'ary' : 'ar';
+  }
+  if (/[àâçéèêëîïôûùüÿœæ]/i.test(t) || /\b(le|la|les|est|avec|pour|bonjour|merci)\b/i.test(t)) return 'fr';
+  return 'en';
+}
+
+/* ── اكتشاف نوع المهمة من نص السؤال ── */
+function detectTaskType(userQ) {
+  const l = (userQ || '').toLowerCase();
+  const codeSig = ['كود','دالة','function','javascript','python','html','css','sql','api','debug','error','خطأ برمجي','bug','script','class','array','json','برمج'];
+  const toolSig = ['/طقس','/weather','/خريطة','/map','/جيت','/github','/اخبار','/news','طقس','خريطة','جيت هوب','اخبار'];
+  const imgSig  = ['/صورة','/image','ولد لي صورة','رسم لي','générer une image','generate image','draw me'];
+  const searchSig = ['/بحث','بحث عميق','دير بحث','recherche approfondie','deep search','ابحث عن'];
+  const trSig = ['ترجم','traduis','translate'];
+
+  if (codeSig.some(k => l.includes(k))) return 'code';
+  if (imgSig.some(k => l.includes(k))) return 'image';
+  if (searchSig.some(k => l.includes(k))) return 'search';
+  if (toolSig.some(k => l.includes(k))) return 'tool';
+  if (trSig.some(k => l.includes(k))) return 'translate';
+  return 'general';
+}
+
+/* ── مكتبة القوالب: > 30 عبارة تفكير حقيقية، موزعة على
+   6 أنواع مهام × لغات/لهجات متعددة ── */
+const THINK_LIB = {
+  code: {
+    ar:  ['أحلّل بنية السؤال البرمجي…', 'أراجع المتطلبات التقنية…', 'أبحث عن أفضل نمط للحل…', 'أتحقق من صحة الصياغة والمنطق…', 'أُجهّز الكود النهائي وأنسّقه…'],
+    ary: ['كنقرا السؤال ديال الكود مزيان…', 'كنشوف شنو خاصو الحل باش يخدم…', 'كنقارن بين شي حلول ممكنة…', 'كنتأكد من المنطق قبل ما نكتب…', 'كنصيفط الكود وكنرتبو…'],
+    en:  ['Parsing the code request…', 'Reviewing technical requirements…', 'Evaluating the best implementation pattern…', 'Checking logic and syntax…', 'Formatting the final code…'],
+    fr:  ['Analyse de la demande technique…', 'Vérification des exigences…', 'Recherche du meilleur pattern…', 'Contrôle de la logique et de la syntaxe…', 'Mise en forme finale du code…'],
+  },
+  tool: {
+    ar:  ['أستخرج نية السؤال…', 'أختار الأداة الخارجية المناسبة…', 'أرسل الطلب إلى المصدر الحي…', 'أستقبل البيانات وأنسّقها…'],
+    ary: ['كنشوف شنو باغي يعرف بالضبط…', 'كنختار الأداة لي غادية تعاون…', 'كنجيب المعلومة مباشرة ديال دابا…', 'كنرتب الجواب باش يبان واضح…'],
+    en:  ['Extracting intent from the request…', 'Selecting the right external tool…', 'Fetching live data from the source…', 'Formatting the retrieved data…'],
+    fr:  ['Extraction de l\'intention…', 'Sélection de l\'outil externe adapté…', 'Récupération des données en direct…', 'Mise en forme du résultat…'],
+  },
+  image: {
+    ar:  ['أفكّك وصف الصورة المطلوبة…', 'أحدّد الأسلوب والألوان المناسبة…', 'أرسل الطلب لمحرّك التوليد…', 'أنتظر اكتمال توليد الصورة…'],
+    ary: ['كنفهم شنو باغي يبان فالصورة…', 'كنحدد الستايل والألوان…', 'كنصيفط الطلب لمحرّك التوليد…', 'كنتسنى الصورة توصل كاملة…'],
+    en:  ['Breaking down the image description…', 'Choosing the right style and palette…', 'Sending the request to the generator…', 'Waiting for the image to render…'],
+    fr:  ['Décomposition de la description…', 'Choix du style et des couleurs…', 'Envoi de la requête au générateur…', 'Attente du rendu final…'],
+  },
+  search: {
+    ar:  ['أحدّد الكلمات المفتاحية للبحث…', 'أبحث في مصادر متعددة…', 'أقارن وأفلتر النتائج الأكثر صلة…', 'ألخّص أهم النقاط…'],
+    ary: ['كنحدد شنو غادي نقلب عليه…', 'كنقلب فبزاف ديال المصادر…', 'كنفلتر النتائج لي عندها علاقة…', 'كنلخّص أهم شي حاجة…'],
+    en:  ['Identifying search keywords…', 'Searching across multiple sources…', 'Filtering the most relevant results…', 'Summarizing the key findings…'],
+    fr:  ['Identification des mots-clés…', 'Recherche dans plusieurs sources…', 'Filtrage des résultats pertinents…', 'Synthèse des points clés…'],
+  },
+  translate: {
+    ar:  ['أحدّد اللغة المصدر والهدف…', 'أراجع السياق لدقة الترجمة…', 'أصيغ الترجمة النهائية…'],
+    ary: ['كنشوف من أي لغة لأي لغة…', 'كنراجع السياق باش الترجمة تكون مزيانة…', 'كنصيفط الترجمة النهائية…'],
+    en:  ['Detecting source and target language…', 'Reviewing context for accuracy…', 'Composing the final translation…'],
+    fr:  ['Détection des langues source/cible…', 'Vérification du contexte…', 'Rédaction de la traduction finale…'],
+  },
+  general: {
+    ar:  ['أقرأ السؤال وأحلّل المقصود منه…', 'أبحث في قاعدة المعرفة المحلية…', 'أراجع المعلومات ذات الصلة…', 'أُركّب إجابة واضحة ومفيدة…', 'أراجع الصياغة النهائية…'],
+    ary: ['كنقرا السؤال باش نفهمو مزيان…', 'كنقلب فقاعدة المعرفة المحلية…', 'كنشوف المعلومات لي عندها علاقة…', 'كنبني جواب واضح ومفيد…', 'كنراجع الصياغة قبل ما نجاوب…'],
+    en:  ['Reading and understanding the question…', 'Searching the local knowledge base…', 'Reviewing relevant information…', 'Composing a clear, helpful answer…', 'Polishing the final phrasing…'],
+    fr:  ['Lecture et compréhension de la question…', 'Recherche dans la base de connaissances…', 'Analyse des informations pertinentes…', 'Rédaction d\'une réponse claire…', 'Relecture finale…'],
+  },
+};
+
+let _thinkTimer = null;
+let _thinkQueue = [];
+let _thinkIdx = 0;
+
+/* thinkStart(userQ, extraSteps?) — يبني الصندوق، يكتشف نوع المهمة
+   ولغة المستخدم تلقائياً، ويبدأ العرض المتدرّج زمنياً. */
+function thinkStart(userQ, extraSteps) {
+  const taskType = detectTaskType(userQ);
+  const lang     = detectUserLang(userQ);
+  const lib      = THINK_LIB[taskType] || THINK_LIB.general;
+  _thinkQueue    = [...(lib[lang] || lib.ar), ...(extraSteps || [])];
+  _thinkIdx      = 0;
+
   const conv = document.getElementById('conv');
   const wrap = document.createElement('div');
   wrap.className = 'msg bot';
   wrap.id = 'thinkMsg';
-  const stepsHtml = steps.map(s =>
-    `<div class="think-step" data-step="${s.id}"><span class="ts-dot"></span><span class="ts-label">${s.label}</span></div>`
-  ).join('');
   wrap.innerHTML = `
     <div class="msg-av">Z</div>
     <div class="msg-body">
@@ -2879,46 +2992,54 @@ function thinkStart(steps) {
         <div class="think-head" onclick="this.parentElement.classList.toggle('collapsed')">
           <span class="th-caret">▾</span> سلسلة التفكير
         </div>
-        <div class="think-steps">${stepsHtml}</div>
+        <div class="think-dynamic">
+          <span class="td-text" id="thinkTextEl">${_thinkQueue[0] || ''}</span>
+          <span class="td-dots"><span></span><span></span><span></span></span>
+        </div>
       </div>
     </div>`;
   conv.appendChild(wrap);
   conv.scrollTop = conv.scrollHeight;
   _thinkBoxEl = wrap;
+
+  clearInterval(_thinkTimer);
+  _thinkTimer = setInterval(() => {
+    _thinkIdx++;
+    if (_thinkIdx >= _thinkQueue.length) { _thinkIdx = _thinkQueue.length - 1; return; }
+    const el = document.getElementById('thinkTextEl');
+    if (!el) { clearInterval(_thinkTimer); return; }
+    el.classList.add('out');
+    setTimeout(() => {
+      el.textContent = _thinkQueue[_thinkIdx];
+      el.classList.remove('out');
+    }, 220);
+  }, 400 + Math.random() * 400); // كل 400-800ms — غير ثابت باش يبان حي وواقعي
 }
 
-function thinkStep(id) {
-  if (!_thinkBoxEl) return;
-  const el = _thinkBoxEl.querySelector(`.think-step[data-step="${id}"]`);
-  if (el) el.classList.add('active');
-  document.getElementById('conv').scrollTop = document.getElementById('conv').scrollHeight;
-}
-
-/* Inserts a step that wasn't known at thinkStart() time — used for
-   the WebLLM fallback, whose need only becomes real if the cloud call
-   actually fails at runtime. Marks it active immediately since it's
-   only ever added right as that stage begins. No-op if the box is
-   gone or the step already exists (avoids duplicates on retries). */
+/* thinkAddStep(id, label) — يضيف خطوة حقيقية وقعت فعلاً أثناء
+   التنفيذ (مثلاً: تبديل لـ WebLLM) للطابور الجاري بدون كسر الدورة. */
 function thinkAddStep(id, label) {
-  if (!_thinkBoxEl) return;
-  const stepsWrap = _thinkBoxEl.querySelector('.think-steps');
-  if (!stepsWrap || stepsWrap.querySelector(`.think-step[data-step="${id}"]`)) return;
-  const el = document.createElement('div');
-  el.className = 'think-step active';
-  el.dataset.step = id;
-  el.innerHTML = `<span class="ts-dot"></span><span class="ts-label">${label}</span>`;
-  stepsWrap.appendChild(el);
-  document.getElementById('conv').scrollTop = document.getElementById('conv').scrollHeight;
+  if (!_thinkQueue) return;
+  _thinkQueue.push(label);
 }
 
-function thinkDone(id) {
-  if (!_thinkBoxEl) return;
-  const el = _thinkBoxEl.querySelector(`.think-step[data-step="${id}"]`);
-  if (el) { el.classList.remove('active'); el.classList.add('done'); el.querySelector('.ts-dot').textContent = '✓'; }
-}
+/* thinkStep/thinkDone — أُبقيا كدوال متوافقة مع الاستدعاءات
+   القديمة في answer()، لأن العرض الجديد نصّي متدرّج وليس قائمة خطوات. */
+function thinkStep(id) {}
+function thinkDone(id) {}
 
+/* thinkEnd() — إنهاء سلس: تلاشي + طيّ الصندوق قبل حذفه. */
 function thinkEnd() {
-  if (_thinkBoxEl) { _thinkBoxEl.remove(); _thinkBoxEl = null; }
+  clearInterval(_thinkTimer);
+  if (!_thinkBoxEl) return;
+  const box = _thinkBoxEl.querySelector('.think-box');
+  if (box) {
+    box.classList.add('finishing');
+    setTimeout(() => { if (_thinkBoxEl) { _thinkBoxEl.remove(); _thinkBoxEl = null; } }, 380);
+  } else {
+    _thinkBoxEl.remove();
+    _thinkBoxEl = null;
+  }
 }
 
 async function answer(userQ) {
@@ -3386,14 +3507,7 @@ async function send() {
       res = tool;
     } else {
       removeTyping();
-      const steps = zxModel === 'lite'
-        ? [{ id:'local', label:'بحث في قاعدة المعرفة المحلية' }]
-        : [
-            { id:'local', label:'بحث في قاعدة المعرفة المحلية' },
-            { id:'rag',   label:'بحث دلالي RAG (Supabase)' },
-            { id:'brain', label:'توليد الإجابة عبر Archon Brain' }
-          ];
-      thinkStart(steps);
+      thinkStart(q);
       res = await answer(q);
       thinkEnd();
       addTyping();
