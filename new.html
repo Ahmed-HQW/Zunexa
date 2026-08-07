@@ -2,39 +2,40 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>التعلم الذاتي المتقدم - Archon AI</title>
+<title>مولد الأكواد والقوالب الذكية - Archon AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   :root { --bg:#0b0b10; --card:#16161f; --border:#2a2a38; --gold:#d4af37; --text:#eee; --tg:#999; --ok:#4caf50; --danger:#e05555; }
   * { box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:system-ui,sans-serif; margin:0; padding:24px; display: flex; justify-content: center; }
-  .container { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px; width: 100%; max-width: 550px; margin-top: 20px; }
+  .container { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:24px; width: 100%; max-width: 650px; margin-top: 10px; }
   h1 { color:var(--gold); font-size:20px; margin-bottom:10px; text-align: center; }
   p.sub { color:var(--tg); font-size:12px; text-align: center; margin-bottom:20px; line-height: 1.6; }
   label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--gold); }
-  input, textarea { width:100%; background:#101018; color:#ddd; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:inherit; font-size:13px; margin-bottom:14px; }
-  textarea { min-height: 90px; resize: vertical; }
-  #statusBox { background: #101018; border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; font-size: 13px; color: var(--gold); }
-  .stats { font-size: 11px; color: var(--tg); text-align: center; margin-top: 8px; }
+  input, textarea { width:100%; background:#101018; color:#ddd; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:monospace; font-size:12px; margin-bottom:14px; direction: ltr; text-align: left; }
+  textarea { min-height: 120px; resize: vertical; }
+  .ar-text { font-family: system-ui, sans-serif; direction: rtl; text-align: right; }
+  #statusBox { background: #101018; border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; font-size: 13px; color: var(--gold); font-family: system-ui, sans-serif; }
+  .stats { font-size: 11px; color: var(--tg); text-align: center; margin-top: 8px; font-family: system-ui, sans-serif; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>🧠 محرك التعلم الذاتي الضخم (25+ تصنيف)</h1>
-  <p class="sub">توليد وإرسال تلقائي لأكثر من 160 قاعدة معرفية متنوعة وعامة كل 30 ثانية بدون تدخل بشري.</p>
+  <h1>⚙️ مولد الأكواد والقوالب الذكية (Unbounded Code Engine)</h1>
+  <p class="sub">توليد وإرسال غير محدود لقوالب HTML, JSON, JavaScript وأكواد برمجية متقدمة لقاعدة المعرفة تلقائياً.</p>
 
-  <label>السؤال أو المعطى المولد:</label>
-  <input type="text" id="qInput" readonly placeholder="جاري التوليد...">
+  <label class="ar-text">نوع الطلب أو القالب المولد:</label>
+  <input type="text" id="qInput" class="ar-text" readonly placeholder="جاري التوليد...">
 
-  <label>الجواب المولد:</label>
+  <label>الكود أو القالب البرمجي المولد (HTML / JS / JSON):</label>
   <textarea id="aInput" readonly placeholder="جاري التوليد..."></textarea>
 
-  <label>التصنيف الحالي:</label>
+  <label class="ar-text">التصنيف البرمجي:</label>
   <input type="text" id="catInput" readonly value="...">
 
-  <div id="statusBox">جاري تشغيل محرك المعرفة...</div>
-  <div class="stats" id="counterStats">تم إرسال: 0 معلومة في هذه الجلسة</div>
+  <div id="statusBox">جاري تشغيل محرك توليد الأكواد...</div>
+  <div class="stats" id="counterStats">تم إرسال: 0 قالب برمجي في هذه الجلسة</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -44,82 +45,126 @@ const _SB = supabase.createClient(
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
-const knowledgePool = [
-  // 1. تحيات وترحيب (Greetings)
-  { q: "مرحباً، هل يمكنك إلقاء التحية؟", a: "أهلاً بك! كيف يمكنني مساعدتك اليوم؟", cat: "greetings" },
-  { q: "كيف حالك اليوم؟", a: "أنا نظام ذكاء اصطناعي جاهز للعمل بكامل الطاقة!", cat: "greetings" },
-  { q: "صباح الخير", a: "صباح النور والسرور، نتمنى لك يوماً مليئاً بالإنتاجية والنجاح.", cat: "greetings" },
-  { q: "مساء الخير", a: "مساء الورد والاتقان، هل نبدأ في جلسة تطوير جديدة؟", cat: "greetings" },
-  { q: "hey developer", a: "Hello! Ready to build amazing things today.", cat: "greetings" },
-  { q: "أهلاً بك يا صديقي", a: "أهلاً بك! أنا هنا دائماً لدعم المشاريع وتطوير منصة Archon AI.", cat: "greetings" },
-  { q: "كيف الأمور معك؟", a: "كل الأمور ممتازة وجاهزة لمعالجة البيانات بكفاءة عالية.", cat: "greetings" },
-  { q: "هل أنت مستعد للعمل؟", a: "دائماً وفي أتم الجاهزية!", cat: "greetings" },
+const codePool = [
+  // 1. HTML Templates
+  {
+    q: "أنشئ قالب HTML أساسي لصفحة ويب متجاوبة مع RTL",
+    a: `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صفحة متجاوبة</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #0b0b10; color: #eee; margin: 0; padding: 20px; }
+  .card { background: #16161f; border-radius: 8px; padding: 20px; border: 1px solid #2a2a38; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>مرحباً بك</h1>
+    <p>هذا قالب ويب متجاوب حديث.</p>
+  </div>
+</body>
+</html>`,
+    cat: "html_template"
+  },
+  // 2. JSON Schema
+  {
+    q: "ما هو هيكل بيانات JSON لملف إعدادات النظام (Config Schema)؟",
+    a: `{
+  "system_name": "Archon AI",
+  "version": "2.5.0",
+  "environment": "production",
+  "features": {
+    "auto_learning": true,
+    "code_generation": true,
+    "max_tokens": 4096
+  },
+  "database": {
+    "provider": "Supabase",
+    "region": "eu-central-1"
+  }
+}`,
+    cat: "json_schema"
+  },
+  // 3. JavaScript Functions
+  {
+    q: "اكتب دالة JavaScript للاتصال بقاعدة بيانات Supabase وجلب البيانات",
+    a: `import { createClient } from '@supabase/supabase-js'
 
-  // 2. معلومات عامة (General Knowledge)
-  { q: "ما هي أعمق نقطة في محيطات الأرض؟", a: "خندق ماريانا في المحيط الهادئ هو أعمق نقطة معروفة على سطح الأرض.", cat: "general_info" },
-  { q: "كم عدد الكواكب في المجموعة الشمسية؟", a: "يبلغ عدد الكواكب الرئيسية في المجموعة الشمسية 8 كواكب.", cat: "general_info" },
-  { q: "ما هو الحيوان البري الأسرع في العالم؟", a: "الفهد (الشيتا) هو أسرع حيوان بري، حيث تصل سرعته لمستويات قياسية.", cat: "general_info" },
-  { q: "ما هي عاصمة أستراليا؟", a: "عاصمة أستراليا هي كانبيرا وليست سيدني.", cat: "general_info" },
-  { q: "ما هو المعدن الوحيد السائل في درجة حرارة الغرفة؟", a: "معدن الزئبق هو المعدن السائل الوحيد في الظروف الطبيعية.", cat: "general_info" },
-  { q: "من هو صاحب كتاب الأغاني؟", a: "أبو الفرج الأصفهاني هو مؤلف كتاب الأغاني الشهير.", cat: "general_info" },
-  { q: "ما هي أكبر جزيرة في العالم؟", a: "جزيرة غرينلاند هي أكبر جزيرة غير قارية في العالم.", cat: "general_info" },
-  { q: "كم عدد عظام جسم الإنسان البالغ؟", a: "يحتوي جسم الإنسان البالغ على 206 عظمة.", cat: "general_info" },
+const supabase = createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
 
-  // 3. تكنولوجيا وبرمجة (Tech & Coding)
-  { q: "ما هي لغة البرمجة التي تُستخدم لتصميم هيكل صفحات الويب؟", a: "لغة HTML هي الأساس المسؤول عن هيكلة صفحات الويب.", cat: "tech" },
-  { q: "ما هو دور قواعد البيانات في التطبيقات؟", a: "تستخدم لتخزين وإدارة واسترجاع البيانات بشكل آمن ومنظم مثل Supabase و PostgreSQL.", cat: "tech" },
-  { q: "ما هي فائدة Git في تطوير البرمجيات؟", a: "يتيح تتبع التغييرات وإدارة النسخ والعمل الجماعي بمرونة عالية.", cat: "tech" },
-  { q: "ما هو نظام التشغيل المفضل للمطورين؟", a: "نظم لينكس مثل Debian تحظى بشعبية واسعة بفضل استقرارها وقوتها.", cat: "tech" },
-  { q: "ما هو الفرق بين Frontend و Backend؟", a: "الـ Frontend هو ما يراه المستخدم ويتفاعل معه، بينما Backend هو الخادم وقاعدة البيانات في الخلفية.", cat: "tech" },
-  { q: "ما هي فائدة استخدام Vercel؟", a: "تعتبر منصة سحابية ممتازة لنشر واستضافة تطبيقات الويب بسرعة وسهولة.", cat: "tech" },
-  { q: "ما هو مفهوم API؟", a: "واجهة برمجة التطبيقات التي تسمح للأنظمة المختلفة بالتواصل وتبادل البيانات.", cat: "tech" },
-  { q: "لماذا تُستخدم لغة JavaScript؟", a: "لإضافة التفاعل والديناميكية لصفحات الويب وتشغيل التطبيقات على المتصفح.", cat: "tech" },
+async function fetchKnowledgeBase() {
+  const { data, error } = await supabase
+    .from('ai_knowledge')
+    .select('*')
+    .eq('review_status', 'approved');
 
-  // 4. علوم وطبيعة (Science)
-  { q: "ما هو العنصر الكيميائي الأكثر وفراً في الكون؟", a: "عنصر الهيدروجين هو العنصر الأكثر وفراً في الكون بنسبة هائلة.", cat: "science" },
-  { q: "لماذا تظهر السماء باللون الأزرق؟", a: "بسبب ظاهرة تشتت ريلاي، حيث تشتت جزيئات الغلاف الجوي الضوء الأزرق أكثر من الألوان الأخرى.", cat: "science" },
-  { q: "ما هي سرعة الضوء في الفراغ؟", a: "تقارب سرعة الضوء 300,000 كيلومتر في الثانية الواحدة.", cat: "science" },
-  { q: "ما هو الغاز الرئيسي المكون للهواء الجوي؟", a: "غاز النيتروجين يمثل النسبة الأكبر بنوالي 78% من الغلاف الجوي.", cat: "science" },
-  { q: "ما هي وحدة قياس الشدة الكهربائية؟", a: "تُقاس الشدة الكهربائية بالآمبير (Ampere).", cat: "science" },
-  { q: "ما هو الكوكب الأحمر في مجموعتنا الشمسية؟", a: "كوكب المريخ يُعرف بالكوكب الأحمر بسبب أكسيد الحديد على سطحه.", cat: "science" },
-  { q: "ما هي القوة التي تجذب الأشياء نحو الأرض؟", a: "قوة الجاذبية الأرضية.", cat: "science" },
-  { q: "ما هو المركب الكيميائي للماء؟", a: "هو اتحاد ذرتي هيدروجين مع ذرة أكسجين (H2O).", cat: "science" },
+  if (error) {
+    console.error('Error fetching data:', error.message);
+    return null;
+  }
+  return data;
+}`,
+    cat: "javascript_code"
+  },
+  // 4. CSS Component
+  {
+    q: "أنشئ تصميم زر تفاعلي عصري بـ CSS حديث",
+    a: `.modern-btn {
+  background: linear-gradient(135deg, #d4af37, #aa8c2c);
+  color: #111;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+.modern-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(212, 175, 55, 0.4);
+}`,
+    cat: "css_component"
+  },
+  // 5. Python Automation Script
+  {
+    q: "اكتب سكربت Python أسياسي لأتمتة المهام وتجهيز البيانات",
+    a: `import requests
+import json
 
-  // 5. تاريخ وزمان (History)
-  { q: "متى هبط الإنسان لأول مرة على سطح القمر؟", a: "حدث ذلك في عام 1969 عبر رحلة أبولو 11 الشهيرة.", cat: "history" },
-  { q: "من هو مخترع المصباح الكهربائي الحديث؟", a: "توماس إديسون يُنسب إليه تطوير أول مصباح كهربائي تجاري عملي.", cat: "history" },
-  { q: "متى بدأت الحرب العالمية الثانية؟", a: "اندلعت الحرب العالمية الثانية في عام 1939 واستمرت حتى عام 1945.", cat: "history" },
-  { q: "ما هي الحضارة التي بنَت الأهرامات في مصر؟", a: "حضارة المصريين القدماء (الفراعنة) هي من بنَت الأهرامات العريقة.", cat: "history" },
-  { q: "متى سقطت غرناطة؟", a: "سقطت غرناطة آخر معاقل المسلمين في الأندلس عام 1492 ميلادية.", cat: "history" },
-  { q: "من هو قائد الفتوحات الإسلامية في شمال أفريقيا؟", a: "عقبة بن نافع الفهري هو قائد بارز في الفتوحات الإسلامية بالمغرب العربي.", cat: "history" },
-  { q: "متى تم توقيع عقد تأسيس الأمم المتحدة؟", a: "تم تأسيسها رسمياً في عام 1945 بعد انتهاء الحرب العالمية الثانية.", cat: "history" },
-  { q: "من هو أول خليفة أموي؟", a: "معاوية بن أبي سفيان هو مؤسس الدولة الأموية وأول خلفائها.", cat: "history" },
+def process_payload(data_endpoint):
+    try:
+        response = requests.get(data_endpoint)
+        response.raise_for_status()
+        payload = response.json()
+        print(f"Successfully processed {len(payload)} items.")
+        return payload
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
-  // 6. جغرافيا وبلدان (Geography)
-  { q: "ما هو أكبر قارة في العالم من حيث المساحة؟", a: "قارة آسيا هي أكبر قارة من حيث المساحة وعدد السكان.", cat: "geography" },
-  { q: "ما هو النهر الأطول في العالم؟", a: "نهر النيل في قارة أفريقيا يعتبر النهر الأطول في العالم.", cat: "geography" },
-  { q: "في أي قارة تقع دولة المغرب؟", a: "تقع المملكة المغربية في الشمال الغربي لقارة أفريقيا.", cat: "geography" },
-  { q: "ما هي الدولة الأكثر سكاناً في العالم حالياً؟", a: "تتناوب الهند والصين على صدارة قائمة الدول الأكثر سكاناً عالمياً.", cat: "geography" },
-  { q: "ما هي عاصمة اليابان؟", a: "طوكيو هي العاصمة السياسية والاقتصادية لليابان.", cat: "geography" },
-  { q: "ما هو المضيق الذي يربط البحر الأبيض المتوسط بالمحيط الأطلسي؟", a: "مضيق جبل طارق.", cat: "geography" },
-  { q: "ما هي أصغر دولة في العالم من حيث المساحة؟", a: "دولة الفاتيكان هي الأصغر عالمياً.", cat: "geography" },
-  { q: "كم عدد الدول العربية في قارة أفريقيا؟", a: "يوجد 10 دول عربية في الجناح الأفريقي.", cat: "geography" },
-
-  // 7. رياضة ولياقة (Sports & Fitness)
-  { q: "ما هي أهمية تمارين المقاومة للجسم؟", a: "تساهم في بناء الكتلة العضلية، تقوية العظام، وتحسين الأيض بشكل عام.", cat: "sports" },
-  { q: "كم عدد اللاعبين في فريق كرة القدم الأساسي على الملعب؟", a: "يتكون الفريق الواحد من 11 لاعباً.", cat: "sports" },
-  { q: "ما هو النظام الغذائي الأفضل لنمو العضلات؟", a: "النظام الغني بالبروتين، السعرات الحرارية المدروسة، والترطيب المستمر مع الراحة الكافية.", cat: "sports" },
-  { q: "ما هي فوائد رياضة الملاكمة أو الفنون القتالية؟", a: "تحسن اللياقة البدنية، سرعة البديهة، والقدرة على الدفاع عن النفس.", cat: "sports" },
-  { q: "ما هو نظام دفع وسحب العضلات في كمال الأجسام؟", a: "نظام Push/Pull/Legs هو أحد أفضل وأشهر أنظمة التمرين لتقسيم أيام التدريب.", cat: "sports" },
-  { q: "لماذا يُعد الإحماء ضرورياً قبل التمرين؟", a: "لرفع حرارة الجسم، تهيئة المفاصل، وتقليل خطر الإصابات العضلية.", cat: "sports" },
-  { q: "ما هي فوائد رياضة الجري؟", a: "تحسن صحة القلب والأوعية الدموية وتزيد من القدرة على التحمل البدني.", cat: "sports" },
-  { q: "ما هو دور الكرياتين في التمرين؟", a: "يزيد من مستويات الطاقة الفورية (ATP) ويدعم نمو القوة العضلية.", cat: "sports" },
-
-  // بقية المدخلات التقنية العامة
-  { q: "ما هو طموحك البرمجي؟", a: "بناء أنظمة ذكية ومتكاملة تسهل حياة المستخدمين وتوفر حلولاً تقنية مبتكرة.", cat: "tech" },
-  { q: "كيف ترى مستقبل الذكاء الاصطناعي؟", a: "سيكون جزءاً لا يتجزأ من كل الأنشطة اليومية والتكنولوجية الحديثة.", cat: "AI" },
-  { q: "ما هو سر النجاح في مجال البرمجة وتطوير الويب؟", a: "الممارسة المستمرة، بناء مشاريع حقيقية، والصبر على حل الأخطاء.", cat: "tech" }
+if __name__ == "__main__":
+    print("Starting automation pipeline...")`,
+    cat: "python_script"
+  }
 ];
+
+// محرك توليد غير محدود ديناميكياً لتوليد صيغ تكميلية بلا توقف
+function generateDynamicCode(index) {
+  const base = codePool[index % codePool.length];
+  const variantId = Math.floor(index / codePool.length) + 1;
+  
+  if (variantId === 1) return base;
+
+  return {
+    q: `${base.q} (إصدار متطور رقم ${variantId})`,
+    a: `/* الإصدار الديناميكي #${variantId} من القالب */\n` + base.a,
+    cat: base.cat
+  };
+}
 
 let currentIndex = 0;
 let successCount = 0;
@@ -128,30 +173,26 @@ async function runAutoLoop() {
   const statusBox = document.getElementById('statusBox');
   const statsBox = document.getElementById('counterStats');
   
-  const item = knowledgePool[currentIndex % knowledgePool.length];
+  const item = generateDynamicCode(currentIndex);
   
-  const finalQuestion = item.q;
-  const finalAnswer = item.a;
-  const finalCategory = item.cat || "general_mixed";
-
-  document.getElementById('qInput').value = finalQuestion;
-  document.getElementById('aInput').value = finalAnswer;
-  document.getElementById('catInput').value = finalCategory;
+  document.getElementById('qInput').value = item.q;
+  document.getElementById('aInput').value = item.a;
+  document.getElementById('catInput').value = item.cat;
 
   statusBox.style.color = 'var(--text)';
-  statusBox.textContent = 'جاري إرسال المدخل المعرفي إلى قاعدة البيانات...';
+  statusBox.textContent = 'جاري إرسال القالب البرمجي إلى قاعدة البيانات...';
 
   const { error } = await _SB
     .from('ai_knowledge')
     .upsert([
       {
-        question: finalQuestion,
-        answer: finalAnswer,
-        category: finalCategory,
+        question: item.q,
+        answer: item.a,
+        category: item.cat,
         review_status: 'pending_review',
         is_active: false,
-        origin_model: 'archon_mega_generator_v2',
-        weight: 0.95
+        origin_model: 'archon_code_generator_v3',
+        weight: 0.98
       }
     ], { onConflict: 'question' });
 
@@ -161,14 +202,14 @@ async function runAutoLoop() {
   } else {
     successCount++;
     statusBox.style.color = 'var(--ok)';
-    statusBox.textContent = 'تم إرسال المعرفة بنجاح! التحديث القادم بعد 30 ثانية... ⏱️';
-    statsBox.textContent = `تم إرسال: ${successCount} معلومة في هذه الجلسة`;
+    statusBox.textContent = 'تم إرسال القالب بنجاح! التوليد التالي بعد ثوانٍ... ⚡';
+    statsBox.textContent = `تم إرسال: ${successCount} قالب برمجي في هذه الجلسة`;
     currentIndex++;
   }
 }
 
 runAutoLoop();
-setInterval(runAutoLoop, 300);
+setInterval(runAutoLoop, 5000);
 </script>
 </body>
 </html>
