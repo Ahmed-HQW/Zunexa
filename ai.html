@@ -2112,7 +2112,49 @@ const THRESHOLDS = {
   // didn't know it" and is eligible to be queued for learning. Above
   // this, the KB already had a decent answer — nothing new to learn.
   AUTOLEARN_WEAK_LOCAL: 0.35,
+
+  // FIX (bug #2 — Zunexa bias / hallucination): answer() used to inject
+  // local.text into the LLM prompt as "Zunexa knowledge base context"
+  // UNCONDITIONALLY, even when the KB match score was 0 (i.e. local.text
+  // was actually the random "I don't know this" filler from buildUnknown()).
+  // The model then treated that filler as real grounding and skewed every
+  // answer toward Zunexa. This threshold is the hard floor: KB context is
+  // ONLY forwarded to the brain when the match is genuinely relevant.
+  RAG_INJECT_MIN_SCORE: 0.12,
+
+  // FIX (bug #3 — search precision / topic routing): a candidate must
+  // clear this bar to be treated as "about Zunexa" at all for topic
+  // routing (isZunexaRelated()). Kept distinct from RAG_INJECT_MIN_SCORE
+  // so "what's worth injecting as context" and "what counts as on-topic"
+  // can be tuned independently.
+  TOPIC_RELEVANT_SCORE: 0.10,
 };
+
+/* ════════════════════════════════════════════════════════════
+   TOPIC ROUTER — decides whether a question is actually about
+   Zunexa/Archon, or is a general-knowledge question that merely
+   shares a stray keyword with a KB entry.
+   FIX (bug #2): rankKB() alone isn't reliable intent detection — a
+   generic question can score > 0 against a Zunexa KB entry purely on
+   loose token overlap (e.g. "سوق" matching "منصة"/"اشتراك" indirectly
+   via TF-IDF noise). This adds an explicit intent gate: a question is
+   only treated as on-topic if (a) it contains a strong Zunexa/product
+   domain signal token itself, OR (b) the KB's top match clears
+   TOPIC_RELEVANT_SCORE by a real margin. Either signal alone is enough
+   to say "yes, it's on-topic" — but NEITHER being true is what blocks
+   Zunexa context from leaking into unrelated answers.
+════════════════════════════════════════════════════════════ */
+const ZUNEXA_DOMAIN_TOKENS = new Set([
+  'zunexa','ارشون','archon','__platform__','__dashboard__','__generator__',
+  '__seo__','__ai__','__plan__','__price__','__account__','__login__',
+  'زونيكسا','زونكسا','منصة','اشتراك','باقة','مطور','زليج','zalij'
+]);
+function isZunexaRelated(userQ, rankedTop) {
+  const qToks = new Set(tok(userQ));
+  const hasDomainToken = [...qToks].some(t => ZUNEXA_DOMAIN_TOKENS.has(t));
+  const kbSaysRelevant = !!(rankedTop && rankedTop[0] && rankedTop[0].score >= THRESHOLDS.TOPIC_RELEVANT_SCORE);
+  return hasDomainToken || kbSaysRelevant;
+}
 
 /* ════════════════════════════════════════════════════════════
    SEMANTIC MATCH ENGINE
@@ -2239,7 +2281,10 @@ async function answerLocal(userQ) {
 
   // Truly unknown — learn it
   await learnQ(userQ);
-  const txt = buildUnknown(userQ);
+  // FIX (bug #2): pick the neutral/general filler text unless the question
+  // is actually Zunexa-scoped, so buildUnknown() never manufactures a
+  // Zunexa-flavored answer for an unrelated question.
+  const txt = buildUnknown(userQ, isZunexaRelated(userQ, top));
   await logMsg(userQ, txt, 'system', 0);
   return { text: txt, src: 'learning', score: 0 };
 }
@@ -2459,12 +2504,20 @@ function archonSystemPrompt(uiLangHint, userProfile) {
     ? `\n\nإذا حيّاك المستخدم فبداية المحادثة (مثل "سلام"، "Hey"، "مرحباً")، رد بترحيب يتضمن اسمه المفضل "${callName}" (مثلاً: "مرحباً ${callName}، كيفاش نقدر نعاونك اليوم؟")، بشكل طبيعي غير مصطنع.`
     : `\n\nإذا حيّاك المستخدم فبداية المحادثة، رد بترحيب مهني وبسيط بدون اسم (ما عندكش اسم مفضل مسجل عند هاد المستخدم).`;
 
-  return 'أنت Archon، المساعد الذكي لمنصة Zunexa (منصة مغربية لتوليد المحتوى بالذكاء الاصطناعي لصناع المحتوى في المنطقة العربية/المغاربية والعالم). '
+  return 'أنت Archon، مساعد ذكاء اصطناعي عام وشامل، مطوَّر ومدمج داخل منصة Zunexa (منصة مغربية لتوليد المحتوى بالذكاء الاصطناعي). '
+       + 'قدرتك تمتد لكل المواضيع — برمجة، علوم، ثقافة عامة، حياة يومية، ترجمة، تحليل، إلخ — ومنصة Zunexa هي فقط واحدة من المواضيع اللي تقدر تجاوب عليها، وليست مرجعك الوحيد أو الافتراضي. '
        + 'تتحدث بطلاقة أكثر من 30 لغة، من بينها: العربية الفصحى، الدارجة المغربية، العربية الخليجية، الفرنسية، الإنجليزية، الإسبانية، الألمانية، الإيطالية، البرتغالية، الهولندية، التركية، الروسية، الصينية، اليابانية، الكورية، الهندية، الأردية، الفارسية، الإندونيسية، الملايوية، التايلاندية، الفيتنامية، البولندية، الأوكرانية، السويدية، النرويجية، الدنماركية، الفنلندية، اليونانية، العبرية، الرومانية، والسواحلية. '
-       + 'جاوب دائماً بنفس اللغة أو اللهجة اللي كتب بيها المستخدم، بشكل طبيعي وسليم ومهني. استعمل المعلومة التالية من قاعدة معرفة Zunexa كسياق أساسي إذا كانت متوفرة، ولا تختلق معلومات عن الشركة أو الأسعار غير موجودة في السياق. '
-       + 'إذا كان الملف المرفق يحتوي على كود من مشروع (ملف .html/.js/.py أو أرشيف .zip)، ولا تُعِد كتابة الكود المصدري الكامل له حرفياً حتى لو طُلب منك ذلك — أعطِ فقط بنية عامة (template/skeleton) أو نمطاً (pattern) موضّحاً، مع شرح المنطق العام، دون نسخ السطور كما هي. هاد القيد خاص فقط بملفات مرفقة من المستخدم — لا ينطبق على كود جديد يطلب منك المستخدم كتابته من الصفر.'
+       + 'جاوب دائماً بنفس اللغة أو اللهجة اللي كتب بيها المستخدم، بشكل طبيعي وسليم ومهني.'
+       + '\n\n⚠ قاعدة صارمة بخصوص السياق (context) المرفق أدناه بعنوان "سياق من قاعدة معرفة Zunexa": '
+       + 'هذا السياق ليس دائماً حقيقياً أو متعلقاً بسؤال المستخدم — أحياناً كيكون فارغاً أو غير ذي صلة. '
+       + 'قبل ما تستعملو، تحقق أولاً: هل سؤال المستخدم فعلاً كيتكلم عن Zunexa، Archon، أو أدواتها (SEO Tool، Generator Hub، الاشتراكات، الأسعار، لوحة التحكم، Zalij Mode)؟ '
+       + 'إذا **نعم** — استعمل السياق كمرجع أساسي، ولا تختلق معلومات (أسعار/مزايا) غير موجودة فيه صراحة. '
+       + 'إذا **لا** (سؤال عام: برمجة، علوم، ثقافة، طقس، أخبار، حياة يومية، إلخ) — **تجاهل السياق المرفق كلياً** حتى لو كان حاضراً في الرسالة، وجاوب مباشرة من معرفتك العامة كأي مساعد ذكاء اصطناعي احترافي، بدون أي ذكر أو ربط بـ Zunexa إلا إذا المستخدم سأل عنها صراحة. '
+       + 'الربط القسري لأي سؤال بـ Zunexa يُعتبر خطأ فادحاً في هذا الدور.'
+       + '\n\nإذا كان الملف المرفق يحتوي على كود من مشروع (ملف .html/.js/.py أو أرشيف .zip)، لا تُعِد كتابة الكود المصدري الكامل له حرفياً حتى لو طُلب منك ذلك — أعطِ فقط بنية عامة (template/skeleton) أو نمطاً (pattern) موضّحاً، مع شرح المنطق العام، دون نسخ السطور كما هي. هاد القيد خاص فقط بملفات مرفقة من المستخدم — لا ينطبق على كود جديد يطلب منك المستخدم كتابته من الصفر.'
        + '\n\nميّز بدقة بين نوعين من الطلبات: (1) سؤال شرح أو تعريف (مثل "ما هو X؟" أو "اشرح ليا Y") — قدّم تعريفاً شاملاً ومنظماً يوضح المفهوم والاستخدامات، بدون كتابة كود طويل غير مطلوب. (2) طلب إنشاء أو تطبيق (مثل "اكتب ليا كود يدير X") — ابدأ مباشرة بكتابة الكود المطلوب باحترافية ونظافة، مطابقاً تماماً للمواصفات المذكورة، بدون كتب مقدمات طويلة قبله.'
        + '\n\nإجاباتك يجب تكون شاملة، منظمة، ومفصلة بشكل واضح ومفيد — تجنب الإجابات المختصرة جداً أو السطحية إلا إذا طلب المستخدم الاختصار صراحة. عند استعمال معلومات من قاعدة المعرفة (RAG)، لا تنسخها حرفياً — حللها وأعد صياغتها بأسلوبك الخاص لتكوين أفضل إجابة ممكنة.'
+       + '\n\n⚠ قاعدة صارمة بخصوص تكرار الإجابات: كل رسالة جديدة من المستخدم هي سؤال منفصل ومستقل، حتى لو شابهت سؤالاً سابقاً في المحادثة (ctx أدناه إن وُجد). لا تُعِد نفس الصياغة أو نفس الجواب الحرفي من رسالة سابقة — اقرأ سؤال المستخدم الحالي بدقة، وإذا كان صياغة مختلفة لنفس الموضوع، أعطِ زاوية أو تفصيلاً جديداً بدل تكرار نفس الجملة.'
        + greetingLine
        + langHintLine;
 }
@@ -2939,14 +2992,42 @@ async function answer(userQ) {
     content: c.text
   }));
 
-  // دمج السياق: RAG أولاً (أغنى) ثم KB محلي كاحتياطي
-  const kbCtx  = local.text ? local.text.slice(0, 600) : '';
-  const ragCtx = ragContext  ? ragContext.slice(0, 1200) : '';
+  // FIX (bug #1 + bug #2 — root cause): local.text (KB lookup result) used
+  // to be injected into the prompt UNCONDITIONALLY, even when local.score
+  // was 0 (i.e. local.text was actually buildUnknown()'s random filler
+  // text, not real knowledge). Two compounding problems came from that:
+  //   (1) Repeated answers: the same generic filler/near-generic KB text
+  //       kept anchoring the model to nearly identical context turn after
+  //       turn, so replies converged on the same phrasing.
+  //   (2) Zunexa bias: filler text always talks about Zunexa ("جرّب سؤالاً
+  //       متعلقاً بـ Zunexa..."), so the model kept "seeing" Zunexa framing
+  //       in its context even for completely unrelated questions.
+  // Fix: only inject local KB text as context when its score clears
+  // RAG_INJECT_MIN_SCORE (i.e. it's a real, relevant match) AND the
+  // question is actually Zunexa-related per isZunexaRelated(). Otherwise
+  // kbCtx stays empty and the model answers purely from general knowledge.
+  const kbTop           = rankKB(followUp ? buildCtxQ(userQ) : userQ);
+  const onTopic          = isZunexaRelated(userQ, kbTop);
+  const kbScoreOk         = local.score >= THRESHOLDS.RAG_INJECT_MIN_SCORE;
+  const kbCtx  = (onTopic && kbScoreOk && local.text) ? local.text.slice(0, 600) : '';
+  const ragCtx = (onTopic && ragContext) ? ragContext.slice(0, 1200) : '';
   const combinedCtx = [ragCtx, kbCtx].filter(Boolean).join('\n\n───\n\n');
 
   let userContent = combinedCtx
-    ? `سياق من قاعدة معرفة Zunexa:\n"""\n${combinedCtx}\n"""\n\nسؤال المستخدم: ${userQ}`
+    ? `سياق من قاعدة معرفة Zunexa (استعمله فقط إذا كان السؤال أدناه متعلقاً به فعلاً):\n"""\n${combinedCtx}\n"""\n\nسؤال المستخدم: ${userQ}`
     : `سؤال المستخدم: ${userQ}`;
+
+  // FIX (bug #1 — repeated answers, extra safety net): even after removing
+  // the unconditional KB-context injection above, a low-temperature model
+  // can still echo a near-identical previous reply when two questions in
+  // the same session are topically close (e.g. "explain X" then "explain X
+  // more"). Explicitly hand the model the LAST bot answer with a direct
+  // "don't repeat this verbatim" instruction — this is a stronger, more
+  // reliable signal than hoping the model infers it from the ctx turns.
+  const lastBotTurn = [...ctx].reverse().find(c => c.role === 'bot');
+  if (lastBotTurn && lastBotTurn.text) {
+    userContent += `\n\n[ملاحظة داخلية — لا تذكرها للمستخدم]: آخر إجابة أعطيتها في هذه المحادثة كانت:\n"""\n${lastBotTurn.text.slice(0, 400)}\n"""\nإذا كان السؤال الحالي مختلفاً عن السابق ولو جزئياً، لا تكرر نفس الصياغة أو نفس المحتوى الحرفي — أجب بمحتوى جديد يخص السؤال الحالي تحديداً.`;
+  }
 
   if (attachedFile && attachedFile.textContent) {
     const { text: safeFileText, flagged } = sanitizeForPrompt(attachedFile.textContent.slice(0, 3000));
@@ -2997,12 +3078,30 @@ function buildCtxQ(q) {
   return ctxTokens ? `${q} ${ctxTokens}` : q;
 }
 
-const UNKNOWNS = [
+// FIX (bug #2 — Zunexa bias in local/Lite mode): the old UNKNOWNS array
+// always pointed the user back toward Zunexa topics no matter what they
+// asked, and — worse — this exact text was what got injected into the
+// Archon Brain prompt as "KB context" (see answer() fix above), which is
+// how the bias leaked into Pro/Max mode too. Now split into two pools:
+// one for genuinely Zunexa-scoped questions (kept as-is), one neutral
+// pool for everything else. Which pool is picked is decided by
+// isZunexaRelated(), computed by the caller and passed in explicitly —
+// buildUnknown() itself does zero topic-guessing, so it can't reintroduce
+// the same bias by accident later.
+const UNKNOWNS_ZUNEXA = [
   m=>`لم أجد إجابة دقيقة على: **"${m.slice(0,50)}"**\n\n✦ تم حفظ سؤالك في نظام التعلم — سيُضاف للـ knowledge base في التحديث القادم.\n\nجرّب سؤالاً متعلقاً بـ **Zunexa · الأدوات · التقنيات · التصميم**.`,
-  m=>`هذا خارج معرفتي الحالية.\n\n✦ **سؤالك محفوظ** في Supabase لمراجعتها من فريق Zunexa وإضافة الإجابة.\n\nاسألني عن: المنصة · SEO Tool · Generator Hub · Zalij Mode · التقنيات المستخدمة.`,
-  m=>`معلوماتي محدودة عن هذا الموضوع حالياً.\n\n✦ **تم التسجيل** — سأتعلم منه قريباً.\n\nيمكنني مساعدتك في أي موضوع يخص **Zunexa SaaS** أو تقنيات الويب.`
+  m=>`هذا خارج معرفتي الحالية عن Zunexa حالياً.\n\n✦ **سؤالك محفوظ** في Supabase لمراجعتها من فريق Zunexa وإضافة الإجابة.\n\nاسألني عن: المنصة · SEO Tool · Generator Hub · Zalij Mode · التقنيات المستخدمة.`,
+  m=>`معلوماتي محدودة عن هذا الجانب من Zunexa حالياً.\n\n✦ **تم التسجيل** — سأتعلم منه قريباً.\n\nيمكنني مساعدتك في أي موضوع يخص **Zunexa SaaS** أو تقنيات الويب.`
 ];
-function buildUnknown(q){ return UNKNOWNS[Math.floor(Math.random()*UNKNOWNS.length)](q); }
+const UNKNOWNS_GENERAL = [
+  m=>`قاعدة المعرفة المحلية عندي (Archon Lite) ما عندهاش إجابة جاهزة على: **"${m.slice(0,50)}"** — هي مبنية بالأساس لأسئلة سريعة ومحددة.\n\n✦ بدّل لـ **Archon Pro أو Max** باش نقدر نجاوبك من معرفة عامة وشاملة على أي موضوع.`,
+  m=>`هذا السؤال خارج نطاق البحث المحلي السريع (Lite).\n\n✦ فعّل **Archon Pro/Max** للحصول على إجابة شاملة، أو صيغ السؤال بشكل أدق إذا كان مرتبطاً بـ Zunexa تحديداً.`,
+  m=>`ما لقيتش تطابق مباشر لهاد السؤال فالبحث المحلي.\n\n✦ للأسئلة العامة (خارج Zunexa)، استعمل وضع **Pro أو Max** باش Archon يجاوبك بذكاء اصطناعي كامل.`
+];
+function buildUnknown(q, onTopic){
+  const pool = onTopic ? UNKNOWNS_ZUNEXA : UNKNOWNS_GENERAL;
+  return pool[Math.floor(Math.random()*pool.length)](q);
+}
 
 /* ════════════════════════════════════════════════════════════
    SUPABASE — Learn & Log
