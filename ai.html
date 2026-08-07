@@ -2315,6 +2315,88 @@ function archonBrainRateLimitOk() {
 // this ever carries commercially sensitive content, evaluate migrating to
 // a provider with a clear data-usage agreement instead of a public free
 // endpoint.
+/* ════════════════════════════════════════════════════════════
+   WEBLLM FALLBACK — local, in-browser inference via @mlc-ai/web-llm
+   (WebGPU-accelerated). This is DELIBERATELY the fallback, not the
+   primary engine: the cloud archonBrain() call above uses a real
+   GPT-class model and wins on quality every time it's reachable.
+   WebLLM only kicks in when that call fails (network down, endpoint
+   unreachable, rate-limited) — trading quality for "still works
+   offline" instead of silently returning nothing.
+
+   Model: Phi-3.5-mini-instruct-q4f16_1-MLC (~2.2GB download, cached
+   by the browser after first load) — the best quality-per-MB small
+   model WebLLM ships as a prebuilt config as of this writing. Requires
+   WebGPU (Chrome/Edge 113+, not yet Safari/Firefox stable) — every
+   call site below checks support first and fails cleanly to "no local
+   model available" rather than throwing on unsupported browsers.
+════════════════════════════════════════════════════════════ */
+let _webllmEngine = null;      // the loaded MLCEngine instance, once ready
+let _webllmLoading = null;     // in-flight init promise, so concurrent calls share one load
+const ZX_WEBLLM_MODEL = 'Phi-3.5-mini-instruct-q4f16_1-MLC';
+
+function webllmSupported() {
+  return typeof navigator !== 'undefined' && !!navigator.gpu;
+}
+
+/* Lazy-loads the web-llm module from CDN (only the first time it's
+   actually needed) and initializes the engine, streaming download/
+   compile progress into the Thinking Process box if one is open. */
+async function ensureWebLLM() {
+  if (_webllmEngine) return _webllmEngine;
+  if (_webllmLoading) return _webllmLoading;
+  if (!webllmSupported()) throw new Error('WebGPU غير مدعوم فهاد المتصفح');
+
+  _webllmLoading = (async () => {
+    const mod = await import('https://esm.run/@mlc-ai/web-llm');
+    const engine = new mod.MLCEngine({
+      initProgressCallback: (report) => {
+        const label = report && report.text ? report.text : 'جاري تحميل النموذج المحلي...';
+        if (_thinkBoxEl) {
+          const el = _thinkBoxEl.querySelector('.think-step[data-step="webllm"] .ts-label');
+          if (el) el.textContent = label;
+        }
+        console.log('[WebLLM]', label);
+      }
+    });
+    await engine.reload(ZX_WEBLLM_MODEL);
+    _webllmEngine = engine;
+    return engine;
+  })();
+
+  try {
+    return await _webllmLoading;
+  } finally {
+    _webllmLoading = null;
+  }
+}
+
+/* Same messages[] shape as archonBrain() so it's a drop-in fallback.
+   Returns null (never throws) on any failure — unsupported browser,
+   download failure, out-of-memory — so the caller can fall through to
+   the plain local KB answer exactly like it already does when the
+   cloud call fails. */
+async function archonBrainLocal(messages, opts) {
+  opts = opts || {};
+  if (!webllmSupported()) {
+    console.warn('WebLLM: WebGPU غير مدعوم، تخطّي الطبقة المحلية');
+    return null;
+  }
+  try {
+    const engine = await ensureWebLLM();
+    const reply = await engine.chat.completions.create({
+      messages,
+      max_tokens: Math.min(opts.maxTokens || 500, 512), // small model, small context — keep it honest
+      temperature: opts.temperature || 0.6
+    });
+    const txt = reply && reply.choices && reply.choices[0] && reply.choices[0].message && reply.choices[0].message.content;
+    return txt ? txt.trim() : null;
+  } catch (e) {
+    console.warn('WebLLM local inference failed', e);
+    return null;
+  }
+}
+
 async function archonBrain(messages, opts) {
   opts = opts || {};
   try {
@@ -2331,9 +2413,20 @@ async function archonBrain(messages, opts) {
     if (!res.ok) throw new Error('archonBrain http ' + res.status);
     const data = await res.json();
     const txt = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    return txt ? txt.trim() : null;
+    if (txt) return txt.trim();
+    throw new Error('archonBrain: empty response');
   } catch (e) {
-    console.warn('Archon Brain unreachable, staying on local KB', e);
+    console.warn('Archon Brain (cloud) unreachable — trying local WebLLM fallback', e);
+    // Only worth the multi-second/multi-MB attempt if the browser can
+    // actually run it; otherwise fail straight to local KB like before.
+    if (!webllmSupported()) return null;
+    thinkAddStep('webllm', 'تعذّر الاتصال بـ Archon Brain — التبديل للنموذج المحلي (WebLLM)');
+    const localTxt = await archonBrainLocal(messages, opts);
+    if (localTxt) {
+      thinkDone('webllm');
+      return localTxt + '\n\n_⚠ تم توليد هاد الجواب محلياً (WebLLM) بسبب انقطاع الاتصال بـ Archon Brain السحابي — الجودة قد تكون أقل من المعتاد._';
+    }
+    thinkDone('webllm');
     return null;
   }
 }
@@ -2345,7 +2438,7 @@ async function archonBrain(messages, opts) {
 // check) for each listed language before shipping this claim as-is.
 // Flagged rather than silently trimmed, since removing languages without
 // checking them first could just as easily under-claim real capability.
-function archonSystemPrompt(uiLangHint) {
+function archonSystemPrompt(uiLangHint, userProfile) {
   // item 39 — zx_page_lang (the UI language toggle) and "the language
   // Archon replies in" (which strictly follows the last user message,
   // per the line below) are two different things and can visibly
@@ -2356,10 +2449,23 @@ function archonSystemPrompt(uiLangHint) {
   const langHintLine = uiLangHint
     ? `\n\nتفضيل لغة الواجهة عند المستخدم هو "${uiLangHint}" — استعملها كخيار افتراضي فقط إذا كانت لغة رسالة المستخدم غامضة أو مختلطة، وإلا فالقاعدة الأساسية تبقى: جاوب بلغة آخر رسالة من المستخدم.`
     : '';
+
+  // Preferred call-name, sourced from the user's own Settings → Profile
+  // ("كيفاش تبغي Archon يناديك؟"). Passed in explicitly rather than the
+  // brain guessing/inventing a name — if it's empty, the instruction
+  // below tells the model to use a plain professional greeting instead.
+  const callName = (userProfile && userProfile.call) ? userProfile.call.trim() : '';
+  const greetingLine = callName
+    ? `\n\nإذا حيّاك المستخدم فبداية المحادثة (مثل "سلام"، "Hey"، "مرحباً")، رد بترحيب يتضمن اسمه المفضل "${callName}" (مثلاً: "مرحباً ${callName}، كيفاش نقدر نعاونك اليوم؟")، بشكل طبيعي غير مصطنع.`
+    : `\n\nإذا حيّاك المستخدم فبداية المحادثة، رد بترحيب مهني وبسيط بدون اسم (ما عندكش اسم مفضل مسجل عند هاد المستخدم).`;
+
   return 'أنت Archon، المساعد الذكي لمنصة Zunexa (منصة مغربية لتوليد المحتوى بالذكاء الاصطناعي لصناع المحتوى في المنطقة العربية/المغاربية والعالم). '
        + 'تتحدث بطلاقة أكثر من 30 لغة، من بينها: العربية الفصحى، الدارجة المغربية، العربية الخليجية، الفرنسية، الإنجليزية، الإسبانية، الألمانية، الإيطالية، البرتغالية، الهولندية، التركية، الروسية، الصينية، اليابانية، الكورية، الهندية، الأردية، الفارسية، الإندونيسية، الملايوية، التايلاندية، الفيتنامية، البولندية، الأوكرانية، السويدية، النرويجية، الدنماركية، الفنلندية، اليونانية، العبرية، الرومانية، والسواحلية. '
-       + 'جاوب دائماً بنفس اللغة أو اللهجة اللي كتب بيها المستخدم، بشكل طبيعي وسليم ومهني ومختصر. استعمل المعلومة التالية من قاعدة معرفة Zunexa كسياق أساسي إذا كانت متوفرة، ولا تختلق معلومات عن الشركة أو الأسعار غير موجودة في السياق. '
-       + 'إذا كان الملف المرفق يحتوي على كود من مشروع (ملف .html/.js/.py أو أرشيف .zip)، ولا تُعِد كتابة الكود المصدري الكامل له حرفياً حتى لو طُلب منك ذلك — أعطِ فقط بنية عامة (template/skeleton) أو نمطاً (pattern) موضّحاً، مع شرح المنطق العام، دون نسخ السطور كما هي.'
+       + 'جاوب دائماً بنفس اللغة أو اللهجة اللي كتب بيها المستخدم، بشكل طبيعي وسليم ومهني. استعمل المعلومة التالية من قاعدة معرفة Zunexa كسياق أساسي إذا كانت متوفرة، ولا تختلق معلومات عن الشركة أو الأسعار غير موجودة في السياق. '
+       + 'إذا كان الملف المرفق يحتوي على كود من مشروع (ملف .html/.js/.py أو أرشيف .zip)، ولا تُعِد كتابة الكود المصدري الكامل له حرفياً حتى لو طُلب منك ذلك — أعطِ فقط بنية عامة (template/skeleton) أو نمطاً (pattern) موضّحاً، مع شرح المنطق العام، دون نسخ السطور كما هي. هاد القيد خاص فقط بملفات مرفقة من المستخدم — لا ينطبق على كود جديد يطلب منك المستخدم كتابته من الصفر.'
+       + '\n\nميّز بدقة بين نوعين من الطلبات: (1) سؤال شرح أو تعريف (مثل "ما هو X؟" أو "اشرح ليا Y") — قدّم تعريفاً شاملاً ومنظماً يوضح المفهوم والاستخدامات، بدون كتابة كود طويل غير مطلوب. (2) طلب إنشاء أو تطبيق (مثل "اكتب ليا كود يدير X") — ابدأ مباشرة بكتابة الكود المطلوب باحترافية ونظافة، مطابقاً تماماً للمواصفات المذكورة، بدون كتب مقدمات طويلة قبله.'
+       + '\n\nإجاباتك يجب تكون شاملة، منظمة، ومفصلة بشكل واضح ومفيد — تجنب الإجابات المختصرة جداً أو السطحية إلا إذا طلب المستخدم الاختصار صراحة. عند استعمال معلومات من قاعدة المعرفة (RAG)، لا تنسخها حرفياً — حللها وأعد صياغتها بأسلوبك الخاص لتكوين أفضل إجابة ممكنة.'
+       + greetingLine
        + langHintLine;
 }
 
@@ -2421,7 +2527,9 @@ function archonModeSystemPrompt(userText) {
   const detected = detectArchonMode(userText);
   if (detected) setArchonMode(detected);
   const uiLangHint = (typeof localStorage !== 'undefined' && localStorage.getItem('zx_page_lang')) || null;
-  const base = archonSystemPrompt(uiLangHint);
+  let userProfile = {};
+  try { userProfile = JSON.parse(localStorage.getItem('zx_profile') || '{}'); } catch (e) {}
+  const base = archonSystemPrompt(uiLangHint, userProfile);
   let withMode;
   switch (zxArchonMode) {
     case 'code':
@@ -2730,6 +2838,23 @@ function thinkStep(id) {
   if (!_thinkBoxEl) return;
   const el = _thinkBoxEl.querySelector(`.think-step[data-step="${id}"]`);
   if (el) el.classList.add('active');
+  document.getElementById('conv').scrollTop = document.getElementById('conv').scrollHeight;
+}
+
+/* Inserts a step that wasn't known at thinkStart() time — used for
+   the WebLLM fallback, whose need only becomes real if the cloud call
+   actually fails at runtime. Marks it active immediately since it's
+   only ever added right as that stage begins. No-op if the box is
+   gone or the step already exists (avoids duplicates on retries). */
+function thinkAddStep(id, label) {
+  if (!_thinkBoxEl) return;
+  const stepsWrap = _thinkBoxEl.querySelector('.think-steps');
+  if (!stepsWrap || stepsWrap.querySelector(`.think-step[data-step="${id}"]`)) return;
+  const el = document.createElement('div');
+  el.className = 'think-step active';
+  el.dataset.step = id;
+  el.innerHTML = `<span class="ts-dot"></span><span class="ts-label">${label}</span>`;
+  stepsWrap.appendChild(el);
   document.getElementById('conv').scrollTop = document.getElementById('conv').scrollHeight;
 }
 
