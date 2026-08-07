@@ -37,6 +37,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 /* ════════════════════════════════════════════════════════
    DESIGN TOKENS — Zalij Mode · Noir & Gold
@@ -1178,7 +1180,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     </div>
     <div id="fileChipZone"></div>
     <div class="input-shell">
-      <input type="file" id="fileInput" accept="image/*,audio/*,.pdf,.txt,.csv,.json,.md,.html,.htm,.js,.py,.sh,.css,.xml,.yml,.yaml,.zip" style="display:none" onchange="onFilePicked(event)">
+      <input type="file" id="fileInput" accept="image/*,audio/*,.pdf,.docx,.xlsx,.xls,.txt,.csv,.json,.md,.html,.htm,.js,.py,.sh,.css,.xml,.yml,.yaml,.zip" style="display:none" onchange="onFilePicked(event)">
       <button class="attach-btn" id="attachBtn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف / صورة / PDF">📎</button>
       <textarea
         class="chat-input" id="aiInput" rows="1"
@@ -4091,6 +4093,31 @@ async function onFilePicked(e) {
         text += content.items.map(it => it.str).join(' ') + '\n';
       }
       attachedFile = { name: file.name, kind: 'text', textContent: text.trim(), dataUrl: '' };
+    } else if (file.name.toLowerCase().endsWith('.docx')) {
+      // mammoth.js extracts raw text from Word .docx (Office Open XML) —
+      // client-side, no server round-trip, no API key. Legacy binary
+      // .doc (pre-2007) isn't a zip-based format at all and can't be
+      // parsed this way; it falls through to readAsText() below and
+      // will produce garbled binary text — that's a real, honest
+      // limitation, not a silent failure.
+      const buf = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer: buf });
+      attachedFile = { name: file.name, kind: 'text', textContent: result.value.trim(), dataUrl: '' };
+    } else if (file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls')) {
+      // SheetJS reads every sheet and renders each as a compact CSV
+      // block labeled with its sheet name, so the AI sees real row/
+      // column structure instead of a flat character dump.
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: 'array' });
+      let combined = '';
+      let charBudget = 12000;
+      for (const sheetName of wb.SheetNames) {
+        if (charBudget <= 0) break;
+        const csv = XLSX.utils.sheet_to_csv(wb.Sheets[sheetName]).slice(0, charBudget);
+        combined += `\n\n--- الورقة: ${sheetName} ---\n${csv}`;
+        charBudget -= csv.length;
+      }
+      attachedFile = { name: file.name, kind: 'text', textContent: combined.trim(), dataUrl: '' };
     } else if (file.name.toLowerCase().endsWith('.zip')) {
       // Reads a .zip archive: text/code files (html/js/py/json/md/css/
       // txt/xml/yml/sh) get their content pulled in as context, so the
