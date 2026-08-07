@@ -38,7 +38,7 @@
 
 <div id="panel" style="display:none">
   <h1>⚡ مراجعة المعرفة المُتعلَّمة تلقائياً (غير محدودة)</h1>
-  <p class="sub">يتم تفعيل وقبول جميع المدخلات الجديدة تلقائياً في الخلفية كل 10 دقائق.</p>
+  <p class="sub">يتم تفعيل وقبول جميع المدخلات الجديدة تلقائياً في الخلفية كل 5 دقائق.</p>
   
   <!-- زر قبول الكل -->
   <div style="margin-bottom: 20px;">
@@ -72,8 +72,8 @@ async function checkSession() {
     document.getElementById('panel').style.display = 'block';
     loadPending();
     
-    // تشغيل التحديث التلقائي كل 10 دقائق (600,000 ميلي ثانية) في الخلفية
-    setInterval(autoApproveAllSilent, 600000);
+    // تشغيل التحديث التلقائي كل 5 دقائق (300,000 ميلي ثانية) في الخلفية
+    setInterval(autoApproveAllSilent, 300000);
   }
 }
 
@@ -81,7 +81,6 @@ async function loadPending() {
   const list = document.getElementById('list');
   list.innerHTML = '<p class="empty">جاري التحميل...</p>';
   
-  // إزالة الحد الأقصى لجلب كافة المدخلات المعلقة بلا حدود
   const { data, error } = await _SB
     .from('ai_knowledge')
     .select('id,question,answer,keywords,category,weight,created_at,origin_model,review_status')
@@ -176,7 +175,7 @@ async function approveAll() {
   loadPending();
 }
 
-// دالة تنفيذ القبول التلقائي كل 10 دقائق بشكل صامت في الخلفية
+// دالة تنفيذ القبول التلقائي كل 5 دقائق بشكل صامت في الخلفية
 async function autoApproveAllSilent() {
   const { error } = await _SB
     .from('ai_knowledge')
