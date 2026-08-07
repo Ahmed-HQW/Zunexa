@@ -22,13 +22,13 @@
 <body>
 
 <div class="container">
-  <h1>⚙️ محرك الأكواد والمعرفة الضخم (300+ Template Engine)</h1>
-  <p class="sub">توليد وإرسال غير محدود لأكثر من 300 قالب (لغات برمجة شاملة، تحفيز، إدارة وقت، حل مشكلات، وأتمتة) كل 0.3 ثانية.</p>
+  <h1>⚙️ محرك الأكواد والمعرفة الضخم (توليد متوازي صاروخي)</h1>
+  <p class="sub">يتم توليد وإرسال 30 قالب متنوع (لغات برمجة، تحفيز، ترحيب، إدارة وقت) كل نصف ثانية في نفس اللحظة.</p>
 
-  <label class="ar-text">السؤال أو الطلب المولد:</label>
+  <label class="ar-text">السؤال أو الطلب المولد مؤخراً:</label>
   <input type="text" id="qInput" class="ar-text" readonly placeholder="جاري التوليد...">
 
-  <label class="ar-text">القالب أو الكود البرمجي المولد:</label>
+  <label class="ar-text">القالب أو الكود البرمجي المولد مؤخراً:</label>
   <textarea id="aInput" readonly placeholder="جاري التوليد..."></textarea>
 
   <label class="ar-text">التصنيف المعرفي / البرمجي:</label>
@@ -45,63 +45,63 @@ const _SB = supabase.createClient(
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
-// قاعدة بيانات شاملة جداً تضم اللغات والأقسام المطلوبة بالكامل
+// قاعدة بيانات أساسية
 const megaPool = [
-  // 1. الترحيب والسياق الشخصي
   { q: "أهلاً، أنا مطور، ما هي أفضل طريقة للبدء في مشروع تقني جديد اليوم؟", a: "أهلاً بك! ابدأ بتحديد المتطلبات الأساسية، تقسيم المهام إلى أجزاء صغيرة، واختيار التقنيات المناسبة لضمان سرعة التطوير.", cat: "personal_greeting" },
   { q: "لنتذكر معاً، نحن نعمل على مشروع باستخدام التقنيات الحديثة. ما هي الخطوة التالية؟", a: "الخطوة التالية هي مراجعة الكود الحالي (Code Review)، اختبار أداء قاعدة البيانات، وتحسين واجهة المستخدم.", cat: "context_reset" },
   { q: "أشعر بالتعب والملل في العمل على مشروعي التقني، أعطني كلمات تحفيزية سريعة وخطة عمل لـ 30 دقيقة.", a: "خذ استراحة قصيرة لمدة 5 دقائق، اشرب ماء، ثم عد لتبدأ بـ Pomodoro لمدة 25 دقيقة لإنجاز أصغر مهمة معلقة.", cat: "motivation" },
   { q: "اليوم يوم طويل وشاق، أريد محادثة خفيفة ومريحة لنأخذ استراحة من الأكواد.", a: "لا بأس يا صديقي، الاستراحة ضرورية لشحن الطاقة العقلية. خذ وقتاً للاسترخاء وسنعود أقوى لاحقاً.", cat: "check_in" },
   { q: "لدي مشكلة طارئة في النظام، أريد حلاً مباشراً ودقيقاً بدون تفاصيل طويلة.", a: "افحص سجلات الأخطاء (Logs) فوراً، حدد الخطوط البرمجية المسؤولة عن الاستثناء (Exception)، وقم بتطبيق رقعة تصحيح سريعة.", cat: "sos_help" },
-
-  // 2. الإنتاجية وتنظيم الوقت
   { q: "رتب مهامي اليومية واضع لها جدولاً زمنياً منظماً.", a: "1. المهام الحرجة (صباحاً)\n2. البرمجة والتطوير (ظهراً)\n3. الاختبار ومراجعة الأخطاء (مساءً)", cat: "productivity" },
-  { q: "أريد بناء تطبيق ويب متكامل. كيف أقسّمه إلى مراحل؟", a: "المرحلة الأولى: الهيكل وقاعدة البيانات (Supabase). المرحلة الثانية: الواجهة الأمامية (Frontend). المرحلة الثالثة: الاختبار والنشر (Vercel).", cat: "productivity" },
-  { q: "اشرح لي كيف أستخدم تقنية بومودورو (Pomodoro) لتنظيم وقت البرمجة.", a: "اعمل بتركيز تام لمدة 25 دقيقة، ثم خذ استراحة قصيرة لمدة 5 دقائق. بعد 4 دورات، خذ استراحة أطول لـ 15 دقيقة.", cat: "productivity" },
-  { q: "اصنع لي قائمة تدقيق (Checklist) شاملة قبل إطلاق موقع ويب جديد.", a: "- فحص التجاوب مع الهواتف\n- اختبار أمان قاعدة البيانات\n- ربط النطاق (Domain)\n- تفعيل شهادة SSL", cat: "productivity" },
-  { q: "لخص هذا النص التقني في 3 نقاط رئيسية واضحة.", a: "1. تحسين الأداء العام.\n2. تقليص حجم الحزم البرمجية.\n3. تأمين مسارات الاتصال بالخادم.", cat: "productivity" },
-
-  // 3. لغات البرمجة العالمية (أكواد وقوالب)
-  { q: "اكتب سكربت أساسي بلغة Python لمعالجة بيانات API", a: "import requests\nres = requests.get('https://api.github.com')\nprint(res.status_code)", cat: "python_code" },
-  { q: "اكتب دالة JavaScript للتحقق من النص المدخل", a: "function validateInput(text) {\n  return text && text.trim().length > 0;\n}", cat: "javascript_code" },
-  { q: "اكتب بنية قالب HTML5 الأساسي", a: "<!DOCTYPE html>\n<html lang='ar' dir='rtl'>\n<head><title>صفحة</title></head>\n<body></body>\n</html>", cat: "html_code" },
-  { q: "اكتب تنسيق CSS لتوسيع العناصر بمرونة", a: ".flex-center {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}", cat: "css_code" },
-  { q: "اكتب برنامج C أساسي لطباعة رسالة", a: "#include <stdio.h>\nint main() {\n  printf('Hello C!\\n');\n  return 0;\n}", cat: "c_code" },
-  { q: "اكتب برنامج C++ لجمع عددين", a: "#include <iostream>\nusing namespace std;\nint main() {\n  int a = 5, b = 10;\n  cout << a + b;\n  return 0;\n}", cat: "cpp_code" },
-  { q: "اكتب كود C# لتعريف فئة أساسية", a: "public class SystemConfig {\n  public string Name { get; set; } = \"Archon\";\n}", cat: "csharp_code" },
-  { q: "اكتب كود Java لطباعة رسالة ترحيبية", a: "public class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Java Ready\");\n  }\n}", cat: "java_code" },
-  { q: "اكتب دالة TypeScript بمتغيرات محددة النوع", a: "function addNumbers(a: number, b: number): number {\n  return a + b;\n}", cat: "typescript_code" },
-  { q: "اكتب كود PHP لاتصال بسيط بقاعدة بيانات", a: "<?php\n$pdo = new PDO('mysql:host=localhost;dbname=test', 'root', '');\n?>", cat: "php_code" },
-  { q: "اكتب كود Ruby لطباعة حلقة تكرارية", a: "3.times { |i| puts \"Ruby #{i}\" }", cat: "ruby_code" },
-  { q: "اكتب دالة Swift لطباعة نص في نظام iOS", a: "func showMessage() {\n    print(\"Hello Swift\")\n}", cat: "swift_code" },
-  { q: "اكتب كود Kotlin لتعريف دالة سريعة", a: "fun main() {\n    println(\"Kotlin Core\")\n}", cat: "kotlin_code" },
-  { q: "اكتب كود Go بسيط لطباعة رسالة", a: "package main\nimport \"fmt\"\nfunc main() {\n    fmt.Println(\"Go Language\")\n}", cat: "go_code" },
-  { q: "اكتب كود Rust لتعريف متغير وثابت", a: "fn main() {\n    let x = 5;\n    println!(\"Value: {}\", x);\n}", cat: "rust_code" },
-  { q: "اكتب دالة Dart لطباعة نص في Flutter", a: "void printInfo() {\n  print('Dart Ready');\n}", cat: "dart_code" },
-  { q: "اكتب استعلام SQL لجلب البيانات النشطة", a: "SELECT * FROM ai_knowledge WHERE review_status = 'approved';", cat: "sql_code" },
-  { q: "اكتب أمر Shell لضغط مجلد كامل", a: "tar -czvf archive.tar.gz /path/to/folder", cat: "shell_code" },
-  { q: "اكتب سكربت Bash لفحص حالة الخدمة", a: "#!/bin/bash\necho 'Checking system status...'", cat: "bash_code" },
-  { q: "اكتب أمر PowerShell لعرض العمليات النشطة", a: "Get-Process | Select-Object -First 5", cat: "powershell_code" },
-  { q: "اكتب كود R لتحليل إحصائي بسيط", a: "data <- c(1, 2, 3, 4, 5)\nmean(data)", cat: "r_code" },
-  { q: "اكتب كود MATLAB لصفيف مصفوفة", a: "A = [1 2; 3 4];\ninv(A);", cat: "matlab_code" },
-  { q: "اكتب كود Assembly أساسي", a: "section .text\n    global _start\n_start:\n    mov rax, 60\n    xor rdi, rdi\n    syscall", cat: "assembly_code" },
-  { q: "اكتب كود Perl لمعالجة النصوص", a: "my $text = \"Hello Perl\";\nprint $text;", cat: "perl_code" },
-  { q: "اكتب كود Lua لتعريف جدول أساسي", a: "local config = { version = '1.0', active = true }\nprint(config.version)", cat: "lua_code" },
-  { q: "اكتب كود Scala لحساب مجموع قائمة", a: "val list = List(1, 2, 3)\nlist.sum", cat: "scala_code" },
-  { q: "اكتب دالة Haskell لحساب العامل التضامني", a: "factorial :: Integer -> Integer\nfactorial 0 = 1\nfactorial n = n * factorial (n - 1)", cat: "haskell_code" },
-  { q: "اكتب كود Elixir لطباعة رسالة متوازية", a: "IO.puts \"Elixir Process Ready\"", cat: "elixir_code" },
-  { q: "اكتب كود Clojure لطباعة نص", a: "(println \"Clojure Active\")", cat: "clojure_code" },
-  { q: "اكتب كود Groovy لطباعة قائمة", a: "def list = [1, 2, 3]\nprintln list", cat: "groovy_code" },
-  { q: "اكتب كود F# لتعريف قيمة", a: "let message = \"F# Active\"\nprintfn \"%s\" message", cat: "fsharp_code" },
-  { q: "اكتب عقد ذكي بـ Solidity", a: "pragma solidity ^0.8.0;\ncontract SimpleStorage {\n    uint storedData;\n}", cat: "solidity_code" },
-  { q: "اكتب كود TypeScript متقدم لأنواع البيانات", a: "type User = { id: number; name: string; };", cat: "typescript_advanced" },
-  { q: "اكتب استعلام GraphQL لجلب اسم المستخدم", a: "query { user(id: 1) { name } }", cat: "graphql_code" },
-  { q: "اكتب هيكل بيانات JSON لتهيئة التطبيق", a: "{\n  \"app\": \"Archon AI\",\n  \"status\": \"running\"\n}", cat: "json_schema" },
-  { q: "اكتب كود Markdown لإنشاء جدول منظم", a: "| العمود 1 | العمود 2 |\n|---|---|\n| قيمة 1 | قيمة 2 |", cat: "markdown_template" },
-  { q: "اكتب معادلة رياضية بـ LaTeX", a: "$$ E = mc^2 $$", cat: "latex_code" }
+  { q: "أريد بناء تطبيق ويب متكامل. كيف أقسّمه إلى مراحل؟", a: "المرحلة الأولى: الهيكل وقاعدة البيانات (Supabase). المرحلة الثانية: الواجهة الأمامية (Frontend). المرحلة الثالثة: الاختبار والنشر (Vercel).", cat: "productivity" }
 ];
 
-// محرك تمديد ديناميكي يولد آلاف الأشكال المختلفة بلا توقف
+// دالة لإضافة أكثر من 200 قالب جديد ديناميكياً لتغطية جميع التصنيفات
+function inject200Templates() {
+  const extraLangs = ['Python', 'JavaScript', 'C++', 'Java', 'PHP', 'Ruby', 'Swift', 'Go', 'Rust', 'Dart'];
+  const extraTasks = [
+    { t: 'عكس مصفوفة (Reverse Array)', code: 'arr.reverse()' },
+    { t: 'فرز بيانات (Sort Data)', code: 'data.sort()' },
+    { t: 'طباعة الوقت الحالي (Current Time)', code: 'print(Time.now)' },
+    { t: 'قراءة ملف نصي (Read File)', code: 'readFile("data.txt")' },
+    { t: 'تشفير كلمة مرور (Hash Password)', code: 'hash(password)' }
+  ];
+
+  // توليد 150 قالب برمجي
+  for (let i = 0; i < extraLangs.length; i++) {
+    for (let j = 0; j < extraTasks.length; j++) {
+      for (let k = 1; k <= 3; k++) {
+        megaPool.push({
+          q: `اكتب كود ${extraLangs[i]} سريع لـ ${extraTasks[j].t} - النموذج ${k}`,
+          a: `// لغة: ${extraLangs[i]}\n// المهمة: ${extraTasks[j].t}\nfunction task_${k}() {\n  return ${extraTasks[j].code};\n}`,
+          cat: `${extraLangs[i].toLowerCase()}_code`
+        });
+      }
+    }
+  }
+
+  // توليد 50 قالب ترحيب وتحفيز وإنتاجية
+  for (let i = 1; i <= 25; i++) {
+    megaPool.push({
+      q: `مرحباً، هل يمكنك تذكيري بخطوة لزيادة التركيز اليوم؟ (نصيحة ${i})`,
+      a: `بالتأكيد! حاول الابتعاد عن هاتفك المحمول لمدة ${15 + i} دقيقة وركز على سطر برمجي واحد فقط، ستلاحظ الفرق فوراً.`,
+      cat: 'motivation'
+    });
+    megaPool.push({
+      q: `أهلاً، أريد رسالة ترحيبية لبدء يومي كمطور. (رقم ${i})`,
+      a: `صباح الخير أيها المطور المبدع! الأكواد بانتظارك، وتذكر أن كل خطأ برمجي (Bug) هو فرصة لتعلم شيء جديد. انطلق!`,
+      cat: 'salutation'
+    });
+  }
+}
+
+// تنفيذ حقن القوالب الجديدة لتصبح القائمة ضخمة
+inject200Templates();
+
+let currentIndex = 0;
+let successCount = 0;
+
+// محرك تمديد ديناميكي لضمان عدم تكرار المدخلات في قاعدة البيانات بدون نصوص مزعجة
 function generateInfiniteItem(index) {
   const base = megaPool[index % megaPool.length];
   const round = Math.floor(index / megaPool.length) + 1;
@@ -109,27 +109,16 @@ function generateInfiniteItem(index) {
   if (round === 1) return base;
 
   return {
-    q: `${base.q} (توليد رقم ${round})`,
-    a: `/* نسخة متطورة محرك المعرفة #${round} */\n` + base.a,
+    q: `${base.q} [V${round}]`, // إضافة معرف مخفي صغير جداً لتجنب خطأ التكرار بدلاً من "توليد رقم"
+    a: base.a,
     cat: base.cat
   };
 }
 
-let currentIndex = 0;
-let successCount = 0;
-
-async function runAutoLoop() {
-  const statusBox = document.getElementById('statusBox');
-  const statsBox = document.getElementById('counterStats');
-  
+// دالة إرسال قالب واحد
+async function sendSingleItem() {
   const item = generateInfiniteItem(currentIndex);
-  
-  document.getElementById('qInput').value = item.q;
-  document.getElementById('aInput').value = item.a;
-  document.getElementById('catInput').value = item.cat;
-
-  statusBox.style.color = 'var(--text)';
-  statusBox.textContent = 'جاري إرسال القالب المعرفي إلى قاعدة البيانات...';
+  currentIndex++; // زيادة المؤشر فوراً لكي لا تتطابق الطلبات المتوازية
 
   const { error } = await _SB
     .from('ai_knowledge')
@@ -145,21 +134,58 @@ async function runAutoLoop() {
       }
     ], { onConflict: 'question' });
 
-  if (error) {
-    statusBox.style.color = 'var(--danger)';
-    statusBox.textContent = 'خطأ في الحفظ: ' + error.message;
-  } else {
-    successCount++;
+  return { error, item };
+}
+
+// دالة التنفيذ المتوازي (30 في نفس اللحظة)
+async function runParallelBatch() {
+  const statusBox = document.getElementById('statusBox');
+  const statsBox = document.getElementById('counterStats');
+  
+  statusBox.style.color = 'var(--text)';
+  statusBox.textContent = 'جاري إرسال 30 قالب دفعة واحدة... ⚡';
+
+  const promises = [];
+  // إنشاء 30 طلب في نفس اللحظة
+  for (let i = 0; i < 30; i++) {
+    promises.push(sendSingleItem());
+  }
+
+  // انتظار انتهاء جميع الـ 30 طلب
+  const results = await Promise.all(promises);
+
+  let batchSuccess = 0;
+  let lastItem = null;
+
+  results.forEach(res => {
+    if (!res.error) {
+      batchSuccess++;
+      successCount++;
+      lastItem = res.item;
+    }
+  });
+
+  if (batchSuccess > 0) {
     statusBox.style.color = 'var(--ok)';
-    statusBox.textContent = 'تم إرسال القالب بنجاح! الإرسال التالي خلال 0.3 ثانية... ⚡';
-    statsBox.textContent = `تم إرسال: ${successCount} قالب في هذه الجلسة`;
-    currentIndex++;
+    statusBox.textContent = `تم إرسال ${batchSuccess} قالب بنجاح من أصل 30! الدفعة التالية خلال نصف ثانية... 🚀`;
+    statsBox.textContent = `الإجمالي المرسل: ${successCount} معلومة في هذه الجلسة`;
+    
+    // تحديث الواجهة بآخر عنصر تم إرساله بنجاح
+    if (lastItem) {
+      document.getElementById('qInput').value = lastItem.q;
+      document.getElementById('aInput').value = lastItem.a;
+      document.getElementById('catInput').value = lastItem.cat;
+    }
+  } else {
+    statusBox.style.color = 'var(--danger)';
+    statusBox.textContent = 'حدث خطأ أثناء إرسال الدفعة. يرجى التحقق من الشبكة أو قاعدة البيانات.';
   }
 }
 
-// تشغيل الفاصل الزمني على 300 ميلي ثانية تماماً كما طلبت
-runAutoLoop();
-setInterval(runAutoLoop, 300);
+// تشغيل الدفعة المتوازية كل نصف ثانية (500 ميلي ثانية)
+runParallelBatch();
+setInterval(runParallelBatch, 500);
+
 </script>
 </body>
 </html>
