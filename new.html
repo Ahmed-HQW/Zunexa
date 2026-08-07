@@ -23,6 +23,8 @@
   button.btn-start:hover { background:#2e7d32; }
   button.btn-stop { background:#7a1f1f; border-color:var(--danger); }
   button.btn-stop:hover { background:#962828; }
+  button.btn-approve-all { background:#1b4d5e; border-color:#3aa0c2; }
+  button.btn-approve-all:hover { background:#236a80; }
 
   .settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; background:#101018; padding:12px; border-radius:8px; border:1px solid var(--border); }
   .setting-item label { display:block; font-size:11px; color:var(--tg); margin-bottom:4px; text-align:right; }
@@ -56,6 +58,7 @@
   <div class="control-panel">
     <button class="btn-start" id="startBtn" onclick="generateBatch()">▶️ توليد دفعة جديدة</button>
     <button class="btn-stop" id="stopBtn" onclick="clearPending()" disabled>🗑️ مسح المعاينة الحالية</button>
+    <button class="btn-approve-all" id="approveAllBtn" onclick="approveAll()" disabled>✓ قبول كل المدخلات المعروضة</button>
   </div>
 
   <div class="settings-grid">
@@ -288,6 +291,7 @@ function generateBatch(){
   document.getElementById('badge').innerHTML = '🟢 تم توليد ' + added + ' عنصر — راجعهم تحت';
   document.getElementById('badge').className = 'status-badge badge-active';
   document.getElementById('stopBtn').disabled = false;
+  document.getElementById('approveAllBtn').disabled = pendingItems.length === 0;
   renderReviewList();
 }
 
@@ -297,6 +301,50 @@ function clearPending(){
   document.getElementById('badge').textContent = '🟡 جاهز - بانتظار الأمر';
   document.getElementById('badge').className = 'status-badge badge-idle';
   document.getElementById('stopBtn').disabled = true;
+  document.getElementById('approveAllBtn').disabled = true;
+}
+
+// Approve every item currently shown, one at a time (sequential —
+// keeps Supabase load gentle and lets us report exactly which
+// items failed instead of an opaque batch error).
+async function approveAll(){
+  if (pendingItems.length === 0) return;
+
+  const approveAllBtn = document.getElementById('approveAllBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  approveAllBtn.disabled = true;
+  stopBtn.disabled = true;
+
+  const total = pendingItems.length;
+  let done = 0;
+  let failed = 0;
+
+  // snapshot ids so we iterate a stable list even as approveItem mutates pendingItems
+  const ids = pendingItems.map(it => it.id);
+
+  for (const id of ids) {
+    const stillThere = pendingItems.find(it => it.id === id);
+    if (!stillThere) continue; // already removed (e.g. rejected mid-way)
+
+    document.getElementById('badge').innerHTML =
+      `🟢 جارٍ القبول... (${done + 1}/${total})`;
+    document.getElementById('badge').className = 'status-badge badge-active';
+
+    const ok = await approveItem(id);
+    done++;
+    if (!ok) failed++;
+  }
+
+  if (failed === 0) {
+    document.getElementById('badge').innerHTML = `✅ تم قبول وإرسال ${done} عنصر بنجاح`;
+  } else {
+    document.getElementById('badge').innerHTML =
+      `⚠️ تم إرسال ${done - failed}/${done} بنجاح — فشل ${failed} (شوف التفاصيل فـ العناصر المتبقية)`;
+  }
+  document.getElementById('badge').className = 'status-badge badge-idle';
+
+  stopBtn.disabled = pendingItems.length === 0;
+  approveAllBtn.disabled = pendingItems.length === 0;
 }
 
 function renderReviewList(){
@@ -335,7 +383,7 @@ function rejectItem(id){
 // ============================================================
 async function approveItem(id){
   const item = pendingItems.find(it=>it.id===id);
-  if (!item) return;
+  if (!item) return false;
 
   const card = document.getElementById('item-'+id);
   if (card) card.style.opacity = '0.5';
@@ -352,16 +400,28 @@ async function approveItem(id){
     }]);
 
   if (error) {
-    document.getElementById('badge').textContent = '🔴 خطأ فـ الإرسال: ' + error.message;
-    document.getElementById('badge').className = 'status-badge badge-idle';
-    if (card) card.style.opacity = '1';
-    return;
+    // leave the item in the list (marked failed) so it's easy to retry manually
+    if (card) {
+      card.style.opacity = '1';
+      card.style.borderColor = 'var(--danger)';
+      const meta = card.querySelector('.meta');
+      let errNote = card.querySelector('.err-note');
+      if (!errNote) {
+        errNote = document.createElement('div');
+        errNote.className = 'err-note';
+        errNote.style.cssText = 'color:var(--danger);font-size:11px;margin-top:4px;text-align:right;';
+        card.insertBefore(errNote, meta);
+      }
+      errNote.textContent = '❌ فشل الإرسال: ' + error.message;
+    }
+    return false;
   }
 
   sentCount++;
   document.getElementById('counterStats').textContent = `تم إرسال (بعد الموافقة): ${sentCount} معلومة في هذه الجلسة`;
   pendingItems = pendingItems.filter(it=>it.id!==id);
   renderReviewList();
+  return true;
 }
 </script>
 </body>
