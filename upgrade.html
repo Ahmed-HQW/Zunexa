@@ -1,16 +1,4 @@
 <!DOCTYPE html>
-<!--
-  ╔══════════════════════════════════════════════════════════════════╗
-  ║  ZUNEXA — UPGRADE / BILLING                                       ║
-  ║  Author  : ahmed_dev_a                                             ║
-  ║  Stack   : HTML5 · CSS3 · Vanilla JS · Supabase                    ║
-  ║  Design  : Zalij Mode — Premium Moroccan Noir & Gold               ║
-  ║  Version : V1 — Archon Protocol                                    ║
-  ║  Note    : Submits an upgrade REQUEST to Supabase (billing_requests║
-  ║  table). No live payment gateway key exists yet — wire in your own║
-  ║  Stripe/CMI/PayPal key when ready to actually charge cards.        ║
-  ╚══════════════════════════════════════════════════════════════════╝
--->
 <html lang="ar" dir="rtl">
 <head>
 <script>
@@ -71,7 +59,24 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .plan-btn:hover{background:var(--gold);color:#060606}
 .plan.featured .plan-btn{background:var(--gold);color:#060606}
 .plan.featured .plan-btn:hover{background:var(--gold2)}
-.note{position:relative;z-index:2;max-width:640px;margin:8px auto 60px;text-align:center;color:var(--tg);font-size:12.5px;padding:0 20px;line-height:1.7}
+.note{position:relative;z-index:2;max-width:640px;margin:8px auto 30px;text-align:center;color:var(--tg);font-size:12.5px;padding:0 20px;line-height:1.7}
+
+/* ===== Redeem code block ===== */
+.redeem-wrap{position:relative;z-index:2;max-width:460px;margin:0 auto 50px;padding:0 20px;text-align:center}
+.redeem-toggle{background:none;border:1px dashed var(--b2);color:var(--gold);font-family:'Rajdhani',sans-serif;font-size:13.5px;font-weight:600;padding:10px 18px;border-radius:10px;cursor:pointer;transition:.2s}
+.redeem-toggle:hover{border-color:var(--gold);background:var(--card)}
+.redeem-box{display:none;margin-top:14px;background:var(--card);border:1px solid var(--b1);border-radius:14px;padding:18px}
+.redeem-box.on{display:block}
+.redeem-row{display:flex;gap:8px}
+.redeem-input{flex:1;padding:11px 13px;background:var(--void);border:1px solid var(--b1);border-radius:9px;color:var(--tw);font-family:'Rajdhani',sans-serif;font-size:14px;letter-spacing:.05em;text-transform:uppercase}
+.redeem-input:focus{outline:none;border-color:var(--gold)}
+.redeem-submit{padding:0 18px;border-radius:9px;border:none;background:var(--gold);color:#060606;font-weight:700;cursor:pointer;font-size:14px;white-space:nowrap}
+.redeem-submit:disabled{opacity:.5;cursor:not-allowed}
+.redeem-status{margin-top:10px;font-size:12.5px;min-height:16px}
+.redeem-status.ok{color:var(--green)}
+.redeem-status.err{color:var(--red)}
+/* ===== end redeem code block ===== */
+
 .modal-wrap{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)}
 .modal-wrap.on{display:flex}
 .modal-box{background:var(--card2);border:1px solid var(--bg);border-radius:16px;padding:28px;width:min(400px,90vw)}
@@ -109,11 +114,22 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 
 <div class="plans" id="plansGrid"><!-- injected by JS --></div>
 
+<div class="redeem-wrap">
+  <button class="redeem-toggle" id="redeemToggle" onclick="toggleRedeemBox()">🎟 عندك كود تفعيل؟ اضغط هنا</button>
+  <div class="redeem-box" id="redeemBox">
+    <div class="redeem-row">
+      <input class="redeem-input" id="redeemCode" type="text" placeholder="ZUNX-XXXX-XXXX" maxlength="32">
+      <button class="redeem-submit" id="redeemBtn" onclick="submitRedeem()">تفعيل</button>
+    </div>
+    <div class="redeem-status" id="redeemStatus"></div>
+  </div>
+</div>
+
 <p class="note">
-  الدفع الفعلي غير مفعّل بعد — هذا النموذج يسجّل طلب الترقية في قاعدة بيانات Zunexa (Supabase) وسيتواصل معك الفريق لإتمام الاشتراك. لتفعيل الدفع الآلي (بطاقة بنكية حقيقية) يحتاج المشروع مفتاح بوابة دفع خاص بك (Stripe / CMI / PayPal) — أخبرني حين يتوفر عندك وسأربطه مباشرة.
+  الدفع الفعلي غير مفعّل بعد — نموذج الترقية يسجّل طلبك في قاعدة بيانات Zunexa وسيتواصل معك الفريق لإتمام الاشتراك. أما كود التفعيل فيفعّل خطتك مباشرة وفوراً دون انتظار.
 </p>
 
-<!-- Confirm modal -->
+<!-- Confirm modal (طلب ترقية عادي) -->
 <div class="modal-wrap" id="confirmModal">
   <div class="modal-box">
     <span class="modal-x" onclick="closeModal()">✕</span>
@@ -222,6 +238,50 @@ async function submitUpgrade() {
   }
   btn.disabled = false; btn.textContent = '✓ إرسال طلب الترقية';
 }
+
+/* ===== Redeem code logic ===== */
+function toggleRedeemBox() {
+  document.getElementById('redeemBox').classList.toggle('on');
+}
+
+function setRedeemStatus(msg, ok) {
+  const el = document.getElementById('redeemStatus');
+  el.textContent = msg;
+  el.className = 'redeem-status ' + (ok ? 'ok' : 'err');
+}
+
+async function submitRedeem() {
+  const codeInput = document.getElementById('redeemCode');
+  const code = codeInput.value.trim().toUpperCase();
+  if (!code) { setRedeemStatus('⚠ الرجاء إدخال الكود', false); return; }
+
+  const { data: { session } } = await _SB.auth.getSession();
+  if (!session) { setRedeemStatus('⚠ يجب تسجيل الدخول أولاً', false); return; }
+
+  const btn = document.getElementById('redeemBtn');
+  btn.disabled = true; btn.textContent = '⏳...';
+  setRedeemStatus('', true);
+
+  try {
+    // استدعاء دالة SQL آمنة (security definer) بدل الوصول المباشر لجدول الأكواد
+    const { data, error } = await _SB.rpc('redeem_code', { p_code: code });
+    if (error) throw error;
+
+    if (data && data.success) {
+      setRedeemStatus('✓ تم تفعيل خطة ' + data.plan + ' بنجاح!', true);
+      toast('✓ تم تفعيل اشتراكك بنجاح 🎉');
+      codeInput.value = '';
+      setTimeout(() => window.location.reload(), 1500);
+    } else {
+      setRedeemStatus('⚠ ' + (data ? data.message : 'كود غير صالح'), false);
+    }
+  } catch (e) {
+    console.error(e);
+    setRedeemStatus('⚠ تعذّر التحقق من الكود، حاول مرة أخرى', false);
+  }
+  btn.disabled = false; btn.textContent = 'تفعيل';
+}
+/* ===== end redeem code logic ===== */
 
 let _t = null;
 function toast(msg) {
