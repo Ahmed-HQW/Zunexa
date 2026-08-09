@@ -1,0 +1,138 @@
+{
+  "$schema": "archon-multi-llm-config-v1",
+  "engine": "Archon Brain — Multi-LLM Router",
+  "version": "1.0.0",
+  "note_ar": "هذا الملف يضبط كيفاش المحرك المحلي (rankKB / hybridRankKB) يقرر يستدعي أي LLM خارجي، وبأي ترتيب fallback، إذا الطبقة المحلية (كاش/رياضيات/بحث هجين) ما عطاتش جواب كافي.",
+
+  "defaults": {
+    "primary_model": "model_a_general",
+    "timeout_ms": 25000,
+    "max_retries_per_model": 1,
+    "temperature": 0.4,
+    "max_tokens": 2048,
+    "stream": true,
+    "local_first": true,
+    "local_confidence_threshold": 0.62,
+    "_note_ar": "local_confidence_threshold: إذا أفضل نتيجة من hybridRankKB score >= هاد الرقم، نستعملوها مباشرة بلا ما نديرو استدعاء LLM — توفير تكلفة/وقت."
+  },
+
+  "models": [
+    {
+      "id": "model_a_general",
+      "role": "primary_general",
+      "provider": "anthropic",
+      "model_name": "claude-sonnet-5",
+      "api_base": "https://api.anthropic.com/v1/messages",
+      "api_key_env": "ARCHON_ANTHROPIC_KEY",
+      "use_for": ["general_chat", "reasoning", "long_context"],
+      "priority": 1,
+      "max_tokens": 4096,
+      "temperature": 0.4,
+      "enabled": true
+    },
+    {
+      "id": "model_b_coding",
+      "role": "coding_specialist",
+      "provider": "anthropic",
+      "model_name": "claude-opus-4-8",
+      "api_base": "https://api.anthropic.com/v1/messages",
+      "api_key_env": "ARCHON_ANTHROPIC_KEY",
+      "use_for": ["coding_mode", "debugging", "code_review"],
+      "priority": 1,
+      "max_tokens": 8192,
+      "temperature": 0.15,
+      "enabled": true
+    },
+    {
+      "id": "model_c_fast",
+      "role": "fast_fallback",
+      "provider": "anthropic",
+      "model_name": "claude-haiku-4-5",
+      "api_base": "https://api.anthropic.com/v1/messages",
+      "api_key_env": "ARCHON_ANTHROPIC_KEY",
+      "use_for": ["lite_instant_fallback", "quick_intent_classification", "high_traffic_low_complexity"],
+      "priority": 2,
+      "max_tokens": 1024,
+      "temperature": 0.3,
+      "enabled": true
+    },
+    {
+      "id": "model_d_openai",
+      "role": "secondary_general",
+      "provider": "openai",
+      "model_name": "REPLACE_WITH_ACTUAL_MODEL_NAME",
+      "api_base": "https://api.openai.com/v1/chat/completions",
+      "api_key_env": "ARCHON_OPENAI_KEY",
+      "use_for": ["fallback_when_primary_down", "cross_check"],
+      "priority": 3,
+      "max_tokens": 4096,
+      "temperature": 0.4,
+      "enabled": false,
+      "_note_ar": "معطّل افتراضياً (enabled=false) — فعّليه فقط بعد ما تعبّي model_name الصحيح ومفتاح API ديالك."
+    },
+    {
+      "id": "model_e_local_free",
+      "role": "keyless_local_or_free_tier",
+      "provider": "custom_keyless",
+      "model_name": "REPLACE_WITH_ACTUAL_ENDPOINT_MODEL",
+      "api_base": "REPLACE_WITH_ACTUAL_ENDPOINT_URL",
+      "api_key_env": null,
+      "use_for": ["offline_degraded_mode", "no_budget_fallback"],
+      "priority": 4,
+      "max_tokens": 2048,
+      "temperature": 0.5,
+      "enabled": false,
+      "_note_ar": "هذا المكان مخصص لأي مزود 'بدون مفتاح' فعلي عندك. لا تتركه enabled=true بـ endpoint وهمي — التطبيق غادي يفشل صامتاً فالإنتاج."
+    }
+  ],
+
+  "routing_rules": [
+    {
+      "condition": "decision.route === 'lite_instant' || decision.route === 'cache'",
+      "action": "skip_llm",
+      "_note_ar": "الطبقة المحلية كفاية، ما نديرو حتى استدعاء API."
+    },
+    {
+      "condition": "decision.route === 'math' || decision.route === 'date'",
+      "action": "skip_llm",
+      "_note_ar": "المحركات المحلية (MathEngine/DateEngine) كافية وأدق من أي LLM فهاد الحالة."
+    },
+    {
+      "condition": "decision.meta.codingMode === true",
+      "action": "use_model",
+      "model_id": "model_b_coding"
+    },
+    {
+      "condition": "decision.route === 'hybrid_search' && best_local_score < local_confidence_threshold",
+      "action": "use_model",
+      "model_id": "model_a_general"
+    },
+    {
+      "condition": "decision.meta.intent === 'quick_classification'",
+      "action": "use_model",
+      "model_id": "model_c_fast"
+    }
+  ],
+
+  "fallback_chain": {
+    "on_primary_timeout_or_error": ["model_c_fast", "model_d_openai", "model_e_local_free"],
+    "on_coding_model_error": ["model_a_general", "model_c_fast"],
+    "max_chain_depth": 3,
+    "_note_ar": "إذا نموذج فشل (timeout / rate-limit / 5xx)، نتقدمو للتالي فاللائحة. إذا الجميع فشلوا، رجّع رسالة واضحة للمستخدم أنه فشل مؤقت — لا تختلق جواب بدون مصدر."
+  },
+
+  "rate_limits": {
+    "per_session_per_minute": 12,
+    "global_per_minute": 300,
+    "on_limit_exceeded": "queue_then_serve_from_cache_if_available"
+  },
+
+  "logging": {
+    "log_model_used_to_table": "archon_interactions.llm_model_used",
+    "log_latency": true,
+    "log_full_prompt": false,
+    "_note_ar": "log_full_prompt=false افتراضياً لاعتبارات الخصوصية — فعّلها فقط فبيئة تطوير محلية."
+  },
+
+  "honesty_disclaimer_ar": "المحرك يعتمد فعلياً على استدعاء نماذج LLM خارجية (عبر API) عند الحاجة، بالتوازي مع طبقة بحث/كاش/رياضيات محلية. لا يُفترض تقديمه للمستخدم النهائي على أنه 'شبكة عصبية تعمل بالكامل محلياً بدون أي نموذج خارجي' إذا لم يكن ذلك صحيحاً تقنياً."
+}
