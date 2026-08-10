@@ -3223,7 +3223,21 @@ async function answer(userQ) {
     messages.push({ role: 'user', content: userContent });
   }
 
-  const brainTxt = await archonBrain(messages, { maxTokens: cfg.maxTokens });
+  // ── اختيار النموذج فعلياً حسب archon_multi_llm_config.json ─────────
+  // (ArchonExt.Config.pickModel يطبّق نفس منطق routing_rules بلا eval —
+  // انظر §27 فـ archon-brain-ext.js/الملحق. إذا الإعدادات ماتحمّلاتش
+  // بعد أو الطبقة غير متوفرة، model يبقى undefined و archonBrain()
+  // كتستعمل الافتراضي 'openai' — سلوك مطابق للسابق، بلا كسر شي حاجة.)
+  let pickedModel;
+  try {
+    if (window.ArchonExt && window.ArchonExt.archonDecide && window.ArchonExt.Config) {
+      const modelDecision = window.ArchonExt.archonDecide(userQ, ctx);
+      const modelPick = window.ArchonExt.Config.pickModel(modelDecision, window.ArchonExt.Config.get());
+      pickedModel = modelPick && modelPick.model_name;
+    }
+  } catch (e) { console.warn('[Archon] اختيار النموذج فشل، رجعنا للافتراضي:', e.message); }
+
+  const brainTxt = await archonBrain(messages, { maxTokens: cfg.maxTokens, model: pickedModel });
   thinkDone('brain');
   if (!brainTxt) return local;
 
@@ -6217,6 +6231,213 @@ try {
     return true;
   }
 
+  /* ═══════════════════════════════════════════════════════════════════
+     § 26 — ARCHON_DB: بلا جداول جديدة — كنستعملو نفس الروابط القديمة
+     ─────────────────────────────────────────────────────────────────
+     تصحيح مهم عن النسخة السابقة: كنا زدنا جداول جديدة (archon_knowledge/
+     archon_interactions/archon_cache) غير موجودة فقاعدة البيانات
+     الحقيقية ديالك — هادشي كان غادي يعطي أخطاء صامتة (console.warn)
+     ويبقى "متصل" بالاسم غير. دابا الطبقة هادي **ما كتخلقش ولا كتقرا
+     من جدول جديد بتاتاً** — كتستعمل فقط:
+       • ai_knowledge  (عبر loadKB()/refreshKB() الأصليين — موجودين
+         فعلاً وكيخدمو من قبل)
+       • ai_learning + zunexa_messages (عبر learnQ()/autoLearn()/
+         logMsg() الأصليين — كيخدمو من قبل فداخل answer())
+     هاد §26 دابا غير طبقة "قراءة/تنسيق" فوق الدوال القديمة، بلا أي
+     نداء Supabase جديد مباشر.
+  ═══════════════════════════════════════════════════════════════════ */
+  const ARCHON_DB = (function () {
+    function getClient() {
+      return (typeof window !== 'undefined' && window._SB) ? window._SB : null;
+    }
+
+    function isConnected() {
+      return !!getClient();
+    }
+
+    // كتعاود تحميل ai_knowledge عبر الدالة الأصلية refreshKB()/loadKB()
+    // (نفس الجدول، نفس المنطق، بلا تكرار) — مفيدة إذا بغيتي ريفريش
+    // يدوي من ArchonExt بدل ما تنتظر إعادة تحميل الصفحة.
+    async function refreshKnowledgeBase() {
+      try {
+        if (typeof window.refreshKB === 'function') { await window.refreshKB(); return true; }
+        if (typeof window.loadKB === 'function')    { await window.loadKB();    return true; }
+        console.warn('[ArchonExt.DB] لا refreshKB ولا loadKB متوفرين global.');
+        return false;
+      } catch (e) {
+        console.warn('[ArchonExt.DB] refreshKnowledgeBase فشل:', e.message);
+        return false;
+      }
+    }
+
+    // بدل ما نديرو insert جديد لجدول جديد، كنستعملو autoLearn()/learnQ()
+    // الأصليين — هوما لي كيكتبو فـ ai_knowledge/ai_learning فعلاً.
+    // هاد الدالة غير façade باش الكود الجديد (§29) يقدر يستدعيها بلا
+    // ما يعرف تفاصيل الدوال القديمة.
+    async function recordInteraction({ question, answerText, localScore }) {
+      try {
+        if (typeof window.autoLearn === 'function') {
+          await window.autoLearn(question, answerText, typeof localScore === 'number' ? localScore : 0);
+          return true;
+        }
+        return false;
+      } catch (e) {
+        console.warn('[ArchonExt.DB] recordInteraction (autoLearn) فشل:', e.message);
+        return false;
+      }
+    }
+
+    return { getClient, isConnected, refreshKnowledgeBase, recordInteraction };
+  })();
+
+  /* ═══════════════════════════════════════════════════════════════════
+     § 27 — ARCHON_CONFIG: تحميل archon_multi_llm_config.json
+     ملاحظة أمان: ما كنديروش eval() على شروط routing_rules — المنطق
+     مكتوب يدوياً وآمناً فـ pickModel(). الملف خاصو يتحط فنفس مجلد
+     ai.html (fetch نسبي، بحال zunexa_qa_final.json).
+  ═══════════════════════════════════════════════════════════════════ */
+  const ARCHON_CONFIG = (function () {
+    let _configPromise = null;
+    let _lastResolved = null;
+
+    function loadAndCache(url) {
+      if (_configPromise) return _configPromise;
+      _configPromise = fetch(url || 'archon_multi_llm_config.json', { cache: 'no-store' })
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+        .then(cfg => { _lastResolved = cfg; return cfg; })
+        .catch(e => {
+          console.warn('[ArchonExt.Config] فشل تحميل archon_multi_llm_config.json:', e.message);
+          _lastResolved = null;
+          return null;
+        });
+      return _configPromise;
+    }
+
+    function pickModel(decision, cfg) {
+      cfg = cfg || _lastResolved;
+      if (!cfg || !Array.isArray(cfg.models)) return null;
+
+      const route = decision && decision.route;
+      const meta  = (decision && decision.meta) || {};
+
+      if (route === 'lite_instant' || route === 'cache' || route === 'math' || route === 'date') {
+        return null;
+      }
+
+      const enabledModels = cfg.models.filter(m => m.enabled !== false);
+      const byId = id => enabledModels.find(m => m.id === id);
+      const byRole = role => enabledModels.find(m => m.role === role);
+
+      if (meta.codingMode) {
+        const coding = byRole('coding_specialist');
+        if (coding) return coding;
+      }
+      if (meta.intent === 'quick_classification') {
+        const fast = byRole('fast_fallback');
+        if (fast) return fast;
+      }
+
+      const defaultId = cfg.defaults && cfg.defaults.primary_model;
+      return (defaultId && byId(defaultId)) || byRole('primary_general') || enabledModels[0] || null;
+    }
+
+    function getFallbackChain(cfg, key) {
+      cfg = cfg || _lastResolved;
+      if (!cfg || !cfg.fallback_chain) return [];
+      const ids = cfg.fallback_chain[key] || [];
+      return ids.map(id => (cfg.models || []).find(m => m.id === id)).filter(m => m && m.enabled !== false);
+    }
+
+    return { load: loadAndCache, get: () => _lastResolved, pickModel, getFallbackChain };
+  })();
+
+  /* ═══════════════════════════════════════════════════════════════════
+     § 28 — ARCHON_SYSTEM_PROMPT: حقن archon_master_system.md
+  ═══════════════════════════════════════════════════════════════════ */
+  const ARCHON_SYSTEM_PROMPT = (function () {
+    let _textPromise = null;
+    let _lastText = '';
+
+    function load(url) {
+      if (_textPromise) return _textPromise;
+      _textPromise = fetch(url || 'archon_master_system.md', { cache: 'no-store' })
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.text(); })
+        .then(txt => { _lastText = txt; return txt; })
+        .catch(e => {
+          console.warn('[ArchonExt.SystemPrompt] فشل تحميل archon_master_system.md:', e.message);
+          _lastText = '';
+          return '';
+        });
+      return _textPromise;
+    }
+
+    function getSync() { return _lastText; }
+
+    function buildFullSystemPrompt(basePromptText, userQ, decision, searchResults) {
+      const master = _lastText
+        ? `\n\n[ملف المعرفة الموحد — Archon Brain Master System]:\n${_lastText.slice(0, 4000)}`
+        : '';
+      const addendum = '\n\n' + buildDynamicPromptAddendum(userQ, decision, searchResults);
+      return (basePromptText || '') + master + addendum;
+    }
+
+    return { load, getSync, buildFullSystemPrompt };
+  })();
+
+  /* ═══════════════════════════════════════════════════════════════════
+     § 29 — طبقة التكامل البعيد (Remote Integration Layer)
+     ─────────────────────────────────────────────────────────────────
+     ملاحظة عن النسخة السابقة: كنا كنديرو fetch مكرر من جدول جديد
+     (archon_knowledge) باش نعمرو KB، ونديرو insert مكرر لتسجيل كل
+     تفاعل (archon_interactions). هادشي زايد على الطاق: loadKB() كتعمر
+     KB من ai_knowledge من قبل (عند تحميل الصفحة)، وanswer() كتسجل كل
+     تفاعل عبر logMsg()/autoLearn() من قبل. دابا §29 كتخدم غير على
+     شيئين جداد حقاً: (أ) اختيار نموذج LLM حسب archon_multi_llm_config.json
+     [مربوط مباشرة فـ answer() نفسها]، و(ب) حقن archon_master_system.md
+     فـ system prompt — بلا أي تكرار لكتابة/قراءة قاعدة البيانات.
+  ═══════════════════════════════════════════════════════════════════ */
+  async function integrateRemoteLayer(opts) {
+    opts = opts || {};
+    await Promise.all([
+      ARCHON_CONFIG.load(opts.configUrl),
+      ARCHON_SYSTEM_PROMPT.load(opts.masterSystemUrl),
+    ]);
+
+    if (typeof window.archonModeSystemPrompt === 'function' && !window.archonModeSystemPrompt._archonExtWrapped) {
+      const originalModePrompt = window.archonModeSystemPrompt;
+      const wrapped = function (userText) {
+        let base;
+        try { base = originalModePrompt(userText); }
+        catch (e) { console.warn('[ArchonExt.SystemPrompt] الأصلية فشلت:', e.message); base = ''; }
+        try {
+          const decision = archonDecide(userText, Array.isArray(window.ctx) ? window.ctx : []);
+          let searchResults = [];
+          try { searchResults = typeof window.rankKB === 'function' ? (window.rankKB(userText) || []) : []; }
+          catch (e2) { searchResults = []; }
+          return ARCHON_SYSTEM_PROMPT.buildFullSystemPrompt(base, userText, decision, searchResults);
+        } catch (e) {
+          console.warn('[ArchonExt.SystemPrompt] فشل بناء الإضافة، رجعنا للـ prompt الأصلي فقط:', e.message);
+          return base;
+        }
+      };
+      wrapped._archonExtWrapped = true;
+      window.archonModeSystemPrompt = wrapped;
+      console.log('[ArchonExt.SystemPrompt] archonModeSystemPrompt مربوط الآن بـ archon_master_system.md.');
+    }
+
+    console.log('[ArchonExt] طبقة التكامل البعيد (Config + System Prompt، فوق نفس ai_knowledge/ai_learning القديمين) جاهزة.');
+    return true;
+  }
+
+  function scheduleRemoteIntegration() {
+    integrateRemoteLayer().catch(e => console.warn('[ArchonExt] integrateRemoteLayer فشلت كلياً (best-effort):', e.message));
+  }
+  if (typeof document !== 'undefined' && document.readyState !== 'loading') {
+    scheduleRemoteIntegration();
+  } else if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', scheduleRemoteIntegration);
+  }
+
   // نحاولو التكامل التلقائي فور تحميل هاد الملف. إذا الأصليين ماكاينش
   // بعد (ترتيب تحميل السكريبتات)، كنعاودو المحاولة عند DOMContentLoaded.
   const integratedNow = integrateWithOriginal();
@@ -6243,6 +6464,10 @@ try {
     isCodingModeQuestion, tryLiteInstantAnswer,
     createLatencyTracker, archonDecide, buildDynamicPromptAddendum,
     integrateWithOriginal,
+    DB: ARCHON_DB,
+    Config: ARCHON_CONFIG,
+    SystemPrompt: ARCHON_SYSTEM_PROMPT,
+    integrateRemoteLayer,
   });
 })();
 </script>
