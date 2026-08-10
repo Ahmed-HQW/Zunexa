@@ -1294,6 +1294,370 @@
     return true;
   }
 
+  /* ═══════════════════════════════════════════════════════════════════
+     § 26 — ARCHON_DB: ربط Supabase حسب archon_schema.sql
+     ─────────────────────────────────────────────────────────────────
+     صراحة تقنية: هاد الطبقة كتخدم بجدول جديد (archon_knowledge /
+     archon_interactions / archon_cache) بحال ما تصفاو فـ archon_schema.sql
+     — وهي منفصلة عن جداول ai.html الأصلية (ai_knowledge / ai_learning).
+     كنستعملو نفس عميل Supabase الموجود (window._SB) إذا كاين، بلا ما
+     نديرو client جديد بمفتاح مكرر. إذا ماكاينش، الطبقة كتبقى معطلة
+     صامتاً (best-effort) — ما كتكسرش الشات.
+  ═══════════════════════════════════════════════════════════════════ */
+  const ARCHON_DB = (function () {
+    let _client = null;
+    let _clientChecked = false;
+
+    function getClient() {
+      if (_clientChecked) return _client;
+      _clientChecked = true;
+      try {
+        if (typeof window !== 'undefined' && window._SB) {
+          _client = window._SB; // نفس العميل الأصلي المُعرَّف فـ ai.html
+        } else if (typeof window !== 'undefined' && window.supabase &&
+                   window.ARCHON_SUPABASE_URL && window.ARCHON_SUPABASE_KEY) {
+          // fallback: عميل مستقل إذا المطور عبّى القيم global يدوياً
+          _client = window.supabase.createClient(window.ARCHON_SUPABASE_URL, window.ARCHON_SUPABASE_KEY);
+        } else {
+          _client = null;
+          console.warn('[ArchonExt.DB] ماكاينش Supabase client متوفر (لا window._SB ولا ARCHON_SUPABASE_URL/KEY) — طبقة archon_* معطلة.');
+        }
+      } catch (e) {
+        _client = null;
+        console.warn('[ArchonExt.DB] فشل تهيئة العميل:', e.message);
+      }
+      return _client;
+    }
+
+    // كتجيب معرفة archon_knowledge النشطة + الصيغ البديلة ديالها، وترجعها
+    // بشكل KB items متوافق مع hybridRankKB/rankKB ({q,a,kw,src,w}).
+    async function fetchRemoteKnowledge(limit) {
+      const sb = getClient();
+      if (!sb) return [];
+      try {
+        const { data: rows, error } = await sb
+          .from('archon_knowledge')
+          .select('id,canonical_q,answer,keywords,priority,confidence,topic_id')
+          .eq('is_active', true)
+          .order('priority', { ascending: false })
+          .limit(limit || 2000);
+        if (error || !rows) {
+          console.warn('[ArchonExt.DB] fetchRemoteKnowledge فشل:', error && error.message);
+          return [];
+        }
+
+        // نجيبو الصيغ البديلة فـ استعلام واحد إضافي (بدل N+1)
+        let variantsByKnowledge = {};
+        try {
+          const ids = rows.map(r => r.id);
+          if (ids.length) {
+            const { data: variants } = await sb
+              .from('archon_knowledge_variants')
+              .select('knowledge_id,variant_text')
+              .in('knowledge_id', ids);
+            (variants || []).forEach(v => {
+              (variantsByKnowledge[v.knowledge_id] = variantsByKnowledge[v.knowledge_id] || []).push(v.variant_text);
+            });
+          }
+        } catch (e) { /* الصيغ البديلة اختيارية — ما نوقفوش الجلب الأساسي بسببها */ }
+
+        return rows.map(r => ({
+          id:  `archon_${r.id}`,
+          q:   r.canonical_q,
+          a:   r.answer,
+          kw:  Array.isArray(r.keywords) ? r.keywords : [],
+          variants: variantsByKnowledge[r.id] || [],
+          src: 'archon_db',
+          w:   typeof r.confidence === 'number' ? r.confidence : 0.8,
+        })).filter(i => i.q && i.a);
+      } catch (e) {
+        console.warn('[ArchonExt.DB] fetchRemoteKnowledge استثناء:', e.message);
+        return [];
+      }
+    }
+
+    // تسجيل تفاعل فـ archon_interactions (fire-and-forget، ما كيوقفش الشات
+    // إذا فشل). هاد الجدول هو مصدر التعلّم المُراجَع لاحقاً عبر
+    // archon_promote_interaction() فـ archon_schema.sql — ماشي ترقية
+    // تلقائية بلا مراجعة.
+    async function logInteraction(payload) {
+      const sb = getClient();
+      if (!sb) return null;
+      try {
+        const { data, error } = await sb.from('archon_interactions').insert({
+          session_id:           payload.sessionId || null,
+          user_question:        payload.question,
+          matched_knowledge_id: payload.matchedKnowledgeId || null,
+          route:                payload.route || null,
+          final_answer:         payload.answer || null,
+          llm_model_used:       payload.modelUsed || null,
+          match_score:          typeof payload.score === 'number' ? payload.score : null,
+        }).select('id').single();
+        if (error) {
+          console.warn('[ArchonExt.DB] logInteraction فشل:', error.message);
+          return null;
+        }
+        return data ? data.id : null;
+      } catch (e) {
+        console.warn('[ArchonExt.DB] logInteraction استثناء:', e.message);
+        return null;
+      }
+    }
+
+    // كاش سحابي اختياري يوازي archon_cache (ArchonCache المحلي فالـ JS
+    // يبقى الخط الأول دائماً — هذا فقط للاستمرارية عبر الأجهزة/الجلسات).
+    async function cacheGet(key) {
+      const sb = getClient();
+      if (!sb) return null;
+      try {
+        const { data, error } = await sb.from('archon_cache').select('answer,expires_at').eq('cache_key', key).maybeSingle();
+        if (error || !data) return null;
+        if (data.expires_at && new Date(data.expires_at) < new Date()) return null;
+        return data.answer;
+      } catch (e) { return null; }
+    }
+
+    async function cacheSet(key, question, answerText, ttlSeconds) {
+      const sb = getClient();
+      if (!sb) return false;
+      try {
+        const { error } = await sb.rpc('archon_cache_upsert', {
+          p_key: key, p_question: question, p_answer: answerText,
+          p_ttl_seconds: ttlSeconds || null,
+        });
+        return !error;
+      } catch (e) { return false; }
+    }
+
+    return { getClient, fetchRemoteKnowledge, logInteraction, cacheGet, cacheSet };
+  })();
+
+  /* ═══════════════════════════════════════════════════════════════════
+     § 27 — ARCHON_CONFIG: تحميل archon_multi_llm_config.json
+     ─────────────────────────────────────────────────────────────────
+     ملاحظة أمان: قواعد routing_rules فالملف JSON مكتوبة كنص وصفي
+     (condition strings) — ما كنديروش eval() عليها هنا (خطر أمني حقيقي
+     إذا الملف تبدل بمصدر غير موثوق). بدل هادشي، pickModel() كتطبق نفس
+     المنطق يدوياً بجافاسكريبت آمن، وكتقرا فقط القيم (model ids, priority,
+     enabled) من الملف.
+  ═══════════════════════════════════════════════════════════════════ */
+  const ARCHON_CONFIG = (function () {
+    let _configPromise = null;
+
+    function load(url) {
+      if (_configPromise) return _configPromise;
+      _configPromise = fetch(url || 'archon_multi_llm_config.json', { cache: 'no-store' })
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+        .catch(e => {
+          console.warn('[ArchonExt.Config] فشل تحميل archon_multi_llm_config.json:', e.message);
+          return null;
+        });
+      return _configPromise;
+    }
+
+    let _lastResolved = null;
+    function loadAndCache(url) {
+      return load(url).then(cfg => { _lastResolved = cfg; return cfg; });
+    }
+
+    // كتختار model_id مناسب لقرار archonDecide() معيّن، بمنطق يوازي
+    // routing_rules فالملف (بلا eval).
+    function pickModel(decision, cfg) {
+      cfg = cfg || _lastResolved;
+      if (!cfg || !Array.isArray(cfg.models)) return null;
+
+      const route = decision && decision.route;
+      const meta  = (decision && decision.meta) || {};
+
+      // قواعد 1-2: هاد الـ routes ما كتحتاجش LLM أصلاً
+      if (route === 'lite_instant' || route === 'cache' || route === 'math' || route === 'date') {
+        return null;
+      }
+
+      const enabledModels = cfg.models.filter(m => m.enabled !== false);
+      const byId = id => enabledModels.find(m => m.id === id);
+      const byRole = role => enabledModels.find(m => m.role === role);
+
+      // قاعدة 3: وضع الكود → نموذج الكود المتخصص
+      if (meta.codingMode) {
+        const coding = byRole('coding_specialist');
+        if (coding) return coding;
+      }
+
+      // قاعدة 5: تصنيف سريع → النموذج السريع
+      if (meta.intent === 'quick_classification') {
+        const fast = byRole('fast_fallback');
+        if (fast) return fast;
+      }
+
+      // قاعدة 4 + الافتراضي: النموذج الأساسي حسب defaults.primary_model
+      const defaultId = cfg.defaults && cfg.defaults.primary_model;
+      return (defaultId && byId(defaultId)) || byRole('primary_general') || enabledModels[0] || null;
+    }
+
+    // سلسلة fallback مرتبة (model objects) حسب fallback_chain فالملف
+    function getFallbackChain(cfg, key) {
+      cfg = cfg || _lastResolved;
+      if (!cfg || !cfg.fallback_chain) return [];
+      const ids = cfg.fallback_chain[key] || [];
+      return ids
+        .map(id => (cfg.models || []).find(m => m.id === id))
+        .filter(m => m && m.enabled !== false);
+    }
+
+    return { load: loadAndCache, get: () => _lastResolved, pickModel, getFallbackChain };
+  })();
+
+  /* ═══════════════════════════════════════════════════════════════════
+     § 28 — ARCHON_SYSTEM_PROMPT: حقن archon_master_system.md
+     ─────────────────────────────────────────────────────────────────
+     كيجيب محتوى الملف كنص خام (fetch، ماشي parsing كامل لـ Markdown —
+     كافي لأنه غادي يتحقن كسياق نصي داخل system prompt) ويخزّنو مؤقتاً.
+     buildFullSystemPrompt() كتدمجو مع buildDynamicPromptAddendum()
+     الموجودة أصلاً (§24) بلا ما تبدل منطقها.
+  ═══════════════════════════════════════════════════════════════════ */
+  const ARCHON_SYSTEM_PROMPT = (function () {
+    let _textPromise = null;
+    let _lastText = '';
+
+    function load(url) {
+      if (_textPromise) return _textPromise;
+      _textPromise = fetch(url || 'archon_master_system.md', { cache: 'no-store' })
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.text(); })
+        .then(txt => { _lastText = txt; return txt; })
+        .catch(e => {
+          console.warn('[ArchonExt.SystemPrompt] فشل تحميل archon_master_system.md:', e.message);
+          _lastText = '';
+          return '';
+        });
+      return _textPromise;
+    }
+
+    function getSync() { return _lastText; }
+
+    // basePromptText: النص الأصلي (مثلاً ناتج archonModeSystemPrompt() —
+    // ما كنبدلوهش، غير كنزيدو عليه إضافة).
+    function buildFullSystemPrompt(basePromptText, userQ, decision, searchResults) {
+      const master = _lastText
+        ? `\n\n[ملف المعرفة الموحد — Archon Brain Master System]:\n${_lastText.slice(0, 4000)}`
+        : '';
+      const addendum = '\n\n' + buildDynamicPromptAddendum(userQ, decision, searchResults);
+      return (basePromptText || '') + master + addendum;
+    }
+
+    return { load, getSync, buildFullSystemPrompt };
+  })();
+
+  /* ═══════════════════════════════════════════════════════════════════
+     § 29 — طبقة التكامل البعيد (Remote Integration Layer)
+     ─────────────────────────────────────────────────────────────────
+     كتربط § 26/27/28 مع الكود الأصلي، بنفس فلسفة integrateWithOriginal()
+     (§25): override محسوب، مع fallback دائماً للأصلي عند أي فشل، وبلا
+     ما تلمس ai.html. كل شي هنا best-effort وما كيوقفش الشات إذا Supabase
+     أو الملفات ماكايناش.
+  ═══════════════════════════════════════════════════════════════════ */
+  let _remoteKBMerged = false;
+
+  async function integrateRemoteLayer(opts) {
+    opts = opts || {};
+
+    // 1) تحميل الإعدادات + ملف النظام الموحد بالتوازي (لا يوقفان بعضهما)
+    const [cfg] = await Promise.all([
+      ARCHON_CONFIG.load(opts.configUrl),
+      ARCHON_SYSTEM_PROMPT.load(opts.masterSystemUrl),
+    ]);
+
+    // 2) دمج معرفة archon_knowledge (Supabase) داخل window.KB مباشرة —
+    // نفس نمط دمج cloud/local الموجود أصلاً فـ loadKB() فـ ai.html
+    // (mutation فالمكان، بلا ما نبدلو المرجع)، مع تفادي التكرار بالـ id.
+    if (!_remoteKBMerged && Array.isArray(window.KB)) {
+      try {
+        const remoteItems = await ARCHON_DB.fetchRemoteKnowledge();
+        const existingIds = new Set(window.KB.map(i => i.id).filter(Boolean));
+        const newItems = remoteItems.filter(i => !existingIds.has(i.id));
+        if (newItems.length) {
+          window.KB.push(...newItems);
+          console.log(`[ArchonExt.DB] تم دمج ${newItems.length} عنصر من archon_knowledge داخل KB.`);
+        }
+        _remoteKBMerged = true;
+      } catch (e) {
+        console.warn('[ArchonExt.DB] دمج KB البعيد فشل (best-effort):', e.message);
+      }
+    }
+
+    // 3) حقن system prompt الموحد — override محسوب لـ archonModeSystemPrompt
+    // إذا كانت موجودة global، مع fallback كامل للأصلية عند أي خطأ.
+    if (typeof window.archonModeSystemPrompt === 'function' && !window.archonModeSystemPrompt._archonExtWrapped) {
+      const originalModePrompt = window.archonModeSystemPrompt;
+      const wrapped = function (userText) {
+        let base;
+        try {
+          base = originalModePrompt(userText);
+        } catch (e) {
+          console.warn('[ArchonExt.SystemPrompt] archonModeSystemPrompt الأصلية فشلت:', e.message);
+          base = '';
+        }
+        try {
+          const decision = archonDecide(userText, Array.isArray(window.ctx) ? window.ctx : []);
+          let searchResults = [];
+          try {
+            searchResults = typeof window.rankKB === 'function' ? (window.rankKB(userText) || []) : [];
+          } catch (e2) { searchResults = []; }
+          return ARCHON_SYSTEM_PROMPT.buildFullSystemPrompt(base, userText, decision, searchResults);
+        } catch (e) {
+          console.warn('[ArchonExt.SystemPrompt] فشل بناء الإضافة، رجعنا للـ prompt الأصلي فقط:', e.message);
+          return base;
+        }
+      };
+      wrapped._archonExtWrapped = true;
+      window.archonModeSystemPrompt = wrapped;
+      console.log('[ArchonExt.SystemPrompt] archonModeSystemPrompt مربوط الآن بـ archon_master_system.md.');
+    }
+
+    // 4) تسجيل التفاعلات — override محسوب لـ window.answer (إذا موجودة)،
+    // فقط تسجيل بعد الحصول على النتيجة (fire-and-forget)، بلا ما نبدلو
+    // شكل أو محتوى الجواب المُرجَع للمستخدم.
+    if (typeof window.answer === 'function' && !window.answer._archonExtWrapped) {
+      const originalAnswer = window.answer;
+      const wrappedAnswer = async function (userQ) {
+        const result = await originalAnswer(userQ);
+        try {
+          const decision = archonDecide(userQ, Array.isArray(window.ctx) ? window.ctx : []);
+          const modelPick = ARCHON_CONFIG.pickModel(decision, ARCHON_CONFIG.get());
+          ARCHON_DB.logInteraction({
+            question:   userQ,
+            answer:     result && result.text,
+            route:      decision && decision.route,
+            score:      result && result.score,
+            modelUsed:  modelPick && modelPick.model_name,
+          }); // بلا await — ما نأخّروش الجواب للمستخدم بسبب التسجيل
+        } catch (e) {
+          console.warn('[ArchonExt.DB] تسجيل التفاعل فشل (best-effort):', e.message);
+        }
+        return result;
+      };
+      wrappedAnswer._archonExtWrapped = true;
+      window.answer = wrappedAnswer;
+      console.log('[ArchonExt.DB] window.answer مربوط الآن بتسجيل archon_interactions.');
+    }
+
+    console.log('[ArchonExt] طبقة التكامل البعيد (DB + Config + System Prompt) جاهزة.');
+    return true;
+  }
+
+  // نطلقو التكامل البعيد بعد التكامل الأصلي، وبعد DOMContentLoaded إذا
+  // لزم الأمر (باش window.KB/window.answer/window.archonModeSystemPrompt
+  // يكونو معرّفين). ما كيوقفش لا الصفحة ولا الشات إذا فشل — كلشي مغلف
+  // بـ try/catch جوج مرات (هنا + داخل كل دالة).
+  function scheduleRemoteIntegration() {
+    integrateRemoteLayer().catch(e => console.warn('[ArchonExt] integrateRemoteLayer فشلت كلياً (best-effort):', e.message));
+  }
+  if (typeof document !== 'undefined' && document.readyState !== 'loading') {
+    scheduleRemoteIntegration();
+  } else if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', scheduleRemoteIntegration);
+  }
+
   // نحاولو التكامل التلقائي فور تحميل هاد الملف. إذا الأصليين ماكاينش
   // بعد (ترتيب تحميل السكريبتات)، كنعاودو المحاولة عند DOMContentLoaded.
   const integratedNow = integrateWithOriginal();
@@ -1320,5 +1684,10 @@
     isCodingModeQuestion, tryLiteInstantAnswer,
     createLatencyTracker, archonDecide, buildDynamicPromptAddendum,
     integrateWithOriginal,
+    // § 26-29 — الطبقة البعيدة (DB / Config / System Prompt)
+    DB: ARCHON_DB,
+    Config: ARCHON_CONFIG,
+    SystemPrompt: ARCHON_SYSTEM_PROMPT,
+    integrateRemoteLayer,
   });
 })();
