@@ -1,0 +1,18 @@
+# ══════════════════════════════════════════════
+#  Zunexa AI — robots.txt
+# ══════════════════════════════════════════════
+
+User-agent: *
+Allow: /
+
+# الصفحات الخاصة/المحمية بتسجيل الدخول — ما خاصهاش تتفهرس
+Disallow: /dashboard.html
+Disallow: /settings.html
+Disallow: /appearance.html
+Disallow: /analytics.html
+Disallow: /billing.html
+Disallow: /owner_admin.html
+Disallow: /ai.html
+
+# ملف السيتماب
+Sitemap: https://zunexa.vercel.app/sitemap.xml
