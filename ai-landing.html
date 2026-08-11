@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  ZUNEXA — ARCHON AI · صفحة هبوط عامة (SEO Landing)               ║
+  ║  هذه الصفحة بدون أي حماية تسجيل دخول، مخصصة للفهرسة فقط.        ║
+  ║  التطبيق الفعلي (الدردشة) يبقى في ai.html خلف تسجيل الدخول.      ║
+  ║  Design: Zalij Mode — Premium Moroccan Noir & Gold (مطابق)      ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#060606">
+<title>Zunexa — Archon AI | ذكاء اصطناعي مغربي مجاني بالعربية</title>
+
+<script src="zunexa-seo-keywords.js"></script>
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23060606'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%23D4AF37' stroke-width='.7' opacity='.7'/><text x='16' y='22' text-anchor='middle' font-size='18' font-family='Georgia,serif' fill='%23D4AF37' font-weight='bold'>Z</text></svg>">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ════════════════════════════════════════════════════════
+   DESIGN TOKENS — Zalij Mode · Noir & Gold (مطابقة لـ ai.html)
+════════════════════════════════════════════════════════ */
+:root{
+  --void:#060606; --deep:#090909; --card:#0e0e0e; --card2:#121212;
+  --b1:#1a1a1a; --b2:#242424;
+  --bg:rgba(212,175,55,.22); --bgh:rgba(212,175,55,.50); --bgp:rgba(212,175,55,.08);
+  --gold:#D4AF37; --gold2:#ecc84a; --gold3:#f5d76e; --gdim:#7a6218;
+  --gglow:rgba(212,175,55,.20);
+  --tw:#edeae2; --tg:#7a7468; --tm:#303028;
+  --green:#3ddc84;
+  --r2:11px; --r3:17px; --r4:24px;
+  --tr:.2s cubic-bezier(.4,0,.2,1);
+  --sg:0 0 0 1px rgba(212,175,55,.12) inset,0 4px 28px rgba(0,0,0,.55);
+  --sg2:0 0 30px rgba(212,175,55,.22),0 0 80px rgba(212,175,55,.07);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Rajdhani',sans-serif;background:var(--void);color:var(--tw);
+  -webkit-font-smoothing:antialiased;line-height:1.6;
+}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-thumb{background:var(--gdim)}
+
+/* خلفية زليج خفيفة */
+#zalij-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#zalij-bg::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    radial-gradient(rgba(212,175,55,.10) 1px,transparent 1px);
+  background-size:34px 34px;
+  opacity:.5;
+}
+#zalij-bg::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,transparent 20%,rgba(6,6,6,.94) 100%);
+}
+
+.wrap{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:0 20px}
+
+/* ── HEADER ── */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 0;border-bottom:1px solid var(--b1);
+}
+.logo{display:flex;align-items:center;gap:11px}
+.logo-mark{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,var(--gold),var(--gdim));
+  display:grid;place-items:center;
+  font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:#060606;
+  box-shadow:var(--sg2);
+}
+.logo-name{font-family:'Cinzel',serif;font-size:15px;font-weight:600;letter-spacing:.05em}
+.logo-ver{font-size:9px;color:var(--gold);letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+.btn-nav{
+  padding:9px 20px;border-radius:9px;border:1px solid var(--bg);
+  color:var(--gold);font-size:13px;font-weight:700;letter-spacing:.03em;
+  background:rgba(212,175,55,.06);transition:all var(--tr);
+}
+.btn-nav:hover{background:rgba(212,175,55,.16);border-color:var(--bgh)}
+
+/* ── HERO ── */
+.hero{padding:64px 0 40px;text-align:center}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;border-radius:99px;border:1px solid var(--bg);
+  background:rgba(212,175,55,.06);color:var(--gold);
+  font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:22px;
+}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+h1{
+  font-family:'Cinzel',serif;font-weight:700;
+  font-size:clamp(28px,5.5vw,48px);line-height:1.25;color:var(--tw);
+  margin-bottom:18px;
+}
+h1 span{
+  background:linear-gradient(135deg,var(--gold3),var(--gold),var(--gdim));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.lede{
+  font-size:clamp(15px,2.2vw,18.5px);color:var(--tg);
+  max-width:640px;margin:0 auto 34px;line-height:1.75;
+}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  padding:15px 34px;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold2),var(--gold),var(--gdim));
+  color:#0a0a0a;font-size:15px;font-weight:700;letter-spacing:.02em;
+  box-shadow:var(--sg2);transition:transform var(--tr);
+}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{
+  padding:15px 30px;border-radius:12px;border:1px solid var(--b2);
+  color:var(--tw);font-size:15px;font-weight:600;transition:all var(--tr);
+}
+.btn-secondary:hover{border-color:var(--bgh);color:var(--gold3)}
+
+/* ── FEATURES ── */
+.features{padding:56px 0;border-top:1px solid var(--b1)}
+.section-title{
+  font-family:'Cinzel',serif;font-size:24px;font-weight:600;
+  text-align:center;margin-bottom:8px;
+}
+.section-sub{text-align:center;color:var(--tg);font-size:14.5px;margin-bottom:38px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.fcard{
+  background:var(--card);border:1px solid var(--b1);border-radius:var(--r3);
+  padding:24px 22px;transition:all var(--tr);position:relative;overflow:hidden;
+}
+.fcard:hover{border-color:var(--bg);box-shadow:var(--sg)}
+.fcard .ficon{
+  width:42px;height:42px;border-radius:10px;
+  background:rgba(212,175,55,.09);border:1px solid var(--bg);
+  display:grid;place-items:center;font-size:19px;margin-bottom:14px;color:var(--gold);
+}
+.fcard h3{font-size:16px;font-weight:700;margin-bottom:7px;color:var(--tw)}
+.fcard p{font-size:13.5px;color:var(--tg);line-height:1.65}
+
+/* ── LANGUAGES STRIP ── */
+.langs{
+  padding:32px 0;border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);
+  display:flex;justify-content:center;gap:28px;flex-wrap:wrap;
+}
+.lang-pill{
+  display:flex;align-items:center;gap:8px;color:var(--tg);font-size:13.5px;font-weight:600;
+}
+.lang-pill b{color:var(--gold3)}
+
+/* ── FAQ ── */
+.faq{padding:56px 0}
+.qa{
+  border-bottom:1px solid var(--b1);padding:20px 0;
+}
+.qa h4{font-size:15.5px;font-weight:700;margin-bottom:8px;color:var(--tw)}
+.qa p{font-size:13.5px;color:var(--tg);line-height:1.7}
+
+/* ── FOOTER ── */
+footer{
+  padding:34px 0 46px;text-align:center;border-top:1px solid var(--b1);
+  color:var(--tm);font-size:12px;
+}
+footer a{color:var(--gold);opacity:.85}
+footer a:hover{opacity:1}
+
+@media(max-width:560px){
+  .cta-row{flex-direction:column;align-items:stretch}
+  header{padding:18px 0}
+}
+</style>
+</head>
+<body>
+
+<div id="zalij-bg" aria-hidden="true"></div>
+
+<div class="wrap">
+
+  <!-- ══════════ HEADER ══════════ -->
+  <header>
+    <div class="logo">
+      <div class="logo-mark">Z</div>
+      <div>
+        <div class="logo-name">Zunexa</div>
+        <div class="logo-ver">Archon AI</div>
+      </div>
+    </div>
+    <a class="btn-nav" href="ai.html">تسجيل الدخول</a>
+  </header>
+
+  <!-- ══════════ HERO ══════════ -->
+  <main>
+    <section class="hero">
+      <span class="eyebrow"><span class="dot"></span> مجاني · بدون مفتاح API · Archon Engine</span>
+      <h1>مساعد <span>الذكاء الاصطناعي</span><br>المغربي، مجاناً وبالعربية</h1>
+      <p class="lede">
+        Zunexa Archon AI يجاوبك بالعربية والدارجة والفرنسية والإنجليزية،
+        يحلل ملفات PDF وWord وExcel، يحل المسائل الرياضية، ويساعدك في البرمجة —
+        كل هذا بدون تسجيل مفتاح API وبدون تعقيد.
+      </p>
+      <div class="cta-row">
+        <a class="btn-primary" href="ai.html">ابدأ الدردشة الآن</a>
+        <a class="btn-secondary" href="#features">اكتشف المزايا</a>
+      </div>
+    </section>
+
+    <!-- ══════════ FEATURES ══════════ -->
+    <section class="features" id="features">
+      <h2 class="section-title">لماذا Zunexa؟</h2>
+      <p class="section-sub">محرك عصبي مبني خصيصاً للمستخدم الناطق بالعربية والدارجة</p>
+      <div class="grid">
+        <div class="fcard">
+          <div class="ficon">💬</div>
+          <h3>دردشة ذكية متعددة اللغات</h3>
+          <p>يفهم ويجاوب بالعربية الفصحى، الدارجة المغربية، الفرنسية، والإنجليزية بطلاقة.</p>
+        </div>
+        <div class="fcard">
+          <div class="ficon">📄</div>
+          <h3>تحليل الملفات</h3>
+          <p>ارفع ملف PDF أو Word أو Excel، وخليه يلخص أو يستخرج المعلومات مباشرة.</p>
+        </div>
+        <div class="fcard">
+          <div class="ficon">∑</div>
+          <h3>حل المسائل الرياضية</h3>
+          <p>محرك رياضي مدمج يحل المعادلات خطوة بخطوة، بدون الحاجة لأداة خارجية.</p>
+        </div>
+        <div class="fcard">
+          <div class="ficon">⌨</div>
+          <h3>مساعدة في البرمجة</h3>
+          <p>وضع مطوّر مخصص يعطيك الكود مباشرة مع شرح تقني مختصر عند الحاجة.</p>
+        </div>
+        <div class="fcard">
+          <div class="ficon">🔒</div>
+          <h3>بدون مفتاح API</h3>
+          <p>لا حاجة لأي إعداد تقني أو اشتراك خارجي — كل شيء جاهز فور تسجيل الدخول.</p>
+        </div>
+        <div class="fcard">
+          <div class="ficon">⚡</div>
+          <h3>بحث هجين سريع</h3>
+          <p>محرك بحث محلي يجاوب فوراً على الأسئلة الشائعة قبل اللجوء لمعالجة أعمق.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════ LANGUAGES ══════════ -->
+    <section class="langs">
+      <div class="lang-pill"><b>العربية</b> الفصحى</div>
+      <div class="lang-pill"><b>الدارجة</b> المغربية</div>
+      <div class="lang-pill"><b>Français</b></div>
+      <div class="lang-pill"><b>English</b></div>
+    </section>
+
+    <!-- ══════════ FAQ (يفيد SEO + featured snippets) ══════════ -->
+    <section class="faq">
+      <h2 class="section-title">أسئلة شائعة</h2>
+      <p class="section-sub">كل ما تحتاج معرفته عن Zunexa Archon AI</p>
+
+      <div class="qa">
+        <h4>هل Zunexa مجاني بالكامل؟</h4>
+        <p>نعم، يمكنك استعمال المساعد الذكي بدون أي رسوم وبدون الحاجة لمفتاح API خارجي.</p>
+      </div>
+      <div class="qa">
+        <h4>هل يفهم Zunexa الدارجة المغربية؟</h4>
+        <p>نعم، محرك Archon مصمم للفهم والرد بالدارجة المغربية بجانب العربية الفصحى والفرنسية والإنجليزية.</p>
+      </div>
+      <div class="qa">
+        <h4>هل يمكنني رفع ملفات PDF أو Word للتحليل؟</h4>
+        <p>نعم، يدعم Zunexa تحليل ملفات PDF وWord وExcel مباشرة داخل المحادثة.</p>
+      </div>
+      <div class="qa">
+        <h4>هل أحتاج لإنشاء حساب لاستعمال المساعد؟</h4>
+        <p>نعم، تسجيل حساب مجاني مطلوب لحفظ محادثاتك واستعمال جميع المزايا بأمان.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ══════════ FOOTER ══════════ -->
+  <footer>
+    <p>© 2026 Zunexa AI — جميع الحقوق محفوظة</p>
+    <p style="margin-top:6px">
+      <a href="about.html">من نحن</a> ·
+      <a href="CONTACT.html">تواصل معنا</a> ·
+      <a href="help.html">المساعدة</a>
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>
