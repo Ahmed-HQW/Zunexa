@@ -237,7 +237,7 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
       <div class="success-title" id="success-title">Welcome to Zunexa!</div>
       <div class="success-sub" id="success-name">مرحباً 👋</div>
       <div class="success-plan-badge" id="success-plan-badge">✦ Pro Plan</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px" id="redirect-msg">Redirecting to dashboard...</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px" id="redirect-msg">Redirecting to ai...</div>
       <div class="progress-wrap" id="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
       <div id="resend-wrap" style="display:none;margin-top:16px">
         <button type="button" class="btn-auth" style="background:transparent;border:1px solid var(--border-gold);color:var(--gold);box-shadow:none" onclick="resendConfirmation()">
@@ -269,7 +269,7 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
      brute forcing from a single browser tab. It slows down one script
      kiddie with one tab open — it is trivially bypassed by disabling
      JS or calling the API directly, so it is NOT a substitute for
-     server-side rate limiting. Confirm in Supabase Dashboard →
+     server-side rate limiting. Confirm in Supabase ai →
      Authentication → Rate Limits (and enable leaked-password
      protection) — this file cannot configure that for you.
    - Plan/tokens/role are never trusted from the client: they are only
@@ -338,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (savedEmail) document.getElementById('si-username').value = savedEmail;
 
   _SB.auth.getSession().then(({ data: { session } }) => {
-    if (session) window.location.replace('dashboard.html');
+    if (session) window.location.replace('ai.html');
   });
 });
 
@@ -480,7 +480,7 @@ async function handleSignIn(){
   if (codeVal && data.user) redeemed = await redeemPlanCodeIfAny(codeVal);
   const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan] || FREE_PLAN) : FREE_PLAN;
   showSuccess(email, plan);
-  setTimeout(() => window.location.replace('dashboard.html'), 1600);
+  setTimeout(() => window.location.replace('ai.html'), 1600);
 }
 
 // ── Sign Up ──
@@ -543,9 +543,9 @@ async function handleSignUp(){
       if (redeemed) plan = PLAN_DISPLAY[redeemed.plan] || FREE_PLAN;
     }
     showSuccess(fname, plan);
-    setTimeout(() => window.location.replace('dashboard.html'), 1600);
+    setTimeout(() => window.location.replace('ai.html'), 1600);
   } else {
-    // Email confirmation required — redeem the code on first dashboard
+    // Email confirmation required — redeem the code on first ai
     // load instead (no session yet to call the RPC with).
     if (codeVal) localStorage.setItem('zx_pending_plan_code', codeVal);
     showEmailConfirmation(fname, email);
@@ -590,7 +590,7 @@ function showSuccess(name, plan){
 
   document.getElementById('success-icon').textContent = '✓';
   document.getElementById('success-title').textContent = 'Welcome to Zunexa!';
-  document.getElementById('redirect-msg').textContent = 'Redirecting to dashboard...';
+  document.getElementById('redirect-msg').textContent = 'Redirecting to ai...';
 
   const progressWrap = document.getElementById('progress-wrap');
   progressWrap.style.display = '';
@@ -617,7 +617,7 @@ async function handleOAuth(provider){
   document.querySelectorAll('.btn-oauth').forEach(b => { b.disabled = true; });
   const { error } = await _SB.auth.signInWithOAuth({
     provider,
-    options: { redirectTo: ZX_PROD_URL + '/dashboard.html' }
+    options: { redirectTo: ZX_PROD_URL + '/ai.html' }
   });
   if (error) {
     document.querySelectorAll('.btn-oauth').forEach(b => { b.disabled = false; });
@@ -638,7 +638,7 @@ async function handleOAuth(provider){
     const refresh = params.get('refresh_token');
     if (access && refresh) {
       await _SB.auth.setSession({ access_token: access, refresh_token: refresh });
-      window.location.replace(ZX_PROD_URL + '/dashboard.html');
+      window.location.replace(ZX_PROD_URL + '/ai.html');
     }
   }
 })();
