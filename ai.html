@@ -2367,8 +2367,7 @@ async function answerLocal(userQ) {
 }
 
 /* ════════════════════════════════════════════════════════════
-   ZUNEXA BRAIN — free, keyless LLM layer (Pollinations text API)
-   Pollinations' text.pollinations.ai endpoint is a public, keyless,
+   ZUNEXA BRAIN — free, keyless LLM layer endpoint is a public, keyless,
    OpenAI-compatible completion API. It's what actually makes
    "Zunexa Pro" / "Zunexa Max" reason and write instead of only doing
    a KB lookup. No account, no API key, no cost — if it's unreachable
@@ -2405,7 +2404,7 @@ function sanitizeForPrompt(text) {
 }
 
 // item 25 — simple sliding-window rate limit per device, stored in
-// localStorage. Client-side only: it protects the free Pollinations
+// localStorage. Client-side only: 
 // endpoint from accidental runaway use on this device, it is NOT a
 // security boundary (anyone can clear localStorage) — same caveat as
 // getDeviceId() above.
@@ -2428,7 +2427,7 @@ function zunexaBrainRateLimitOk() {
   }
 }
 
-// item 24 — Pollinations (text.pollinations.ai) is a free, public, keyless
+// 
 // third-party completion API. Every message sent through Zunexa Pro/Max —
 // the user's question, recent conversation turns, and any KB/RAG context
 // injected above — is transmitted to that external service, which is
@@ -2519,19 +2518,7 @@ async function zunexaBrainLocal(messages, opts) {
   }
 }
 
-async function zunexaBrain(messages, opts) {
-  opts = opts || {};
-  try {
-    const res = await fetch('https://text.pollinations.ai/openai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: opts.model || 'openai',
-        messages,
-        max_tokens: opts.maxTokens || 500,
-        temperature: opts.temperature || 0.6
-      })
-    });
+
     if (!res.ok) throw new Error('zunexaBrain http ' + res.status);
     const data = await res.json();
     const txt = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
@@ -2554,7 +2541,6 @@ async function zunexaBrain(messages, opts) {
 }
 
 // item 38 — the "fluent in 30+ languages" claim below is inherited from
-// the underlying model (Pollinations' 'openai' backend) and has NOT been
 // verified language-by-language against a real sample in this pass —
 // that needs a native/fluent speaker (or at least a sampled automated
 // check) for each listed language before shipping this claim as-is.
@@ -3120,8 +3106,7 @@ async function answer(userQ) {
 
   if (!shouldUseBrain) return local;
 
-  // item 25 — Pollinations is a free, public, keyless endpoint with no
-  // rate limiting of its own on this end; without a local cap one device
+  // item 25 — Pollinations is a free, public, keyless endpoint with no  // rate limiting of its own on this end; without a local cap one device
   // could hammer it indefinitely. Client-side only (not a real security
   // boundary — see getDeviceId()'s own comment — but it stops accidental
   // runaway loops and casual abuse without needing a backend change).
@@ -3292,7 +3277,6 @@ async function learnQ(q) {
 }
 
 // AUTO-LEARNING (QUEUE ONLY) — item 21: this used to write is_active:true
-// directly, meaning anything Pollinations (a public, unvetted third-party
 // model) produced went straight into the live, user-facing KB with zero
 // human review. It now always writes is_active:false / review_status:
 // 'pending_review'. loadKB()/refreshKB() only ever select is_active:true,
@@ -4603,12 +4587,107 @@ function clearFile() {
 
 /* ════════════════════════════════════════════════════════════
    QUICK-COMMAND TOOLS — free, keyless third-party APIs
-   /طقس or /weather <city>   → Open-Meteo (no key)
-   /خريطة or /map <place>    → OpenStreetMap Nominatim (no key)
-   /جيت or /github <query>   → GitHub public REST API (no key, rate-limited)
-   /اخبار or /news <query>   → Hacker News Algolia API (no key)
-   /صورة or /image <prompt>  → Pollinations image generation (no key)
+   /طقس or /weather <city>    → Open-Meteo (no key)
+   /خريطة or /map <place>     → OpenStreetMap Nominatim (no key)
+   /جيت or /github <query>    → GitHub public REST API (no key, rate-limited)
+   /اخبار or /news <query>    → Hacker News Algolia API (no key)
+   /صورة or /image <prompt>   → Pollinations image generation (no key)
+   /ترجمة or /translate <txt> → MyMemory Translation (no key)
+   /عملة or /currency <amt>   → exchangerate.host (no key)
+   /قاموس or /define <word>   → dictionaryapi.dev (no key)
+   /اقتباس or /quote          → quotable.io (no key)
+   /ip or /myip               → ipapi.co (no key)
 ════════════════════════════════════════════════════════════ */
+
+const COMMANDS = {
+  '/طقس': weather, '/weather': weather,
+  '/خريطة': map, '/map': map,
+  '/جيت': github, '/github': github,
+  '/اخبار': news, '/news': news,
+  '/صورة': image, '/image': image,
+  '/ترجمة': translate, '/translate': translate,
+  '/عملة': currency, '/currency': currency,
+  '/قاموس': define, '/define': define,
+  '/اقتباس': quote, '/quote': quote,
+  '/ip': myip, '/myip': myip,
+};
+
+async function weather(city) {
+  const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`).then(r => r.json());
+  if (!geo.results?.length) return `❌ ماكايناش المدينة: ${city}`;
+  const { latitude, longitude, name } = geo.results[0];
+  const w = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`).then(r => r.json());
+  const c = w.current_weather;
+  return `🌤️ الطقس ف ${name}\n🌡️ ${c.temperature}°C | 💨 ${c.windspeed} km/h`;
+}
+
+async function map(place) {
+  const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(place)}&format=json&limit=1`, {
+    headers: { 'User-Agent': 'QuickCommandBot/1.0' }
+  }).then(r => r.json());
+  if (!r.length) return `❌ ماكاين والو: ${place}`;
+  const { display_name, lat, lon } = r[0];
+  return `📍 ${display_name}\n🔗 https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=15/${lat}/${lon}`;
+}
+
+async function github(query) {
+  const r = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=3`).then(r => r.json());
+  if (!r.items?.length) return `❌ ماكاين والو`;
+  return r.items.map(repo => `⭐ ${repo.stargazers_count} | ${repo.full_name}\n${repo.html_url}`).join('\n\n');
+}
+
+async function news(query) {
+  const r = await fetch(`https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(query)}&tags=story&hitsPerPage=3`).then(r => r.json());
+  if (!r.hits?.length) return `❌ ماكاين والو`;
+  return r.hits.map(h => `📰 ${h.title}\n${h.url || `https://news.ycombinator.com/item?id=${h.objectID}`}`).join('\n\n');
+}
+
+function image(prompt) {
+  return `🎨 https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+}
+
+async function translate(text, from = 'en', to = 'ar') {
+  const r = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`).then(r => r.json());
+  return `🌐 ${r.responseData.translatedText}`;
+}
+
+async function currency(query) {
+  const [amt, from, , to] = query.split(' ');
+  const r = await fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amt}`).then(r => r.json());
+  return `💱 ${amt} ${from} = ${r.result?.toFixed(2)} ${to}`;
+}
+
+async function define(word) {
+  const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`).then(r => r.json());
+  if (!Array.isArray(r)) return `❌ ماكاين تعريف ل: ${word}`;
+  const def = r[0].meanings[0].definitions[0].definition;
+  return `📖 ${word}: ${def}`;
+}
+
+async function quote() {
+  const r = await fetch(`https://api.quotable.io/random`).then(r => r.json());
+  return `💬 "${r.content}"\n— ${r.author}`;
+}
+
+async function myip() {
+  const r = await fetch(`https://ipapi.co/json/`).then(r => r.json());
+  return `🌍 IP: ${r.ip}\n📍 ${r.city}, ${r.country_name}`;
+}
+
+// ─── router ───
+async function handleCommand(input) {
+  const [cmd, ...rest] = input.trim().split(' ');
+  const arg = rest.join(' ');
+  const fn = COMMANDS[cmd];
+  if (!fn) return `❌ الكوماند ماكايناش: ${cmd}`;
+  try {
+    return await fn(arg);
+  } catch (e) {
+    return `⚠️ error: ${e.message}`;
+  }
+}
+
+module.exports = { handleCommand };
 /* ════════════════════════════════════════════════════════════
    NATURAL-LANGUAGE TOOL KEYWORDS
    These don't replace the /command syntax above — they catch the
@@ -4797,7 +4876,7 @@ async function toolImageGen(prompt) {
    a fast open-source model, as a second option next to Pollinations. */
 async function toolImageGenHF(prompt) {
   const key = getApiKey('hf');
-  if (!key) return { text: `⚠ /صورة_hf تحتاج Hugging Face Token مجاني — سجّل فـ huggingface.co/settings/tokens وحطو فالإعدادات ← مفاتيح API. فالوقت الحالي جرّب /صورة (Pollinations، بلا مفتاح).`, src: 'tool', score: 0.3 };
+  if (!key) return { text: `⚠ /صورة_hf تحتاج Hugging Face Token مجاني — سجّل فـ huggingface.co/settings/tokens وحطو فالإعدادات ← مفاتيح API. فالوقت الحالي جرّب /صورة ().`, src: 'tool', score: 0.3 };
   try {
     const res = await fetch('https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell', {
       method: 'POST',
