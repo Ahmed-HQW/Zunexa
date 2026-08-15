@@ -11,7 +11,10 @@
     { "source": "/upgrade",   "destination": "/upgrade.html" },
     { "source": "/app",       "destination": "/dashboard.html" },
     { "source": "/dashboard", "destination": "/dashboard.html" },
-    { "source": "/home",      "destination": "/landing.html" }
+    { "source": "/home",      "destination": "/landing.html" },
+    { "source": "/owner_admin", "destination": "/owner_admin.html" },
+    { "source": "/CONTACT",     "destination": "/CONTACT.html" },
+    { "source": "/affiliat",    "destination": "/affiliat.html" }
   ],
 
   "redirects": [

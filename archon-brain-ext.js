@@ -1,26 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   ARCHON BRAIN EXTENSION — archon-brain-ext.js
+   ZUNEXA BRAIN EXTENSION — zunexa-brain-ext.js
    ───────────────────────────────────────────────────────────────────────
-   واش هاد الملف: طبقة إضافية مستقلة كتزيد فوق ArchonBrain الأصلي بلا ما
-   تكسر حتى دالة موجودة (norm, tok, rankKB, answerLocal, answer, THRESHOLDS
-   كلهم باقيين خدامين — هاد الملف كيدير override ذكي لبعضهم فقط، محسوب،
-   ومربوط بـ try/catch fallback فكل مكان حساس).
 
-   صراحة تقنية (باش ما تبقاش عندك صورة غالطة): هاد الملف كيزيد retrieval
-   محلي أقوى (BM25F, Jaccard, stemming, N-grams, inverted index), حساب
-   رياضي آمن (Shunting-yard بلا eval), إدارة ذاكرة/سياق أذكى, و rule-based
-   intent/sentiment/NER. ماشي "نموذج لغوي" حقيقي — بلا أوزان مدربة
-   (model weights) ما كاين والو إسمو "فهم عميق" فـ Vanilla JS. كل دالة هنا
-   إما رياضيات محضة (BM25, cosine, Levenshtein) أو قواعد صريحة (regex,
-   قواميس). هاد الفرق مهم تعرفو باش ما تبنيش عليه توقعات غالطة.
-
-   الترتيب: التحميل ديال هاد الملف خاصو يكون بعد ما يتحمل السكريبت
-   الأصلي مباشرة (بعد إغلاق </script> اللي فيه tok/norm/rankKB/answerLocal/
-   answer/THRESHOLDS/ctx), قبل استدعاء init().
-   مثال:
-     <script src="app.js"></script>          <!-- الأصلي -->
-     <script src="archon-brain-ext.js"></script>  <!-- هادشي -->
-     <script>init();</script>
 ═══════════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -30,7 +11,7 @@
     typeof window.norm === 'function';
 
   if (!HAS_ORIGINAL) {
-    console.warn('[ArchonExt] السكريبت الأصلي (tok/norm) ماكاينش فـ window — الإضافة غادي تخدم بموارد ذاتية معزولة.');
+    console.warn('[ZunexaExt] السكريبت الأصلي (tok/norm) ماكاينش فـ window — الإضافة غادي تخدم بموارد ذاتية معزولة.');
   }
 
   /* ═══════════════════════════════════════════════════════════════════
@@ -38,7 +19,7 @@
      نسخة مستقلة، أدق فتصنيف الأرقام والرموز من tok() الأصلية، تُستعمل
      داخلياً فـ BM25F والـ Math Router.
   ═══════════════════════════════════════════════════════════════════ */
-  const ArchonTokenizer = (function () {
+  const ZunexaTokenizer = (function () {
     // نطاقات Unicode: عربي أساسي + ملحقات + أرقام هندية-عربية
     const ARABIC_RANGE = '\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF';
     const LATIN_RANGE  = 'a-zA-Z';
@@ -115,7 +96,7 @@
   ];
   const STOPWORDS_ALL = new Set([
     ...STOPWORDS_AR_MSA, ...STOPWORDS_AR_DARIJA, ...STOPWORDS_EN, ...STOPWORDS_FR
-  ].map(w => ArchonTokenizer.deepNormalize(w)));
+  ].map(w => ZunexaTokenizer.deepNormalize(w)));
 
   function removeStopwords(tokens) {
     return tokens.filter(t => !STOPWORDS_ALL.has(typeof t === 'string' ? t : t.text));
@@ -266,7 +247,7 @@
   let AVG_DOC_LENGTH = 0;
 
   function tokenizeForIndex(text) {
-    const raw = ArchonTokenizer.tokenize(text || '').map(t => t.text);
+    const raw = ZunexaTokenizer.tokenize(text || '').map(t => t.text);
     const noStop = removeStopwords(raw);
     return noStop.map(stemToken);
   }
@@ -439,7 +420,7 @@
     if (!kb || !kb.length) return [];
     ensureIndexFresh(kb);
 
-    const qTokensRaw = ArchonTokenizer.tokenize(userQ).map(t => t.text);
+    const qTokensRaw = ZunexaTokenizer.tokenize(userQ).map(t => t.text);
     const qTokensNoStop = removeStopwords(qTokensRaw);
     const qTokensStemmed = qTokensNoStop.map(stemToken);
     if (!qTokensStemmed.length) return [];
@@ -462,7 +443,7 @@
       if (!item || !item.a) return;
 
       const docTextRaw = (item.q || '') + ' ' + (Array.isArray(item.kw) ? item.kw.join(' ') : '');
-      const dTokensRaw = ArchonTokenizer.tokenize(docTextRaw).map(t => t.text);
+      const dTokensRaw = ZunexaTokenizer.tokenize(docTextRaw).map(t => t.text);
       const dTokensStemmed = removeStopwords(dTokensRaw).map(stemToken);
       const dSet = new Set(dTokensStemmed);
       const dBi  = new Set(extractBigrams(dTokensStemmed));
@@ -549,7 +530,7 @@
 
     // Tokenizer خاص بالرياضيات — يفصل الأرقام، العمليات، الأقواس
     function mathTokenize(expr) {
-      const clean = ArchonTokenizer.normalizeDigits(expr)
+      const clean = ZunexaTokenizer.normalizeDigits(expr)
         .replace(/[×✕]/g, '*').replace(/[÷]/g, '/')
         .replace(/جذر\s*\(/g, 'sqrt(')
         .replace(/\s+/g, '');
@@ -867,7 +848,7 @@
     }
 
     // القاعدة 22: تخزين طويل الأمد لتفضيلات المستخدم عبر localStorage
-    const LS_KEY = 'archon_user_prefs_v1';
+    const LS_KEY = 'zunexa_user_prefs_v1';
     function saveUserPref(key, value) {
       try {
         const store = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
@@ -898,12 +879,12 @@
      § 18 — CACHE (Memoization) + DEBOUNCE + GC-friendly cleanup
      LRU بسيط بحجم محدود (باش ما يتضخمش فالذاكرة على جهاز 8GB).
   ═══════════════════════════════════════════════════════════════════ */
-  const ArchonCache = (function () {
+  const ZunexaCache = (function () {
     const MAX_ENTRIES = 100;
     const map = new Map(); // Map كتحافظ على ترتيب الإدخال = LRU سهلة بـ delete+re-set
 
     function keyFor(input) {
-      return ArchonTokenizer.deepNormalize(String(input));
+      return ZunexaTokenizer.deepNormalize(String(input));
     }
     function get(input) {
       const k = keyFor(input);
@@ -954,7 +935,7 @@
      يبقى قطعة وحدة self-contained. عند غياب دعم Worker (نادر لكن ممكن
      على متصفحات قديمة)، كيرجع fallback تلقائي للحساب المتزامن العادي.
   ═══════════════════════════════════════════════════════════════════ */
-  const ArchonWorkerPool = (function () {
+  const ZunexaWorkerPool = (function () {
     let worker = null;
     let requestId = 0;
     const pending = new Map();
@@ -1080,13 +1061,13 @@
   ═══════════════════════════════════════════════════════════════════ */
   const LITE_INSTANT_ANSWERS = [
     { patterns: ['كيف حالك','كيداير','لاباس','ça va','how are you'], reply: 'لاباس الحمد لله! أنا هنا، شنو نقدر نعاونك فيه؟' },
-    { patterns: ['شكون نتا','شكون انت','who are you','qui es-tu'], reply: 'أنا Archon — المساعد الذكي ديال Zunexa. كيفاش نقدر نعاونك؟' },
+    { patterns: ['شكون نتا','شكون انت','who are you','qui es-tu'], reply: 'أنا Zunexa — المساعد الذكي ديال Zunexa. كيفاش نقدر نعاونك؟' },
     { patterns: ['شكرا','merci','thank you','thanks'], reply: 'العفو! نتسنى لأي حاجة أخرى تحتاجها.' },
   ];
   function tryLiteInstantAnswer(userQ) {
-    const n = ArchonTokenizer.deepNormalize(userQ);
+    const n = ZunexaTokenizer.deepNormalize(userQ);
     for (const entry of LITE_INSTANT_ANSWERS) {
-      if (entry.patterns.some(p => n.includes(ArchonTokenizer.deepNormalize(p)))) {
+      if (entry.patterns.some(p => n.includes(ZunexaTokenizer.deepNormalize(p)))) {
         return entry.reply;
       }
     }
@@ -1109,12 +1090,12 @@
   }
 
   /* ═══════════════════════════════════════════════════════════════════
-     § 23 — ArchonDecide — عقدة القرار المركزية (القاعدة 25)
+     § 23 — ZunexaDecide — عقدة القرار المركزية (القاعدة 25)
      كتقرر: نجاوبو من الذاكرة/lite cache؟ نحسبو معادلة؟ نستعملو hybrid
      KB search؟ نديرو fallback عام؟ — بلا ما تبدل تدفق answer()/answerLocal()
      الأصلي، هي دالة استشارية (advisory) تقدر تُستدعى قبل استدعاء الأصليين.
   ═══════════════════════════════════════════════════════════════════ */
-  function archonDecide(userQ, ctxArr) {
+  function zunexaDecide(userQ, ctxArr) {
     const tracker = createLatencyTracker();
     const decision = { route: null, meta: {} };
 
@@ -1131,7 +1112,7 @@
     }
 
     // 2) Cache (سؤال سبق وتجاوب عليه)
-    const cached = ArchonCache.get(userQ);
+    const cached = ZunexaCache.get(userQ);
     if (cached) {
       decision.route = 'cache';
       decision.meta.reply = cached;
@@ -1180,8 +1161,8 @@
 
   /* ═══════════════════════════════════════════════════════════════════
      § 24 — DYNAMIC SYSTEM PROMPT ASSEMBLY (القواعد 28-31)
-     كتبني إضافة (ماشي بديل) للـ prompt الأصلي archonSystemPrompt/
-     archonModeSystemPrompt — كتحقن قواعد ضد الهلوسة + توجيه JSON/HTML
+     كتبني إضافة (ماشي بديل) للـ prompt الأصلي zunexaSystemPrompt/
+     zunexaModeSystemPrompt — كتحقن قواعد ضد الهلوسة + توجيه JSON/HTML
      + self-review، بناءً على حالة اللحظة (وقت، ذاكرة، نوع سؤال).
   ═══════════════════════════════════════════════════════════════════ */
   function buildDynamicPromptAddendum(userQ, decision, searchResults) {
@@ -1218,13 +1199,13 @@
      الأصلية إذا صرا أي خطأ.
   ═══════════════════════════════════════════════════════════════════ */
   function integrateWithOriginal() {
-    // ضمان وجود window.ArchonExt قبل أي استعمال ليها فهاد الدالة — قبل هذا
+    // ضمان وجود window.ZunexaExt قبل أي استعمال ليها فهاد الدالة — قبل هذا
     // كانت كتتصرح غير فآخر الملف، وكانت كتسبب crash إذا integrateWithOriginal()
     // تلاقات (عبر DOMContentLoaded) قبل ما توصل تلك السطور.
-    window.ArchonExt = window.ArchonExt || {};
+    window.ZunexaExt = window.ZunexaExt || {};
 
     if (typeof window.THRESHOLDS === 'undefined' || typeof window.KB === 'undefined') {
-      console.warn('[ArchonExt] THRESHOLDS أو KB ماكاينينش global — التكامل التلقائي متوقف، الدوال باقية متوفرة يدوياً عبر window.ArchonExt.');
+      console.warn('[ZunexaExt] THRESHOLDS أو KB ماكاينينش global — التكامل التلقائي متوقف، الدوال باقية متوفرة يدوياً عبر window.ZunexaExt.');
       return false;
     }
 
@@ -1240,7 +1221,7 @@
         }
         return result;
       } catch (e) {
-        console.warn('[ArchonExt] hybridRankKB فشلت، رجعنا للأصلية:', e.message);
+        console.warn('[ZunexaExt] hybridRankKB فشلت، رجعنا للأصلية:', e.message);
         return typeof originalRankKB === 'function' ? originalRankKB(userQ) : [];
       }
     };
@@ -1268,7 +1249,7 @@
             return { text: `⚠ ${solved.error} (المعادلة: ${solved.expr})`, src: 'math-engine', score: 1.0 };
           }
         } catch (e) {
-          console.warn('[ArchonExt] Math short-circuit فشل، كمّلنا للمسار العادي:', e.message);
+          console.warn('[ZunexaExt] Math short-circuit فشل، كمّلنا للمسار العادي:', e.message);
         }
         return originalAnswerLocal(userQ);
       };
@@ -1278,10 +1259,10 @@
     // إذا ctx global موجودة (مصفوفة).
     if (Array.isArray(window.ctx)) {
       const originalPushIfExists = true; // ctx كتتبدل بمكان آخر (saveThreadMsg على الأرجح) — هنا غير enforcement بعدي
-      window.ArchonExt._enforceContextRules = function (userQ) {
+      window.ZunexaExt._enforceContextRules = function (userQ) {
         try {
           if (ContextManager.detectTopicShift(window.ctx, userQ)) {
-            console.log('[ArchonExt] تحول موضوع مكتشف — تفريغ جزئي للسياق القديم.');
+            console.log('[ZunexaExt] تحول موضوع مكتشف — تفريغ جزئي للسياق القديم.');
             ContextManager.summarizeOldTurns(window.ctx, ContextManager.MAX_WINDOW * 2);
           } else {
             ContextManager.enforceSlidingWindow(window.ctx, ContextManager.MAX_WINDOW);
@@ -1290,21 +1271,21 @@
       };
     }
 
-    console.log('[ArchonExt] التكامل تم بنجاح — rankKB وanswerLocal مدعومين الآن بـ BM25F/Jaccard/Math Engine.');
+    console.log('[ZunexaExt] التكامل تم بنجاح — rankKB وanswerLocal مدعومين الآن بـ BM25F/Jaccard/Math Engine.');
     return true;
   }
 
   /* ═══════════════════════════════════════════════════════════════════
-     § 26 — ARCHON_DB: ربط Supabase حسب archon_schema.sql
+     § 26 — ZUNEXA_DB: ربط Supabase حسب zunexa_schema.sql
      ─────────────────────────────────────────────────────────────────
      صراحة تقنية: هاد الطبقة كتخدم بجدول جديد (archon_knowledge /
-     archon_interactions / archon_cache) بحال ما تصفاو فـ archon_schema.sql
+     zunexa_interactions / zunexa_cache) بحال ما تصفاو فـ zunexa_schema.sql
      — وهي منفصلة عن جداول ai.html الأصلية (ai_knowledge / ai_learning).
      كنستعملو نفس عميل Supabase الموجود (window._SB) إذا كاين، بلا ما
      نديرو client جديد بمفتاح مكرر. إذا ماكاينش، الطبقة كتبقى معطلة
      صامتاً (best-effort) — ما كتكسرش الشات.
   ═══════════════════════════════════════════════════════════════════ */
-  const ARCHON_DB = (function () {
+  const ZUNEXA_DB = (function () {
     let _client = null;
     let _clientChecked = false;
 
@@ -1320,11 +1301,11 @@
           _client = window.supabase.createClient(window.ARCHON_SUPABASE_URL, window.ARCHON_SUPABASE_KEY);
         } else {
           _client = null;
-          console.warn('[ArchonExt.DB] ماكاينش Supabase client متوفر (لا window._SB ولا ARCHON_SUPABASE_URL/KEY) — طبقة archon_* معطلة.');
+          console.warn('[ZunexaExt.DB] ماكاينش Supabase client متوفر (لا window._SB ولا ARCHON_SUPABASE_URL/KEY) — طبقة zunexa_* معطلة.');
         }
       } catch (e) {
         _client = null;
-        console.warn('[ArchonExt.DB] فشل تهيئة العميل:', e.message);
+        console.warn('[ZunexaExt.DB] فشل تهيئة العميل:', e.message);
       }
       return _client;
     }
@@ -1342,7 +1323,7 @@
           .order('priority', { ascending: false })
           .limit(limit || 2000);
         if (error || !rows) {
-          console.warn('[ArchonExt.DB] fetchRemoteKnowledge فشل:', error && error.message);
+          console.warn('[ZunexaExt.DB] fetchRemoteKnowledge فشل:', error && error.message);
           return [];
         }
 
@@ -1362,23 +1343,23 @@
         } catch (e) { /* الصيغ البديلة اختيارية — ما نوقفوش الجلب الأساسي بسببها */ }
 
         return rows.map(r => ({
-          id:  `archon_${r.id}`,
+          id:  `zunexa_${r.id}`,
           q:   r.canonical_q,
           a:   r.answer,
           kw:  Array.isArray(r.keywords) ? r.keywords : [],
           variants: variantsByKnowledge[r.id] || [],
-          src: 'archon_db',
+          src: 'zunexa_db',
           w:   typeof r.confidence === 'number' ? r.confidence : 0.8,
         })).filter(i => i.q && i.a);
       } catch (e) {
-        console.warn('[ArchonExt.DB] fetchRemoteKnowledge استثناء:', e.message);
+        console.warn('[ZunexaExt.DB] fetchRemoteKnowledge استثناء:', e.message);
         return [];
       }
     }
 
-    // تسجيل تفاعل فـ archon_interactions (fire-and-forget، ما كيوقفش الشات
+    // تسجيل تفاعل فـ zunexa_interactions (fire-and-forget، ما كيوقفش الشات
     // إذا فشل). هاد الجدول هو مصدر التعلّم المُراجَع لاحقاً عبر
-    // archon_promote_interaction() فـ archon_schema.sql — ماشي ترقية
+    // zunexa_promote_interaction() فـ zunexa_schema.sql — ماشي ترقية
     // تلقائية بلا مراجعة.
     async function logInteraction(payload) {
       const sb = getClient();
@@ -1394,17 +1375,17 @@
           match_score:          typeof payload.score === 'number' ? payload.score : null,
         }).select('id').single();
         if (error) {
-          console.warn('[ArchonExt.DB] logInteraction فشل:', error.message);
+          console.warn('[ZunexaExt.DB] logInteraction فشل:', error.message);
           return null;
         }
         return data ? data.id : null;
       } catch (e) {
-        console.warn('[ArchonExt.DB] logInteraction استثناء:', e.message);
+        console.warn('[ZunexaExt.DB] logInteraction استثناء:', e.message);
         return null;
       }
     }
 
-    // كاش سحابي اختياري يوازي archon_cache (ArchonCache المحلي فالـ JS
+    // كاش سحابي اختياري يوازي zunexa_cache (ZunexaCache المحلي فالـ JS
     // يبقى الخط الأول دائماً — هذا فقط للاستمرارية عبر الأجهزة/الجلسات).
     async function cacheGet(key) {
       const sb = getClient();
@@ -1433,7 +1414,7 @@
   })();
 
   /* ═══════════════════════════════════════════════════════════════════
-     § 27 — ARCHON_CONFIG: تحميل archon_multi_llm_config.json
+     § 27 — ZUNEXA_CONFIG: تحميل zunexa_multi_llm_config.json
      ─────────────────────────────────────────────────────────────────
      ملاحظة أمان: قواعد routing_rules فالملف JSON مكتوبة كنص وصفي
      (condition strings) — ما كنديروش eval() عليها هنا (خطر أمني حقيقي
@@ -1441,15 +1422,15 @@
      المنطق يدوياً بجافاسكريبت آمن، وكتقرا فقط القيم (model ids, priority,
      enabled) من الملف.
   ═══════════════════════════════════════════════════════════════════ */
-  const ARCHON_CONFIG = (function () {
+  const ZUNEXA_CONFIG = (function () {
     let _configPromise = null;
 
     function load(url) {
       if (_configPromise) return _configPromise;
-      _configPromise = fetch(url || 'archon_multi_llm_config.json', { cache: 'no-store' })
+      _configPromise = fetch(url || 'zunexa_multi_llm_config.json', { cache: 'no-store' })
         .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
         .catch(e => {
-          console.warn('[ArchonExt.Config] فشل تحميل archon_multi_llm_config.json:', e.message);
+          console.warn('[ZunexaExt.Config] فشل تحميل zunexa_multi_llm_config.json:', e.message);
           return null;
         });
       return _configPromise;
@@ -1460,7 +1441,7 @@
       return load(url).then(cfg => { _lastResolved = cfg; return cfg; });
     }
 
-    // كتختار model_id مناسب لقرار archonDecide() معيّن، بمنطق يوازي
+    // كتختار model_id مناسب لقرار zunexaDecide() معيّن، بمنطق يوازي
     // routing_rules فالملف (بلا eval).
     function pickModel(decision, cfg) {
       cfg = cfg || _lastResolved;
@@ -1509,24 +1490,24 @@
   })();
 
   /* ═══════════════════════════════════════════════════════════════════
-     § 28 — ARCHON_SYSTEM_PROMPT: حقن archon_master_system.md
+     § 28 — ZUNEXA_SYSTEM_PROMPT: حقن zunexa_master_system.md
      ─────────────────────────────────────────────────────────────────
      كيجيب محتوى الملف كنص خام (fetch، ماشي parsing كامل لـ Markdown —
      كافي لأنه غادي يتحقن كسياق نصي داخل system prompt) ويخزّنو مؤقتاً.
      buildFullSystemPrompt() كتدمجو مع buildDynamicPromptAddendum()
      الموجودة أصلاً (§24) بلا ما تبدل منطقها.
   ═══════════════════════════════════════════════════════════════════ */
-  const ARCHON_SYSTEM_PROMPT = (function () {
+  const ZUNEXA_SYSTEM_PROMPT = (function () {
     let _textPromise = null;
     let _lastText = '';
 
     function load(url) {
       if (_textPromise) return _textPromise;
-      _textPromise = fetch(url || 'archon_master_system.md', { cache: 'no-store' })
+      _textPromise = fetch(url || 'zunexa_master_system.md', { cache: 'no-store' })
         .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.text(); })
         .then(txt => { _lastText = txt; return txt; })
         .catch(e => {
-          console.warn('[ArchonExt.SystemPrompt] فشل تحميل archon_master_system.md:', e.message);
+          console.warn('[ZunexaExt.SystemPrompt] فشل تحميل zunexa_master_system.md:', e.message);
           _lastText = '';
           return '';
         });
@@ -1535,11 +1516,11 @@
 
     function getSync() { return _lastText; }
 
-    // basePromptText: النص الأصلي (مثلاً ناتج archonModeSystemPrompt() —
+    // basePromptText: النص الأصلي (مثلاً ناتج zunexaModeSystemPrompt() —
     // ما كنبدلوهش، غير كنزيدو عليه إضافة).
     function buildFullSystemPrompt(basePromptText, userQ, decision, searchResults) {
       const master = _lastText
-        ? `\n\n[ملف المعرفة الموحد — Archon Brain Master System]:\n${_lastText.slice(0, 4000)}`
+        ? `\n\n[ملف المعرفة الموحد — Zunexa Brain Master System]:\n${_lastText.slice(0, 4000)}`
         : '';
       const addendum = '\n\n' + buildDynamicPromptAddendum(userQ, decision, searchResults);
       return (basePromptText || '') + master + addendum;
@@ -1563,8 +1544,8 @@
 
     // 1) تحميل الإعدادات + ملف النظام الموحد بالتوازي (لا يوقفان بعضهما)
     const [cfg] = await Promise.all([
-      ARCHON_CONFIG.load(opts.configUrl),
-      ARCHON_SYSTEM_PROMPT.load(opts.masterSystemUrl),
+      ZUNEXA_CONFIG.load(opts.configUrl),
+      ZUNEXA_SYSTEM_PROMPT.load(opts.masterSystemUrl),
     ]);
 
     // 2) دمج معرفة archon_knowledge (Supabase) داخل window.KB مباشرة —
@@ -1572,59 +1553,59 @@
     // (mutation فالمكان، بلا ما نبدلو المرجع)، مع تفادي التكرار بالـ id.
     if (!_remoteKBMerged && Array.isArray(window.KB)) {
       try {
-        const remoteItems = await ARCHON_DB.fetchRemoteKnowledge();
+        const remoteItems = await ZUNEXA_DB.fetchRemoteKnowledge();
         const existingIds = new Set(window.KB.map(i => i.id).filter(Boolean));
         const newItems = remoteItems.filter(i => !existingIds.has(i.id));
         if (newItems.length) {
           window.KB.push(...newItems);
-          console.log(`[ArchonExt.DB] تم دمج ${newItems.length} عنصر من archon_knowledge داخل KB.`);
+          console.log(`[ZunexaExt.DB] تم دمج ${newItems.length} عنصر من archon_knowledge داخل KB.`);
         }
         _remoteKBMerged = true;
       } catch (e) {
-        console.warn('[ArchonExt.DB] دمج KB البعيد فشل (best-effort):', e.message);
+        console.warn('[ZunexaExt.DB] دمج KB البعيد فشل (best-effort):', e.message);
       }
     }
 
-    // 3) حقن system prompt الموحد — override محسوب لـ archonModeSystemPrompt
+    // 3) حقن system prompt الموحد — override محسوب لـ zunexaModeSystemPrompt
     // إذا كانت موجودة global، مع fallback كامل للأصلية عند أي خطأ.
-    if (typeof window.archonModeSystemPrompt === 'function' && !window.archonModeSystemPrompt._archonExtWrapped) {
-      const originalModePrompt = window.archonModeSystemPrompt;
+    if (typeof window.zunexaModeSystemPrompt === 'function' && !window.zunexaModeSystemPrompt._zunexaExtWrapped) {
+      const originalModePrompt = window.zunexaModeSystemPrompt;
       const wrapped = function (userText) {
         let base;
         try {
           base = originalModePrompt(userText);
         } catch (e) {
-          console.warn('[ArchonExt.SystemPrompt] archonModeSystemPrompt الأصلية فشلت:', e.message);
+          console.warn('[ZunexaExt.SystemPrompt] zunexaModeSystemPrompt الأصلية فشلت:', e.message);
           base = '';
         }
         try {
-          const decision = archonDecide(userText, Array.isArray(window.ctx) ? window.ctx : []);
+          const decision = zunexaDecide(userText, Array.isArray(window.ctx) ? window.ctx : []);
           let searchResults = [];
           try {
             searchResults = typeof window.rankKB === 'function' ? (window.rankKB(userText) || []) : [];
           } catch (e2) { searchResults = []; }
-          return ARCHON_SYSTEM_PROMPT.buildFullSystemPrompt(base, userText, decision, searchResults);
+          return ZUNEXA_SYSTEM_PROMPT.buildFullSystemPrompt(base, userText, decision, searchResults);
         } catch (e) {
-          console.warn('[ArchonExt.SystemPrompt] فشل بناء الإضافة، رجعنا للـ prompt الأصلي فقط:', e.message);
+          console.warn('[ZunexaExt.SystemPrompt] فشل بناء الإضافة، رجعنا للـ prompt الأصلي فقط:', e.message);
           return base;
         }
       };
-      wrapped._archonExtWrapped = true;
-      window.archonModeSystemPrompt = wrapped;
-      console.log('[ArchonExt.SystemPrompt] archonModeSystemPrompt مربوط الآن بـ archon_master_system.md.');
+      wrapped._zunexaExtWrapped = true;
+      window.zunexaModeSystemPrompt = wrapped;
+      console.log('[ZunexaExt.SystemPrompt] zunexaModeSystemPrompt مربوط الآن بـ zunexa_master_system.md.');
     }
 
     // 4) تسجيل التفاعلات — override محسوب لـ window.answer (إذا موجودة)،
     // فقط تسجيل بعد الحصول على النتيجة (fire-and-forget)، بلا ما نبدلو
     // شكل أو محتوى الجواب المُرجَع للمستخدم.
-    if (typeof window.answer === 'function' && !window.answer._archonExtWrapped) {
+    if (typeof window.answer === 'function' && !window.answer._zunexaExtWrapped) {
       const originalAnswer = window.answer;
       const wrappedAnswer = async function (userQ) {
         const result = await originalAnswer(userQ);
         try {
-          const decision = archonDecide(userQ, Array.isArray(window.ctx) ? window.ctx : []);
-          const modelPick = ARCHON_CONFIG.pickModel(decision, ARCHON_CONFIG.get());
-          ARCHON_DB.logInteraction({
+          const decision = zunexaDecide(userQ, Array.isArray(window.ctx) ? window.ctx : []);
+          const modelPick = ZUNEXA_CONFIG.pickModel(decision, ZUNEXA_CONFIG.get());
+          ZUNEXA_DB.logInteraction({
             question:   userQ,
             answer:     result && result.text,
             route:      decision && decision.route,
@@ -1632,25 +1613,25 @@
             modelUsed:  modelPick && modelPick.model_name,
           }); // بلا await — ما نأخّروش الجواب للمستخدم بسبب التسجيل
         } catch (e) {
-          console.warn('[ArchonExt.DB] تسجيل التفاعل فشل (best-effort):', e.message);
+          console.warn('[ZunexaExt.DB] تسجيل التفاعل فشل (best-effort):', e.message);
         }
         return result;
       };
-      wrappedAnswer._archonExtWrapped = true;
+      wrappedAnswer._zunexaExtWrapped = true;
       window.answer = wrappedAnswer;
-      console.log('[ArchonExt.DB] window.answer مربوط الآن بتسجيل archon_interactions.');
+      console.log('[ZunexaExt.DB] window.answer مربوط الآن بتسجيل zunexa_interactions.');
     }
 
-    console.log('[ArchonExt] طبقة التكامل البعيد (DB + Config + System Prompt) جاهزة.');
+    console.log('[ZunexaExt] طبقة التكامل البعيد (DB + Config + System Prompt) جاهزة.');
     return true;
   }
 
   // نطلقو التكامل البعيد بعد التكامل الأصلي، وبعد DOMContentLoaded إذا
-  // لزم الأمر (باش window.KB/window.answer/window.archonModeSystemPrompt
+  // لزم الأمر (باش window.KB/window.answer/window.zunexaModeSystemPrompt
   // يكونو معرّفين). ما كيوقفش لا الصفحة ولا الشات إذا فشل — كلشي مغلف
   // بـ try/catch جوج مرات (هنا + داخل كل دالة).
   function scheduleRemoteIntegration() {
-    integrateRemoteLayer().catch(e => console.warn('[ArchonExt] integrateRemoteLayer فشلت كلياً (best-effort):', e.message));
+    integrateRemoteLayer().catch(e => console.warn('[ZunexaExt] integrateRemoteLayer فشلت كلياً (best-effort):', e.message));
   }
   if (typeof document !== 'undefined' && document.readyState !== 'loading') {
     scheduleRemoteIntegration();
@@ -1665,9 +1646,9 @@
     document.addEventListener('DOMContentLoaded', () => integrateWithOriginal());
   }
 
-  window.ArchonExt = window.ArchonExt || {};
-  Object.assign(window.ArchonExt, {
-    Tokenizer: ArchonTokenizer,
+  window.ZunexaExt = window.ZunexaExt || {};
+  Object.assign(window.ZunexaExt, {
+    Tokenizer: ZunexaTokenizer,
     STOPWORDS_ALL, removeStopwords,
     stemToken, ArabicStemmer, EnglishStemmer,
     ngrams, extractBigrams, extractTrigrams,
@@ -1679,15 +1660,15 @@
     hybridRankKB,
     MathEngine, UnitConverter, DateEngine,
     IntentEngine, NEREngine,
-    ContextManager, ArchonCache, debounce, throttle,
-    ArchonWorkerPool,
+    ContextManager, ZunexaCache, debounce, throttle,
+    ZunexaWorkerPool,
     isCodingModeQuestion, tryLiteInstantAnswer,
-    createLatencyTracker, archonDecide, buildDynamicPromptAddendum,
+    createLatencyTracker, zunexaDecide, buildDynamicPromptAddendum,
     integrateWithOriginal,
     // § 26-29 — الطبقة البعيدة (DB / Config / System Prompt)
-    DB: ARCHON_DB,
-    Config: ARCHON_CONFIG,
-    SystemPrompt: ARCHON_SYSTEM_PROMPT,
+    DB: ZUNEXA_DB,
+    Config: ZUNEXA_CONFIG,
+    SystemPrompt: ZUNEXA_SYSTEM_PROMPT,
     integrateRemoteLayer,
   });
 })();
