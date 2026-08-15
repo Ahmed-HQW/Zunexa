@@ -2492,6 +2492,45 @@ async function ensureWebLLM() {
   }
 }
 
+/* zunexaBrain — the cloud call itself: free, keyless, OpenAI-compatible
+   chat-completions endpoint (Pollinations text API). Sends `messages` as-is
+   and returns the assistant's reply text, or null on any failure (network,
+   CORS, non-2xx, empty content) so the caller can fall through to WebLLM
+   and then the local KB, exactly like the rest of this pipeline expects. */
+async function zunexaBrain(messages, opts) {
+  opts = opts || {};
+  try {
+    const res = await fetch('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: opts.model || 'openai',
+        messages,
+        max_tokens: opts.maxTokens || 800,
+        temperature: opts.temperature || 0.7
+      })
+    });
+    if (!res.ok) throw new Error('zunexaBrain http ' + res.status);
+    const data = await res.json();
+    const txt = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    if (txt) return txt.trim();
+    throw new Error('zunexaBrain: empty response');
+  } catch (e) {
+    console.warn('Zunexa Brain (cloud) unreachable — trying local WebLLM fallback', e);
+    // Only worth the multi-second/multi-MB attempt if the browser can
+    // actually run it; otherwise fail straight to local KB like before.
+    if (!webllmSupported()) return null;
+    thinkAddStep('webllm', 'تعذّر الاتصال بـ Zunexa Brain — التبديل للنموذج المحلي (WebLLM)');
+    const localTxt = await zunexaBrainLocal(messages, opts);
+    if (localTxt) {
+      thinkDone('webllm');
+      return localTxt + '\n\n_⚠ تم توليد هاد الجواب محلياً (WebLLM) بسبب انقطاع الاتصال بـ Zunexa Brain السحابي — الجودة قد تكون أقل من المعتاد._';
+    }
+    thinkDone('webllm');
+    return null;
+  }
+}
+
 /* Same messages[] shape as zunexaBrain() so it's a drop-in fallback.
    Returns null (never throws) on any failure — unsupported browser,
    download failure, out-of-memory — so the caller can fall through to
@@ -2514,28 +2553,6 @@ async function zunexaBrainLocal(messages, opts) {
     return txt ? txt.trim() : null;
   } catch (e) {
     console.warn('WebLLM local inference failed', e);
-    return null;
-  }
-}
-
-
-    if (!res.ok) throw new Error('zunexaBrain http ' + res.status);
-    const data = await res.json();
-    const txt = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    if (txt) return txt.trim();
-    throw new Error('zunexaBrain: empty response');
-  } catch (e) {
-    console.warn('Zunexa Brain (cloud) unreachable — trying local WebLLM fallback', e);
-    // Only worth the multi-second/multi-MB attempt if the browser can
-    // actually run it; otherwise fail straight to local KB like before.
-    if (!webllmSupported()) return null;
-    thinkAddStep('webllm', 'تعذّر الاتصال بـ Zunexa Brain — التبديل للنموذج المحلي (WebLLM)');
-    const localTxt = await zunexaBrainLocal(messages, opts);
-    if (localTxt) {
-      thinkDone('webllm');
-      return localTxt + '\n\n_⚠ تم توليد هاد الجواب محلياً (WebLLM) بسبب انقطاع الاتصال بـ Zunexa Brain السحابي — الجودة قد تكون أقل من المعتاد._';
-    }
-    thinkDone('webllm');
     return null;
   }
 }
@@ -4687,7 +4704,6 @@ async function handleCommand(input) {
   }
 }
 
-module.exports = { handleCommand };
 /* ════════════════════════════════════════════════════════════
    NATURAL-LANGUAGE TOOL KEYWORDS
    These don't replace the /command syntax above — they catch the
