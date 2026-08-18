@@ -1299,18 +1299,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         <button class="mode-chip tier-chip" data-model="pro" onclick="setModelUI('pro')">Zunexa Pro</button>
         <button class="mode-chip tier-chip" data-model="max" onclick="setModelUI('max')">Zunexa Max</button>
       </div>
-      <div class="mode-sep"></div>
-      <!-- ── Provider selector (restored from the previous ai.html) ──
-           Chooses WHICH upstream Edge Function zunexaBrain() calls when
-           the tier/effort combo decides the brain should run at all
-           (see EFFORT_CFG / zxModel gating in answer()). Persisted the
-           same way as zxModel/zxEffort. ── -->
-      <select class="mode-chip" id="providerSelect" onchange="setProviderUI(this.value)" title="مزوّد الذكاء الاصطناعي" style="background:var(--card2,#121212);border:1px solid var(--b1,#1a1a1a);color:inherit;padding:0 10px">
-        <option value="openrouter">Zunexa Core (OpenRouter)</option>
-        <option value="gemini">Zunexa Fast (Gemini)</option>
-        <option value="groq">Zunexa Turbo (Groq)</option>
-        <option value="deepseek">Zunexa Deep (DeepSeek)</option>
-      </select>
     </div>
     <div id="fileChipZone"></div>
     <div class="input-shell">
@@ -1497,13 +1485,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         <option value="balanced">⚖ متوازن</option>
         <option value="deep">🔍 عميق</option>
         <option value="max">🚀 أقصى</option>
-      </select>
-      <label class="field-label">مزوّد الذكاء الاصطناعي</label>
-      <select class="field-input" id="setProviderSel2" onchange="setProviderUI(this.value)">
-        <option value="openrouter">Zunexa Core (OpenRouter)</option>
-        <option value="gemini">Zunexa Fast (Gemini)</option>
-        <option value="groq">Zunexa Turbo (Groq)</option>
-        <option value="deepseek">Zunexa Deep (DeepSeek)</option>
       </select>
       <label class="field-label">خط المحادثة</label>
       <select class="field-input" id="setFontSel" onchange="setChatFont(this.value)">
@@ -1854,7 +1835,6 @@ async function init() {
   applyPageLang(localStorage.getItem('zx_page_lang') || 'ary');
   setModelUI(zxModel, true);
   setEffortUI(zxEffort, true);
-  setProviderUI(zxProvider, true);
   setModel(zxModel);
   document.body.setAttribute('data-zunexa-mode', zxZunexaMode);
   if (loadThread(currentChatId).length) replayThread(currentChatId);
@@ -2706,9 +2686,10 @@ async function callEdgeFunction(provider, messages, opts) {
   }
 }
 
-/* zunexaBrain — the cloud call itself. Tries the user-selected provider's
-   Edge Function first (zxProvider — real paid API keys, plan-gated,
-   never exposed to the browser). If that specific provider fails for a
+/* zunexaBrain — the cloud call itself. Tries a randomly-picked provider's
+   Edge Function first (real paid API keys, plan-gated, never exposed to
+   the browser) so load is spread evenly across all providers instead of
+   every user hammering the same one. If that specific provider fails for a
    reason worth retrying elsewhere (quota/5xx/network — NOT an auth
    failure, which no other provider can fix either), it tries the
    remaining three providers in turn. Only if every Edge Function call
@@ -2718,7 +2699,7 @@ async function callEdgeFunction(provider, messages, opts) {
    WebLLM and then the local KB, exactly like before. */
 async function zunexaBrain(messages, opts) {
   opts = opts || {};
-  const requestedProvider = opts.provider || zxProvider || 'openrouter';
+  const requestedProvider = opts.provider || randomProvider();
   const tryOrder = [requestedProvider, ...Object.keys(PROVIDER_FN).filter(p => p !== requestedProvider)];
 
   let authFailure = false;
@@ -3500,8 +3481,8 @@ async function answer(userQ) {
       pickedModel = modelPick && modelPick.model_name;
       // Optional: the smart-router config may also name a provider
       // (e.g. routing_rules mapping a query type to Groq for speed).
-      // If it doesn't, zunexaBrain() falls back to the user's manual
-      // choice (zxProvider, set via the provider selector chip/dropdown).
+      // If it doesn't, zunexaBrain() falls back to a random provider
+      // per request to spread load across the four Edge Functions.
       pickedProvider = modelPick && modelPick.provider;
     }
   } catch (e) { console.warn('[Zunexa] اختيار النموذج فشل، رجعنا للافتراضي:', e.message); }
@@ -3944,10 +3925,6 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
       meta.innerHTML += `<span class="meta-badge badge-partial">❔ غير معروف — يتم التعلّم</span>`;
     } else if (src === 'web') {
       meta.innerHTML += `<span class="meta-badge badge-web">🌐 ويب</span>`;
-    } else if (src === 'ai-brain') {
-      meta.innerHTML += `<span class="meta-badge badge-ai">✦ Zunexa Brain</span>`;
-    } else if (src === 'rag+brain') {
-      meta.innerHTML += `<span class="meta-badge badge-ai">✦ Zunexa Brain + RAG</span>`;
     } else if (src === 'tool') {
       meta.innerHTML += `<span class="meta-badge badge-web">🛠 أداة مباشرة</span>`;
     } else if (src === 'system') {
@@ -3966,13 +3943,6 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
     }
 
     body.appendChild(meta);
-
-    const speakBtn = document.createElement('button');
-    speakBtn.className = 'speak-btn';
-    speakBtn.title = 'استمع للرد';
-    speakBtn.textContent = '🔊';
-    speakBtn.onclick = () => speakBrowser(text.replace(/\*\*/g,'').replace(/`/g,''), (JSON.parse(localStorage.getItem('zx_voice')||'{}').lang)||'ar-SA');
-    body.appendChild(speakBtn);
   }
 
   div.appendChild(av);
@@ -4680,7 +4650,13 @@ document.getElementById('settModal').addEventListener('click', function(e) {
 ════════════════════════════════════════════════════════════ */
 let zxModel    = localStorage.getItem('zx_model')    || 'lite';
 let zxEffort   = localStorage.getItem('zx_effort')   || 'balanced';
-let zxProvider = localStorage.getItem('zx_provider') || 'openrouter';
+/* zxProvider ماعادش مخزّن ولا مختار من اليوزر — كل رسالة كتختار
+   مزوّد عشوائياً (انظر randomProvider() و zunexaBrain) باش يتوزع
+   الضغط بالتساوي على الأربعة Edge Functions. */
+function randomProvider() {
+  const keys = Object.keys(PROVIDER_FN);
+  return keys[Math.floor(Math.random() * keys.length)];
+}
 
 function setModel(v) {
   zxModel = v; localStorage.setItem('zx_model', v);
@@ -4711,23 +4687,7 @@ function setEffortUI(v, silent) {
   if (sel2) sel2.value = v;
 }
 
-/* ── Provider (Edge Function) selection — restored from the previous
-   ai.html. This picks which of the four Supabase Edge Functions
-   (ai-openrouter / ai-gemini / ai-groq / ai-deepseek) zunexaBrain()
-   calls; it is independent from zxModel (tier: local-only vs. brain)
-   and zxEffort (token/context budget). ── */
-function setProvider(v) { zxProvider = v; localStorage.setItem('zx_provider', v); }
-function setProviderUI(v, silent) {
-  setProvider(v);
-  const sel = document.getElementById('providerSelect');
-  if (sel) sel.value = v;
-  const sel2 = document.getElementById('setProviderSel2');
-  if (sel2) sel2.value = v;
-  if (!silent) {
-    const labels = { openrouter: 'Zunexa Core (OpenRouter)', gemini: 'Zunexa Fast (Gemini)', groq: 'Zunexa Turbo (Groq)', deepseek: 'Zunexa Deep (DeepSeek)' };
-    toast('✓ المزوّد: ' + (labels[v] || v));
-  }
-}
+
 
 /* ════════════════════════════════════════════════════════════
    12-LANGUAGE UI — translation dictionary + apply function.
@@ -4909,7 +4869,6 @@ function loadAllPrefsIntoUI() {
   applyPageLang(pageLang);
   if (document.getElementById('setModelSel2'))    document.getElementById('setModelSel2').value = zxModel;
   if (document.getElementById('setEffortSel2'))   document.getElementById('setEffortSel2').value = zxEffort;
-  if (document.getElementById('setProviderSel2')) document.getElementById('setProviderSel2').value = zxProvider;
   if (document.getElementById('setVoiceLang') && voice.lang)   document.getElementById('setVoiceLang').value = voice.lang;
   if (document.getElementById('setVoiceStyle') && voice.style) document.getElementById('setVoiceStyle').value = voice.style;
   if (document.getElementById('setVoiceSpeed') && voice.speed) document.getElementById('setVoiceSpeed').value = voice.speed;
