@@ -40,6 +40,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 <style>
 /* ════════════════════════════════════════════════════════
    DESIGN TOKENS — Zalij Mode · Noir & Gold
@@ -684,6 +685,15 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
   cursor:ns-resize;font-size:9px;color:var(--tm);
 }
 
+/* ── Syntax highlighting tokens — themed with existing Zalij vars ── */
+.bubble pre code{display:block}
+.tok-keyword{color:var(--gold3);font-weight:600}
+.tok-string{color:var(--green)}
+.tok-number{color:var(--orange)}
+.tok-comment{color:var(--tg);font-style:italic}
+.tok-func{color:var(--blue)}
+.tok-attr{color:var(--gold2)}
+
 /* ════════════════════════════════════════════════════════
    THINKING PROCESS — live execution steps shown above the bot's
    reply while it's being generated (real pipeline stages, not
@@ -1149,10 +1159,10 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 <div id="limitOverlay">
   <div class="lim-icon">⏳</div>
   <div class="lim-title">وصلت للحد المسموح من الاستخدام</div>
-  <div class="lim-sub">استعملتي العدد الأقصى من الرسائل المسموح به فهاد الساعة. عاود المحاولة من بعد، ولا رقّي لخطة أعلى باش تزيد الحصة.</div>
+  <div class="lim-sub" id="limitSub">استعملتي العدد الأقصى من التوكنز المسموح بهم فالخطة المجانية. عاود المحاولة من بعد، ولا رقّي لخطة أعلى باش تزيد الحصة.</div>
   <div class="lim-timer" id="limitTimer">--:--</div>
   <div class="lim-hint">غادي يترفع القفل أوتوماتيكياً</div>
-  <a href="upgrade.html" class="lim-upgrade">⬆ ترقية الخطة</a>
+  <button class="lim-upgrade" onclick="hideLimitOverlay(); openBilling();" style="border:none;cursor:pointer">⬆ ترقية الخطة</button>
 </div>
 
 <!-- ── Zalij Background SVG ── -->
@@ -1598,11 +1608,21 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         <div class="field-input" style="opacity:.7" id="settRealPlan">—</div>
         <p style="font-size:11px;color:var(--text-muted,#888);margin:6px 0 14px">لتغيير معلومات حسابك أو خطتك، توجه إلى صفحة الإعدادات الكاملة.</p>
         <button class="modal-save" onclick="window.location.href='settings.html'">⚙ إدارة الحساب</button>
+        <button class="modal-save" style="background:transparent;border:1px solid var(--b1);color:var(--tw)" onclick="zxLogout()">↪ تسجيل الخروج</button>
       </div>
       <div id="settGuestInfo" style="display:none">
         <label class="field-label">اسم الضيف (محلي فقط، لا يؤثر على أي حساب)</label>
         <input class="field-input" type="text" id="fName" placeholder="اسمك">
         <button class="modal-save" onclick="saveSettings()">✓ حفظ</button>
+      </div>
+
+      <div style="margin-top:22px;padding-top:16px;border-top:1px solid var(--b1)">
+        <label class="field-label" style="color:var(--red)">منطقة الخطر</label>
+        <p style="font-size:11px;color:var(--tg);line-height:1.7;margin-bottom:10px">
+          هاد الأزرار كتمسح المعطيات المحلية فهاد الجهاز فقط (المتصفح) — ماكتمسحش أي حاجة من حسابك على السيرفر إلا إذا كنتي فـ "تسجيل الخروج" فوق.
+        </p>
+        <button class="modal-save" style="background:transparent;border:1px solid var(--b1);color:var(--tw)" onclick="zxClearCacheOnly()">🧹 مسح الكاش (Cache) فقط</button>
+        <button class="modal-save" style="background:transparent;border:1px solid var(--red);color:var(--red)" onclick="zxClearAllLocalData()">🗑 مسح كل البيانات المحلية والمحادثات</button>
       </div>
     </div>
   </div>
@@ -1791,16 +1811,17 @@ window.addEventListener('offline', updateOfflineOverlay);
 
 async function checkSessionLimitOnBoot() {
   try {
+    if (await zxIsPaidPlan()) return; // paid plans never see the lock
     const identityId = await zxIdentityId();
     const { data, error } = await _SB
       .from('ai_session_usage')
-      .select('locked_until')
+      .select('locked_until, tokens_used')
       .eq('identity_id', identityId)
       .maybeSingle();
     if (error) throw error;
     if (data && data.locked_until) {
       const remaining = (new Date(data.locked_until).getTime() - Date.now()) / 1000;
-      if (remaining > 0) showLimitOverlay(remaining);
+      if (remaining > 0) showLimitOverlay(remaining, data.tokens_used, ZX_MAX_TOKENS);
     }
   } catch (e) {
     // Table/RPC not set up yet — silently skip, chat still works (fail open).
@@ -3270,7 +3291,7 @@ function thinkStart(userQ, extraSteps) {
       </div>
     </div>`;
   conv.appendChild(wrap);
-  conv.scrollTop = conv.scrollHeight;
+  zxScrollToBottom(conv, false);
   _thinkBoxEl = wrap;
 
   clearInterval(_thinkTimer);
@@ -3690,20 +3711,62 @@ async function shareCurrentChat() {
    identity (device_id, or auth uid if logged in) for ZX_LOCK_SECONDS,
    verified server-side so clearing localStorage doesn't reset it.
 ════════════════════════════════════════════════════════════ */
-const ZX_WINDOW_SECONDS = 3600;   // 1 hour rolling window
-const ZX_MAX_MESSAGES   = 40;     // messages allowed per window
-const ZX_LOCK_SECONDS   = 3600;   // 1h lockout once exceeded, per spec
+const ZX_WINDOW_SECONDS  = 10800;  // 3 hour rolling window (free tier)
+const ZX_MAX_TOKENS      = 2000;   // free-tier token budget per window
+const ZX_LOCK_SECONDS    = 10800;  // 3h lockout once exceeded
 let _zxLimitTimerHandle = null;
+
+// Rough token estimate — same heuristic used across the file
+// (~4 chars/token). Good enough for a client-side gate; the source
+// of truth stays server-side in zx_check_and_increment_usage.
+function zxEstimateTokens(text) {
+  if (!text) return 0;
+  return Math.max(1, Math.ceil(String(text).length / 4));
+}
 
 async function zxIdentityId() {
   const { data: { session } } = await _SB.auth.getSession();
   return session ? session.user.id : getDeviceId();
 }
 
-function showLimitOverlay(secondsRemaining) {
+// Cached plan lookup so we don't hit user_plans on every single
+// message. Refreshed on login/logout via loadUser()/refreshUserPlan().
+let _zxPlanCache = null;
+let _zxPlanCacheAt = 0;
+async function zxIsPaidPlan() {
+  const now = Date.now();
+  if (_zxPlanCache !== null && (now - _zxPlanCacheAt) < 60000) {
+    return _zxPlanCache;
+  }
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) { _zxPlanCache = false; _zxPlanCacheAt = now; return false; }
+    const { data: planRow, error } = await _SB
+      .from('user_plans')
+      .select('plan')
+      .eq('user_id', session.user.id)
+      .maybeSingle();
+    if (error) throw error;
+    const plan = (planRow && planRow.plan || 'free').toLowerCase();
+    _zxPlanCache = plan !== 'free';
+    _zxPlanCacheAt = now;
+    return _zxPlanCache;
+  } catch (e) {
+    console.warn('zxIsPaidPlan check failed — treating as free tier', e);
+    _zxPlanCache = false;
+    _zxPlanCacheAt = now;
+    return false;
+  }
+}
+
+function showLimitOverlay(secondsRemaining, tokensUsed, tokensMax) {
   const ov = document.getElementById('limitOverlay');
   if (!ov) return;
   ov.classList.add('on');
+  const subEl = document.getElementById('limitSub');
+  if (subEl && typeof tokensUsed === 'number') {
+    subEl.textContent = `استعملتي ${tokensUsed} من ${tokensMax} توكن المسموح بهم فهاد النافذة الزمنية (3 ساعات) فالخطة المجانية. عاود المحاولة من بعد، ولا رقّي لخطة أعلى باش تزيد الحصة أو تولي بلا حدود.`;
+  }
   const timerEl = document.getElementById('limitTimer');
   let remaining = Math.max(0, Math.floor(secondsRemaining));
 
@@ -3734,20 +3797,29 @@ function hideLimitOverlay() {
    lock overlay with a live countdown and returns false. Fails OPEN
    (allows the message) if the RPC itself errors — e.g. the SQL setup
    hasn't been run yet — so a missing migration never bricks the chat. */
-async function checkSessionLimit() {
+async function checkSessionLimit(messageText) {
+  // Paid plans (any plan value other than 'free', or a guest that
+  // upgraded) are never gated — server-verified via user_plans, not
+  // a client flag.
+  try {
+    if (await zxIsPaidPlan()) return true;
+  } catch (e) { /* fall through to the gate on any check failure */ }
+
   try {
     const identityId = await zxIdentityId();
+    const estTokens = zxEstimateTokens(messageText || '');
     const { data, error } = await _SB.rpc('zx_check_and_increment_usage', {
       p_identity_id: identityId,
       p_window_seconds: ZX_WINDOW_SECONDS,
-      p_max_messages: ZX_MAX_MESSAGES,
+      p_max_tokens: ZX_MAX_TOKENS,
+      p_tokens_used: estTokens,
       p_lock_seconds: ZX_LOCK_SECONDS
     });
     if (error) throw error;
     const row = Array.isArray(data) ? data[0] : data;
     if (!row) return true; // defensive fallback
     if (!row.allowed) {
-      showLimitOverlay(row.seconds_remaining || ZX_LOCK_SECONDS);
+      showLimitOverlay(row.seconds_remaining || ZX_LOCK_SECONDS, row.tokens_used, ZX_MAX_TOKENS);
       return false;
     }
     return true;
@@ -3777,7 +3849,7 @@ async function send() {
   const q = inp.value.trim();
   if (!q) return;
   if (!ZX_AI_RATE.check()) return;
-  if (!(await checkSessionLimit())) return;
+  if (!(await checkSessionLimit(q))) return;
 
   busy = true;
   const sendBtn = document.getElementById('sendBtn');
@@ -3874,6 +3946,79 @@ async function send() {
 /* ════════════════════════════════════════════════════════════
    DOM HELPERS
 ════════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════
+   AUTO-SCROLL — sticky follow: only auto-scrolls to bottom when
+   the user is already near the bottom (so it never yanks them
+   down mid-read of older messages), plus a smooth per-frame
+   scroll instead of a hard jump.
+════════════════════════════════════════════════════════════ */
+const ZX_SCROLL_NEAR_BOTTOM_PX = 120;
+
+function zxIsNearBottom(conv) {
+  return (conv.scrollHeight - conv.scrollTop - conv.clientHeight) < ZX_SCROLL_NEAR_BOTTOM_PX;
+}
+
+function zxScrollToBottom(conv, smooth) {
+  if (!conv) return;
+  if (smooth) {
+    conv.scrollTo({ top: conv.scrollHeight, behavior: 'smooth' });
+  } else {
+    conv.scrollTop = conv.scrollHeight;
+  }
+}
+
+// Call this after adding any content that might grow a bubble
+// (streaming text, image load, etc). Only scrolls if the user
+// hasn't scrolled away to read something older.
+function zxAutoScroll(smooth) {
+  const conv = document.getElementById('conv');
+  if (!conv) return;
+  if (zxIsNearBottom(conv)) zxScrollToBottom(conv, smooth);
+}
+
+/* ════════════════════════════════════════════════════════════
+   STREAMED / TYPED RENDERING — reveals a bot bubble gradually
+   instead of dumping the full HTML at once. Renders the final
+   HTML off-screen first (so markdown/code-blocks/links are
+   already correct), then reveals it by growing a character
+   window over the *text* content and re-diffing against the
+   parsed HTML — safe for tags because we re-render fmt(text)
+   on a truncated substring each frame rather than slicing raw
+   HTML (which would cut tags in half).
+════════════════════════════════════════════════════════════ */
+function zxStreamBubble(bub, fullText, onDone) {
+  const total = fullText.length;
+  const charsPerTick = total > 1200 ? 14 : total > 400 ? 6 : 2;
+  const tickMs = 12;
+  let i = 0;
+
+  bub.innerHTML = '';
+  const conv = document.getElementById('conv');
+
+  // If the answer contains a fenced code block, streaming char-by-char
+  // would rebuild+re-highlight the block every frame (expensive, and
+  // spams unique code-block ids). Simpler and just as readable: type
+  // out any prose before the first fence at normal speed, then render
+  // the rest (including all code blocks) in one final pass.
+  const fenceIdx = fullText.indexOf('```');
+  const typedPart = fenceIdx === -1 ? fullText : fullText.slice(0, fenceIdx);
+  const hasRest = fenceIdx !== -1;
+
+  function tick() {
+    i = Math.min(typedPart.length, i + charsPerTick);
+    bub.innerHTML = fmt(typedPart.slice(0, i));
+    zxAutoScroll(false);
+    if (i < typedPart.length) {
+      setTimeout(tick, tickMs);
+    } else {
+      bub.innerHTML = fmt(fullText); // final pass — full text incl. code blocks
+      zxAutoScroll(false);
+      if (typeof onDone === 'function') onDone();
+    }
+  }
+  tick();
+}
+
 function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
   const conv = document.getElementById('conv');
   const div  = document.createElement('div');
@@ -3901,7 +4046,8 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
 
   const bub = document.createElement('div');
   bub.className = 'bubble';
-  bub.innerHTML = fmt(text);
+  const shouldStream = role === 'bot' && !skipSave && text && text.length > 0;
+  if (!shouldStream) bub.innerHTML = fmt(text);
   if (imgUrl) {
     const img = document.createElement('img');
     img.src = imgUrl;
@@ -3960,7 +4106,11 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
   div.appendChild(av);
   div.appendChild(body);
   conv.appendChild(div);
-  conv.scrollTop = conv.scrollHeight;
+  zxScrollToBottom(conv, false); // new message arriving: always snap to it
+
+  if (shouldStream) {
+    zxStreamBubble(bub, text);
+  }
 
   if (!skipSave) saveThreadMsg(role, text, src, score, imgUrl, audioUrl);
 }
@@ -3978,6 +4128,7 @@ function buildCodeBlockHtml(lang, code) {
   const langLabel = (lang || 'text').toLowerCase();
   const previewKind = ZX_PREVIEWABLE[langLabel];
   const escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const highlighted = zxHighlightCode(code, langLabel);
 
   const previewBtn = previewKind
     ? `<button class="code-btn" id="${id}_pbtn" onclick="toggleSandboxPreview('${id}')">▶ معاينة حية</button>`
@@ -3992,10 +4143,116 @@ function buildCodeBlockHtml(lang, code) {
           <button class="code-btn" onclick="copyCodeBlock('${id}')">⧉ نسخ</button>
         </div>
       </div>
-      <pre><code id="${id}" data-lang="${langLabel}" data-preview-kind="${previewKind || ''}">${escaped}</code></pre>
+      <pre><code id="${id}" data-lang="${langLabel}" data-preview-kind="${previewKind || ''}" data-raw="${encodeURIComponent(code)}">${highlighted}</code></pre>
       ${previewKind ? `<div class="sandbox-wrap" id="${id}_sandbox"></div>` : ''}
     </div>`;
 }
+
+/* ════════════════════════════════════════════════════════════
+   SYNTAX HIGHLIGHTING — dependency-free, regex-based tokenizer.
+   Covers the languages people actually paste in chat (JS/TS,
+   Python, HTML, CSS, JSON, SQL, Bash, C-family, PHP). No CDN
+   needed — keeps the whole file self-contained and works offline.
+   Colors come from CSS classes (.tok-*), themed via the existing
+   --gold/--green/--blue/--orange/--red vars so it matches Zalij
+   design automatically in both this file and any future theme.
+════════════════════════════════════════════════════════════ */
+const ZX_LANG_ALIASES = {
+  js:'javascript', jsx:'javascript', mjs:'javascript', cjs:'javascript',
+  ts:'typescript', tsx:'typescript',
+  py:'python', py3:'python',
+  sh:'bash', shell:'bash', zsh:'bash',
+  yml:'yaml',
+  htm:'html', xml:'html', svg:'html',
+  cpp:'c', cc:'c', h:'c', hpp:'c', cs:'c', java:'c', kt:'c', go:'c', rs:'c', swift:'c',
+};
+
+const ZX_LANG_KEYWORDS = {
+  javascript: ['const','let','var','function','return','if','else','for','while','do','switch','case','break','continue','class','extends','new','this','super','import','export','default','from','async','await','try','catch','finally','throw','typeof','instanceof','in','of','null','undefined','true','false','yield','static','get','set'],
+  typescript: ['const','let','var','function','return','if','else','for','while','do','switch','case','break','continue','class','extends','implements','interface','type','enum','new','this','super','import','export','default','from','async','await','try','catch','finally','throw','typeof','instanceof','in','of','null','undefined','true','false','yield','static','public','private','protected','readonly','as'],
+  python: ['def','return','if','elif','else','for','while','break','continue','class','import','from','as','try','except','finally','raise','with','lambda','yield','pass','None','True','False','and','or','not','in','is','global','nonlocal','async','await','self'],
+  bash: ['if','then','else','elif','fi','for','while','do','done','case','esac','function','return','local','export','echo','in'],
+  sql: ['select','insert','update','delete','from','where','join','left','right','inner','outer','on','group','by','order','having','as','into','values','create','table','alter','drop','and','or','not','null','is','in','like','limit','union','distinct'],
+  c: ['int','float','double','char','void','if','else','for','while','do','switch','case','break','continue','return','struct','class','public','private','protected','static','const','new','delete','namespace','using','include','typedef','enum','template','virtual','override','func','var','let','fn','impl','pub','mod'],
+  css: [],
+  html: [],
+  json: [],
+};
+
+function zxHighlightCode(code, lang) {
+  const key = ZX_LANG_ALIASES[lang] || lang;
+
+  if (key === 'html') return zxHighlightHtml(code);
+  if (key === 'css') return zxHighlightCss(code);
+  if (key === 'json') return zxHighlightJson(code);
+
+  const kw = ZX_LANG_KEYWORDS[key] || ZX_LANG_KEYWORDS.javascript;
+  const kwRe = new RegExp('\\b(' + kw.join('|') + ')\\b', 'g');
+
+  // Tokenize in priority order using a placeholder scheme so later
+  // passes never re-match inside an already-tokenized span.
+  const spans = [];
+  const stash = (cls, str) => { spans.push({cls, str}); return `\u0001${spans.length-1}\u0001`; };
+
+  let out = code;
+
+  // Comments first (highest priority — nothing inside gets re-colored)
+  out = out.replace(/(\/\/[^\n]*|#[^\n]*(?!\!))/g, m => stash('tok-comment', m));
+  out = out.replace(/\/\*[\s\S]*?\*\//g, m => stash('tok-comment', m));
+  if (key === 'python' || key === 'bash') {
+    out = out.replace(/("""[\s\S]*?"""|'''[\s\S]*?''')/g, m => stash('tok-string', m));
+  }
+
+  // Strings
+  out = out.replace(/(`(?:\\.|[^`\\])*`|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g, m => stash('tok-string', m));
+
+  // Numbers
+  out = out.replace(/\b(0x[0-9a-fA-F]+|\d+\.?\d*)\b/g, m => stash('tok-number', m));
+
+  // Keywords
+  out = out.replace(kwRe, m => stash('tok-keyword', m));
+
+  // Function calls: identifier(
+  out = out.replace(/\b([a-zA-Z_$][\w$]*)(?=\()/g, m => stash('tok-func', m));
+
+  // Now escape HTML entities on what remains (plain text), then
+  // splice the stashed spans back in as real <span> tags.
+  out = out.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  out = out.replace(/\u0001(\d+)\u0001/g, (_, i) => {
+    const s = spans[Number(i)];
+    const escaped = s.str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `<span class="${s.cls}">${escaped}</span>`;
+  });
+
+  return out;
+}
+
+function zxHighlightJson(code) {
+  let out = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  out = out.replace(/(&quot;|")([^"\\]|\\.)*\1(?=\s*:)/g, m => `<span class="tok-attr">${m}</span>`);
+  out = out.replace(/"(?:\\.|[^"\\])*"/g, m => `<span class="tok-string">${m}</span>`);
+  out = out.replace(/\b(true|false|null)\b/g, '<span class="tok-keyword">$1</span>');
+  out = out.replace(/\b(-?\d+\.?\d*)\b/g, '<span class="tok-number">$1</span>');
+  return out;
+}
+
+function zxHighlightCss(code) {
+  let out = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  out = out.replace(/\/\*[\s\S]*?\*\//g, m => `<span class="tok-comment">${m}</span>`);
+  out = out.replace(/([.#]?[a-zA-Z][\w-]*)(?=\s*\{)/g, '<span class="tok-func">$1</span>');
+  out = out.replace(/([a-zA-Z-]+)(?=\s*:)/g, '<span class="tok-attr">$1</span>');
+  out = out.replace(/(#[0-9a-fA-F]{3,8}\b|\b\d+\.?\d*(px|em|rem|%|s|ms|vh|vw)?\b)/g, '<span class="tok-number">$1</span>');
+  return out;
+}
+
+function zxHighlightHtml(code) {
+  let out = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  out = out.replace(/&lt;!--[\s\S]*?--&gt;/g, m => `<span class="tok-comment">${m}</span>`);
+  out = out.replace(/(&lt;\/?)([a-zA-Z][\w-]*)/g, '$1<span class="tok-keyword">$2</span>');
+  out = out.replace(/([a-zA-Z-]+)(=)(&quot;.*?&quot;|"[^"]*"|'[^']*')/g, '<span class="tok-attr">$1</span>$2<span class="tok-string">$3</span>');
+  return out;
+}
+
 
 function fmt(text) {
   // Pull fenced ```lang\ncode\n``` blocks out first so their content
@@ -4083,7 +4340,7 @@ function addTyping() {
     <div class="msg-av">Z</div>
     <div class="msg-body"><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div></div>`;
   conv.appendChild(div);
-  conv.scrollTop = conv.scrollHeight;
+  zxScrollToBottom(conv, false);
 }
 
 function removeTyping() {
@@ -4311,6 +4568,55 @@ async function openSettings() {
   closeSidebar();
 }
 function closeSettings() { document.getElementById('settModal').classList.remove('on'); }
+
+/* ════════════════════════════════════════════════════════════
+   SETTINGS — logout + local data wipe
+════════════════════════════════════════════════════════════ */
+async function zxLogout() {
+  if (!confirm('واخا تسجّل الخروج من حسابك؟')) return;
+  try {
+    await _SB.auth.signOut();
+  } catch (e) {
+    console.warn('signOut error', e);
+  }
+  // Guest-identity/device-scoped data stays (it's not account data),
+  // but anything cached from the authenticated session must go so the
+  // next person on this device doesn't see a stale name/plan/avatar.
+  ['zx_name_cache', 'zx_avatar_url', 'zx_uid'].forEach(k => localStorage.removeItem(k));
+  toast('✓ تم تسجيل الخروج');
+  setTimeout(() => location.reload(), 600);
+}
+
+// Clears only soft/rebuildable cache — never chat history or the
+// user's saved preferences/personas. Safe to call anytime.
+function zxClearCacheOnly() {
+  const CACHE_KEYS = ['zx_name_cache'];
+  CACHE_KEYS.forEach(k => localStorage.removeItem(k));
+  if ('caches' in window) {
+    caches.keys().then(names => names.forEach(n => caches.delete(n))).catch(()=>{});
+  }
+  toast('✓ تم مسح الكاش');
+}
+
+// Full local wipe: every zx_* key including all thread histories
+// (zx_thread_<chatId>), the chat list, personas, preferences, and
+// the device id itself. Destructive and local-only — never touches
+// the Supabase account (see zxLogout for that).
+function zxClearAllLocalData() {
+  if (!confirm('هادشي غادي يمسح كل المحادثات والإعدادات المحفوظة فهاد الجهاز بشكل نهائي. متأكد؟')) return;
+  const toRemove = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('zx_')) toRemove.push(k);
+  }
+  toRemove.forEach(k => localStorage.removeItem(k));
+  if ('caches' in window) {
+    caches.keys().then(names => names.forEach(n => caches.delete(n))).catch(()=>{});
+  }
+  toast('✓ تم مسح جميع البيانات المحلية');
+  setTimeout(() => location.reload(), 600);
+}
+
 
 /* ════════════════════════════════════════════════════════════
    BILLING MODAL — restored from the previous ai.html, adapted to
@@ -4890,6 +5196,48 @@ async function uploadFileToSupabase(file) {
   }
 }
 
+/* ════════════════════════════════════════════════════════════
+   QR CODE READING — decodes any QR code found in an attached
+   image using jsQR (pure client-side, no server round-trip).
+   The decoded payload is folded into attachedFile.textContent so
+   the AI can see and reason about it (e.g. "what's in this QR?"),
+   and it's also shown immediately in the file chip.
+════════════════════════════════════════════════════════════ */
+function zxDecodeQrFromDataUrl(dataUrl) {
+  return new Promise((resolve) => {
+    if (typeof jsQR !== 'function') { resolve(null); return; }
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx2d = canvas.getContext('2d');
+        ctx2d.drawImage(img, 0, 0);
+        const imageData = ctx2d.getImageData(0, 0, canvas.width, canvas.height);
+        const result = jsQR(imageData.data, imageData.width, imageData.height);
+        resolve(result ? result.data : null);
+      } catch (e) {
+        console.warn('QR decode failed', e);
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = dataUrl;
+  });
+}
+
+// Best-effort classification so the chat shows something useful
+// beyond raw text — e.g. "رابط", "شبكة WiFi", "جهة اتصال".
+function zxDescribeQrPayload(data) {
+  if (/^https?:\/\//i.test(data)) return { type: 'رابط (URL)', icon: '🔗' };
+  if (/^WIFI:/i.test(data)) return { type: 'إعدادات شبكة WiFi', icon: '📶' };
+  if (/^BEGIN:VCARD/i.test(data)) return { type: 'جهة اتصال (vCard)', icon: '👤' };
+  if (/^mailto:/i.test(data)) return { type: 'بريد إلكتروني', icon: '✉️' };
+  if (/^tel:/i.test(data)) return { type: 'رقم هاتف', icon: '📞' };
+  return { type: 'نص', icon: '📝' };
+}
+
 async function onFilePicked(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -4902,6 +5250,15 @@ async function onFilePicked(e) {
     if (file.type.startsWith('image/')) {
       const dataUrl = await readAsDataURL(file);
       attachedFile = { name: file.name, kind: 'image', dataUrl, textContent: '' };
+
+      // Try to decode a QR code in the image, best-effort. Doesn't
+      // block or fail the attach if there's none / jsQR didn't load.
+      const qrData = await zxDecodeQrFromDataUrl(dataUrl);
+      if (qrData) {
+        const info = zxDescribeQrPayload(qrData);
+        attachedFile.qr = { data: qrData, type: info.type };
+        attachedFile.textContent = `[تم اكتشاف رمز QR في الصورة — النوع: ${info.type}]\nالمحتوى: ${qrData}`;
+      }
     } else if (file.type.startsWith('audio/')) {
       // No keyless speech-to-text API is wired in — attaching the filename as
       // context is honest; it does NOT transcribe the audio content.
@@ -4980,10 +5337,10 @@ async function onFilePicked(e) {
     zone.innerHTML = `
       <div class="file-chip">
         ${attachedFile.kind === 'image' ? `<img src="${attachedFile.dataUrl}">` : (attachedFile.kind === 'audio' ? '🎵' : '📄')}
-        <span>${esc(file.name)}</span>
+        <span>${esc(file.name)}${attachedFile.qr ? ` — QR: ${esc(attachedFile.qr.type)}` : ''}</span>
         <span class="fc-x" onclick="clearFile()">✕</span>
       </div>`;
-    toast('✓ تم إرفاق الملف — اسأل عنه الآن');
+    toast(attachedFile.qr ? '✓ تم اكتشاف وقراءة رمز QR فالصورة' : '✓ تم إرفاق الملف — اسأل عنه الآن');
 
     // Mirror the raw file to Supabase Storage (best-effort, doesn't
     // block the chat if it fails) so it isn't only in browser memory —
