@@ -263,14 +263,12 @@ img{max-width:100%;display:block}
 
 /* ── Upgrade CTA ── */
 .sb-upgrade{
-  margin:10px 10px 2px;
+  margin:8px 10px 4px;flex-shrink:0;
   display:flex;align-items:center;gap:8px;justify-content:center;
-  background:linear-gradient(135deg,rgba(212,175,55,.16),rgba(212,175,55,.05));
-  border:1px solid var(--bg);border-radius:var(--r1);
-  padding:9px 12px;color:var(--gold);font-size:11px;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;
-  transition:all var(--tr);position:relative;overflow:hidden;
-  flex-shrink:0;
+  background:transparent;border:1px solid var(--bg);border-radius:var(--r1);
+  color:var(--gold);padding:9px;font-size:11.5px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;transition:all var(--tr);
+  position:relative;overflow:hidden;
 }
 .sb-upgrade::before{
   content:'';position:absolute;inset:0;
@@ -278,7 +276,7 @@ img{max-width:100%;display:block}
   transform:translateX(-100%);transition:transform .55s ease;
 }
 .sb-upgrade:hover::before{transform:translateX(100%)}
-.sb-upgrade:hover{background:linear-gradient(135deg,rgba(212,175,55,.26),rgba(212,175,55,.1));box-shadow:0 0 22px rgba(212,175,55,.18)}
+.sb-upgrade:hover{background:var(--gold);color:#060606;box-shadow:var(--sg2)}
 
 /* ── New Chat ── */
 .sb-new{
@@ -436,19 +434,6 @@ img{max-width:100%;display:block}
   padding:4px 8px;background:var(--card);border:1px solid var(--b1);
   border-radius:4px;font-weight:700;text-transform:uppercase;
 }
-
-/* Web toggle */
-.web-toggle{
-  display:flex;align-items:center;gap:5px;
-  padding:5px 9px;background:var(--card);
-  border:1px solid var(--b1);border-radius:99px;
-  cursor:pointer;font-size:10px;color:var(--tg);
-  letter-spacing:.04em;transition:all var(--tr);white-space:nowrap;
-}
-.web-toggle.on{border-color:var(--bg);color:var(--gold);background:rgba(212,175,55,.05)}
-.wd{width:5px;height:5px;border-radius:50%;background:var(--tm);transition:background var(--tr)}
-.web-toggle.on .wd{background:var(--gold);box-shadow:0 0 6px var(--gglow)}
-.web-toggle .wl{display:none}
 
 /* ── Model / Effort / Theme selectors ── */
 .zx-select{
@@ -900,16 +885,6 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 }
 .chat-input::placeholder{color:var(--tm)}
 
-/* Voice btn */
-.voice-btn{
-  width:34px;height:34px;border-radius:8px;flex-shrink:0;
-  border:1px solid var(--b1);color:var(--tg);font-size:14px;
-  display:grid;place-items:center;transition:all var(--tr);
-}
-.voice-btn:hover{border-color:var(--bg);color:var(--gold)}
-.voice-btn.recording{border-color:var(--red);color:var(--red);animation:rec-pulse .8s ease infinite}
-@keyframes rec-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,77,109,.3)}50%{box-shadow:0 0 0 6px rgba(255,77,109,.0)}}
-
 /* Toast */
 #zxToast{
   position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
@@ -1059,7 +1034,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   .sb-close{display:flex}
   .hamburger{display:flex}
   .model-tag{display:none}
-  .web-toggle .wl{display:none}
   .conv{padding:16px 14px}
   .input-zone{padding:10px 12px 14px}
   .bubble{max-width:86%;font-size:13.5px}
@@ -1077,8 +1051,13 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     backdrop-filter:none!important;
     -webkit-backdrop-filter:none!important;
   }
-  .overlay{background:#000!important}
-  .sidebar{background:#0a0a0a!important}
+  .overlay{background:#000!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .sidebar{
+    background:#0a0a0a!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+    isolation:auto!important;will-change:auto!important;filter:none!important;-webkit-filter:none!important;
+  }
+  .sidebar *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .sb-user{background:#111!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
   .topbar{background:#060606!important}
   .input-zone{background:#080808!important}
   .modal-wrap{background:rgba(0,0,0,.92)!important}
@@ -1258,7 +1237,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   </div>
 
   <!-- Billing -->
-  <button class="sb-upgrade" style="width:100%" onclick="openBilling()">💳 الخطط والفوترة</button>
+  <button class="sb-upgrade" onclick="openBilling()">💳 الخطط والفوترة</button>
 
   <!-- New Chat -->
   <button class="sb-new" onclick="newChat()">✦ محادثة جديدة</button>
@@ -1308,10 +1287,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     </div>
     <div class="tb-right">
       <div class="model-tag">Zunexa AI Engine</div>
-      <button class="web-toggle" id="webTgl" onclick="toggleWeb()">
-        <span class="wd"></span>
-        <span class="wl">بحث</span>
-      </button>
       <button id="tempChatBtn" onclick="toggleTempChat()" title="محادثة مؤقتة" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r1);color:var(--tg);transition:all var(--tr)"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="group" aria-hidden="true" style="flex-shrink: 0;"><g class="group-hover:animate-[look-around_2.4s_ease-in-out_infinite] group-active:animate-none"><path d="M6.99951 8.66672C7.5518 8.66672 7.99951 9.11443 7.99951 9.66672C7.9993 10.2188 7.55166 10.6667 6.99951 10.6667C6.44736 10.6667 5.99973 10.2188 5.99951 9.66672C5.99951 9.11443 6.44723 8.66672 6.99951 8.66672Z"></path><path d="M12.9995 8.66672C13.5518 8.66672 13.9995 9.11443 13.9995 9.66672C13.9993 10.2188 13.5517 10.6667 12.9995 10.6667C12.4474 10.6667 11.9997 10.2188 11.9995 9.66672C11.9995 9.11443 12.4472 8.66672 12.9995 8.66672Z"></path></g><path fill-rule="evenodd" clip-rule="evenodd" d="M10 2C14.326 2.00018 17.9998 5.67403 18 10V17.3123C17.9997 17.5427 17.8411 17.8079 17.6172 17.8623C17.3932 17.9165 17.1614 17.7456 17.0557 17.5408C16.7805 17.007 16.3658 16.5937 16.062 16.2878C15.7793 16.0034 15.4503 15.8338 14.9771 15.8337C14.2092 15.8339 13.4371 16.3862 12.9487 17.53C12.8701 17.7138 12.6887 17.8621 12.4888 17.8623C12.2888 17.8623 12.1076 17.7138 12.0288 17.53C11.5404 16.386 10.7674 15.8339 9.99951 15.8337C9.23161 15.8339 8.45959 16.386 7.97119 17.53C7.89253 17.7138 7.71118 17.8621 7.51123 17.8623C7.31122 17.8623 7.13006 17.7138 7.05127 17.53C6.56296 16.3862 5.78982 15.834 5.02197 15.8337C4.54861 15.8338 4.21974 16.0032 3.93701 16.2878C3.63309 16.5937 3.21952 17.0715 2.94434 17.6055C2.83865 17.8103 2.60589 17.9165 2.38184 17.8623C2.15801 17.8079 2.00033 17.6073 2 17.377V10C2.00018 5.67403 5.67403 2.00018 10 2ZM10 3C6.22631 3.00018 3.00018 6.22631 3 10V15.8633C3.0205 15.8414 3.20696 15.6049 3.22803 15.5837C3.67524 15.1336 4.251 14.8338 5.02197 14.8337C6.03838 14.8341 6.90232 15.4025 7.51025 16.2937C8.11828 15.4018 8.9824 14.8338 9.99951 14.8337C11.0163 14.8338 11.8798 15.4022 12.4878 16.2937C13.0959 15.4018 13.9601 14.8339 14.9771 14.8337C15.7481 14.8338 16.3247 15.1336 16.772 15.5837C16.772 15.5837 16.9796 15.812 17 15.8337V10C16.9998 6.22631 13.7737 3.00018 10 3Z"></path></svg></button>
       <div class="model-sel" id="tbShortcuts">
         <button class="model-sel-btn" id="tbShortcutsBtn" onclick="toggleTbShortcuts()" title="المزيد" style="padding:6px 9px">⋯</button>
@@ -1347,11 +1322,17 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   <!-- Input -->
   <div class="input-zone">
     <div class="mode-row">
-      <div class="mode-group" id="effortGroup">
-        <button class="mode-chip" data-effort="quick" onclick="setEffortUI('quick')" title="بحث محلي فقط، بدون AI توليدي">⚡ سريع</button>
-        <button class="mode-chip" data-effort="balanced" onclick="setEffortUI('balanced')">⚖ متوازن</button>
-        <button class="mode-chip" data-effort="deep" onclick="setEffortUI('deep')">🔍 عميق</button>
-        <button class="mode-chip" data-effort="max" onclick="setEffortUI('max')">🚀 أقصى</button>
+      <div class="model-sel" id="effortSel">
+        <button class="model-sel-btn" id="effortSelBtn" onclick="toggleEffortSel()">
+          <span id="effortSelLabel">⚡ سريع</span>
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5.5 7.5L10 12l4.5-4.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="model-sel-menu" id="effortSelMenu">
+          <button class="model-sel-item" data-effort="quick" onclick="setEffortUI('quick');toggleEffortSel(false)" title="بحث محلي فقط، بدون AI توليدي"><b>⚡ سريع</b></button>
+          <button class="model-sel-item" data-effort="balanced" onclick="setEffortUI('balanced');toggleEffortSel(false)"><b>⚖ متوازن</b></button>
+          <button class="model-sel-item" data-effort="deep" onclick="setEffortUI('deep');toggleEffortSel(false)"><b>🔍 عميق</b></button>
+          <button class="model-sel-item" data-effort="max" onclick="setEffortUI('max');toggleEffortSel(false)"><b>🚀 أقصى</b></button>
+        </div>
       </div>
       <div class="mode-sep"></div>
       <div class="model-sel" id="modelSel">
@@ -1376,7 +1357,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         onkeydown="onKey(event)"
         oninput="resize(this)"
       ></textarea>
-      <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="صوت">🎤</button>
       <button class="send-btn" id="sendBtn" onclick="send()">
         <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
       </button>
@@ -1687,9 +1667,6 @@ let KB        = [];          // knowledge base (qa.json + supabase)
 let IDF       = {};          // IDF cache
 let kbReady   = false;
 let busy      = false;
-let webOn     = false;
-let recording = false;
-let recog     = null;
 let ctx       = [];          // conversation context (last 6)
 let hist      = JSON.parse(localStorage.getItem('zx_hist_v3') || '[]');
 
@@ -1840,7 +1817,6 @@ async function init() {
   checkSessionLimitOnBoot();
   await loadKB();
   initParticles();
-  initVoice();
   initPWAInstall();
   applyPageLang(localStorage.getItem('zx_page_lang') || 'ary');
   setModelUI(zxModel, true);
@@ -4247,82 +4223,6 @@ function newChat() {
 }
 
 /* ════════════════════════════════════════════════════════════
-   WEB SEARCH (DuckDuckGo Instant Answer — no key)
-════════════════════════════════════════════════════════════ */
-function toggleWeb() {
-  webOn = !webOn;
-  document.getElementById('webTgl').classList.toggle('on', webOn);
-}
-
-/* ════════════════════════════════════════════════════════════
-   VOICE INPUT — Web Speech API
-════════════════════════════════════════════════════════════ */
-function initVoice() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    document.getElementById('voiceBtn').style.display = 'none';
-    return;
-  }
-  recog = new SpeechRecognition();
-  // Bug fix: this used to always hardcode 'ar-MA' here, so a saved
-  // voice-language preference only ever changed the dropdown's look —
-  // dictation itself silently kept listening in Arabic (Morocco) until
-  // the user touched the settings dropdown again in that same session.
-  const savedVoice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
-  recog.lang = savedVoice.lang || 'ar-MA';
-  recog.interimResults = false;
-  recog.continuous = false;
-  recog.maxAlternatives = 1;
-
-  recog.onresult = e => {
-    const t = e.results[0][0].transcript;
-    document.getElementById('aiInput').value = t;
-    resize(document.getElementById('aiInput'));
-    stopVoice();
-    send();
-  };
-  recog.onerror = (e) => {
-    stopVoice();
-    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-      toast('🎙 يرجى السماح بالوصول إلى الميكروفون من إعدادات المتصفح');
-    } else if (e.error === 'no-speech') {
-      toast('🎙 لم يُسمع أي صوت — حاول مرة أخرى');
-    } else if (e.error !== 'aborted') {
-      toast('🎙 تعذّر التعرف على الصوت');
-    }
-  };
-  recog.onend = () => stopVoice();
-}
-
-function toggleVoice() {
-  if (!recog) { toast('🎙 التعرف على الصوت غير مدعوم في هذا المتصفح'); return; }
-  if (recording) {
-    recog.stop();
-    stopVoice();
-  } else {
-    try {
-      recog.start();
-      startVoice();
-    } catch (err) {
-      stopVoice();
-      toast('🎙 تعذّر بدء التسجيل — حاول من جديد');
-    }
-  }
-}
-
-function startVoice() {
-  recording = true;
-  document.getElementById('voiceBtn').classList.add('recording');
-  document.getElementById('voiceBtn').textContent = '⏹';
-}
-
-function stopVoice() {
-  recording = false;
-  document.getElementById('voiceBtn').classList.remove('recording');
-  document.getElementById('voiceBtn').textContent = '🎤';
-}
-
-/* ════════════════════════════════════════════════════════════
    SIDEBAR — Mobile
 ════════════════════════════════════════════════════════════ */
 function openSidebar() {
@@ -4741,14 +4641,25 @@ function toggleTbShortcuts(force) {
 document.addEventListener('click', (e) => {
   const sel = document.getElementById('modelSel');
   if (sel && sel.classList.contains('open') && !sel.contains(e.target)) sel.classList.remove('open');
+  const eff = document.getElementById('effortSel');
+  if (eff && eff.classList.contains('open') && !eff.contains(e.target)) eff.classList.remove('open');
   const sc = document.getElementById('tbShortcuts');
   if (sc && sc.classList.contains('open') && !sc.contains(e.target)) sc.classList.remove('open');
 });
 function setEffortUI(v, silent) {
   setEffort(v);
-  document.querySelectorAll('#effortGroup .mode-chip').forEach(b => b.classList.toggle('on', b.dataset.effort === v));
+  const names = {quick:'⚡ سريع', balanced:'⚖ متوازن', deep:'🔍 عميق', max:'🚀 أقصى'};
+  document.querySelectorAll('#effortSelMenu .model-sel-item').forEach(b => b.classList.toggle('on', b.dataset.effort === v));
+  const label = document.getElementById('effortSelLabel');
+  if (label) label.textContent = names[v] || '⚡ سريع';
   const sel2 = document.getElementById('setEffortSel2');
   if (sel2) sel2.value = v;
+}
+function toggleEffortSel(force) {
+  const el = document.getElementById('effortSel');
+  if (!el) return;
+  const show = typeof force === 'boolean' ? force : !el.classList.contains('open');
+  el.classList.toggle('open', show);
 }
 
 
@@ -4820,12 +4731,10 @@ function applyPageLang(lang) {
   const installBtn = document.getElementById('installBtn');
   if (installBtn) installBtn.lastChild.textContent = ' ' + t.install.replace('📲 ', '');
 
-  const effortLabels = document.querySelectorAll('#effortGroup .mode-chip');
-  if (effortLabels.length === 4) {
-    effortLabels[0].textContent = t.effQuick;
-    effortLabels[1].textContent = t.effBal;
-    effortLabels[2].textContent = t.effDeep;
-    effortLabels[3].textContent = t.effMax;
+  const effortLabel = document.getElementById('effortSelLabel');
+  if (effortLabel) {
+    const map = { quick: t.effQuick, balanced: t.effBal, deep: t.effDeep, max: t.effMax };
+    effortLabel.textContent = map[zxEffort] || t.effQuick;
   }
 
   setModel(zxModel); // refreshes the model-tag text in the new language
@@ -4894,7 +4803,6 @@ function saveVoicePrefs() {
   const style = document.getElementById('setVoiceStyle').value;
   const speed = document.getElementById('setVoiceSpeed').value;
   localStorage.setItem('zx_voice', JSON.stringify({ lang, style, speed }));
-  if (recog) recog.lang = lang;
 }
 
 function setNotifPref(on) {
