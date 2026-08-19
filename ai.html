@@ -257,7 +257,7 @@ img{max-width:100%;display:block}
 
 /* ── Upgrade CTA ── */
 .sb-upgrade{
-  margin:10px 10px 2px;width:calc(100% - 20px);cursor:pointer;font-family:inherit;
+  margin:10px 10px 2px;
   display:flex;align-items:center;gap:8px;justify-content:center;
   background:linear-gradient(135deg,rgba(212,175,55,.16),rgba(212,175,55,.05));
   border:1px solid var(--bg);border-radius:var(--r1);
@@ -457,25 +457,7 @@ img{max-width:100%;display:block}
 }
 .zx-select:hover{border-color:var(--bg);color:var(--gold)}
 .zx-select:focus{outline:none;border-color:var(--bgh)}
-
-.tb-model-select{
-  appearance:none;-webkit-appearance:none;-moz-appearance:none;
-  font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;
-  letter-spacing:.04em;color:var(--tg);
-  padding:5px 20px 5px 9px;background:var(--card);
-  border:1px solid var(--b1);border-radius:99px;cursor:pointer;
-  transition:all var(--tr);white-space:nowrap;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a7468'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:left 8px center;
-}
-.tb-model-select:hover{border-color:var(--bg);color:var(--gold)}
-.tb-model-select:focus{outline:none;border-color:var(--bgh)}
-@media(max-width:768px){
-  .tb-model-select{font-size:9px;padding:4px 18px 4px 7px}
-}
-@media(max-width:390px){
-  .tb-model-select{max-width:78px;text-overflow:ellipsis}
-}
+@media(max-width:640px){ .zx-select{display:none} }
 
 /* ── Attach / file button ── */
 .attach-btn{
@@ -797,10 +779,10 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 }
 .lim-hint{font-size:11px;color:var(--tm)}
 .lim-upgrade{
-  margin-top:8px;padding:10px 26px;border-radius:99px;border:none;
+  margin-top:8px;padding:10px 26px;border-radius:99px;
   background:linear-gradient(135deg,var(--gold),var(--gdim));
-  color:#060606;font-weight:700;font-size:13px;cursor:pointer;
-  box-shadow:0 0 20px rgba(212,175,55,.25);font-family:inherit;
+  color:#060606;font-weight:700;font-size:13px;
+  box-shadow:0 0 20px rgba(212,175,55,.25);
 }
 
 /* ════════════════════════════════════════════════════════
@@ -1129,7 +1111,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   <div class="lim-sub">استعملتي العدد الأقصى من الرسائل المسموح به فهاد الساعة. عاود المحاولة من بعد، ولا رقّي لخطة أعلى باش تزيد الحصة.</div>
   <div class="lim-timer" id="limitTimer">--:--</div>
   <div class="lim-hint">غادي يترفع القفل أوتوماتيكياً</div>
-  <button class="lim-upgrade" onclick="openBilling()">⬆ ترقية الخطة</button>
+  <a href="upgrade.html" class="lim-upgrade">⬆ ترقية الخطة</a>
 </div>
 
 <!-- ── Zalij Background SVG ── -->
@@ -1214,7 +1196,8 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   </div>
 
   <!-- Upgrade -->
-  <button class="sb-upgrade" onclick="openBilling()">⬆ ترقية الخطة</button>
+  <a href="upgrade.html" class="sb-upgrade">⬆ ترقية الخطة</a>
+  <button class="sb-upgrade" style="width:100%;border:1px solid var(--b1);background:transparent;margin-top:6px" onclick="openBilling()">💳 الخطط والفوترة (داخل التطبيق)</button>
 
   <!-- New Chat -->
   <button class="sb-new" onclick="newChat()">✦ محادثة جديدة</button>
@@ -1264,11 +1247,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     </div>
     <div class="tb-right">
       <div class="model-tag">Zunexa AI Engine</div>
-      <select class="tb-model-select" id="tbModelSel" onchange="setModelUI(this.value)" title="اختيار فئة الموديل">
-        <option value="lite">Zunexa Lite</option>
-        <option value="pro">Zunexa Pro</option>
-        <option value="max">Zunexa Max</option>
-      </select>
       <button class="web-toggle" id="shareChatBtn" onclick="shareCurrentChat()" title="مشاركة هاد المحادثة عبر رابط">
         <span class="wd"></span>
         <span class="wl">🔗 مشاركة</span>
@@ -1314,6 +1292,12 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         <button class="mode-chip" data-effort="balanced" onclick="setEffortUI('balanced')">⚖ متوازن</button>
         <button class="mode-chip" data-effort="deep" onclick="setEffortUI('deep')">🔍 عميق</button>
         <button class="mode-chip" data-effort="max" onclick="setEffortUI('max')">🚀 أقصى</button>
+      </div>
+      <div class="mode-sep"></div>
+      <div class="mode-group" id="tierGroup">
+        <button class="mode-chip tier-chip" data-model="lite" onclick="setModelUI('lite')" title="محلي فقط، بدون ذكاء انترنت">Zunexa Lite</button>
+        <button class="mode-chip tier-chip" data-model="pro" onclick="setModelUI('pro')">Zunexa Pro</button>
+        <button class="mode-chip tier-chip" data-model="max" onclick="setModelUI('max')">Zunexa Max</button>
       </div>
     </div>
     <div id="fileChipZone"></div>
@@ -4684,20 +4668,16 @@ function setModel(v) {
 }
 function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); }
 
-/* ── UI wrappers: setModelUI drives the compact Topbar dropdown
-   (#tbModelSel) plus the legacy #tierGroup chips and Settings
-   dropdown (setModelSel2) if present; setEffortUI drives the
-   speed-mode chips next to the input box. Keep the underlying
-   setModel/setEffort as the single source of truth; these just also
-   toggle .on classes and mirror the choice across every surface so
-   they always agree. ── */
+/* ── UI wrappers for the mode-row chips (speed modes + tier chips
+   next to the input box). Keep the underlying setModel/setEffort as
+   the single source of truth; these just also toggle .on classes and
+   mirror the choice into the Settings dropdowns (setModelSel2/
+   setEffortSel2) so both surfaces always agree. ── */
 function setModelUI(v, silent) {
   setModel(v);
   document.querySelectorAll('#tierGroup .mode-chip').forEach(b => b.classList.toggle('on', b.dataset.model === v));
   const sel2 = document.getElementById('setModelSel2');
   if (sel2) sel2.value = v;
-  const tbSel = document.getElementById('tbModelSel');
-  if (tbSel) tbSel.value = v;
   if (!silent) toast('✓ الفئة: ' + ({lite:'Zunexa Lite', pro:'Zunexa Pro', max:'Zunexa Max'}[v] || v));
 }
 function setEffortUI(v, silent) {
