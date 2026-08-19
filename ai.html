@@ -145,17 +145,6 @@ img{max-width:100%;display:block}
 }
 .overlay.on{display:block}
 
-/* Remove sidebar/scrim blur entirely on mobile — backdrop-filter is
-   heavy on phone GPUs and was the only "blur" tied to the sidebar
-   (the sidebar panel itself already uses a solid background). */
-@media(max-width:768px){
-  .overlay{
-    backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
-    background:rgba(0,0,0,.86)!important;
-  }
-  .sidebar{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-}
-
 /* ════════════════════════════════════════════════════════
    SIDEBAR
 ════════════════════════════════════════════════════════ */
@@ -840,44 +829,6 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 .tier-chip.on{background:linear-gradient(135deg,var(--gold),var(--gdim));color:#060606}
 @media(max-width:640px){ .mode-row{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px} }
 
-/* ── Model Selector (compact Claude-style dropdown) ── */
-.model-picker{position:relative;flex-shrink:0}
-.model-picker-btn{
-  display:flex;align-items:center;gap:6px;
-  padding:6px 10px;background:var(--card);border:1px solid var(--b1);
-  border-radius:99px;color:var(--tw);font-size:11.5px;font-weight:600;
-  letter-spacing:.02em;transition:all var(--tr);white-space:nowrap;
-}
-.model-picker-btn:hover{border-color:var(--bg);color:var(--gold)}
-.model-picker.on .model-picker-btn{border-color:var(--bgh);color:var(--gold);background:var(--bgp)}
-.mp-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gglow);flex-shrink:0}
-.mp-chevron{fill:var(--tg);transition:transform var(--tr);flex-shrink:0}
-.model-picker.on .mp-chevron{transform:rotate(180deg);fill:var(--gold)}
-
-.model-picker-menu{
-  position:absolute;bottom:calc(100% + 8px);right:0;
-  min-width:230px;background:var(--card2);border:1px solid var(--b1);
-  border-radius:var(--r2);box-shadow:var(--sg);padding:6px;
-  display:none;flex-direction:column;gap:2px;z-index:50;
-  max-height:60vh;overflow-y:auto;
-}
-.model-picker.on .model-picker-menu{display:flex;animation:fadeUp .16s ease}
-.mp-item{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  width:100%;padding:9px 10px;border-radius:var(--r1);
-  color:var(--tw);text-align:right;transition:background var(--tr);
-}
-.mp-item:hover{background:var(--hover)}
-.mp-item-main{display:flex;flex-direction:column;gap:2px;min-width:0}
-.mp-item-name{font-size:12.5px;font-weight:700;color:var(--tw)}
-.mp-item-desc{font-size:10px;color:var(--tg);line-height:1.4}
-.mp-check{fill:var(--gold);flex-shrink:0;opacity:0;transition:opacity var(--tr)}
-.mp-item.on .mp-check{opacity:1}
-.mp-item.on .mp-item-name{color:var(--gold)}
-@media(max-width:640px){
-  .model-picker-menu{right:0;left:auto;min-width:210px}
-}
-
 /* ════════════════════════════════════════════════════════
    INPUT ZONE
 ════════════════════════════════════════════════════════ */
@@ -916,6 +867,16 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
   max-height:110px;min-height:28px;line-height:1.5;overflow-y:auto;
 }
 .chat-input::placeholder{color:var(--tm)}
+
+/* Voice btn */
+.voice-btn{
+  width:34px;height:34px;border-radius:8px;flex-shrink:0;
+  border:1px solid var(--b1);color:var(--tg);font-size:14px;
+  display:grid;place-items:center;transition:all var(--tr);
+}
+.voice-btn:hover{border-color:var(--bg);color:var(--gold)}
+.voice-btn.recording{border-color:var(--red);color:var(--red);animation:rec-pulse .8s ease infinite}
+@keyframes rec-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,77,109,.3)}50%{box-shadow:0 0 0 6px rgba(255,77,109,.0)}}
 
 /* Toast */
 #zxToast{
@@ -1333,46 +1294,10 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         <button class="mode-chip" data-effort="max" onclick="setEffortUI('max')">🚀 أقصى</button>
       </div>
       <div class="mode-sep"></div>
-      <!-- Original tier chips preserved (hidden) so every model + all
-           existing logic (#tierGroup .mode-chip toggling in setModelUI)
-           stays 100% intact — the new selector below just drives the
-           same setModelUI() calls through a compact dropdown UI. -->
-      <div class="mode-group" id="tierGroup" style="display:none">
+      <div class="mode-group" id="tierGroup">
         <button class="mode-chip tier-chip" data-model="lite" onclick="setModelUI('lite')" title="محلي فقط، بدون ذكاء انترنت">Zunexa Lite</button>
         <button class="mode-chip tier-chip" data-model="pro" onclick="setModelUI('pro')">Zunexa Pro</button>
         <button class="mode-chip tier-chip" data-model="max" onclick="setModelUI('max')">Zunexa Max</button>
-      </div>
-
-      <!-- Compact Model Selector (Claude-style dropdown) -->
-      <div class="model-picker" id="modelPicker">
-        <button class="model-picker-btn" id="modelPickerBtn" onclick="toggleModelPicker(event)" title="اختر النموذج">
-          <span class="mp-dot" id="mpDot"></span>
-          <span class="mp-label" id="mpLabel">Zunexa Lite</span>
-          <svg class="mp-chevron" viewBox="0 0 24 24" width="13" height="13"><path d="M7 10l5 5 5-5z"/></svg>
-        </button>
-        <div class="model-picker-menu" id="modelPickerMenu">
-          <button class="mp-item" data-model="lite" onclick="pickModelFromMenu('lite')">
-            <span class="mp-item-main">
-              <span class="mp-item-name">Zunexa Lite</span>
-              <span class="mp-item-desc">محلي فقط، بدون ذكاء انترنت</span>
-            </span>
-            <svg class="mp-check" viewBox="0 0 24 24" width="15" height="15"><path d="M9 16.2l-3.5-3.5L4 14.2 9 19.2 20 8.2l-1.5-1.5z"/></svg>
-          </button>
-          <button class="mp-item" data-model="pro" onclick="pickModelFromMenu('pro')">
-            <span class="mp-item-main">
-              <span class="mp-item-name">Zunexa Pro</span>
-              <span class="mp-item-desc">قاعدة معرفة + ذكاء اصطناعي</span>
-            </span>
-            <svg class="mp-check" viewBox="0 0 24 24" width="15" height="15"><path d="M9 16.2l-3.5-3.5L4 14.2 9 19.2 20 8.2l-1.5-1.5z"/></svg>
-          </button>
-          <button class="mp-item" data-model="max" onclick="pickModelFromMenu('max')">
-            <span class="mp-item-main">
-              <span class="mp-item-name">Zunexa Max</span>
-              <span class="mp-item-desc">أقصى سياق وقدرة استدلال</span>
-            </span>
-            <svg class="mp-check" viewBox="0 0 24 24" width="15" height="15"><path d="M9 16.2l-3.5-3.5L4 14.2 9 19.2 20 8.2l-1.5-1.5z"/></svg>
-          </button>
-        </div>
       </div>
     </div>
     <div id="fileChipZone"></div>
@@ -1385,6 +1310,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         onkeydown="onKey(event)"
         oninput="resize(this)"
       ></textarea>
+      <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="صوت">🎤</button>
       <button class="send-btn" id="sendBtn" onclick="send()">
         <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
       </button>
@@ -3625,26 +3551,6 @@ async function learnQ(q) {
   } catch(e){}
 }
 
-// Item 28 — UNCONDITIONAL ai_learning logger. learnQ() above only fires
-// for "truly unknown" answers (a KB-improvement queue). This one is the
-// requested audit log: it must capture EVERY message from EVERY user,
-// independent of the "تعلّم من المحادثات" toggle or unknown-answer
-// detection — the only exception is Temporary Chat, whose entire point
-// is that nothing is written to Supabase for that session.
-async function logToAiLearning(q) {
-  if (tempChatOn) return;
-  try {
-    await _SB.from('ai_learning').insert({
-      question:     q,
-      category:     detectCat(q),
-      source:       'user_chat',
-      status:       'pending',
-      reviewed_by:  'ahmed_dev_a',
-      device_id:    getDeviceId(),
-    });
-  } catch(e) { /* best-effort — never breaks the chat if this fails */ }
-}
-
 // AUTO-LEARNING (QUEUE ONLY) — item 21: this used to write is_active:true
 // model) produced went straight into the live, user-facing KB with zero
 // human review. It now always writes is_active:false / review_status:
@@ -3896,10 +3802,6 @@ async function send() {
   if (w) w.remove();
 
   addMsg(q, 'user');
-
-  // Log every message to ai_learning (audit trail), independent of the
-  // KB-training toggle — best-effort, never blocks the chat.
-  logToAiLearning(q);
 
   if (containsBlockedContent(q)) {
     const refusal = '🚫 ما نقدرش نجاوب على هاد النوع ديال الطلبات — عندي حدود واضحة بخصوص المحتوى الجنسي الصريح أو العنيف. اسألني على شي حاجة أخرى وأنا معاك.';
@@ -4314,12 +4216,9 @@ function toggleWeb() {
    VOICE INPUT — Web Speech API
 ════════════════════════════════════════════════════════════ */
 function initVoice() {
-  // Voice UI button was removed from the input bar — Web Speech API
-  // recognition setup is skipped entirely (nothing left to wire it to).
-  return;
-  // eslint-disable-next-line no-unreachable
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
+    document.getElementById('voiceBtn').style.display = 'none';
     return;
   }
   recog = new SpeechRecognition();
@@ -4371,14 +4270,14 @@ function toggleVoice() {
 
 function startVoice() {
   recording = true;
-  const btn = document.getElementById('voiceBtn');
-  if (btn) { btn.classList.add('recording'); btn.textContent = '⏹'; }
+  document.getElementById('voiceBtn').classList.add('recording');
+  document.getElementById('voiceBtn').textContent = '⏹';
 }
 
 function stopVoice() {
   recording = false;
-  const btn = document.getElementById('voiceBtn');
-  if (btn) { btn.classList.remove('recording'); btn.textContent = '🎤'; }
+  document.getElementById('voiceBtn').classList.remove('recording');
+  document.getElementById('voiceBtn').textContent = '🎤';
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -4779,37 +4678,8 @@ function setModelUI(v, silent) {
   document.querySelectorAll('#tierGroup .mode-chip').forEach(b => b.classList.toggle('on', b.dataset.model === v));
   const sel2 = document.getElementById('setModelSel2');
   if (sel2) sel2.value = v;
-  syncModelPicker(v);
   if (!silent) toast('✓ الفئة: ' + ({lite:'Zunexa Lite', pro:'Zunexa Pro', max:'Zunexa Max'}[v] || v));
 }
-
-/* ── Compact Model Selector (dropdown) ── */
-function syncModelPicker(v) {
-  const label = { lite:'Zunexa Lite', pro:'Zunexa Pro', max:'Zunexa Max' }[v] || 'Zunexa AI';
-  const lbl = document.getElementById('mpLabel');
-  if (lbl) lbl.textContent = label;
-  document.querySelectorAll('#modelPickerMenu .mp-item').forEach(b => b.classList.toggle('on', b.dataset.model === v));
-}
-function toggleModelPicker(e) {
-  if (e) e.stopPropagation();
-  const picker = document.getElementById('modelPicker');
-  if (!picker) return;
-  picker.classList.toggle('on');
-}
-function closeModelPicker() {
-  const picker = document.getElementById('modelPicker');
-  if (picker) picker.classList.remove('on');
-}
-function pickModelFromMenu(v) {
-  setModelUI(v);
-  closeModelPicker();
-}
-document.addEventListener('click', function(e) {
-  const picker = document.getElementById('modelPicker');
-  if (picker && picker.classList.contains('on') && !picker.contains(e.target)) {
-    picker.classList.remove('on');
-  }
-});
 function setEffortUI(v, silent) {
   setEffort(v);
   document.querySelectorAll('#effortGroup .mode-chip').forEach(b => b.classList.toggle('on', b.dataset.effort === v));
