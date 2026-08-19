@@ -58,9 +58,6 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
 .auth-tabs{display:flex;gap:0;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;margin-bottom:22px;}
 .tab-btn{flex:1;padding:10px;background:none;border:none;color:var(--text-muted);font-size:13px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all var(--trans);}
 .tab-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#000;box-shadow:0 2px 12px rgba(212,175,55,.3);}
-.guide-link{text-align:center;margin-bottom:16px;font-size:12px;color:var(--text-muted);}
-.guide-link a{color:var(--gold);text-decoration:none;}
-.guide-link a:hover{color:var(--gold-bright);text-decoration:underline;}
 .form-field{margin-bottom:16px;}
 .form-field label{display:block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px;}
 .field-wrap{position:relative;}
@@ -109,8 +106,9 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
 .oauth-divider{display:flex;align-items:center;gap:10px;margin:18px 0 14px;color:var(--text-muted);font-size:10px;letter-spacing:.14em;text-transform:uppercase;}
 .oauth-divider::before,.oauth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 .oauth-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
-.btn-oauth{padding:11px 6px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:12px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.04em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all var(--trans);}
+.btn-oauth{padding:13px 6px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:13px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.04em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all var(--trans);}
 .btn-oauth:hover:not(:disabled){border-color:var(--gold);background:rgba(212,175,55,.06);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+.btn-oauth-primary{border-color:var(--border-gold);background:rgba(212,175,55,.04);}
 .btn-oauth:disabled{opacity:.5;pointer-events:none;cursor:not-allowed;}
 .btn-oauth svg{width:18px;height:18px;flex-shrink:0;}
 #zx-pwd-strength{margin-top:8px;display:none;flex-direction:column;gap:4px;}
@@ -150,10 +148,6 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
       <button class="tab-btn" onclick="switchTab('signup')" id="tab-signup" role="tab" aria-selected="false">Sign Up</button>
     </div>
 
-    <div class="guide-link">
-      صعيب عليك التسجيل؟ <a href="guide.html">شوف الدليل ✦</a>
-    </div>
-
     <div class="err-box" id="errBox" role="alert" aria-live="assertive">
       <span aria-hidden="true">⚠</span><span id="errMsg">Error</span>
     </div>
@@ -164,11 +158,24 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
         <span class="dot" aria-hidden="true"></span>
         <span>No code needed — start free, upgrade anytime.</span>
       </div>
+
+      <div class="oauth-row">
+        <button type="button" class="btn-oauth btn-oauth-primary" onclick="handleOAuth('google')">
+          <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <span>Google</span>
+        </button>
+        <button type="button" class="btn-oauth" onclick="handleOAuth('github')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+          <span>GitHub</span>
+        </button>
+      </div>
+      <div class="oauth-divider">or use email</div>
+
       <div class="form-field">
         <label for="si-username">Email</label>
         <div class="field-wrap">
           <span class="field-icon" aria-hidden="true">✉</span>
-          <input type="email" id="si-username" placeholder="you@example.com" autocomplete="username" autofocus required/>
+          <input type="email" id="si-username" placeholder="you@example.com" autocomplete="username" required/>
         </div>
       </div>
       <div class="form-field">
@@ -192,9 +199,13 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
         <div class="spinner"></div>
         <span class="btn-label">✦ &nbsp; Enter Zunexa</span>
       </button>
-      <div class="oauth-divider">or continue with</div>
+      <div class="auth-footer-link">No account? <a onclick="switchTab('signup')" role="button" tabindex="0">Create one →</a></div>
+    </form>
+
+    <!-- SIGN UP -->
+    <form id="form-signup" novalidate style="display:none" onsubmit="event.preventDefault();handleSignUp();">
       <div class="oauth-row">
-        <button type="button" class="btn-oauth" onclick="handleOAuth('google')">
+        <button type="button" class="btn-oauth btn-oauth-primary" onclick="handleOAuth('google')">
           <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
           <span>Google</span>
         </button>
@@ -203,11 +214,8 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
           <span>GitHub</span>
         </button>
       </div>
-      <div class="auth-footer-link">No account? <a onclick="switchTab('signup')" role="button" tabindex="0">Create one →</a></div>
-    </form>
+      <div class="oauth-divider">or use email</div>
 
-    <!-- SIGN UP -->
-    <form id="form-signup" novalidate style="display:none" onsubmit="event.preventDefault();handleSignUp();">
       <div class="form-field">
         <label for="su-fname">Name</label>
         <div class="field-wrap"><span class="field-icon" aria-hidden="true">◎</span>
@@ -249,17 +257,6 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
         <div class="spinner"></div>
         <span class="btn-label">✦ &nbsp; Create Account</span>
       </button>
-      <div class="oauth-divider">or sign up with</div>
-      <div class="oauth-row">
-        <button type="button" class="btn-oauth" onclick="handleOAuth('google')">
-          <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-          <span>Google</span>
-        </button>
-        <button type="button" class="btn-oauth" onclick="handleOAuth('github')">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-          <span>GitHub</span>
-        </button>
-      </div>
       <div class="auth-footer-link">Have an account? <a onclick="switchTab('signin')" role="button" tabindex="0">Sign In →</a></div>
     </form>
 
@@ -313,7 +310,10 @@ const _SB = supabase.createClient(
   'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
 );
 
-const ZX_PROD_URL = 'https://zunexa.vercel.app';
+// Use the current origin so OAuth + email-confirm redirects work
+// identically on localhost, preview deployments, and production —
+// no hardcoded domain to break in any environment.
+const ZX_ORIGIN = window.location.origin;
 
 // ── 10-second post-failure lockout (client-side UX guard, see note above) ──
 const LOCKOUT_MS = 10000;
@@ -649,7 +649,7 @@ async function handleOAuth(provider){
   document.querySelectorAll('.btn-oauth').forEach(b => { b.disabled = true; });
   const { error } = await _SB.auth.signInWithOAuth({
     provider,
-    options: { redirectTo: ZX_PROD_URL + '/ai.html' }
+    options: { redirectTo: ZX_ORIGIN + '/ai.html' }
   });
   if (error) {
     document.querySelectorAll('.btn-oauth').forEach(b => { b.disabled = false; });
@@ -670,7 +670,7 @@ async function handleOAuth(provider){
     const refresh = params.get('refresh_token');
     if (access && refresh) {
       await _SB.auth.setSession({ access_token: access, refresh_token: refresh });
-      window.location.replace(ZX_PROD_URL + '/ai.html');
+      window.location.replace(ZX_ORIGIN + '/ai.html');
     }
   }
 })();
