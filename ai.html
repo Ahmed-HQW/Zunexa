@@ -100,7 +100,13 @@ body{
   font-size:15px;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+  user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;
 }
+/* Allow copying the AI's own response bubbles + any input field the user types in */
+.msg.bot .bubble,.msg.bot .bubble *{
+  user-select:text!important;-webkit-user-select:text!important;-moz-user-select:text!important;-ms-user-select:text!important;
+}
+input,textarea{user-select:text;-webkit-user-select:text}
 button,input,textarea,select{font-family:'Rajdhani',sans-serif;outline:none}
 button{cursor:pointer;background:none;border:none}
 a{text-decoration:none;color:inherit}
@@ -829,6 +835,32 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 .tier-chip.on{background:linear-gradient(135deg,var(--gold),var(--gdim));color:#060606}
 @media(max-width:640px){ .mode-row{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px} }
 
+/* ── COMPACT MODEL SELECTOR (Claude-style dropdown) ── */
+.model-sel{position:relative;flex-shrink:0}
+.model-sel-btn{
+  display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:99px;
+  background:var(--card2);border:1px solid var(--b1);color:var(--tw);
+  font-size:12px;font-weight:700;white-space:nowrap;transition:all var(--tr);
+}
+.model-sel-btn:hover{border-color:var(--gold)}
+.model-sel-btn svg{width:11px;height:11px;transition:transform .18s ease;flex-shrink:0}
+.model-sel.open .model-sel-btn svg{transform:rotate(180deg)}
+.model-sel-menu{
+  display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:220px;z-index:60;
+  background:var(--card);border:1px solid var(--b1);border-radius:var(--r2);
+  box-shadow:0 12px 40px rgba(0,0,0,.55);padding:6px;
+}
+.model-sel.open .model-sel-menu{display:block;animation:fadeUp .14s ease}
+.model-sel-item{
+  display:flex;flex-direction:column;gap:1px;width:100%;padding:8px 10px;border-radius:9px;
+  color:var(--tw);text-align:right;transition:all var(--tr);
+}
+.model-sel-item:hover{background:var(--card2)}
+.model-sel-item.on{background:rgba(212,175,55,.1)}
+.model-sel-item b{font-size:12.5px;color:var(--gold)}
+.model-sel-item span{font-size:10.5px;color:var(--tg)}
+@media(max-width:768px){ .model-sel-menu{right:auto;left:0} }
+
 /* ════════════════════════════════════════════════════════
    INPUT ZONE
 ════════════════════════════════════════════════════════ */
@@ -987,6 +1019,9 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
    ANIMATIONS
 ════════════════════════════════════════════════════════ */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes look-around{0%,16.6%,100%{transform:translateX(-1.5px) translateY(0)}25%,41.6%{transform:translateX(1.5px) translateY(0)}50%,66.6%{transform:translateX(0) translateY(-1.5px)}75%,91.6%{transform:translateX(0) translateY(0)}}
+#tempChatBtn:hover{color:var(--gold);background:var(--card)}
+#tempChatBtn:hover .group g{animation:look-around 2.4s ease-in-out infinite}
 .zx-reduce-motion *{animation-duration:.001s!important;animation-delay:0s!important;transition-duration:.001s!important}
 /* "تقليل الحركة" كتقفل البلور نهائياً — أثقل حاجة على الـ GPU فالهواتف
    الضعيفة، وكتبدّلو بخلفية صمّاء باش يبقى النص مقروء بلا أي أثر على
@@ -1027,11 +1062,38 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   .web-toggle .wl{display:none}
   .conv{padding:16px 14px}
   .input-zone{padding:10px 12px 14px}
-  .topbar{padding:0 14px}
   .bubble{max-width:86%;font-size:13.5px}
   .wl-title{font-size:20px}
   .wl-sub{font-size:12.5px}
   .wl-icon{width:66px;height:66px;font-size:30px}
+
+  /* ── DEEP BLUR KILL — mobile GPUs choke on backdrop-filter, causing
+     scroll jank/lag on sidebars + overlays. Nuke it everywhere on
+     mobile, replaced with solid near-opaque backgrounds. Multiple
+     selectors + !important to survive any specificity/browser quirk
+     (older Android WebViews included). ── */
+  .sidebar,.overlay,.topbar,.input-zone,.modal-wrap,.modal-box,
+  #limitOverlay,#offlineOverlay,.sb-user,.hist-search{
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+  .overlay{background:#000!important}
+  .sidebar{background:#0a0a0a!important}
+  .topbar{background:#060606!important}
+  .input-zone{background:#080808!important}
+  .modal-wrap{background:rgba(0,0,0,.92)!important}
+  .modal-box{background:#0c0c0c!important}
+
+  /* Claude-style minimal mobile topbar: hide the version tag + status
+     chip, keep hamburger · model selector · shortcuts only. */
+  .status-chip{display:none}
+  .tb-title{font-size:0}
+  .topbar{padding:0 10px;gap:6px}
+  .model-sel-btn{padding:5px 8px;font-size:11.5px}
+  .mode-row{gap:4px}
+  .mode-group{padding:2px}
+  .mode-chip{padding:4px 9px;font-size:10px}
+  .input-shell{gap:6px}
 }
 
 @media(max-width:390px){
@@ -1195,9 +1257,8 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     </div>
   </div>
 
-  <!-- Upgrade -->
-  <a href="upgrade.html" class="sb-upgrade">⬆ ترقية الخطة</a>
-  <button class="sb-upgrade" style="width:100%;border:1px solid var(--b1);background:transparent;margin-top:6px" onclick="openBilling()">💳 الخطط والفوترة (داخل التطبيق)</button>
+  <!-- Billing -->
+  <button class="sb-upgrade" style="width:100%" onclick="openBilling()">💳 الخطط والفوترة</button>
 
   <!-- New Chat -->
   <button class="sb-new" onclick="newChat()">✦ محادثة جديدة</button>
@@ -1247,18 +1308,17 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     </div>
     <div class="tb-right">
       <div class="model-tag">Zunexa AI Engine</div>
-      <button class="web-toggle" id="shareChatBtn" onclick="shareCurrentChat()" title="مشاركة هاد المحادثة عبر رابط">
-        <span class="wd"></span>
-        <span class="wl">🔗 مشاركة</span>
-      </button>
-      <button class="web-toggle" id="tempChatBtn" onclick="toggleTempChat()" title="محادثة مؤقتة — لا تُحفظ فالسجل ولا فقاعدة البيانات">
-        <span class="wd"></span>
-        <span class="wl">🕶 مؤقتة</span>
-      </button>
       <button class="web-toggle" id="webTgl" onclick="toggleWeb()">
         <span class="wd"></span>
         <span class="wl">بحث</span>
       </button>
+      <button id="tempChatBtn" onclick="toggleTempChat()" title="محادثة مؤقتة" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r1);color:var(--tg);transition:all var(--tr)"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="group" aria-hidden="true" style="flex-shrink: 0;"><g class="group-hover:animate-[look-around_2.4s_ease-in-out_infinite] group-active:animate-none"><path d="M6.99951 8.66672C7.5518 8.66672 7.99951 9.11443 7.99951 9.66672C7.9993 10.2188 7.55166 10.6667 6.99951 10.6667C6.44736 10.6667 5.99973 10.2188 5.99951 9.66672C5.99951 9.11443 6.44723 8.66672 6.99951 8.66672Z"></path><path d="M12.9995 8.66672C13.5518 8.66672 13.9995 9.11443 13.9995 9.66672C13.9993 10.2188 13.5517 10.6667 12.9995 10.6667C12.4474 10.6667 11.9997 10.2188 11.9995 9.66672C11.9995 9.11443 12.4472 8.66672 12.9995 8.66672Z"></path></g><path fill-rule="evenodd" clip-rule="evenodd" d="M10 2C14.326 2.00018 17.9998 5.67403 18 10V17.3123C17.9997 17.5427 17.8411 17.8079 17.6172 17.8623C17.3932 17.9165 17.1614 17.7456 17.0557 17.5408C16.7805 17.007 16.3658 16.5937 16.062 16.2878C15.7793 16.0034 15.4503 15.8338 14.9771 15.8337C14.2092 15.8339 13.4371 16.3862 12.9487 17.53C12.8701 17.7138 12.6887 17.8621 12.4888 17.8623C12.2888 17.8623 12.1076 17.7138 12.0288 17.53C11.5404 16.386 10.7674 15.8339 9.99951 15.8337C9.23161 15.8339 8.45959 16.386 7.97119 17.53C7.89253 17.7138 7.71118 17.8621 7.51123 17.8623C7.31122 17.8623 7.13006 17.7138 7.05127 17.53C6.56296 16.3862 5.78982 15.834 5.02197 15.8337C4.54861 15.8338 4.21974 16.0032 3.93701 16.2878C3.63309 16.5937 3.21952 17.0715 2.94434 17.6055C2.83865 17.8103 2.60589 17.9165 2.38184 17.8623C2.15801 17.8079 2.00033 17.6073 2 17.377V10C2.00018 5.67403 5.67403 2.00018 10 2ZM10 3C6.22631 3.00018 3.00018 6.22631 3 10V15.8633C3.0205 15.8414 3.20696 15.6049 3.22803 15.5837C3.67524 15.1336 4.251 14.8338 5.02197 14.8337C6.03838 14.8341 6.90232 15.4025 7.51025 16.2937C8.11828 15.4018 8.9824 14.8338 9.99951 14.8337C11.0163 14.8338 11.8798 15.4022 12.4878 16.2937C13.0959 15.4018 13.9601 14.8339 14.9771 14.8337C15.7481 14.8338 16.3247 15.1336 16.772 15.5837C16.772 15.5837 16.9796 15.812 17 15.8337V10C16.9998 6.22631 13.7737 3.00018 10 3Z"></path></svg></button>
+      <div class="model-sel" id="tbShortcuts">
+        <button class="model-sel-btn" id="tbShortcutsBtn" onclick="toggleTbShortcuts()" title="المزيد" style="padding:6px 9px">⋯</button>
+        <div class="model-sel-menu" id="tbShortcutsMenu" style="min-width:190px">
+          <button class="model-sel-item" id="shareChatBtn" onclick="shareCurrentChat();toggleTbShortcuts(false)">🔗 مشاركة المحادثة</button>
+        </div>
+      </div>
       <div class="status-chip">
         <div class="sdot"></div> نشط
       </div>
@@ -1294,10 +1354,16 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         <button class="mode-chip" data-effort="max" onclick="setEffortUI('max')">🚀 أقصى</button>
       </div>
       <div class="mode-sep"></div>
-      <div class="mode-group" id="tierGroup">
-        <button class="mode-chip tier-chip" data-model="lite" onclick="setModelUI('lite')" title="محلي فقط، بدون ذكاء انترنت">Zunexa Lite</button>
-        <button class="mode-chip tier-chip" data-model="pro" onclick="setModelUI('pro')">Zunexa Pro</button>
-        <button class="mode-chip tier-chip" data-model="max" onclick="setModelUI('max')">Zunexa Max</button>
+      <div class="model-sel" id="modelSel">
+        <button class="model-sel-btn" id="modelSelBtn" onclick="toggleModelSel()">
+          <span id="modelSelLabel">Zunexa Pro</span>
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5.5 7.5L10 12l4.5-4.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="model-sel-menu" id="modelSelMenu">
+          <button class="model-sel-item" data-model="lite" onclick="setModelUI('lite');toggleModelSel(false)"><b>Zunexa Lite</b><span>محلي فقط، بدون ذكاء انترنت</span></button>
+          <button class="model-sel-item" data-model="pro" onclick="setModelUI('pro');toggleModelSel(false)"><b>Zunexa Pro</b><span>محلي + Zunexa Brain</span></button>
+          <button class="model-sel-item" data-model="max" onclick="setModelUI('max');toggleModelSel(false)"><b>Zunexa Max</b><span>أقصى سياق</span></button>
+        </div>
       </div>
     </div>
     <div id="fileChipZone"></div>
@@ -1500,72 +1566,16 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 
     <!-- VOICE -->
     <div class="set-pane" id="pane-voice">
-      <label class="field-label">لغة الصوت</label>
+      <label class="field-label">الصوت</label>
       <select class="field-input" id="setVoiceLang" onchange="saveVoicePrefs()">
         <option value="ar-MA">العربية (المغرب)</option>
         <option value="ar-SA">العربية (فصحى)</option>
-        <option value="ar-EG">العربية (مصر)</option>
-        <option value="ar-AE">العربية (الخليج)</option>
         <option value="fr-FR">Français</option>
-        <option value="en-US">English (US)</option>
-        <option value="en-GB">English (UK)</option>
-        <option value="es-ES">Español</option>
-        <option value="de-DE">Deutsch</option>
-        <option value="it-IT">Italiano</option>
-        <option value="pt-PT">Português</option>
-        <option value="pt-BR">Português (Brasil)</option>
-        <option value="nl-NL">Nederlands</option>
-        <option value="tr-TR">Türkçe</option>
-        <option value="ru-RU">Русский</option>
-        <option value="zh-CN">中文 (简体)</option>
-        <option value="ja-JP">日本語</option>
-        <option value="ko-KR">한국어</option>
-        <option value="hi-IN">हिन्दी</option>
-        <option value="ur-PK">اردو</option>
-        <option value="fa-IR">فارسی</option>
-        <option value="id-ID">Bahasa Indonesia</option>
-        <option value="ms-MY">Bahasa Melayu</option>
-        <option value="th-TH">ไทย</option>
-        <option value="vi-VN">Tiếng Việt</option>
-        <option value="pl-PL">Polski</option>
-        <option value="uk-UA">Українська</option>
-        <option value="sv-SE">Svenska</option>
-        <option value="no-NO">Norsk</option>
-        <option value="da-DK">Dansk</option>
-        <option value="fi-FI">Suomi</option>
-        <option value="el-GR">Ελληνικά</option>
-        <option value="he-IL">עברית</option>
-        <option value="ro-RO">Română</option>
-        <option value="sw-KE">Kiswahili</option>
-        <option value="bn-BD">বাংলা</option>
-        <option value="pa-IN">ਪੰਜਾਬੀ</option>
-        <option value="ta-IN">தமிழ்</option>
-        <option value="te-IN">తెలుగు</option>
-        <option value="mr-IN">मराठी</option>
-        <option value="gu-IN">ગુજરાતી</option>
-        <option value="kn-IN">ಕನ್ನಡ</option>
-        <option value="ml-IN">മലയാളം</option>
-        <option value="fil-PH">Filipino</option>
-        <option value="cs-CZ">Čeština</option>
-        <option value="hu-HU">Magyar</option>
-        <option value="sk-SK">Slovenčina</option>
-        <option value="bg-BG">Български</option>
-        <option value="sr-RS">Српски</option>
-        <option value="hr-HR">Hrvatski</option>
-        <option value="ca-ES">Català</option>
-        <option value="af-ZA">Afrikaans</option>
-        <option value="am-ET">አማርኛ</option>
-        <option value="zu-ZA">isiZulu</option>
+        <option value="en-US">English</option>
       </select>
-      <label class="field-label">أسلوب الصوت (عند القراءة الصوتية للردود)</label>
-      <select class="field-input" id="setVoiceStyle" onchange="saveVoicePrefs()">
-        <option value="normal">عادي</option>
-        <option value="calm">هادئ</option>
-        <option value="energetic">حيوي</option>
-      </select>
-      <label class="field-label">السرعة</label>
-      <input class="field-input" type="range" id="setVoiceSpeed" min="0.6" max="1.6" step="0.1" value="1" oninput="saveVoicePrefs()">
-      <p style="font-size:11px;color:var(--tg);line-height:1.6">تُستعمل هذه الإعدادات في الإدخال الصوتي (🎤) وفي القراءة الصوتية للردود (🔊 بجانب كل رد) — عبر Web Speech API المدمجة في المتصفح، بدون أي مفتاح API.</p>
+      <input type="hidden" id="setVoiceStyle" value="normal">
+      <input type="hidden" id="setVoiceSpeed" value="1">
+      <p style="font-size:11px;color:var(--tg);line-height:1.6">تُستعمل عبر Web Speech API المدمجة فالمتصفح، بدون أي مفتاح API.</p>
     </div>
 
     <!-- NOTIFICATIONS -->
@@ -2122,22 +2132,12 @@ async function refreshKB() {
 }
 setInterval(refreshKB, 5 * 60 * 1000); // every 5 minutes
 
-// mergeKB — dedupe key is the stable `id` field (item 17) rather than the
-// first 55 characters of the question, which collided unrelated entries
-// that merely started the same way. Falls back to a normalized-question
-// key only for the rare entry with no id, and logs any real collision
-// instead of silently dropping data.
 function mergeKB(local, cloud) {
   const map = new Map();
   [...local, ...cloud].forEach(item => {
     const key = item.id || ('q:' + (norm(item.q) || norm(item.kw.join(' '))));
     const ex  = map.get(key);
-    if (!ex) {
-      map.set(key, item);
-    } else if (item.w > ex.w) {
-      console.log(`Zunexa KB: merge collision on key "${key}" — keeping higher-weight entry (${item.w} > ${ex.w})`);
-      map.set(key, item);
-    }
+    if (!ex || item.w > ex.w) map.set(key, item);
   });
   return Array.from(map.values());
 }
@@ -3785,16 +3785,31 @@ async function checkSessionLimit() {
   }
 }
 
+// ── EXACT-MATCH CACHE — API cost guard ─────────────────────────
+// Before any AI Brain call, check if the exact question (trimmed,
+// case-insensitive, diacritic-normalized via norm()) already exists
+// in the loaded ai_knowledge KB. Exact hits skip zunexaBrain() entirely
+// — zero API cost, instant reply. Fuzzy/partial matches still fall
+// through to the normal answerLocal()/zunexaBrain() pipeline.
+function findExactKBMatch(userQ) {
+  if (!kbReady || !KB.length) return null;
+  const key = norm(userQ);
+  if (!key) return null;
+  return KB.find(item => item.q && norm(item.q) === key) || null;
+}
+
 async function send() {
   if (busy) return;
   const inp = document.getElementById('aiInput');
-  const q   = inp.value.trim();
+  if (!inp) return;
+  const q = inp.value.trim();
   if (!q) return;
   if (!ZX_AI_RATE.check()) return;
   if (!(await checkSessionLimit())) return;
 
   busy = true;
-  document.getElementById('sendBtn').disabled = true;
+  const sendBtn = document.getElementById('sendBtn');
+  if (sendBtn) sendBtn.disabled = true;
   inp.value = ''; resize(inp);
 
   // Hide welcome
@@ -3809,7 +3824,30 @@ async function send() {
     await logMsg(q, refusal, 'blocked', 0);
     clearFile();
     busy = false;
-    document.getElementById('sendBtn').disabled = false;
+    if (sendBtn) sendBtn.disabled = false;
+    inp.focus();
+    return;
+  }
+
+  // Exact-match cache — skip API entirely on a known question
+  const cached = findExactKBMatch(q);
+  if (cached) {
+    addMsg(cached.a, 'bot', cached.src || 'cache', cached.w || 1);
+    ctx.push({ role:'user', text:q });
+    ctx.push({ role:'bot',  text:cached.a });
+    if (ctx.length > 12) ctx = ctx.slice(-12);
+    if (!tempChatOn) {
+      const existing = hist.findIndex(h => h.chatId === currentChatId);
+      const wasPinned = existing !== -1 && hist[existing].pinned;
+      if (existing !== -1) hist.splice(existing, 1);
+      hist.unshift({ chatId: currentChatId, t: q.slice(0,50), ts: Date.now(), pinned: wasPinned || false });
+      if (hist.length > 40) hist.length = 40;
+      localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
+      renderHist();
+    }
+    clearFile();
+    busy = false;
+    if (sendBtn) sendBtn.disabled = false;
     inp.focus();
     return;
   }
@@ -3829,6 +3867,7 @@ async function send() {
       addTyping();
     }
     removeTyping();
+    if (!res || !res.text) res = { text: '⚠ خطأ في المعالجة. حاول مرة أخرى.', src: 'error', score: 0 };
     addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl);
 
     // Update context
@@ -3849,13 +3888,14 @@ async function send() {
     clearFile();
 
   } catch(err) {
+    console.error('Zunexa send() error:', err);
     thinkEnd();
     removeTyping();
     addMsg('⚠ خطأ في المعالجة. حاول مرة أخرى.', 'bot', 'error', 0);
   }
 
   busy = false;
-  document.getElementById('sendBtn').disabled = false;
+  if (sendBtn) sendBtn.disabled = false;
   inp.focus();
 }
 
@@ -4089,10 +4129,12 @@ function onKey(e) {
 }
 
 function resize(el) {
+  if (!el) return;
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 110) + 'px';
   const l = el.value.length;
-  document.getElementById('charCount').textContent = l ? l : '';
+  const cc = document.getElementById('charCount');
+  if (cc) cc.textContent = l ? l : '';
 }
 
 let _toastTimer = null;
@@ -4675,11 +4717,33 @@ function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); }
    setEffortSel2) so both surfaces always agree. ── */
 function setModelUI(v, silent) {
   setModel(v);
-  document.querySelectorAll('#tierGroup .mode-chip').forEach(b => b.classList.toggle('on', b.dataset.model === v));
+  const names = {lite:'Zunexa Lite', pro:'Zunexa Pro', max:'Zunexa Max'};
+  document.querySelectorAll('#modelSelMenu .model-sel-item').forEach(b => b.classList.toggle('on', b.dataset.model === v));
+  const label = document.getElementById('modelSelLabel');
+  if (label) label.textContent = names[v] || 'Zunexa Pro';
   const sel2 = document.getElementById('setModelSel2');
   if (sel2) sel2.value = v;
-  if (!silent) toast('✓ الفئة: ' + ({lite:'Zunexa Lite', pro:'Zunexa Pro', max:'Zunexa Max'}[v] || v));
+  if (!silent) toast('✓ الفئة: ' + (names[v] || v));
 }
+
+function toggleModelSel(force) {
+  const el = document.getElementById('modelSel');
+  if (!el) return;
+  const show = typeof force === 'boolean' ? force : !el.classList.contains('open');
+  el.classList.toggle('open', show);
+}
+function toggleTbShortcuts(force) {
+  const el = document.getElementById('tbShortcuts');
+  if (!el) return;
+  const show = typeof force === 'boolean' ? force : !el.classList.contains('open');
+  el.classList.toggle('open', show);
+}
+document.addEventListener('click', (e) => {
+  const sel = document.getElementById('modelSel');
+  if (sel && sel.classList.contains('open') && !sel.contains(e.target)) sel.classList.remove('open');
+  const sc = document.getElementById('tbShortcuts');
+  if (sc && sc.classList.contains('open') && !sc.contains(e.target)) sc.classList.remove('open');
+});
 function setEffortUI(v, silent) {
   setEffort(v);
   document.querySelectorAll('#effortGroup .mode-chip').forEach(b => b.classList.toggle('on', b.dataset.effort === v));
@@ -4716,6 +4780,27 @@ const ZX_I18N = {
   hi:  { welcome:'में आपका स्वागत है', placeholder:'Zunexa या तकनीक के बारे में मुझसे कुछ भी पूछें...', newChat:'✦ नई चैट', history:'पिछली चैट', settings:'⚙ सेटिंग्स', clear:'🗑 इतिहास साफ़ करें', install:'📲 Zunexa इंस्टॉल करें', effQuick:'⚡ तेज़', effBal:'⚖ संतुलित', effDeep:'🔍 गहरा', effMax:'🚀 अधिकतम', modelLite:'Zunexa Lite · स्थानीय', modelPro:'Zunexa Pro · KB+AI', modelMax:'Zunexa Max · पूर्ण' }
 };
 
+// ── 30-language "Chat with Zunexa" placeholder ──────────────────
+// Independent of ZX_I18N (which only covers 12 full UI languages) —
+// this covers the input placeholder specifically, driven by the same
+// zx_page_lang setting, falling back to English for any language the
+// user's chosen UI locale doesn't have a full ZX_I18N entry for.
+const ZX_PLACEHOLDERS = {
+  ary:'دردش مع Zunexa', ar:'تحدث مع Zunexa', en:'Chat with Zunexa', fr:'Discutez avec Zunexa',
+  es:'Chatea con Zunexa', de:'Chatte mit Zunexa', it:'Chatta con Zunexa', pt:'Converse com a Zunexa',
+  ru:'Общайтесь с Zunexa', zh:'与 Zunexa 聊天', ja:'Zunexaとチャット', ko:'Zunexa와 채팅',
+  tr:'Zunexa ile sohbet et', hi:'Zunexa से चैट करें', ur:'Zunexa سے بات کریں', fa:'با Zunexa چت کنید',
+  id:'Chat dengan Zunexa', ms:'Berbual dengan Zunexa', th:'แชทกับ Zunexa', vi:'Trò chuyện với Zunexa',
+  pl:'Czatuj z Zunexa', uk:'Спілкуйтеся з Zunexa', nl:'Chat met Zunexa', sv:'Chatta med Zunexa',
+  no:'Chat med Zunexa', da:'Chat med Zunexa', fi:'Keskustele Zunexan kanssa', el:'Συνομιλήστε με το Zunexa',
+  he:'שוחח עם Zunexa', ro:'Discută cu Zunexa', sw:'Ongea na Zunexa'
+};
+function zxUpdatePlaceholder(lang) {
+  const inp = document.getElementById('aiInput');
+  if (!inp) return;
+  inp.placeholder = ZX_PLACEHOLDERS[lang] || ZX_PLACEHOLDERS.en;
+}
+
 function applyPageLang(lang) {
   const t = ZX_I18N[lang] || ZX_I18N.ary;
   const isRTL = (lang === 'ar' || lang === 'ary');
@@ -4723,8 +4808,7 @@ function applyPageLang(lang) {
 
   const wlTitleSpan = document.querySelector('.wl-title');
   if (wlTitleSpan) wlTitleSpan.childNodes[0].textContent = t.welcome + ' ';
-  const inp = document.getElementById('aiInput');
-  if (inp) inp.placeholder = t.placeholder;
+  zxUpdatePlaceholder(lang);
   const newChatBtn = document.querySelector('.sb-new');
   if (newChatBtn) newChatBtn.textContent = t.newChat;
   const histLabel = document.querySelector('.sb-label');
