@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  ZUNEXA — SUPPORT / HELP CENTER                                 ║
+  ║  Author  : ahmed_dev_a                                          ║
+  ║  Stack   : HTML5 · CSS3 · Vanilla JS                            ║
+  ║  Design  : Zalij Mode — Premium Moroccan Noir & Gold            ║
+  ║  Matches : index.html / ai.html design tokens                   ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#060606">
+<title>الدعم والمساعدة — Zunexa</title>
+
+<meta name="description" content="مركز الدعم الرسمي لمنصة Zunexa — ابحث عن إجابات، تصفح المواضيع، أو تواصل معنا مباشرة عبر واتساب، البريد الإلكتروني، أو إنستغرام.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zunexa.vercel.app/support">
+<meta property="og:title" content="الدعم والمساعدة — Zunexa">
+<meta property="og:description" content="مركز الدعم الرسمي لمنصة Zunexa AI. ابحث عن إجابات أو تواصل معنا مباشرة.">
+<meta property="og:image" content="https://zunexa.vercel.app/icon-512.png">
+
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ════════════════════════════════════════════════════════
+   DESIGN TOKENS — Zalij Mode · Noir & Gold (matches ai.html)
+════════════════════════════════════════════════════════ */
+:root {
+  --void:        #060606;
+  --deep:        #090909;
+  --card:        #0e0e0e;
+  --card2:       #121212;
+  --hover:       #171717;
+  --input-bg:    #0b0b0b;
+
+  --b1:          #1a1a1a;
+  --b2:          #242424;
+  --bg:          rgba(212,175,55,.22);
+  --bgh:         rgba(212,175,55,.50);
+  --bgp:         rgba(212,175,55,.08);
+
+  --gold:        #D4AF37;
+  --gold2:       #ecc84a;
+  --gold3:       #f5d76e;
+  --gdim:        #7a6218;
+  --gglow:       rgba(212,175,55,.20);
+  --gtrace:      rgba(212,175,55,.05);
+
+  --tw:          #edeae2;
+  --tg:          #7a7468;
+  --tm:          #303028;
+
+  --green:       #3ddc84;
+  --red:         #ff4d6d;
+  --blue:        #5b8dee;
+  --orange:      #f5a623;
+
+  --tr: .2s cubic-bezier(.4,0,.2,1);
+  --ts: .38s cubic-bezier(.4,0,.2,1);
+  --r1: 6px;
+  --r2: 11px;
+  --r3: 17px;
+  --r4: 24px;
+
+  --sg: 0 0 0 1px rgba(212,175,55,.12) inset, 0 4px 28px rgba(0,0,0,.55);
+  --sg2: 0 0 30px rgba(212,175,55,.22), 0 0 80px rgba(212,175,55,.07);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:'Rajdhani',sans-serif;
+  background:var(--void);
+  color:var(--tw);
+  min-height:100vh;
+  font-size:15px;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  position:relative;
+  overflow-x:hidden;
+}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;background:none;border:none;font-family:'Rajdhani',sans-serif}
+img{max-width:100%;display:block}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--gdim);border-radius:99px}
+
+/* ── Zalij geometric background ── */
+#zalij-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#zalij-bg svg{width:100%;height:100%;opacity:.55}
+#zalij-bg::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 80% at 50% 30%,transparent 30%,rgba(6,6,6,.94) 100%);
+  pointer-events:none;
+}
+
+/* ════════════════════════════════════════════════════════
+   TOPBAR (matches ai.html)
+════════════════════════════════════════════════════════ */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:58px;
+  background:rgba(6,6,6,.88);backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--b1);
+}
+.topbar::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,.12),transparent);
+  pointer-events:none;
+}
+.tb-logo{display:flex;align-items:center;gap:11px}
+.tb-logo-mark{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),var(--gdim));
+  display:grid;place-items:center;
+  font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:#060606;
+  box-shadow:var(--sg2);
+}
+.tb-logo-name{font-family:'Cinzel',serif;font-size:15px;font-weight:600;letter-spacing:.05em;color:var(--tw)}
+.tb-logo-tag{font-size:9px;color:var(--gold);letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+.tb-back{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 15px;border:1px solid var(--b1);border-radius:99px;
+  color:var(--tg);font-size:12.5px;font-weight:600;transition:all var(--tr);
+}
+.tb-back:hover{border-color:var(--bg);color:var(--gold)}
+
+/* ════════════════════════════════════════════════════════
+   PAGE SHELL
+════════════════════════════════════════════════════════ */
+.page{
+  position:relative;z-index:2;
+  max-width:880px;margin:0 auto;
+  padding:56px 20px 80px;
+}
+
+/* ── Hero / Headline ── */
+.hero{text-align:center;margin-bottom:40px;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hero-eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gdim);font-weight:700;margin-bottom:14px}
+.gold-hr{width:52px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 18px}
+.hero-title{
+  font-family:'Cinzel',serif;font-size:clamp(22px,4vw,34px);font-weight:600;
+  color:var(--tw);letter-spacing:.01em;line-height:1.35;margin-bottom:10px;
+}
+.hero-title span{color:var(--gold)}
+.hero-sub{font-size:14px;color:var(--tg);max-width:480px;margin:0 auto}
+
+/* ── Search bar ── */
+.search-wrap{
+  position:relative;max-width:560px;margin:32px auto 0;
+}
+.search-icon{
+  position:absolute;top:50%;right:18px;transform:translateY(-50%) scaleX(-1);
+  color:var(--gold);opacity:.75;pointer-events:none;
+  display:flex;align-items:center;
+}
+.search-input{
+  width:100%;padding:16px 54px 16px 20px;
+  background:var(--card);border:1px solid var(--b1);border-radius:var(--r3);
+  color:var(--tw);font-size:15px;font-family:'Rajdhani',sans-serif;
+  outline:none;transition:all var(--tr);
+  box-shadow:var(--sg);
+}
+.search-input::placeholder{color:var(--tg)}
+.search-input:focus{border-color:var(--gold-dim,var(--bg));box-shadow:0 0 0 3px rgba(212,175,55,.12),var(--sg)}
+
+/* ── Language selector (as supplied) ── */
+.lang-wrap{position:relative;max-width:220px;margin:16px auto 0}
+.lang-box{
+  position:relative;display:flex;align-items:center;gap:8px;
+  padding:9px 14px;background:var(--card2);border:1px solid var(--b1);
+  border-radius:99px;color:var(--tg);font-size:12px;font-weight:600;
+  transition:all var(--tr);
+}
+.lang-box:hover,.lang-wrap:focus-within .lang-box{border-color:var(--bg);color:var(--gold)}
+.lang-box svg{width:14px;height:14px;flex-shrink:0;opacity:.8}
+.lang-wrap select{
+  position:absolute;inset:0;z-index:10;display:block;height:100%;width:100%;
+  cursor:pointer;opacity:0;
+}
+
+/* ── Topic grid ── */
+.section-label{
+  font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--tm);margin:56px 0 18px;text-align:center;
+}
+.topics-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:14px;
+}
+.topic-card{
+  background:var(--card);border:1px solid var(--b1);border-radius:var(--r3);
+  padding:22px 20px;transition:all var(--tr);position:relative;overflow:hidden;
+  display:flex;flex-direction:column;gap:8px;
+}
+.topic-card::before{
+  content:'';position:absolute;top:0;right:0;left:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0;transition:opacity var(--tr);
+}
+.topic-card:hover{border-color:var(--bg);transform:translateY(-3px);box-shadow:var(--sg)}
+.topic-card:hover::before{opacity:.6}
+.topic-icon{
+  width:42px;height:42px;border-radius:11px;
+  background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(212,175,55,.03));
+  border:1px solid var(--bg);display:grid;place-items:center;font-size:19px;
+}
+.topic-title{font-size:15px;font-weight:700;color:var(--tw)}
+.topic-desc{font-size:12.5px;color:var(--tg);line-height:1.6}
+.topic-count{font-size:10.5px;color:var(--gdim);letter-spacing:.05em;margin-top:2px}
+
+/* ── FAQ accordion ── */
+.faq-wrap{margin-top:56px}
+.faq-item{
+  background:var(--card);border:1px solid var(--b1);border-radius:var(--r2);
+  margin-bottom:10px;overflow:hidden;transition:border-color var(--tr);
+}
+.faq-item.open{border-color:var(--bg)}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 20px;font-size:14px;font-weight:600;color:var(--tw);width:100%;text-align:right;
+}
+.faq-q .fi{color:var(--gold);font-size:16px;transition:transform var(--tr);flex-shrink:0}
+.faq-item.open .fi{transform:rotate(45deg)}
+.faq-a{
+  max-height:0;overflow:hidden;transition:max-height var(--ts);
+  font-size:13px;color:var(--tg);line-height:1.8;
+}
+.faq-item.open .faq-a{max-height:260px}
+.faq-a-inner{padding:0 20px 18px}
+
+/* ── Contact section ── */
+.contact-wrap{
+  margin-top:64px;padding:36px 28px;
+  background:linear-gradient(135deg,rgba(212,175,55,.06),rgba(212,175,55,.01));
+  border:1px solid var(--bg);border-radius:var(--r4);position:relative;overflow:hidden;
+}
+.contact-wrap::before{
+  content:'';position:absolute;top:-40px;left:-40px;width:160px;height:160px;
+  background:radial-gradient(circle,rgba(212,175,55,.1) 0%,transparent 70%);pointer-events:none;
+}
+.contact-head{text-align:center;margin-bottom:26px;position:relative;z-index:1}
+.contact-title{font-family:'Cinzel',serif;font-size:20px;font-weight:600;color:var(--tw);margin-bottom:6px}
+.contact-sub{font-size:13px;color:var(--tg)}
+
+.contact-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:14px;position:relative;z-index:1;
+}
+.contact-card{
+  background:var(--card);border:1px solid var(--b1);border-radius:var(--r2);
+  padding:20px;display:flex;flex-direction:column;gap:10px;transition:all var(--tr);
+}
+.contact-card:hover{border-color:var(--bg);transform:translateY(-2px)}
+.contact-card-head{display:flex;align-items:center;gap:10px}
+.contact-icon{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  display:grid;place-items:center;font-size:18px;
+  background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(212,175,55,.03));
+  border:1px solid var(--bg);
+}
+.contact-name{font-size:14px;font-weight:700;color:var(--tw)}
+.contact-value{font-size:13px;color:var(--gold);font-weight:600;direction:ltr;text-align:right;word-break:break-all}
+.contact-note{font-size:11.5px;color:var(--tg);line-height:1.6}
+.contact-btn{
+  margin-top:4px;display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:9px;border:1px solid var(--bg);border-radius:99px;
+  color:var(--gold);font-size:12px;font-weight:700;letter-spacing:.04em;
+  transition:all var(--tr);
+}
+.contact-btn:hover{background:var(--gold);color:#060606;box-shadow:var(--sg2)}
+
+/* ── Footer ── */
+.page-footer{
+  margin-top:70px;padding-top:24px;border-top:1px solid var(--b1);
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;
+  font-size:11.5px;color:var(--tm);
+}
+.page-footer a{color:var(--tg);transition:color var(--tr)}
+.page-footer a:hover{color:var(--gold)}
+.footer-links{display:flex;gap:18px;flex-wrap:wrap}
+
+@media(max-width:640px){
+  .page{padding:40px 16px 60px}
+  .topbar{padding:0 14px}
+  .tb-logo-tag{display:none}
+  .contact-wrap{padding:26px 18px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Zalij Geometric Background ── -->
+<div id="zalij-bg" aria-hidden="true">
+  <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="zalijPatternSupport" width="120" height="120" patternUnits="userSpaceOnUse">
+        <g fill="none" stroke="#D4AF37" stroke-width="0.6">
+          <polygon points="60,4 116,32 116,88 60,116 4,88 4,32"/>
+          <polygon points="60,20 100,40 100,80 60,100 20,80 20,40"/>
+          <circle cx="60" cy="60" r="14"/>
+        </g>
+      </pattern>
+    </defs>
+    <rect width="800" height="800" fill="url(#zalijPatternSupport)"/>
+  </svg>
+</div>
+
+<!-- ── TopBar ── -->
+<div class="topbar">
+  <div class="tb-logo">
+    <div class="tb-logo-mark">Z</div>
+    <div>
+      <div class="tb-logo-name">Zunexa</div>
+      <div class="tb-logo-tag">مركز الدعم</div>
+    </div>
+  </div>
+  <a href="ai.html" class="tb-back">
+    <span>← رجوع إلى Zunexa</span>
+  </a>
+</div>
+
+<!-- ── Page ── -->
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Zunexa Support Center</div>
+    <div class="gold-hr"></div>
+    <h1 class="hero-title">ابحث عن إجابات أو <span>تصفح حسب الموضوع</span></h1>
+    <p class="hero-sub">كل ما تحتاج معرفته حول Zunexa — الحساب، الخطط، الفوترة، والدعم التقني — فمكان واحد.</p>
+
+    <!-- Search bar -->
+    <div class="search-wrap">
+      <input type="text" id="supportSearch" class="search-input" placeholder="اكتب سؤالك أو كلمة مفتاحية..." oninput="filterFAQ(this.value)">
+      <span class="search-icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.601 8.39897C18.269 8.06702 17.7309 8.06702 17.3989 8.39897L12 13.7979L6.60099 8.39897C6.26904 8.06702 5.73086 8.06702 5.39891 8.39897C5.06696 8.73091 5.06696 9.2691 5.39891 9.60105L11.3989 15.601C11.7309 15.933 12.269 15.933 12.601 15.601L18.601 9.60105C18.9329 9.2691 18.9329 8.73091 18.601 8.39897Z" fill="currentColor"></path></svg>
+      </span>
+    </div>
+
+    <!-- Language selector -->
+    <div class="lang-wrap">
+      <div class="lang-box" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg>
+        <span id="langCurrentLabel">English</span>
+      </div>
+      <select class="peer" aria-label="Change language" id="language-selector" onchange="document.getElementById('langCurrentLabel').textContent=this.options[this.selectedIndex].text">
+        <option value="/en/" class="text-black" selected>English</option>
+        <option value="/fr/" class="text-black">Français</option>
+        <option value="/de/" class="text-black">Deutsch</option>
+        <option value="/id/" class="text-black">Bahasa Indonesia</option>
+        <option value="/it/" class="text-black">Italiano</option>
+        <option value="/ja/" class="text-black">日本語</option>
+        <option value="/ko/" class="text-black">한국어</option>
+        <option value="/pt/" class="text-black">Português</option>
+        <option value="/ru/" class="text-black">Pусский</option>
+        <option value="/zh-CN/" class="text-black">简体中文</option>
+        <option value="/es/" class="text-black">Español</option>
+        <option value="/zh-TW/" class="text-black">繁體中文</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Browse by topic -->
+  <div class="section-label">تصفح حسب الموضوع</div>
+  <div class="topics-grid">
+    <a class="topic-card" href="#faq-account">
+      <div class="topic-icon">👤</div>
+      <div class="topic-title">الحساب والدخول</div>
+      <div class="topic-desc">إنشاء الحساب، تسجيل الدخول، استعادة كلمة المرور.</div>
+      <div class="topic-count">4 مقالات</div>
+    </a>
+    <a class="topic-card" href="#faq-billing">
+      <div class="topic-icon">💳</div>
+      <div class="topic-title">الخطط والفوترة</div>
+      <div class="topic-desc">أكواد التفعيل، الترقية، وإدارة الاشتراك.</div>
+      <div class="topic-count">5 مقالات</div>
+    </a>
+    <a class="topic-card" href="#faq-ai">
+      <div class="topic-icon">✦</div>
+      <div class="topic-title">استخدام Zunexa AI</div>
+      <div class="topic-desc">النماذج، مستويات الجهد، والملفات المدعومة.</div>
+      <div class="topic-count">6 مقالات</div>
+    </a>
+    <a class="topic-card" href="#faq-privacy">
+      <div class="topic-icon">🔒</div>
+      <div class="topic-title">الخصوصية والأمان</div>
+      <div class="topic-desc">كيف نحمي بياناتك ومحادثاتك.</div>
+      <div class="topic-count">3 مقالات</div>
+    </a>
+    <a class="topic-card" href="#faq-technical">
+      <div class="topic-icon">⚙</div>
+      <div class="topic-title">مشاكل تقنية</div>
+      <div class="topic-desc">حل المشاكل الشائعة والأعطال.</div>
+      <div class="topic-count">4 مقالات</div>
+    </a>
+    <a class="topic-card" href="#contact">
+      <div class="topic-icon">✉</div>
+      <div class="topic-title">تواصل معنا</div>
+      <div class="topic-desc">لم تجد إجابتك؟ راسلنا مباشرة.</div>
+      <div class="topic-count">3 قنوات</div>
+    </a>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section-label">الأسئلة الشائعة</div>
+  <div class="faq-wrap" id="faqWrap">
+    <div class="faq-item" data-topic="account" id="faq-account">
+      <button class="faq-q" onclick="toggleFAQ(this)">
+        <span>كيف أنشئ حساباً جديداً على Zunexa؟</span>
+        <span class="fi">＋</span>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">توجه إلى صفحة تسجيل الدخول، اختر تبويب "إنشاء حساب"، وأدخل اسمك وبريدك الإلكتروني وكلمة مرور. يمكنك أيضاً التسجيل مباشرة عبر Google أو GitHub بضغطة واحدة.</div></div>
+    </div>
+    <div class="faq-item" data-topic="account">
+      <button class="faq-q" onclick="toggleFAQ(this)">
+        <span>نسيت كلمة المرور، ماذا أفعل؟</span>
+        <span class="fi">＋</span>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">من صفحة تسجيل الدخول اضغط على رابط "نسيت كلمة المرور؟" وسنرسل لك رابط إعادة تعيين إلى بريدك الإلكتروني المسجل.</div></div>
+    </div>
+    <div class="faq-item" data-topic="billing" id="faq-billing">
+      <button class="faq-q" onclick="toggleFAQ(this)">
+        <span>كيف أستخدم كود تفعيل الخطة؟</span>
+        <span class="fi">＋</span>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">عند تسجيل الدخول أو إنشاء الحساب، اضغط على "لديك كود خطة؟" وأدخل الكود الخاص بك (مثال: ZX-PRO-XXXX). سيتم تفعيل الخطة تلقائياً بعد التحقق منه.</div></div>
+    </div>
+    <div class="faq-item" data-topic="billing">
+      <button class="faq-q" onclick="toggleFAQ(this)">
+        <span>ما الفرق بين خطط Free وPlus وPro وSenior؟</span>
+        <span class="fi">＋</span>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">كل خطة توفر عدد رموز (tokens) شهرية مختلفة ووصولاً لنماذج ذكاء اصطناعي أقوى. يمكنك مقارنة التفاصيل الكاملة من قسم "الخطط والفوترة" داخل حسابك.</div></div>
+    </div>
+    <div class="faq-item" data-topic="ai" id="faq-ai">
+      <button class="faq-q" onclick="toggleFAQ(this)">
+        <span>ما الفرق بين Zunexa Lite وPro وMax؟</span>
+        <span class="fi">＋</span>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">Lite يعمل محلياً بدون اتصال بالإنترنت للإجابات السريعة. Pro يجمع بين قاعدة المعرفة المحلية والذكاء الاصطناعي السحابي. Max يوفر أقصى سياق ودقة للمهام المعقدة.</div></div>
+    </div>
+    <div class="faq-item" data-topic="ai">
+      <button class="faq-q" onclick="toggleFAQ(this)">
+        <span>ما هي أنواع الملفات التي يمكنني رفعها؟</span>
+        <span class="fi">＋</span>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">يدعم Zunexa الصور، ملفات PDF وWord وExcel، النصوص، ملفات الكود (JS, Python, HTML...)، وملفات الصوت — مع حد أقصى للحجم حسب خطتك.</div></div>
+    </div>
+    <div class="faq-item" data-topic="privacy" id="faq-privacy">
+      <button class="faq-q" onclick="toggleFAQ(this)">
+        <span>هل محادثاتي محفوظة وآمنة؟</span>
+        <span class="fi">＋</span>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">نعم، محادثاتك مرتبطة بحسابك المصادق عليه فقط عبر Supabase مع سياسات أمان صارمة (RLS)، ولا يمكن لأي مستخدم آخر الوصول إليها.</div></div>
+    </div>
+    <div class="faq-item" data-topic="technical" id="faq-technical">
+      <button class="faq-q" onclick="toggleFAQ(this)">
+        <span>التطبيق لا يستجيب أو بطيء، ما الحل؟</span>
+        <span class="fi">＋</span>
+      </button>
+      <div class="faq-a"><div class="faq-a-inner">جرّب تحديث الصفحة، التأكد من اتصالك بالإنترنت، أو مسح ذاكرة التخزين المؤقت للمتصفح. إذا استمرت المشكلة، تواصل معنا عبر القنوات أسفله مع وصف دقيق للمشكلة.</div></div>
+    </div>
+  </div>
+
+  <!-- Contact -->
+  <div class="contact-wrap" id="contact">
+    <div class="contact-head">
+      <div class="contact-title">تواصل مع مالك المنصة</div>
+      <div class="contact-sub">لم تجد ما تبحث عنه؟ راسلنا مباشرة عبر إحدى القنوات التالية</div>
+    </div>
+    <div class="contact-grid">
+      <!-- WhatsApp -->
+      <div class="contact-card">
+        <div class="contact-card-head">
+          <div class="contact-icon">💬</div>
+          <div>
+            <div class="contact-name">واتساب بزنس</div>
+          </div>
+        </div>
+        <div class="contact-value">0772564622</div>
+        <a class="contact-btn" href="https://wa.me/212772564622" target="_blank" rel="noopener">راسلنا على واتساب</a>
+      </div>
+
+      <!-- Email -->
+      <div class="contact-card">
+        <div class="contact-card-head">
+          <div class="contact-icon">✉</div>
+          <div>
+            <div class="contact-name">البريد الإلكتروني</div>
+          </div>
+        </div>
+        <div class="contact-value">mrahmed20101119@gmail.com</div>
+        <div class="contact-note">⚠ نظراً للإقبال الكبير على هذا البريد، قد يستغرق الرد بعض الوقت — شكراً لصبركم.</div>
+        <a class="contact-btn" href="mailto:mrahmed20101119@gmail.com">أرسل بريداً إلكترونياً</a>
+      </div>
+
+      <!-- Instagram -->
+      <div class="contact-card">
+        <div class="contact-card-head">
+          <div class="contact-icon">📷</div>
+          <div>
+            <div class="contact-name">إنستغرام</div>
+          </div>
+        </div>
+        <div class="contact-value">@zunexa_ai</div>
+        <div class="contact-note">تابعنا لآخر التحديثات، أو راسلنا مباشرة (DM).</div>
+        <a class="contact-btn" href="https://instagram.com/zunexa_ai" target="_blank" rel="noopener">زيارة الحساب</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <div>© <span id="yearNow"></span> Zunexa — جميع الحقوق محفوظة</div>
+    <div class="footer-links">
+      <a href="ai.html">التطبيق</a>
+      <a href="index.html">تسجيل الدخول</a>
+      <a href="mailto:mrahmed20101119@gmail.com">راسلنا</a>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+document.getElementById('yearNow').textContent = new Date().getFullYear();
+
+function toggleFAQ(btn){
+  const item = btn.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
+
+function filterFAQ(query){
+  const q = query.trim().toLowerCase();
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = (!q || text.includes(q)) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
