@@ -134,19 +134,21 @@ img{max-width:100%;display:block}
 
 /* Respect reduced-motion preference for users with vestibular
    disorders or motion sensitivity — disable decorative animation. */
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{
-    animation-duration:.01ms!important;
-    animation-iteration-count:1!important;
-    transition-duration:.01ms!important;
-    scroll-behavior:auto!important;
+@media (max-width: 768px) {
+  /* حيد البلور نهائياً وافرض خلفية كحلة صلبة */
+  .sidebar, .topbar, .input-zone, .modal-wrap, .overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: #0a0a0a !important;
+    filter: none !important;
+    -webkit-filter: none !important;
+  }
+
+  /* حبس الأنيميشن فالتلفون باش يرتاح الـ GPU */
+  #pCanvas { 
+    display: none !important; 
   }
 }
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:2px;height:2px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--gdim);border-radius:99px}
 
 /* ════════════════════════════════════════════════════════
    ZALIJ GEOMETRIC BACKGROUND — High Intensity
