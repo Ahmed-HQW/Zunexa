@@ -206,7 +206,7 @@ img{max-width:100%;display:block}
    APP SHELL
 ════════════════════════════════════════════════════════ */
 .shell{
-  position:relative;z-index:2;
+  position:relative;z-index:99;
   display:flex;width:100%;height:100vh;height:100dvh;
 }
 
@@ -5503,17 +5503,6 @@ function isToolsEnabled() { return localStorage.getItem('zx_tools_enabled') !== 
 /* ── Optional free-tier API keys (user-pasted, localStorage-only) ── */
 function getApiKeys() { try { return JSON.parse(localStorage.getItem('zx_api_keys') || '{}'); } catch(e){ return {}; } }
 function getApiKey(name) { return (getApiKeys()[name] || '').trim(); }
-function saveApiKeys(showToast) {
-  const keys = {
-    hf:      (document.getElementById('keyHF')||{}).value || '',
-    deepl:   (document.getElementById('keyDeepL')||{}).value || '',
-    voicerss:(document.getElementById('keyVoiceRSS')||{}).value || '',
-    tavily:  (document.getElementById('keyTavily')||{}).value || '',
-    serper:  (document.getElementById('keySerper')||{}).value || ''
-  };
-  localStorage.setItem('zx_api_keys', JSON.stringify(keys));
-  if (showToast) toast('✓ تم حفظ المفاتيح محلياً فالمتصفح');
-}
 function loadApiKeysIntoUI() {
   const k = getApiKeys();
   if (document.getElementById('keyHF'))       document.getElementById('keyHF').value = k.hf || '';
@@ -5716,108 +5705,6 @@ function clearFile() {
   attachedFile = null;
   document.getElementById('attachBtn').classList.remove('has-file');
   document.getElementById('fileChipZone').innerHTML = '';
-}
-
-/* ════════════════════════════════════════════════════════════
-   QUICK-COMMAND TOOLS — free, keyless third-party APIs
-   /طقس or /weather <city>    → Open-Meteo (no key)
-   /خريطة or /map <place>     → OpenStreetMap Nominatim (no key)
-   /جيت or /github <query>    → GitHub public REST API (no key, rate-limited)
-   /اخبار or /news <query>    → Hacker News Algolia API (no key)
-   /صورة or /image <prompt>   → Pollinations image generation (no key)
-   /ترجمة or /translate <txt> → MyMemory Translation (no key)
-   /عملة or /currency <amt>   → exchangerate.host (no key)
-   /قاموس or /define <word>   → dictionaryapi.dev (no key)
-   /اقتباس or /quote          → quotable.io (no key)
-   /ip or /myip               → ipapi.co (no key)
-════════════════════════════════════════════════════════════ */
-
-const COMMANDS = {
-  '/طقس': weather, '/weather': weather,
-  '/خريطة': map, '/map': map,
-  '/جيت': github, '/github': github,
-  '/اخبار': news, '/news': news,
-  '/صورة': image, '/image': image,
-  '/ترجمة': translate, '/translate': translate,
-  '/عملة': currency, '/currency': currency,
-  '/قاموس': define, '/define': define,
-  '/اقتباس': quote, '/quote': quote,
-  '/ip': myip, '/myip': myip,
-};
-
-async function weather(city) {
-  const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`).then(r => r.json());
-  if (!geo.results?.length) return `❌ ماكايناش المدينة: ${city}`;
-  const { latitude, longitude, name } = geo.results[0];
-  const w = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`).then(r => r.json());
-  const c = w.current_weather;
-  return `🌤️ الطقس ف ${name}\n🌡️ ${c.temperature}°C | 💨 ${c.windspeed} km/h`;
-}
-
-async function map(place) {
-  const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(place)}&format=json&limit=1`, {
-    headers: { 'User-Agent': 'QuickCommandBot/1.0' }
-  }).then(r => r.json());
-  if (!r.length) return `❌ ماكاين والو: ${place}`;
-  const { display_name, lat, lon } = r[0];
-  return `📍 ${display_name}\n🔗 https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=15/${lat}/${lon}`;
-}
-
-async function github(query) {
-  const r = await fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=3`).then(r => r.json());
-  if (!r.items?.length) return `❌ ماكاين والو`;
-  return r.items.map(repo => `⭐ ${repo.stargazers_count} | ${repo.full_name}\n${repo.html_url}`).join('\n\n');
-}
-
-async function news(query) {
-  const r = await fetch(`https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(query)}&tags=story&hitsPerPage=3`).then(r => r.json());
-  if (!r.hits?.length) return `❌ ماكاين والو`;
-  return r.hits.map(h => `📰 ${h.title}\n${h.url || `https://news.ycombinator.com/item?id=${h.objectID}`}`).join('\n\n');
-}
-
-function image(prompt) {
-  return `🎨 https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
-}
-
-async function translate(text, from = 'en', to = 'ar') {
-  const r = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`).then(r => r.json());
-  return `🌐 ${r.responseData.translatedText}`;
-}
-
-async function currency(query) {
-  const [amt, from, , to] = query.split(' ');
-  const r = await fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amt}`).then(r => r.json());
-  return `💱 ${amt} ${from} = ${r.result?.toFixed(2)} ${to}`;
-}
-
-async function define(word) {
-  const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`).then(r => r.json());
-  if (!Array.isArray(r)) return `❌ ماكاين تعريف ل: ${word}`;
-  const def = r[0].meanings[0].definitions[0].definition;
-  return `📖 ${word}: ${def}`;
-}
-
-async function quote() {
-  const r = await fetch(`https://api.quotable.io/random`).then(r => r.json());
-  return `💬 "${r.content}"\n— ${r.author}`;
-}
-
-async function myip() {
-  const r = await fetch(`https://ipapi.co/json/`).then(r => r.json());
-  return `🌍 IP: ${r.ip}\n📍 ${r.city}, ${r.country_name}`;
-}
-
-// ─── router ───
-async function handleCommand(input) {
-  const [cmd, ...rest] = input.trim().split(' ');
-  const arg = rest.join(' ');
-  const fn = COMMANDS[cmd];
-  if (!fn) return `❌ الكوماند ماكايناش: ${cmd}`;
-  try {
-    return await fn(arg);
-  } catch (e) {
-    return `⚠️ error: ${e.message}`;
-  }
 }
 
 /* ════════════════════════════════════════════════════════════
