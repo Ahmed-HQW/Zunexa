@@ -1929,10 +1929,15 @@ function detectZxPlatform() {
 }
 
 const ZX_DOWNLOAD_MAP = {
-  android: { url: 'app/android/zunexa_signed.apk',            label: 'تطبيق Android (APK)' },
-  linux:   { url: 'app/linux/zunexa_0.1.0_amd64.AppImage',    label: 'تطبيق Linux (AppImage)' },
+  android: { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_signed.apk',            label: 'تطبيق Android (APK)' },
+  linux:   { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_0.1.0_amd64.AppImage',    label: 'تطبيق Linux (AppImage)' },
   windows: { url: 'app/windows/zunexa.exe',                   label: 'تطبيق Windows (EXE)' },
 };
+
+// Linux .deb alternative (Debian/Ubuntu-family) — offered alongside the
+// AppImage default above, since a distro can't be told apart from the
+// user agent alone.
+const ZX_LINUX_DEB_URL = 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_0.1.0_amd64.deb';
 
 function openDownloadsMenu() {
   const platform = detectZxPlatform();
