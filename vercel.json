@@ -3,7 +3,6 @@
   "name": "zunexa-archon",
   "cleanUrls": true,
   "trailingSlash": false,
-
   "rewrites": [
     { "source": "/",          "destination": "/dashboard.html" },
     { "source": "/ai",        "destination": "/ai.html" },
@@ -16,13 +15,11 @@
     { "source": "/CONTACT",     "destination": "/CONTACT.html" },
     { "source": "/affiliat",    "destination": "/affiliat.html" }
   ],
-
   "redirects": [
     { "source": "/admin",     "destination": "/owner_admin", "permanent": false },
     { "source": "/contact",   "destination": "/CONTACT",     "permanent": true  },
     { "source": "/affiliate", "destination": "/affiliat",    "permanent": true  }
   ],
-
   "headers": [
     {
       "source": "/(.*)",
@@ -34,7 +31,7 @@
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(self), geolocation=(), payment=()" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://*.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https: https://*.supabase.co https://text.pollinations.ai; worker-src 'self' blob: https://cdnjs.cloudflare.com; frame-ancestors 'none';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://*.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https: https://*.supabase.co https://text.pollinations.ai; worker-src 'self' blob: https://cdnjs.cloudflare.com; frame-ancestors 'none';"
         },
         {
           "key": "Strict-Transport-Security",
@@ -69,43 +66,7 @@
       ]
     },
     {
-      "source": "/sidebar-injection.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=3600" }
-      ]
-    },
-    {
-      "source": "/fab-injection.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=3600" }
-      ]
-    },
-    {
-      "source": "/jarvis-bar.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=3600" }
-      ]
-    },
-    {
-      "source": "/onboarding.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=3600" }
-      ]
-    },
-    {
-      "source": "/translator-bar.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=3600" }
-      ]
-    },
-    {
-      "source": "/i18n-system.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=3600" }
-      ]
-    },
-    {
-      "source": "/zunexa_qa.json",
+     "source": "/zunexa_qa.json",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=600" }
       ]
