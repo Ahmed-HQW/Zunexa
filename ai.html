@@ -54,18 +54,18 @@
 
   --b1:          #E5E7EB;
   --b2:          #D8DBE0;
-  --bg:          rgba(17,17,17,.10);
-  --bgh:         rgba(17,17,17,.28);
-  --bgp:         rgba(17,17,17,.05);
+  --bg:          rgba(212,175,55,.10);
+  --bgh:         rgba(212,175,55,.28);
+  --bgp:         rgba(212,175,55,.05);
 
-  --gold:        #111111;
-  --gold2:       #2A2A2A;
-  --gold3:       #3D3D3D;
-  --gdim:        #6B7280;
-  --gglow:       rgba(17,17,17,.08);
-  --gtrace:      rgba(17,17,17,.04);
+  --gold:        #D4AF37;
+  --gold2:       #B8922E;
+  --gold3:       #8a7022;
+  --gdim:        #8a7022;
+  --gglow:       rgba(212,175,55,.14);
+  --gtrace:      rgba(212,175,55,.06);
 
-  --tw:          #0F1115;
+  --tw:          #111111;
   --tg:          #6B7280;
   --tm:          #9CA3AF;
 
@@ -83,8 +83,8 @@
   --r3: 17px;
   --r4: 24px;
 
-  --sg: 0 0 0 1px rgba(17,17,17,.06) inset, 0 2px 14px rgba(17,17,17,.06);
-  --sg2: 0 2px 10px rgba(17,17,17,.10), 0 0 0 1px rgba(17,17,17,.05);
+  --sg: 0 0 0 1px rgba(212,175,55,.10) inset, 0 2px 14px rgba(212,175,55,.08);
+  --sg2: 0 2px 10px rgba(212,175,55,.18), 0 0 0 1px rgba(212,175,55,.10);
 }
 
 /* ── RESET ── */
@@ -94,6 +94,7 @@ body{
   font-family:'Rajdhani',sans-serif;
   background:var(--void);
   color:var(--tw);
+  height:100vh;
   height:100dvh;
   display:flex;
   overflow:hidden;
@@ -141,7 +142,7 @@ img{max-width:100%;display:block}
 ════════════════════════════════════════════════════════ */
 .shell{
   position:relative;z-index:2;
-  display:flex;width:100%;height:100dvh;
+  display:flex;width:100%;height:100vh;height:100dvh;
 }
 
 /* ── OVERLAY (mobile) ── */
@@ -264,6 +265,22 @@ img{max-width:100%;display:block}
 .sb-uname{font-size:12.5px;font-weight:600;color:var(--tw);line-height:1.2}
 .sb-uplan{font-size:9.5px;color:var(--gdim);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
 .sb-uemail{font-size:9.5px;color:var(--tg);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+
+/* ── Download button — sits inside the user card, next to user info ── */
+.user-icon-button{
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:var(--r1);
+  background:transparent;border:1px solid var(--b1);
+  color:var(--tw);cursor:pointer;transition:all var(--tr);
+  position:relative;z-index:2;
+}
+.user-icon-button:hover{background:var(--gold);border-color:var(--gold);color:#fff}
+.user-icon-button .download-icon{width:18px;height:18px;flex-shrink:0;color:currentColor}
+.user-icon-button .download-icon path{fill:currentColor}
+@media(max-width:768px){
+  .user-icon-button{width:32px;height:32px}
+  .user-icon-button .download-icon{width:16px;height:16px}
+}
 
 /* ── Upgrade CTA ── */
 .sb-upgrade{
@@ -821,7 +838,12 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
   background:#FFFFFF;border:1px solid var(--b1);border-radius:var(--r2);
   box-shadow:0 10px 30px rgba(15,17,21,.12);padding:6px;
 }
-.model-sel.open .model-sel-menu{display:block;animation:fadeUp .14s ease}
+.model-sel.open .model-sel-menu{display:block;animation:selMenuPop .28s cubic-bezier(.34,1.56,.64,1)}
+@keyframes selMenuPop{
+  0%{opacity:0;transform:translateY(10px) scale(.92)}
+  60%{opacity:1;transform:translateY(-2px) scale(1.02)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
 .model-sel-item{
   display:flex;flex-direction:column;gap:1px;width:100%;padding:10px 10px;border-radius:9px;
   color:var(--tw);text-align:right;transition:all var(--tr);min-height:44px;
@@ -830,7 +852,32 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 .model-sel-item.on{background:var(--card)}
 .model-sel-item b{font-size:12.5px;color:var(--gold)}
 .model-sel-item span{font-size:10.5px;color:var(--tg)}
-@media(max-width:768px){ .model-sel-menu{right:auto;left:0} }
+
+/* Mobile: menu opens as a centered pop-sheet instead of a dropdown that
+   can render off-screen below a fixed-position trigger. Solid, instant,
+   and always fully visible regardless of where the button sits. */
+@media(max-width:768px){
+  .sel-menu-backdrop{
+    display:none;position:fixed;inset:0;z-index:97;
+    background:rgba(15,17,21,.45);
+  }
+  .model-sel.open .sel-menu-backdrop{display:block;animation:selBackdropFade .2s ease}
+  @keyframes selBackdropFade{from{opacity:0}to{opacity:1}}
+  .model-sel-menu{
+    position:fixed;top:auto;bottom:0;left:0;right:0;
+    min-width:0;width:100%;max-width:100%;
+    border-radius:var(--r4) var(--r4) 0 0;
+    padding:10px 10px calc(18px + env(safe-area-inset-bottom));
+    box-shadow:0 -8px 30px rgba(15,17,21,.18);
+    z-index:98;
+  }
+  .model-sel.open .model-sel-menu{animation:selSheetUp .32s cubic-bezier(.32,.72,0,1)}
+  @keyframes selSheetUp{
+    0%{opacity:0;transform:translateY(100%)}
+    100%{opacity:1;transform:translateY(0)}
+  }
+  .model-sel-item{padding:14px 12px;min-height:50px}
+}
 
 /* ════════════════════════════════════════════════════════
    INPUT ZONE — solid white, zero blur
@@ -1039,7 +1086,7 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
 @media(max-width:768px){
   :root{--sw:280px}
   .sidebar{
-    position:fixed;top:0;right:0;height:100dvh;
+    position:fixed;top:0;right:0;height:100vh;height:100dvh;
     transform:translateX(100%);
     box-shadow:-2px 0 16px rgba(15,17,21,.12);
   }
@@ -1222,11 +1269,16 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
   <div class="sb-user">
     <div class="sb-avatar" id="uAvatar" onclick="document.getElementById('avatarFileInput').click()" title="غيّر صورتك">Z</div>
     <input type="file" id="avatarFileInput" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none" onchange="onAvatarPicked(event)">
-    <div style="min-width:0">
+    <div style="min-width:0;flex:1">
       <div class="sb-uname"  id="uName">جاري التحميل...</div>
       <div class="sb-uplan"  id="uPlan">—</div>
       <div class="sb-uemail" id="uEmail">—</div>
     </div>
+    <button type="button" class="user-icon-button user-download-button" aria-label="الحصول على التطبيق" aria-expanded="false" aria-haspopup="dialog" onclick="openDownloadsMenu()" title="تحميل التطبيق">
+      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" class="iconify download-icon" width="18" height="18" viewBox="0 0 1024 1024" name="Download">
+        <path d="M512 126.976a36.864 36.864 0 0 1 36.864 36.864v347.91424l119.11168-119.11168a36.864 36.864 0 1 1 52.14208 52.14208l-182.0672 182.02624a36.864 36.864 0 0 1-52.10112 0l-182.0672-182.02624a36.864 36.864 0 0 1 52.14208-52.14208l119.11168 119.11168V163.84a36.864 36.864 0 0 1 36.864-36.864zM184.32 564.71552a36.864 36.864 0 0 1 36.864 36.864v145.65376a35.96288 35.96288 0 0 0 35.96288 35.96288h509.70624a35.96288 35.96288 0 0 0 35.96288-35.96288v-145.65376a36.864 36.864 0 0 1 73.728 0v145.65376a109.69088 109.69088 0 0 1-109.69088 109.69088H257.14688A109.69088 109.69088 0 0 1 147.456 747.23328v-145.65376a36.864 36.864 0 0 1 36.864-36.864z" fill="currentColor"></path>
+      </svg>
+    </button>
   </div>
 
   <!-- Billing -->
@@ -1247,6 +1299,11 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
     <span class="fi">🖼</span> الصور والملفات
   </button>
 
+  <!-- Tasks / Calendar -->
+  <button class="sb-fbtn" onclick="openTasks()" style="margin:2px 6px 0">
+    <span class="fi">🗓</span> التقويم والمهام
+  </button>
+
   <!-- Footer -->
   <div class="sb-footer">
     <button class="sb-fbtn dl" onclick="location.href='downloads.html'">
@@ -1254,9 +1311,6 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
     </button>
     <button class="sb-fbtn" id="installBtn" onclick="installPWA()" style="display:none">
       <span class="fi">📲</span> تثبيت Zunexa
-    </button>
-    <button class="sb-fbtn" onclick="location.href='dashboard.html'">
-      <span class="fi">⊞</span> لوحة التحكم
     </button>
     <button class="sb-fbtn" onclick="openSettings()">
       <span class="fi">⚙</span> الإعدادات
@@ -1282,6 +1336,7 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
       <button id="tempChatBtn" onclick="toggleTempChat()" title="محادثة مؤقتة" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r1);color:var(--tg);transition:all var(--tr)"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="group" aria-hidden="true" style="flex-shrink: 0;"><g class="group-hover:animate-[look-around_2.4s_ease-in-out_infinite] group-active:animate-none"><path d="M6.99951 8.66672C7.5518 8.66672 7.99951 9.11443 7.99951 9.66672C7.9993 10.2188 7.55166 10.6667 6.99951 10.6667C6.44736 10.6667 5.99973 10.2188 5.99951 9.66672C5.99951 9.11443 6.44723 8.66672 6.99951 8.66672Z"></path><path d="M12.9995 8.66672C13.5518 8.66672 13.9995 9.11443 13.9995 9.66672C13.9993 10.2188 13.5517 10.6667 12.9995 10.6667C12.4474 10.6667 11.9997 10.2188 11.9995 9.66672C11.9995 9.11443 12.4472 8.66672 12.9995 8.66672Z"></path></g><path fill-rule="evenodd" clip-rule="evenodd" d="M10 2C14.326 2.00018 17.9998 5.67403 18 10V17.3123C17.9997 17.5427 17.8411 17.8079 17.6172 17.8623C17.3932 17.9165 17.1614 17.7456 17.0557 17.5408C16.7805 17.007 16.3658 16.5937 16.062 16.2878C15.7793 16.0034 15.4503 15.8338 14.9771 15.8337C14.2092 15.8339 13.4371 16.3862 12.9487 17.53C12.8701 17.7138 12.6887 17.8621 12.4888 17.8623C12.2888 17.8623 12.1076 17.7138 12.0288 17.53C11.5404 16.386 10.7674 15.8339 9.99951 15.8337C9.23161 15.8339 8.45959 16.386 7.97119 17.53C7.89253 17.7138 7.71118 17.8621 7.51123 17.8623C7.31122 17.8623 7.13006 17.7138 7.05127 17.53C6.56296 16.3862 5.78982 15.834 5.02197 15.8337C4.54861 15.8338 4.21974 16.0032 3.93701 16.2878C3.63309 16.5937 3.21952 17.0715 2.94434 17.6055C2.83865 17.8103 2.60589 17.9165 2.38184 17.8623C2.15801 17.8079 2.00033 17.6073 2 17.377V10C2.00018 5.67403 5.67403 2.00018 10 2ZM10 3C6.22631 3.00018 3.00018 6.22631 3 10V15.8633C3.0205 15.8414 3.20696 15.6049 3.22803 15.5837C3.67524 15.1336 4.251 14.8338 5.02197 14.8337C6.03838 14.8341 6.90232 15.4025 7.51025 16.2937C8.11828 15.4018 8.9824 14.8338 9.99951 14.8337C11.0163 14.8338 11.8798 15.4022 12.4878 16.2937C13.0959 15.4018 13.9601 14.8339 14.9771 14.8337C15.7481 14.8338 16.3247 15.1336 16.772 15.5837C16.772 15.5837 16.9796 15.812 17 15.8337V10C16.9998 6.22631 13.7737 3.00018 10 3Z"></path></svg></button>
       <div class="model-sel" id="tbShortcuts">
         <button class="model-sel-btn" id="tbShortcutsBtn" onclick="toggleTbShortcuts()" title="المزيد" style="padding:6px 9px">⋯</button>
+        <div class="sel-menu-backdrop" onclick="toggleTbShortcuts(false)"></div>
         <div class="model-sel-menu" id="tbShortcutsMenu" style="min-width:190px">
           <button class="model-sel-item" id="shareChatBtn" onclick="shareCurrentChat();toggleTbShortcuts(false)">🔗 مشاركة المحادثة</button>
         </div>
@@ -1316,6 +1371,7 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
           <span id="effortSelLabel">⚡ سريع</span>
           <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5.5 7.5L10 12l4.5-4.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
+        <div class="sel-menu-backdrop" onclick="toggleEffortSel(false)"></div>
         <div class="model-sel-menu" id="effortSelMenu">
           <button class="model-sel-item" data-effort="quick" onclick="setEffortUI('quick');toggleEffortSel(false)" title="بحث محلي فقط، بدون AI توليدي"><b>⚡ سريع</b></button>
           <button class="model-sel-item" data-effort="balanced" onclick="setEffortUI('balanced');toggleEffortSel(false)"><b>⚖ متوازن</b></button>
@@ -1329,6 +1385,7 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
           <span id="modelSelLabel">Zunexa Pro</span>
           <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5.5 7.5L10 12l4.5-4.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
+        <div class="sel-menu-backdrop" onclick="toggleModelSel(false)"></div>
         <div class="model-sel-menu" id="modelSelMenu">
           <button class="model-sel-item" data-model="lite" onclick="setModelUI('lite');toggleModelSel(false)"><b>Zunexa Lite</b><span>محلي فقط، بدون ذكاء انترنت</span></button>
           <button class="model-sel-item" data-model="pro" onclick="setModelUI('pro');toggleModelSel(false)"><b>Zunexa Pro</b><span>محلي + Zunexa Brain</span></button>
@@ -1433,6 +1490,48 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
     </div>
     <div class="lib-grid" id="libImages"></div>
     <div class="lib-list" id="libFiles" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     TASKS / CALENDAR MODAL
+     Reads/writes public.zx_tasks (see sql/zunexa_tasks_calendar.sql)
+     when a Supabase session exists; falls back to localStorage
+     for guests or if the table isn't set up yet (fail open, same
+     pattern as checkSessionLimitOnBoot above).
+══════════════════════════════════════════════════ -->
+<div class="modal-wrap" id="tasksModal">
+  <div class="modal-box wide">
+    <button class="modal-x" onclick="closeTasks()">✕</button>
+    <div class="modal-title">🗓 التقويم والمهام</div>
+    <div class="lib-tabs">
+      <button class="lib-tab on" id="tasksTabList" onclick="switchTasksTab('list')">المهام</button>
+      <button class="lib-tab" id="tasksTabCal" onclick="switchTasksTab('cal')">التقويم</button>
+    </div>
+
+    <!-- Add task -->
+    <div id="tasksAddRow" style="display:flex;gap:8px;margin:4px 0 16px;flex-wrap:wrap">
+      <input type="text" id="taskTitleInput" class="field-input" placeholder="عنوان المهمة..." style="flex:1;min-width:160px" onkeydown="if(event.key==='Enter')addTask()">
+      <input type="date" id="taskDateInput" class="field-input" style="width:150px">
+      <button class="billing-btn btn-gold" onclick="addTask()" style="min-height:44px">＋ إضافة</button>
+    </div>
+
+    <!-- List view -->
+    <div id="tasksListView">
+      <div id="tasksList" style="display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow-y:auto"></div>
+      <div class="lib-empty" id="tasksEmpty" style="display:none">لا توجد مهام بعد<br>زيد وحدة من فوق ✦</div>
+    </div>
+
+    <!-- Calendar view -->
+    <div id="tasksCalView" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <button class="mini-ghost-btn" onclick="shiftCalMonth(-1)">‹ السابق</button>
+        <div id="calMonthLabel" style="font-weight:700;color:var(--gold);font-family:'Cinzel',serif"></div>
+        <button class="mini-ghost-btn" onclick="shiftCalMonth(1)">التالي ›</button>
+      </div>
+      <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:11.5px"></div>
+      <div id="calDayTasks" style="margin-top:14px;display:flex;flex-direction:column;gap:8px"></div>
+    </div>
   </div>
 </div>
 
@@ -1808,6 +1907,55 @@ async function installPWA() {
   await _zxInstallPrompt.userChoice;
   _zxInstallPrompt = null;
   document.getElementById('installBtn').style.display = 'none';
+}
+
+/* ════════════════════════════════════════════════════════════
+   SMART DOWNLOAD — detects the visitor's OS and, when a native
+   build exists for it, starts the download directly (no extra
+   page, no menu to pick from). Falls back to the PWA install
+   flow on platforms with no native package (iOS / macOS / unknown),
+   since those are covered by "Add to Home Screen" / installPWA()
+   instead of a downloadable binary.
+════════════════════════════════════════════════════════════ */
+function detectZxPlatform() {
+  const ua = navigator.userAgent || '';
+  const platform = navigator.userAgentData?.platform || navigator.platform || '';
+  if (/android/i.test(ua)) return 'android';
+  if (/iphone|ipad|ipod/i.test(ua)) return 'ios';
+  if (/win/i.test(platform) || /windows/i.test(ua)) return 'windows';
+  if (/mac/i.test(platform) && !/android/i.test(ua)) return 'mac';
+  if (/linux/i.test(platform) || /linux/i.test(ua)) return 'linux';
+  return 'unknown';
+}
+
+const ZX_DOWNLOAD_MAP = {
+  android: { url: 'app/android/zunexa_signed.apk',            label: 'تطبيق Android (APK)' },
+  linux:   { url: 'app/linux/zunexa_0.1.0_amd64.AppImage',    label: 'تطبيق Linux (AppImage)' },
+  windows: { url: 'app/windows/zunexa.exe',                   label: 'تطبيق Windows (EXE)' },
+};
+
+function openDownloadsMenu() {
+  const platform = detectZxPlatform();
+  const target = ZX_DOWNLOAD_MAP[platform];
+
+  if (target) {
+    // Direct download to the device — matched to the detected OS.
+    const a = document.createElement('a');
+    a.href = target.url;
+    a.download = '';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    toast('⬇ جاري تحميل ' + target.label);
+    return;
+  }
+
+  // iOS / Mac / unknown: no native binary — offer the PWA install instead.
+  if (platform === 'ios') {
+    toast('📲 من Safari: زر مشاركة ⬆ ثم "إضافة إلى الشاشة الرئيسية"');
+  } else {
+    installPWA();
+  }
 }
 
 
@@ -4313,6 +4461,221 @@ function switchLibTab(tab) {
   document.getElementById('libImages').style.display = tab === 'images' ? 'grid' : 'none';
   document.getElementById('libFiles').style.display = tab === 'files' ? 'flex' : 'none';
 }
+
+/* ════════════════════════════════════════════════════════════
+   TASKS / CALENDAR
+   - Logged-in users: reads/writes public.zx_tasks (RLS-protected,
+     see sql/zunexa_tasks_calendar.sql) via Supabase.
+   - Guests / table not deployed yet: falls back to localStorage
+     under 'zx_tasks_local', same fail-open pattern used elsewhere
+     in this file (see checkSessionLimitOnBoot).
+════════════════════════════════════════════════════════════ */
+let _zxTasksCache = [];
+let _zxTasksMode = 'local'; // 'remote' | 'local'
+let _zxCalCursor = new Date();
+_zxCalCursor.setDate(1);
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str == null ? '' : String(str);
+  return d.innerHTML;
+}
+
+function _localTasksRead() {
+  try { return JSON.parse(localStorage.getItem('zx_tasks_local') || '[]'); }
+  catch (e) { return []; }
+}
+function _localTasksWrite(list) {
+  localStorage.setItem('zx_tasks_local', JSON.stringify(list));
+}
+
+async function openTasks() {
+  closeSidebar();
+  document.getElementById('tasksModal').classList.add('on');
+  await loadTasks();
+  switchTasksTab('list');
+}
+function closeTasks() {
+  document.getElementById('tasksModal').classList.remove('on');
+}
+function switchTasksTab(tab) {
+  document.getElementById('tasksTabList').classList.toggle('on', tab === 'list');
+  document.getElementById('tasksTabCal').classList.toggle('on', tab === 'cal');
+  document.getElementById('tasksListView').style.display = tab === 'list' ? 'block' : 'none';
+  document.getElementById('tasksCalView').style.display = tab === 'cal' ? 'block' : 'none';
+  document.getElementById('tasksAddRow').style.display = tab === 'list' ? 'flex' : 'none';
+  if (tab === 'cal') renderCalendar();
+}
+
+async function loadTasks() {
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (session) {
+      const { data, error } = await _SB
+        .from('zx_tasks')
+        .select('id, title, notes, due_at, all_day, done')
+        .eq('user_id', session.user.id)
+        .order('due_at', { ascending: true, nullsFirst: false });
+      if (error) throw error;
+      _zxTasksCache = data || [];
+      _zxTasksMode = 'remote';
+      renderTasksList();
+      return;
+    }
+  } catch (e) {
+    // Table missing / offline / RLS not deployed yet — fail open to local.
+  }
+  _zxTasksCache = _localTasksRead();
+  _zxTasksMode = 'local';
+  renderTasksList();
+}
+
+function renderTasksList() {
+  const el = document.getElementById('tasksList');
+  const empty = document.getElementById('tasksEmpty');
+  if (!_zxTasksCache.length) {
+    el.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  el.innerHTML = _zxTasksCache.map(t => `
+    <div class="lib-file-row" style="justify-content:space-between">
+      <label style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer;min-width:0">
+        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTaskDone('${t.id}', this.checked)" style="width:18px;height:18px;flex-shrink:0">
+        <span style="text-decoration:${t.done ? 'line-through' : 'none'};color:${t.done ? 'var(--tg)' : 'var(--tw)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+          ${escapeHtml(t.title)}${t.due_at ? ' · ' + new Date(t.due_at).toLocaleDateString('ar') : ''}
+        </span>
+      </label>
+      <button class="mini-ghost-btn" onclick="deleteTask('${t.id}')" title="حذف">🗑</button>
+    </div>
+  `).join('');
+}
+
+async function addTask() {
+  const titleEl = document.getElementById('taskTitleInput');
+  const dateEl = document.getElementById('taskDateInput');
+  const title = titleEl.value.trim();
+  if (!title) { toast('✕ اكتب عنوان المهمة'); return; }
+  const due_at = dateEl.value ? new Date(dateEl.value).toISOString() : null;
+
+  if (_zxTasksMode === 'remote') {
+    try {
+      const { data: { session } } = await _SB.auth.getSession();
+      const { data, error } = await _SB
+        .from('zx_tasks')
+        .insert({ user_id: session.user.id, title, due_at, all_day: true })
+        .select('id, title, notes, due_at, all_day, done')
+        .single();
+      if (error) throw error;
+      _zxTasksCache.push(data);
+    } catch (e) {
+      toast('✕ تعذّرت إضافة المهمة');
+      return;
+    }
+  } else {
+    const t = { id: 'local_' + Date.now(), title, notes: '', due_at, all_day: true, done: false };
+    _zxTasksCache.push(t);
+    _localTasksWrite(_zxTasksCache);
+  }
+
+  titleEl.value = '';
+  dateEl.value = '';
+  renderTasksList();
+  toast('✓ تمت الإضافة');
+}
+
+async function toggleTaskDone(id, done) {
+  const t = _zxTasksCache.find(x => String(x.id) === String(id));
+  if (!t) return;
+  t.done = done;
+  if (_zxTasksMode === 'remote') {
+    try { await _SB.from('zx_tasks').update({ done }).eq('id', id); }
+    catch (e) {}
+  } else {
+    _localTasksWrite(_zxTasksCache);
+  }
+  renderTasksList();
+}
+
+async function deleteTask(id) {
+  _zxTasksCache = _zxTasksCache.filter(x => String(x.id) !== String(id));
+  if (_zxTasksMode === 'remote') {
+    try { await _SB.from('zx_tasks').delete().eq('id', id); }
+    catch (e) {}
+  } else {
+    _localTasksWrite(_zxTasksCache);
+  }
+  renderTasksList();
+  renderCalendar();
+}
+
+/* ── Calendar grid ── */
+function shiftCalMonth(delta) {
+  _zxCalCursor.setMonth(_zxCalCursor.getMonth() + delta);
+  renderCalendar();
+}
+function renderCalendar() {
+  const y = _zxCalCursor.getFullYear();
+  const m = _zxCalCursor.getMonth();
+  const label = document.getElementById('calMonthLabel');
+  label.textContent = _zxCalCursor.toLocaleDateString('ar', { month: 'long', year: 'numeric' });
+
+  const firstDay = new Date(y, m, 1);
+  const startOffset = firstDay.getDay(); // 0=Sunday
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+  const byDay = {};
+  _zxTasksCache.forEach(t => {
+    if (!t.due_at) return;
+    const d = new Date(t.due_at);
+    if (d.getFullYear() === y && d.getMonth() === m) {
+      const key = d.getDate();
+      (byDay[key] = byDay[key] || []).push(t);
+    }
+  });
+
+  const cells = [];
+  for (let i = 0; i < startOffset; i++) cells.push('<div></div>');
+  const today = new Date();
+  for (let day = 1; day <= daysInMonth; day++) {
+    const has = byDay[day];
+    const isToday = today.getFullYear() === y && today.getMonth() === m && today.getDate() === day;
+    cells.push(`
+      <div onclick="showCalDay(${day})" style="
+        aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        border-radius:8px;cursor:pointer;position:relative;
+        background:${isToday ? 'var(--gold)' : 'var(--card2)'};
+        color:${isToday ? '#fff' : 'var(--tw)'};
+        border:1px solid ${has ? 'var(--gold)' : 'var(--b1)'};
+      ">
+        <span>${day}</span>
+        ${has ? '<span style="width:4px;height:4px;border-radius:50%;background:' + (isToday ? '#fff' : 'var(--gold)') + ';margin-top:2px"></span>' : ''}
+      </div>
+    `);
+  }
+  document.getElementById('calGrid').innerHTML = cells.join('');
+  document.getElementById('calDayTasks').innerHTML = '';
+}
+function showCalDay(day) {
+  const y = _zxCalCursor.getFullYear();
+  const m = _zxCalCursor.getMonth();
+  const list = _zxTasksCache.filter(t => {
+    if (!t.due_at) return false;
+    const d = new Date(t.due_at);
+    return d.getFullYear() === y && d.getMonth() === m && d.getDate() === day;
+  });
+  const el = document.getElementById('calDayTasks');
+  if (!list.length) { el.innerHTML = '<div class="lib-empty">لا توجد مهام فهاد اليوم</div>'; return; }
+  el.innerHTML = list.map(t => `
+    <div class="lib-file-row" style="justify-content:space-between">
+      <span style="text-decoration:${t.done ? 'line-through' : 'none'}">${escapeHtml(t.title)}</span>
+      <button class="mini-ghost-btn" onclick="deleteTask('${t.id}');showCalDay(${day})">🗑</button>
+    </div>
+  `).join('');
+}
+
+
 function renderLibImages() {
   const imgs = getAllImages();
   const el = document.getElementById('libImages');
@@ -4668,12 +5031,25 @@ function toggleModelSel(force) {
   if (!el) return;
   const show = typeof force === 'boolean' ? force : !el.classList.contains('open');
   el.classList.toggle('open', show);
+  lockBodyForSheet(show && window.innerWidth <= 768);
 }
 function toggleTbShortcuts(force) {
   const el = document.getElementById('tbShortcuts');
   if (!el) return;
   const show = typeof force === 'boolean' ? force : !el.classList.contains('open');
   el.classList.toggle('open', show);
+  lockBodyForSheet(show && window.innerWidth <= 768);
+}
+// Prevents the page from scrolling behind the mobile bottom-sheet menu
+// while it's open. Ref-counted-ish via a data attribute so closing one
+// selector doesn't unlock scroll if another is still open.
+function lockBodyForSheet(lock) {
+  const anyOpen = document.querySelector('.model-sel.open');
+  if (lock || anyOpen) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
 }
 document.addEventListener('click', (e) => {
   const sel = document.getElementById('modelSel');
@@ -4682,6 +5058,7 @@ document.addEventListener('click', (e) => {
   if (eff && eff.classList.contains('open') && !eff.contains(e.target)) eff.classList.remove('open');
   const sc = document.getElementById('tbShortcuts');
   if (sc && sc.classList.contains('open') && !sc.contains(e.target)) sc.classList.remove('open');
+  lockBodyForSheet(false);
 });
 function setEffortUI(v, silent) {
   setEffort(v);
@@ -4697,6 +5074,7 @@ function toggleEffortSel(force) {
   if (!el) return;
   const show = typeof force === 'boolean' ? force : !el.classList.contains('open');
   el.classList.toggle('open', show);
+  lockBodyForSheet(show && window.innerWidth <= 768);
 }
 
 
