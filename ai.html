@@ -20,13 +20,20 @@
     })()
 </script>
   <script>
-    /* Zalij Mode is now the only mode — always applied before first paint. */
-    document.documentElement.setAttribute('data-theme', 'dark');
+    /* Apply saved theme before first paint — avoids a light/dark flash */
+    (function() {
+        try {
+            const savedTheme = localStorage.getItem('zunexa-theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        } catch (e) {}
+    })()
 </script>
   <script src="zunexa-seo-keywords.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#0B0C0F">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -44,10 +51,38 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
 <style>
+/* ════════════════════════════════════════════════════════
+   THEME TRANSITION — smooth light↔dark (Zalij) crossfade
+   Applies to the elements that actually flip color on
+   [data-theme] change. Animations that already have their
+   own timing (spinners, badges, keyframes) are excluded via
+   the transition:none rule below so this never fights them.
+════════════════════════════════════════════════════════ */
+html, body,
+.sidebar, .topbar, .input-zone, .modal-box, .modal-wrap,
+.msg, .msg-av, .bubble, .h-item, .persona-card, .zx-select,
+.sb-user, .sb-new, .sb-upgrade, .theme-toggle-btn, .wl-icon,
+.badge-ai, .code-btn, .attach-btn, .hist-search {
+  transition:
+    background-color .45s cubic-bezier(.4,0,.2,1),
+    border-color      .45s cubic-bezier(.4,0,.2,1),
+    color             .45s cubic-bezier(.4,0,.2,1),
+    box-shadow        .45s cubic-bezier(.4,0,.2,1);
+}
+/* rotating rings / spinners keep their own animation untouched */
+.wl-ring, .billing-spinner, .ts-dot { transition: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html, body,
+  .sidebar, .topbar, .input-zone, .modal-box, .modal-wrap,
+  .msg, .msg-av, .bubble, .h-item, .persona-card, .zx-select,
+  .sb-user, .sb-new, .sb-upgrade, .theme-toggle-btn, .wl-icon,
+  .badge-ai, .code-btn, .attach-btn, .hist-search {
+    transition: none;
+  }
+}
+
 /* ════════════════════════════════════════════════════════
    DESIGN TOKENS — White Phone Mode
 ════════════════════════════════════════════════════════ */
@@ -614,6 +649,16 @@ img{max-width:100%;display:block}
 .wl-title span{color:var(--gold)}
 .wl-sub{font-size:13px;color:var(--tg);line-height:1.8;max-width:400px}
 
+/* ── Quick chips ── */
+.quick-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:4px}
+.qchip{
+  padding:9px 14px;background:var(--card);
+  border:1px solid var(--b1);border-radius:99px;
+  font-size:11.5px;color:var(--tg);cursor:pointer;
+  transition:all var(--tr);min-height:44px;display:inline-flex;align-items:center;
+}
+.qchip:hover{border-color:var(--b2);color:var(--gold);background:var(--hover)}
+
 /* ── KB Status bar ── */
 .kb-bar{
   display:flex;align-items:center;gap:8px;
@@ -658,11 +703,6 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
   background:#0F1115;border:1px solid var(--gold);color:#7CFC9A;
 }
 .bubble strong{color:var(--gold)}
-.tw-text.tw-active::after{
-  content:'▍';color:var(--gold);margin-inline-start:1px;
-  animation:tw-blink 0.9s step-end infinite;
-}
-@keyframes tw-blink{0%,49%{opacity:1}50%,100%{opacity:0}}
 .bubble em{color:var(--tg);font-style:normal;font-size:12.5px}
 .bubble code{
   background:var(--card);border:1px solid var(--b1);
@@ -1358,6 +1398,15 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
       <div class="sb-uplan"  id="uPlan">—</div>
       <div class="sb-uemail" id="uEmail">—</div>
     </div>
+    <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="تبديل الوضع الليلي" onclick="toggleDarkMode()" title="الوضع الليلي / النهاري">
+      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"></circle>
+        <path d="M12 2.5v2.4M12 19.1v2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.4 19.6l1.7-1.7M17.9 6.1l1.7-1.7"></path>
+      </svg>
+      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M20.5 14.6a8.4 8.4 0 0 1-10.1-10.1 8.6 8.6 0 1 0 10.1 10.1z"></path>
+      </svg>
+    </button>
     <button type="button" class="user-icon-button user-download-button" aria-label="الحصول على التطبيق" aria-expanded="false" aria-haspopup="dialog" onclick="openDownloadsMenu()" title="تحميل التطبيق">
       <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" class="iconify download-icon" width="18" height="18" viewBox="0 0 1024 1024" name="Download">
         <path d="M512 126.976a36.864 36.864 0 0 1 36.864 36.864v347.91424l119.11168-119.11168a36.864 36.864 0 1 1 52.14208 52.14208l-182.0672 182.02624a36.864 36.864 0 0 1-52.10112 0l-182.0672-182.02624a36.864 36.864 0 0 1 52.14208-52.14208l119.11168 119.11168V163.84a36.864 36.864 0 0 1 36.864-36.864zM184.32 564.71552a36.864 36.864 0 0 1 36.864 36.864v145.65376a35.96288 35.96288 0 0 0 35.96288 35.96288h509.70624a35.96288 35.96288 0 0 0 35.96288-35.96288v-145.65376a36.864 36.864 0 0 1 73.728 0v145.65376a109.69088 109.69088 0 0 1-109.69088 109.69088H257.14688A109.69088 109.69088 0 0 1 147.456 747.23328v-145.65376a36.864 36.864 0 0 1 36.864-36.864z" fill="currentColor"></path>
@@ -1436,6 +1485,9 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
       <div class="gold-hr"></div>
       <div class="wl-title">مرحباً في <span>Zunexa</span></div>
       <div class="wl-sub"></div>
+      <div class="quick-chips">
+        <!-- تم مسح جميع الأزرار القديمة -->
+      </div>
     </div>
   </div>
   <!-- Toast -->
@@ -1474,9 +1526,7 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
     <div id="fileChipZone"></div>
     <div class="input-shell">
       <input type="file" id="fileInput" accept="image/*,audio/*,.pdf,.docx,.xlsx,.xls,.txt,.csv,.json,.md,.html,.htm,.js,.py,.sh,.css,.xml,.yml,.yaml,.zip" style="display:none" onchange="onFilePicked(event)">
-      <input type="file" id="qrInput" accept="image/*" style="display:none" onchange="onQrFilePicked(event)">
       <button class="attach-btn" id="attachBtn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف / صورة / PDF">📎</button>
-      <button class="attach-btn" id="qrBtn" onclick="document.getElementById('qrInput').click()" title="قراءة QR Code من صورة">▦</button>
       <textarea
         class="chat-input" id="aiInput" rows="1"
         placeholder="اسألني أي شيء عن Zunexa أو التقنيات..."
@@ -1813,7 +1863,6 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
         <div class="field-input" style="opacity:.7" id="settRealPlan">—</div>
         <p style="font-size:11px;color:var(--text-muted,#888);margin:6px 0 14px">لتغيير معلومات حسابك أو خطتك، توجه إلى صفحة الإعدادات الكاملة.</p>
         <button class="modal-save" onclick="window.location.href='settings.html'">⚙ إدارة الحساب</button>
-        <button class="modal-save" id="logoutBtn" onclick="logoutUser()" style="background:transparent;border:1px solid var(--red,#c0392b);color:var(--red,#c0392b);margin-top:10px">⏻ تسجيل الخروج</button>
       </div>
       <div id="settGuestInfo" style="display:none">
         <label class="field-label">اسم الضيف (محلي فقط، لا يؤثر على أي حساب)</label>
@@ -2012,7 +2061,7 @@ function detectZxPlatform() {
 const ZX_DOWNLOAD_MAP = {
   android: { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_signed.apk',            label: 'تطبيق Android (APK)' },
   linux:   { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_0.1.0_amd64.AppImage',    label: 'تطبيق Linux (AppImage)' },
-  debian:  { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_0.1.0_amd64.deb', label: 'تطبيق Debian (DEB)' },
+  debian:  { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_0.1.0_amd64.deb', label:'debian (deb))'app },
   windows: { url: 'app/windows/zunexa.exe',                   label: 'تطبيق Windows (EXE)' },
 };
 
@@ -2157,7 +2206,6 @@ async function loadUser() {
     } catch (e) {}
 
     setUserUI(displayName, planLabel, email, ini.toUpperCase());
-    pullCloudDataOnLogin(uid); // best-effort, non-blocking — see function for details
 
     // Cache for instant paint next load — display-only, never trusted
     // as the source of truth (loadUser() above always re-verifies).
@@ -3208,7 +3256,6 @@ function loadPersonas() {
 function saveCustomPersonas(list) {
   const custom = list.filter(p => !p.builtin);
   localStorage.setItem('zx_personas', JSON.stringify(custom));
-  syncAppSettingsToSupabase();
 }
 function getActivePersonaId() { return localStorage.getItem('zx_active_persona') || '_default'; }
 function getActivePersona() {
@@ -3238,7 +3285,6 @@ function renderPersonaList() {
 
 function activatePersona(id) {
   localStorage.setItem('zx_active_persona', id);
-  syncAppSettingsToSupabase();
   renderPersonaList();
   const p = loadPersonas().find(x => x.id === id);
   toast('✓ الشخصية النشطة: ' + (p ? p.name : 'Zunexa'));
@@ -3294,7 +3340,6 @@ function deletePersona(id) {
   saveCustomPersonas(list);
   if (getActivePersonaId() === id) {
     localStorage.setItem('zx_active_persona', '_default');
-    syncAppSettingsToSupabase();
   }
   renderPersonaList();
   toast('🗑 تم حذف الشخصية');
@@ -3851,11 +3896,6 @@ async function autoLearn(question, answerText, localScore) {
 async function logMsg(prompt, response, src, score) {
   if (tempChatOn) return; // Temporary Chat: nothing is written to Supabase
   try {
-    let uid = null;
-    try {
-      const { data: { session } } = await _SB.auth.getSession();
-      if (session) uid = session.user.id;
-    } catch (e) {}
     await _SB.from('zunexa_messages').insert({
       user_prompt:  prompt,
       bot_response: response,
@@ -3864,141 +3904,11 @@ async function logMsg(prompt, response, src, score) {
       platform:     'web',
       chat_id:      currentChatId,
       device_id:    getDeviceId(),
-      user_id:      uid,
       file_url:     (attachedFile && attachedFile.storageUrl) || null,
       file_name:    (attachedFile && attachedFile.name) || null,
       created_at:   new Date().toISOString()
     });
   } catch(e){}
-}
-
-/* ════════════════════════════════════════════════════════════
-   CROSS-DEVICE SYNC — settings + chat history
-   ─────────────────────────────────────────────────────────────
-   Every write below is best-effort and never blocks the chat UI
-   if Supabase is unreachable or a column/table is missing — same
-   defensive pattern as the rest of the file (uploadFileToSupabase,
-   saveProfileSettings, etc). Needs these on `profiles` (nullable,
-   safe if absent — reads/writes just no-op):
-     - profiles.app_settings jsonb
-   And `zunexa_messages.user_id uuid` (nullable) — added to logMsg()
-   above — so a logged-in user's messages can be pulled back on any
-   device, not just the one that sent them (device_id alone can't
-   do that, since device_id is per-browser).
-════════════════════════════════════════════════════════════ */
-
-/* Bundles every local app-setting into one object so it can be
-   pushed/pulled as a single profiles.app_settings jsonb column
-   instead of one round-trip per key. */
-function collectAppSettings() {
-  return {
-    model:          localStorage.getItem('zx_model')          || 'lite',
-    effort:         localStorage.getItem('zx_effort')         || 'balanced',
-    page_lang:      localStorage.getItem('zx_page_lang')      || 'ary',
-    font:           localStorage.getItem('zx_font')           || 'rajdhani',
-    reduce_motion:  localStorage.getItem('zx_reduce_motion')  === '1',
-    notif_done:     localStorage.getItem('zx_notif_done')     === '1',
-    learn_enabled:  localStorage.getItem('zx_learn_enabled')  !== '0',
-    tools_enabled:  localStorage.getItem('zx_tools_enabled')  !== '0',
-    voice:          JSON.parse(localStorage.getItem('zx_voice') || '{}'),
-    active_persona: localStorage.getItem('zx_active_persona') || '_default',
-    personas:       JSON.parse(localStorage.getItem('zx_personas') || '[]')
-  };
-}
-
-/* Writes a pulled settings object back into localStorage + live UI —
-   the exact reverse of collectAppSettings(). Missing keys keep
-   whatever local default already applies (never wipes a setting the
-   synced blob simply doesn't have). Guarded by _applyingCloudSettings
-   so the individual setters it calls (setModel, setChatFont, etc.)
-   don't immediately re-push the very values we just pulled. */
-let _applyingCloudSettings = false;
-function applyAppSettings(s) {
-  if (!s || typeof s !== 'object') return;
-  _applyingCloudSettings = true;
-  try {
-    if (s.model)          { localStorage.setItem('zx_model', s.model); setModelUI(s.model, true); }
-    if (s.effort)         { localStorage.setItem('zx_effort', s.effort); setEffortUI(s.effort, true); }
-    if (s.page_lang)      { localStorage.setItem('zx_page_lang', s.page_lang); applyPageLang(s.page_lang); }
-    if (s.font)           { localStorage.setItem('zx_font', s.font); setChatFont(s.font); }
-    if (typeof s.reduce_motion === 'boolean') { setReduceMotion(s.reduce_motion); }
-    if (typeof s.notif_done === 'boolean')    { localStorage.setItem('zx_notif_done', s.notif_done ? '1' : '0'); }
-    if (typeof s.learn_enabled === 'boolean') { localStorage.setItem('zx_learn_enabled', s.learn_enabled ? '1' : '0'); }
-    if (typeof s.tools_enabled === 'boolean') { localStorage.setItem('zx_tools_enabled', s.tools_enabled ? '1' : '0'); }
-    if (s.voice)          { localStorage.setItem('zx_voice', JSON.stringify(s.voice)); }
-    if (s.active_persona) { localStorage.setItem('zx_active_persona', s.active_persona); }
-    if (Array.isArray(s.personas) && s.personas.length) { localStorage.setItem('zx_personas', JSON.stringify(s.personas)); }
-  } finally {
-    _applyingCloudSettings = false;
-  }
-}
-
-let _settingsSyncTimer = null;
-/* Debounced push — call this from any settings-changing action.
-   Coalesces rapid changes (e.g. dragging a slider) into one write. */
-function syncAppSettingsToSupabase() {
-  if (_applyingCloudSettings) return; // avoid pushing right back what we just pulled
-  clearTimeout(_settingsSyncTimer);
-  _settingsSyncTimer = setTimeout(async () => {
-    try {
-      const { data: { session } } = await _SB.auth.getSession();
-      if (!session) return; // guests: local-only, nothing to sync
-      await _SB.from('profiles').update({
-        app_settings: collectAppSettings()
-      }).eq('id', session.user.id);
-    } catch (e) { /* best-effort — never breaks Settings UI if this fails */ }
-  }, 800);
-}
-
-/* Pulls app_settings + chat history from Supabase into this browser.
-   Called once from loadUser() when a session exists. Chat history is
-   only pulled if this browser has NO local threads yet (a genuinely
-   new device) — so it never overwrites messages already sitting in
-   this browser's localStorage. */
-async function pullCloudDataOnLogin(uid) {
-  try {
-    const { data: prof } = await _SB.from('profiles').select('app_settings').eq('id', uid).maybeSingle();
-    if (prof && prof.app_settings) applyAppSettings(prof.app_settings);
-  } catch (e) { /* app_settings column may not exist yet — safe no-op */ }
-
-  try {
-    const hasLocalThreads = Object.keys(localStorage).some(k => k.startsWith('zx_thread_'));
-    if (hasLocalThreads) return; // this device already has chats — don't clobber
-
-    const { data: rows, error } = await _SB
-      .from('zunexa_messages')
-      .select('chat_id, user_prompt, bot_response, source, created_at')
-      .eq('user_id', uid)
-      .order('created_at', { ascending: true })
-      .limit(2000);
-    if (error || !rows || !rows.length) return;
-
-    const byChat = {};
-    rows.forEach(r => {
-      if (!r.chat_id) return;
-      (byChat[r.chat_id] = byChat[r.chat_id] || []).push(r);
-    });
-
-    const newHist = [];
-    Object.keys(byChat).forEach(chatId => {
-      const msgs = byChat[chatId];
-      const thread = [];
-      msgs.forEach(r => {
-        thread.push({ role: 'user', text: r.user_prompt, ts: Date.parse(r.created_at) || Date.now() });
-        thread.push({ role: 'bot',  text: r.bot_response, src: r.source || null, ts: Date.parse(r.created_at) || Date.now() });
-      });
-      localStorage.setItem('zx_thread_' + chatId, JSON.stringify(thread));
-      const firstUserMsg = msgs[0].user_prompt || '';
-      newHist.push({ chatId, t: firstUserMsg.slice(0, 50), ts: Date.parse(msgs[msgs.length-1].created_at) || Date.now(), pinned: false });
-    });
-    newHist.sort((a, b) => b.ts - a.ts);
-    if (newHist.length) {
-      hist = newHist.slice(0, 40);
-      localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
-      renderHist();
-      toast('✓ تم استرجاع محادثاتك من حسابك');
-    }
-  } catch (e) { console.error('pullCloudDataOnLogin() history sync error:', e); }
 }
 
 // item 16 — cap lowered from 5 to 2 (rankKB's weight multiplier, item 15,
@@ -4207,7 +4117,7 @@ async function send() {
 
   if (containsBlockedContent(q)) {
     const refusal = '🚫 ما نقدرش نجاوب على هاد النوع ديال الطلبات — عندي حدود واضحة بخصوص المحتوى الجنسي الصريح أو العنيف. اسألني على شي حاجة أخرى وأنا معاك.';
-    addMsg(refusal, 'bot', 'blocked', 0, null, false, null, true);
+    addMsg(refusal, 'bot', 'blocked', 0);
     await logMsg(q, refusal, 'blocked', 0);
     clearFile();
     busy = false;
@@ -4219,7 +4129,7 @@ async function send() {
   // Exact-match cache — skip API entirely on a known question
   const cached = findExactKBMatch(q);
   if (cached) {
-    addMsg(cached.a, 'bot', cached.src || 'cache', cached.w || 1, null, false, null, true);
+    addMsg(cached.a, 'bot', cached.src || 'cache', cached.w || 1);
     ctx.push({ role:'user', text:q });
     ctx.push({ role:'bot',  text:cached.a });
     if (ctx.length > 12) ctx = ctx.slice(-12);
@@ -4255,7 +4165,7 @@ async function send() {
     }
     removeTyping();
     if (!res || !res.text) res = { text: '⚠ خطأ في المعالجة. حاول مرة أخرى.', src: 'error', score: 0 };
-    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl, true);
+    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl);
 
     // Update context
     ctx.push({ role:'user', text:q });
@@ -4278,7 +4188,7 @@ async function send() {
     console.error('Zunexa send() error:', err);
     thinkEnd();
     removeTyping();
-    addMsg('⚠ خطأ في المعالجة. حاول مرة أخرى.', 'bot', 'error', 0, null, false, null, true);
+    addMsg('⚠ خطأ في المعالجة. حاول مرة أخرى.', 'bot', 'error', 0);
   }
 
   busy = false;
@@ -4289,7 +4199,7 @@ async function send() {
 /* ════════════════════════════════════════════════════════════
    DOM HELPERS
 ════════════════════════════════════════════════════════════ */
-function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate) {
+function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
   const conv = document.getElementById('conv');
   const div  = document.createElement('div');
   div.className = 'msg ' + role;
@@ -4316,15 +4226,7 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate) {
 
   const bub = document.createElement('div');
   bub.className = 'bubble';
-  const doTypewriter = animate && role === 'bot' && typeof text === 'string' && text.length > 0;
-  let twSpan = null;
-  if (doTypewriter) {
-    twSpan = document.createElement('div');
-    twSpan.className = 'tw-text';
-    bub.appendChild(twSpan);
-  } else {
-    bub.innerHTML = fmt(text);
-  }
+  bub.innerHTML = fmt(text);
   if (imgUrl) {
     const img = document.createElement('img');
     img.src = imgUrl;
@@ -4383,52 +4285,9 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate) {
   div.appendChild(av);
   div.appendChild(body);
   conv.appendChild(div);
-
-  if (doTypewriter) {
-    typewriterReveal(twSpan, text, conv);
-  } else {
-    conv.scrollTop = conv.scrollHeight;
-    div.querySelectorAll('pre code[id]').forEach(el => highlightCodeBlock(el.id));
-  }
+  conv.scrollTop = conv.scrollHeight;
 
   if (!skipSave) saveThreadMsg(role, text, src, score, imgUrl, audioUrl);
-}
-
-/* ════════════════════════════════════════════════════════════
-   TYPEWRITER — reveals a finished bot reply progressively instead
-   of dumping the whole message at once, and keeps the conversation
-   auto-scrolled to the bottom as it grows. The backend (Supabase
-   Edge Functions / Pollinations) returns the full text in one
-   response — there's no token stream to read — so this simulates
-   the reveal client-side from the text we already have. Markdown/
-   code formatting (fmt()) and syntax highlighting are applied only
-   once the full text is visible, so partial reveals never show a
-   half-parsed code fence or broken HTML tag.
-════════════════════════════════════════════════════════════ */
-function typewriterReveal(twSpan, fullText, conv) {
-  const CHARS_PER_TICK = 3;
-  const TICK_MS = 12;
-  let i = 0;
-  twSpan.classList.add('tw-active');
-
-  const wasAtBottom = () => conv.scrollHeight - conv.scrollTop - conv.clientHeight < 80;
-
-  const timer = setInterval(() => {
-    const stickToBottom = wasAtBottom();
-    i = Math.min(fullText.length, i + CHARS_PER_TICK);
-    // Plain-text partial slice while revealing — safe against mid-tag /
-    // mid-markdown cuts since it's rendered as text, not HTML, until done.
-    twSpan.textContent = fullText.slice(0, i);
-    if (stickToBottom) conv.scrollTop = conv.scrollHeight;
-
-    if (i >= fullText.length) {
-      clearInterval(timer);
-      twSpan.classList.remove('tw-active');
-      twSpan.innerHTML = fmt(fullText);
-      twSpan.querySelectorAll('pre code[id]').forEach(el => highlightCodeBlock(el.id));
-      if (stickToBottom) conv.scrollTop = conv.scrollHeight;
-    }
-  }, TICK_MS);
 }
 
 /* ── Live-previewable languages: rendered directly (HTML/SVG), or
@@ -4458,16 +4317,9 @@ function buildCodeBlockHtml(lang, code) {
           <button class="code-btn" onclick="copyCodeBlock('${id}')">⧉ نسخ</button>
         </div>
       </div>
-      <pre><code id="${id}" class="hljs language-${langLabel}" data-lang="${langLabel}" data-preview-kind="${previewKind || ''}">${escaped}</code></pre>
+      <pre><code id="${id}" data-lang="${langLabel}" data-preview-kind="${previewKind || ''}">${escaped}</code></pre>
       ${previewKind ? `<div class="sandbox-wrap" id="${id}_sandbox"></div>` : ''}
     </div>`;
-}
-
-function highlightCodeBlock(id) {
-  if (typeof hljs === 'undefined') return;
-  const el = document.getElementById(id);
-  if (!el) return;
-  try { hljs.highlightElement(el); } catch (e) {}
 }
 
 function fmt(text) {
@@ -4674,6 +4526,19 @@ function newChat() {
       <div class="wl-eyebrow">Zunexa Premium · Zunexa AI </div>
       <div class="gold-hr"></div>
       <div class="wl-title">مرحباً في <span>Zunexa</span></div>
+      <div class="quick-chips">
+        <div class="qchip" onclick="go('ما هي منصة Zunexa؟')">ما هي Zunexa؟</div>
+        <div class="qchip" onclick="go('التصميم Zalij Mode')">Zalij Mode</div>
+        <div class="qchip" onclick="go('من المطور؟')">المطور</div>
+        <div class="qchip" onclick="go('أداة SEO كيف تعمل؟')">SEO Tool</div>
+        <div class="qchip" onclick="go('Generator Hub شرح')">Generator Hub</div>
+        <div class="qchip" onclick="go('ما هي تقنيات المنصة؟')">التقنيات</div>
+        <div class="qchip" onclick="go('/طقس الدار البيضاء')">🌤 الطقس</div>
+        <div class="qchip" onclick="go('/صورة شعار ذهبي مغربي عصري')">🎨 توليد صورة</div>
+        <div class="qchip" onclick="go('/جيت zunexa')">🐙 GitHub</div>
+        <div class="qchip" onclick="go('/بحث أفضل ممارسات SEO 2026')">🔎 بحث ويب</div>
+        <div class="qchip" onclick="go('/صوت مرحبا بك في Zunexa')">🔊 نص لصوت</div>
+      </div>
     </div>`;
   closeSidebar();
 }
@@ -4694,25 +4559,17 @@ function closeSidebar() {
    DARK MODE TOGGLE — Zalij gold/dark theme switch
 ════════════════════════════════════════════════════════════ */
 function toggleDarkMode() {
-  /* Zalij Mode (dark) is now the only mode — nothing to toggle. */
-  document.documentElement.setAttribute('data-theme', 'dark');
-}
-
-/* ════════════════════════════════════════════════════════════
-   LOGOUT — ends the real Supabase Auth session (same client used
-   for sync throughout the app), then sends the browser back to
-   the login/landing page. Local-only guest data (localStorage) is
-   left untouched — logging out only ends the account session.
-════════════════════════════════════════════════════════════ */
-async function logoutUser() {
-  const btn = document.getElementById('logoutBtn');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ جاري تسجيل الخروج...'; }
-  try {
-    await _SB.auth.signOut();
-  } catch (err) {
-    console.error('logoutUser() error:', err);
+  const root = document.documentElement;
+  const isDark = root.getAttribute('data-theme') === 'dark';
+  if (isDark) {
+    root.removeAttribute('data-theme');
+    try { localStorage.setItem('zunexa-theme', 'light'); } catch (e) {}
+  } else {
+    root.setAttribute('data-theme', 'dark');
+    try { localStorage.setItem('zunexa-theme', 'dark'); } catch (e) {}
   }
-  window.location.href = 'index.html';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', isDark ? '#FFFFFF' : '#0B0C0F');
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -5295,14 +5152,14 @@ function randomProvider() {
 }
 
 function setModel(v) {
-  zxModel = v; localStorage.setItem('zx_model', v); syncAppSettingsToSupabase();
+  zxModel = v; localStorage.setItem('zx_model', v);
   const tag = document.querySelector('.model-tag');
   const lang = localStorage.getItem('zx_page_lang') || 'ary';
   const descKey = { lite: 'modelLite', pro: 'modelPro', max: 'modelMax' }[v];
   const t = ZX_I18N[lang] || ZX_I18N.ary;
   if (tag) tag.textContent = (descKey && t[descKey]) || 'Zunexa AI Engine';
 }
-function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); syncAppSettingsToSupabase(); }
+function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); }
 
 /* ── UI wrappers for the mode-row chips (speed modes + tier chips
    next to the input box). Keep the underlying setModel/setEffort as
@@ -5642,20 +5499,17 @@ function savePagePrefs() {
   const lang = document.getElementById('setPageLang').value;
   localStorage.setItem('zx_page_lang', lang);
   applyPageLang(lang);
-  syncAppSettingsToSupabase();
 }
 
 function setChatFont(v) {
   localStorage.setItem('zx_font', v);
   const map = { rajdhani: "'Rajdhani',sans-serif", system: "system-ui,-apple-system,sans-serif", mono: "'Courier New',monospace" };
   document.getElementById('conv').style.fontFamily = map[v] || map.rajdhani;
-  syncAppSettingsToSupabase();
 }
 
 function setReduceMotion(on) {
   localStorage.setItem('zx_reduce_motion', on ? '1' : '0');
   document.documentElement.classList.toggle('zx-reduce-motion', on);
-  syncAppSettingsToSupabase();
 }
 
 function saveVoicePrefs() {
@@ -5663,7 +5517,6 @@ function saveVoicePrefs() {
   const style = document.getElementById('setVoiceStyle').value;
   const speed = document.getElementById('setVoiceSpeed').value;
   localStorage.setItem('zx_voice', JSON.stringify({ lang, style, speed }));
-  syncAppSettingsToSupabase();
 }
 
 function setNotifPref(on) {
@@ -5671,13 +5524,12 @@ function setNotifPref(on) {
   if (on && 'Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
   }
-  syncAppSettingsToSupabase();
 }
 
-function setLearnPref(on) { localStorage.setItem('zx_learn_enabled', on ? '1' : '0'); syncAppSettingsToSupabase(); }
+function setLearnPref(on) { localStorage.setItem('zx_learn_enabled', on ? '1' : '0'); }
 function isLearnEnabled() { return localStorage.getItem('zx_learn_enabled') !== '0'; }
 
-function setToolsPref(on) { localStorage.setItem('zx_tools_enabled', on ? '1' : '0'); syncAppSettingsToSupabase(); }
+function setToolsPref(on) { localStorage.setItem('zx_tools_enabled', on ? '1' : '0'); }
 function isToolsEnabled() { return localStorage.getItem('zx_tools_enabled') !== '0'; }
 
 /* ── Optional free-tier API keys (user-pasted, localStorage-only) ── */
@@ -5861,61 +5713,6 @@ async function onFilePicked(e) {
     console.error(err);
     toast('⚠ تعذّرت قراءة هذا الملف');
     attachedFile = null;
-  }
-  e.target.value = '';
-}
-
-/* ════════════════════════════════════════════════════════════
-   QR CODE — read a QR code out of a picked image, using jsQR.
-   Decodes fully client-side (no external API), then drops the
-   decoded text straight into the chat input for the user to send
-   or edit.
-════════════════════════════════════════════════════════════ */
-async function onQrFilePicked(e) {
-  const file = e.target.files[0];
-  if (!file) { return; }
-  if (typeof jsQR === 'undefined') {
-    toast('⚠ مكتبة قراءة QR غير محمّلة');
-    e.target.value = '';
-    return;
-  }
-
-  toast('⏳ جاري قراءة رمز QR...');
-
-  try {
-    const dataUrl = await readAsDataURL(file);
-    const img = new Image();
-    const decoded = await new Promise((resolve, reject) => {
-      img.onload = () => {
-        try {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.naturalWidth;
-          canvas.height = img.naturalHeight;
-          const ctx2d = canvas.getContext('2d');
-          ctx2d.drawImage(img, 0, 0);
-          const imageData = ctx2d.getImageData(0, 0, canvas.width, canvas.height);
-          const result = jsQR(imageData.data, imageData.width, imageData.height);
-          resolve(result ? result.data : null);
-        } catch (err) { reject(err); }
-      };
-      img.onerror = () => reject(new Error('image load failed'));
-      img.src = dataUrl;
-    });
-
-    if (!decoded) {
-      toast('⚠ ما لقيتش رمز QR فهاد الصورة');
-    } else {
-      const inp = document.getElementById('aiInput');
-      if (inp) {
-        inp.value = decoded;
-        resize(inp);
-        inp.focus();
-      }
-      toast('✓ تم قراءة رمز QR بنجاح');
-    }
-  } catch (err) {
-    console.error('QR read error:', err);
-    toast('⚠ تعذّرت قراءة رمز QR من هاد الصورة');
   }
   e.target.value = '';
 }
