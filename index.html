@@ -5,6 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Zunexa — Zunexa AI Engine | Coding, Reasoning & Logic Core</title>
 
+<script>
+// ── Instant session redirect (runs before CSS/body parse — no flash) ──
+// Supabase stores the session synchronously in localStorage under
+// sb-<project-ref>-auth-token. We read it directly here instead of
+// waiting for supabase-js to load + async getSession() to resolve,
+// so a logged-in user never sees index.html render at all.
+(function(){
+  try{
+    for (var i = 0; i < localStorage.length; i++){
+      var k = localStorage.key(i);
+      if (k && k.indexOf('sb-') === 0 && k.indexOf('-auth-token') !== -1){
+        var raw = localStorage.getItem(k);
+        if (!raw) continue;
+        var parsed = JSON.parse(raw);
+        var expiresAt = parsed && (parsed.expires_at || (parsed.session && parsed.session.expires_at));
+        var hasToken = parsed && (parsed.access_token || (parsed.session && parsed.session.access_token));
+        if (hasToken && (!expiresAt || expiresAt * 1000 > Date.now())){
+          window.location.replace('ai.html');
+        }
+        break;
+      }
+    }
+  }catch(e){ /* fall through to normal page load / getSession() check below */ }
+})();
+</script>
+
 <!-- Primary SEO Meta Tags -->
 <meta name="title" content="Zunexa — Zunexa AI Engine | Coding, Reasoning & Logic Core">
 <meta name="description" content="Zunexa AI by Zunexa: Advanced AI model specialized in code generation, deep reasoning, problem-solving, architectural design, and automated logic processing.">
