@@ -20,20 +20,26 @@
     })()
 </script>
   <script>
-    /* Apply saved theme before first paint — avoids a light/dark flash */
+    /* Dark (Zalij) mode is now the official default. Applied before
+       first paint to avoid a light/dark flash. A user who explicitly
+       switched to light before (zunexa-theme === 'light') keeps their
+       choice — this only changes what NEW visitors see by default. */
     (function() {
         try {
             const savedTheme = localStorage.getItem('zunexa-theme');
-            if (savedTheme === 'dark') {
+            if (savedTheme !== 'light') {
                 document.documentElement.setAttribute('data-theme', 'dark');
+                if (!savedTheme) localStorage.setItem('zunexa-theme', 'dark');
             }
-        } catch (e) {}
+        } catch (e) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
     })()
 </script>
   <script src="zunexa-seo-keywords.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#0B0C0F">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -49,6 +55,11 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<!-- Syntax highlighting for code blocks in chat replies -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- QR code reading (from uploaded/attached images) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -602,6 +613,17 @@ img{max-width:100%;display:block}
 .file-chip .fc-x:hover{color:var(--red)}
 .file-chip img{max-height:34px;border-radius:4px}
 
+.qr-result-chip{
+  display:flex;align-items:center;gap:8px;max-width:100%;
+  margin:0 0 8px;padding:6px 10px;background:var(--card2);
+  border:1px solid var(--gold);border-radius:10px;font-size:11.5px;color:var(--tw);
+}
+.qr-result-chip span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.qr-result-chip .qr-insert{
+  cursor:pointer;color:var(--gold);font-weight:700;flex-shrink:0;white-space:nowrap;
+}
+.qr-result-chip .qr-insert:hover{text-decoration:underline}
+
 /* ════════════════════════════════════════════════════════
    CONVERSATION
 ════════════════════════════════════════════════════════ */
@@ -689,6 +711,14 @@ img{max-width:100%;display:block}
   max-width:76%;padding:12px 15px;
   border-radius:13px;font-size:14px;line-height:1.75;word-break:break-word;
 }
+/* Typewriter live-typing cursor — only shown while a bot reply is
+   still being animated in (see typewriteBubble()); removed the
+   instant the full text finishes rendering. */
+.bubble.typing::after{
+  content:'';display:inline-block;width:2px;height:1em;margin-inline-start:2px;
+  background:var(--gold);vertical-align:-2px;animation:bubbleCursorBlink .8s steps(1) infinite;
+}
+@keyframes bubbleCursorBlink{50%{opacity:0}}
 .msg.bot  .bubble{
   background:var(--card2);border:1px solid var(--b1);
   border-top-right-radius:3px;color:var(--tw);
@@ -1863,6 +1893,7 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
         <div class="field-input" style="opacity:.7" id="settRealPlan">—</div>
         <p style="font-size:11px;color:var(--text-muted,#888);margin:6px 0 14px">لتغيير معلومات حسابك أو خطتك، توجه إلى صفحة الإعدادات الكاملة.</p>
         <button class="modal-save" onclick="window.location.href='settings.html'">⚙ إدارة الحساب</button>
+        <button class="modal-save" id="logoutBtn" onclick="logoutUser()" style="margin-top:10px;background:var(--red);border-color:var(--red);color:#fff">🚪 تسجيل الخروج</button>
       </div>
       <div id="settGuestInfo" style="display:none">
         <label class="field-label">اسم الضيف (محلي فقط، لا يؤثر على أي حساب)</label>
@@ -4117,7 +4148,7 @@ async function send() {
 
   if (containsBlockedContent(q)) {
     const refusal = '🚫 ما نقدرش نجاوب على هاد النوع ديال الطلبات — عندي حدود واضحة بخصوص المحتوى الجنسي الصريح أو العنيف. اسألني على شي حاجة أخرى وأنا معاك.';
-    addMsg(refusal, 'bot', 'blocked', 0);
+    addMsg(refusal, 'bot', 'blocked', 0, null, false, null, true);
     await logMsg(q, refusal, 'blocked', 0);
     clearFile();
     busy = false;
@@ -4129,7 +4160,7 @@ async function send() {
   // Exact-match cache — skip API entirely on a known question
   const cached = findExactKBMatch(q);
   if (cached) {
-    addMsg(cached.a, 'bot', cached.src || 'cache', cached.w || 1);
+    addMsg(cached.a, 'bot', cached.src || 'cache', cached.w || 1, null, false, null, true);
     ctx.push({ role:'user', text:q });
     ctx.push({ role:'bot',  text:cached.a });
     if (ctx.length > 12) ctx = ctx.slice(-12);
@@ -4165,7 +4196,7 @@ async function send() {
     }
     removeTyping();
     if (!res || !res.text) res = { text: '⚠ خطأ في المعالجة. حاول مرة أخرى.', src: 'error', score: 0 };
-    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl);
+    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl, true);
 
     // Update context
     ctx.push({ role:'user', text:q });
@@ -4188,7 +4219,7 @@ async function send() {
     console.error('Zunexa send() error:', err);
     thinkEnd();
     removeTyping();
-    addMsg('⚠ خطأ في المعالجة. حاول مرة أخرى.', 'bot', 'error', 0);
+    addMsg('⚠ خطأ في المعالجة. حاول مرة أخرى.', 'bot', 'error', 0, null, false, null, true);
   }
 
   busy = false;
@@ -4199,7 +4230,7 @@ async function send() {
 /* ════════════════════════════════════════════════════════════
    DOM HELPERS
 ════════════════════════════════════════════════════════════ */
-function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
+function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate) {
   const conv = document.getElementById('conv');
   const div  = document.createElement('div');
   div.className = 'msg ' + role;
@@ -4226,7 +4257,8 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
 
   const bub = document.createElement('div');
   bub.className = 'bubble';
-  bub.innerHTML = fmt(text);
+  const shouldAnimate = animate && role === 'bot' && typeof text === 'string' && text.length > 0;
+  if (!shouldAnimate) { bub.innerHTML = fmt(text); highlightCodeIn(bub); }
   if (imgUrl) {
     const img = document.createElement('img');
     img.src = imgUrl;
@@ -4288,6 +4320,54 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
   conv.scrollTop = conv.scrollHeight;
 
   if (!skipSave) saveThreadMsg(role, text, src, score, imgUrl, audioUrl);
+
+  if (shouldAnimate) typewriteBubble(bub, text, conv);
+}
+
+/* ── Typewriter effect for live bot replies ────────────────────────
+   Renders the raw text progressively (plain text, not the final
+   markdown) so no half-parsed HTML tag can ever appear mid-typing,
+   then swaps in the real fmt(text) HTML once typing finishes so code
+   blocks/bold/etc render correctly. Auto-scrolls on every tick so the
+   conversation follows the reply as it's "written" instead of the
+   whole message popping in at once and leaving the user scrolled up. */
+function typewriteBubble(bub, fullText, conv) {
+  const CHARS_PER_TICK = 3;   // small chunks read as smooth typing, not a per-letter crawl
+  const TICK_MS = 16;         // ~60fps
+  let i = 0;
+  bub.textContent = '';
+  bub.classList.add('typing');
+
+  function tick() {
+    i = Math.min(fullText.length, i + CHARS_PER_TICK);
+    bub.textContent = fullText.slice(0, i);
+    // Only auto-scroll if the user is already near the bottom, so
+    // someone who scrolled up to re-read earlier messages isn't
+    // yanked back down mid-stream.
+    const nearBottom = conv.scrollHeight - conv.scrollTop - conv.clientHeight < 120;
+    if (nearBottom) conv.scrollTop = conv.scrollHeight;
+
+    if (i < fullText.length) {
+      setTimeout(tick, TICK_MS);
+    } else {
+      bub.classList.remove('typing');
+      bub.innerHTML = fmt(fullText);
+      highlightCodeIn(bub);
+      if (conv.scrollHeight - conv.scrollTop - conv.clientHeight < 120) {
+        conv.scrollTop = conv.scrollHeight;
+      }
+    }
+  }
+  tick();
+}
+
+/* ── Syntax highlighting hook — best-effort, never breaks the chat
+   if highlight.js failed to load (CDN down, blocked, etc). ── */
+function highlightCodeIn(container) {
+  try {
+    if (typeof hljs === 'undefined') return;
+    container.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+  } catch (e) { /* best-effort */ }
 }
 
 /* ── Live-previewable languages: rendered directly (HTML/SVG), or
@@ -4317,7 +4397,7 @@ function buildCodeBlockHtml(lang, code) {
           <button class="code-btn" onclick="copyCodeBlock('${id}')">⧉ نسخ</button>
         </div>
       </div>
-      <pre><code id="${id}" data-lang="${langLabel}" data-preview-kind="${previewKind || ''}">${escaped}</code></pre>
+      <pre><code id="${id}" class="language-${langLabel}" data-lang="${langLabel}" data-preview-kind="${previewKind || ''}">${escaped}</code></pre>
       ${previewKind ? `<div class="sandbox-wrap" id="${id}_sandbox"></div>` : ''}
     </div>`;
 }
@@ -4866,6 +4946,26 @@ async function openSettings() {
   closeSidebar();
 }
 function closeSettings() { document.getElementById('settModal').classList.remove('on'); }
+
+/* ── Logout ─────────────────────────────────────────────────────
+   Clears the real Supabase session (server + local token), then
+   wipes the local-only device/session identity fields so nothing
+   from the previous account bleeds into the guest state that
+   follows, and redirects to index.html — the same page the
+   top-of-file guard sends unauthenticated visitors to. */
+async function logoutUser() {
+  const btn = document.getElementById('logoutBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '... جارٍ تسجيل الخروج'; }
+  try {
+    await _SB.auth.signOut();
+  } catch (e) {
+    console.warn('logoutUser: signOut failed (best-effort, continuing)', e);
+  }
+  try {
+    localStorage.removeItem('sb-xrldhfsytysznyyhwjlr-auth-token');
+  } catch (e) {}
+  window.location.replace('index.html');
+}
 
 /* ════════════════════════════════════════════════════════════
    BILLING MODAL — restored from the previous ai.html, adapted to
@@ -5692,6 +5792,8 @@ async function onFilePicked(e) {
       </div>`;
     toast('✓ تم إرفاق الملف — اسأل عنه الآن');
 
+    if (attachedFile.kind === 'image') scanAttachedImageForQR(attachedFile.dataUrl);
+
     // Mirror the raw file to Supabase Storage (best-effort, doesn't
     // block the chat if it fails) so it isn't only in browser memory —
     // works for guests too via getDeviceId(), no login required.
@@ -5724,6 +5826,51 @@ function readAsDataURL(file) {
     r.onerror = () => rej(r.error);
     r.readAsDataURL(file);
   });
+}
+
+/* ── QR code reading ────────────────────────────────────────────
+   Best-effort: decodes any QR code inside an attached image using
+   jsQR (client-side, no server round-trip). If found, shows the
+   decoded text as a chip the user can tap to insert into the
+   message box — never auto-sends anything on its own. Silently
+   does nothing if jsQR failed to load or no QR code is present. */
+function scanAttachedImageForQR(dataUrl) {
+  try {
+    if (typeof jsQR === 'undefined' || !dataUrl) return;
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx2d = canvas.getContext('2d');
+        ctx2d.drawImage(img, 0, 0);
+        const imageData = ctx2d.getImageData(0, 0, canvas.width, canvas.height);
+        const result = jsQR(imageData.data, imageData.width, imageData.height);
+        if (result && result.data) showQRResultChip(result.data);
+      } catch (e) { /* best-effort — never breaks the attach flow */ }
+    };
+    img.src = dataUrl;
+  } catch (e) { /* best-effort */ }
+}
+
+function showQRResultChip(text) {
+  const zone = document.getElementById('fileChipZone');
+  if (!zone) return;
+  const existing = zone.querySelector('.qr-result-chip');
+  if (existing) existing.remove();
+  const chip = document.createElement('div');
+  chip.className = 'qr-result-chip';
+  chip.innerHTML = `
+    <span>📷 QR: ${esc(text.length > 60 ? text.slice(0, 60) + '…' : text)}</span>
+    <span class="qr-insert" title="إدراج في الرسالة">➕ إدراج</span>
+  `;
+  chip.querySelector('.qr-insert').onclick = () => {
+    const inp = document.getElementById('aiInput');
+    if (inp) { inp.value = (inp.value ? inp.value + '\n' : '') + text; inp.focus(); }
+  };
+  zone.appendChild(chip);
+  toast('✓ تم قراءة QR Code من الصورة');
 }
 function readAsText(file) {
   return new Promise((res, rej) => {
