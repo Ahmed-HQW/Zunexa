@@ -1933,6 +1933,43 @@ const ZX_SUPABASE_URL      = 'https://xrldhfsytysznyyhwjlr.supabase.co';
 const ZX_SUPABASE_ANON_KEY = 'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F';
 const _SB = supabase.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY);
 
+// ── Handle Supabase access_token from URL hash ──
+(async () => {
+  try {
+    const hash = window.location.hash;
+
+    if (!hash.includes('access_token')) return;
+
+    const params = new URLSearchParams(hash.replace('#', '?'));
+
+    const access = params.get('access_token');
+    const refresh = params.get('refresh_token');
+
+    if (access && refresh) {
+      const { error } = await _SB.auth.setSession({
+        access_token: access,
+        refresh_token: refresh
+      });
+
+      if (error) {
+        console.error('Supabase token session error:', error);
+        return;
+      }
+
+      // تنظيف الـ token من URL بعد إنشاء الـ session
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname + window.location.search
+      );
+
+      // إعادة تحميل الصفحة باش باقي ai.html يلقا الـ session جاهزة
+      window.location.reload();
+    }
+  } catch (e) {
+    console.error('URL access_token processing failed:', e);
+  }
+})(); 
 /* ── Storage bucket used for chat attachments (images/PDF/text files).
  * Must exist in the Supabase project — see ZUNEXA_DB_SETUP.sql for the
  * bucket + policy statements to run once in the Supabase SQL editor. ── */
