@@ -15,17 +15,19 @@
   try{
     for (var i = 0; i < localStorage.length; i++){
       var k = localStorage.key(i);
-      if (k && k.indexOf('sb-') === 0 && k.indexOf('-auth-token') !== -1){
-        var raw = localStorage.getItem(k);
-        if (!raw) continue;
-        var parsed = JSON.parse(raw);
-        var expiresAt = parsed && (parsed.expires_at || (parsed.session && parsed.session.expires_at));
-        var hasToken = parsed && (parsed.access_token || (parsed.session && parsed.session.access_token));
-        if (hasToken && (!expiresAt || expiresAt * 1000 > Date.now())){
-          window.location.replace('ai.html');
-        }
-        break;
+      // Only stop scanning once we find an actual auth-token key —
+      // an unrelated 'sb-' key earlier in the list must not short-
+      // circuit the loop before we reach the real session key.
+      if (!(k && k.indexOf('sb-') === 0 && k.indexOf('-auth-token') !== -1)) continue;
+      var raw = localStorage.getItem(k);
+      if (!raw) continue;
+      var parsed = JSON.parse(raw);
+      var expiresAt = parsed && (parsed.expires_at || (parsed.session && parsed.session.expires_at));
+      var hasToken = parsed && (parsed.access_token || (parsed.session && parsed.session.access_token));
+      if (hasToken && (!expiresAt || expiresAt * 1000 > Date.now())){
+        window.location.replace('ai.html');
       }
+      break;
     }
   }catch(e){ /* fall through to normal page load / getSession() check below */ }
 })();
@@ -201,14 +203,14 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
         <label for="si-username">Email</label>
         <div class="field-wrap">
           <span class="field-icon" aria-hidden="true">✉</span>
-          <input type="email" id="si-username" placeholder="you@example.com" autocomplete="username" required/>
+          <input type="email" id="si-username" placeholder="you@example.com" autocomplete="username" inputmode="email" enterkeyhint="next" required/>
         </div>
       </div>
       <div class="form-field">
         <label for="si-password">Password</label>
         <div class="field-wrap">
           <span class="field-icon" aria-hidden="true">🔒</span>
-          <input type="password" id="si-password" placeholder="••••••••" autocomplete="current-password" required/>
+          <input type="password" id="si-password" placeholder="••••••••" autocomplete="current-password" enterkeyhint="go" required/>
           <button type="button" class="field-icon-end" onclick="togglePwdVisibility('si-password',this)" aria-label="Show or hide password">👁</button>
         </div>
       </div>
@@ -393,7 +395,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (rem > 0) applyLockoutUI(rem);
 
   const savedEmail = localStorage.getItem('zunexa_last_email');
-  if (savedEmail) document.getElementById('si-username').value = savedEmail;
+  if (savedEmail) {
+    document.getElementById('si-username').value = savedEmail;
+    // Returning user with a saved email: jump straight to the password
+    // field so sign-in is a single click/tap away.
+    document.getElementById('si-password').focus();
+  } else {
+    document.getElementById('si-username').focus();
+  }
 
   _SB.auth.getSession().then(({ data: { session } }) => {
     if (session) window.location.replace('ai.html');
@@ -534,11 +543,13 @@ async function handleSignIn(){
   }
 
   localStorage.setItem('zunexa_last_email', email);
+  localStorage.setItem('zunexa_remember', '1');
   let redeemed = null;
   if (codeVal && data.user) redeemed = await redeemPlanCodeIfAny(codeVal);
   const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan] || FREE_PLAN) : FREE_PLAN;
   showSuccess(email, plan);
-  setTimeout(() => window.location.replace('ai.html'), 1600);
+  // Sign-in is the hot path — go straight to ai.html, no artificial delay.
+  window.location.replace('ai.html');
 }
 
 // ── Sign Up ──
@@ -582,16 +593,22 @@ async function handleSignUp(){
     return;
   }
 
-  if (data.user) {
-    // Safe defaults only — plan/tokens/role are managed server-side
-    // (handle_new_user_tokens trigger + user_plans / user_tokens tables).
-    await _SB.from('profiles').upsert({
-      id: data.user.id,
-      username,
-      first_name: fname,
-      email,
-      current_theme: 'zalij-dark',
-    });
+  // Only write to `profiles` when we actually have a session — with
+  // email confirmation ON, data.session is null here and RLS will
+  // reject the insert (no auth.uid() yet). That used to throw an
+  // unhandled rejection and could strand the user on a blank/stuck
+  // screen instead of showing "check your email". Guard it, and
+  // never let a profile-write hiccup block the redirect to ai.html.
+  if (data.user && data.session) {
+    try {
+      await _SB.from('profiles').upsert({
+        id: data.user.id,
+        username,
+        first_name: fname,
+        email,
+        current_theme: 'zalij-dark',
+      });
+    } catch (e) { /* non-fatal — ai.html can self-heal the profile row on load */ }
   }
 
   let plan = FREE_PLAN;
@@ -600,8 +617,9 @@ async function handleSignUp(){
       const redeemed = await redeemPlanCodeIfAny(codeVal);
       if (redeemed) plan = PLAN_DISPLAY[redeemed.plan] || FREE_PLAN;
     }
+    localStorage.setItem('zunexa_last_email', email);
     showSuccess(fname, plan);
-    setTimeout(() => window.location.replace('ai.html'), 1600);
+    setTimeout(() => window.location.replace('ai.html'), 900);
   } else {
     // Email confirmation required — redeem the code on first ai
     // load instead (no session yet to call the RPC with).
@@ -653,7 +671,7 @@ function showSuccess(name, plan){
   const progressWrap = document.getElementById('progress-wrap');
   progressWrap.style.display = '';
   const progressBar = document.getElementById('progress-bar');
-  progressBar.style.transition = 'width 1.6s ease';
+  progressBar.style.transition = 'width .9s ease';
   progressBar.style.width = '0%';
 
   document.getElementById('success-name').textContent = `Hi, ${name} 👋`;
@@ -661,6 +679,7 @@ function showSuccess(name, plan){
   badge.style.display = '';
   badge.textContent = plan.label;
   badge.style.cssText = `background:${plan.color}22;border:1px solid ${plan.color}55;color:${plan.color};display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:20px;`;
+  progressBar.style.transition = 'width .9s ease';
   requestAnimationFrame(() => { progressBar.style.width = '100%'; });
 }
 
@@ -672,13 +691,15 @@ function escapeHtml(str){
 
 // ── OAuth (Google / GitHub) ──
 async function handleOAuth(provider){
-  document.querySelectorAll('.btn-oauth').forEach(b => { b.disabled = true; });
+  document.querySelectorAll('.btn-oauth, .btn-auth').forEach(b => { b.disabled = true; });
+  // Redirect straight to ai.html on success — skip the sign-in page,
+  // Supabase's own hash-token handler on ai.html/index.html finishes the job.
   const { error } = await _SB.auth.signInWithOAuth({
     provider,
     options: { redirectTo: ZX_ORIGIN + '/ai.html' }
   });
   if (error) {
-    document.querySelectorAll('.btn-oauth').forEach(b => { b.disabled = false; });
+    document.querySelectorAll('.btn-oauth, .btn-auth').forEach(b => { b.disabled = false; });
     const msg = /unsupported provider|provider is not enabled/i.test(error.message)
       ? `${provider} sign-in isn't set up yet — use email instead, or enable it in Supabase → Auth → Providers.`
       : `${provider} sign-in failed — please try again.`;
