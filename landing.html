@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B0C0F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Zunexa">
+<meta name="format-detection" content="telephone=no">
+
+<title>Zunexa — وكيل ذكاء اصطناعي متكامل لإدارة مشاريعك | Coder · Planner · Tasker · Tester</title>
+<meta name="description" content="Zunexa هو وكيل ذكاء اصطناعي متعدد التخصصات كيدير مشاريعك من الفكرة حتى التسليم: برمجة، تخطيط، مهام، اختبار، وملخصات — كلشي فمنصة واحدة، بلا ما تبدل بين عشرة أدوات. جرب مجاناً.">
+<meta name="keywords" content="Zunexa, وكيل ذكاء اصطناعي, إدارة المشاريع, AI project management, Coder Agent, Planner Agent, Tasker Agent, Tester Agent, ذكاء اصطناعي عربي, أتمتة المشاريع, multi-agent AI, DeepSeek, Gemini, OpenRouter, أدوات المطورين, project intelligence agent, مساعد برمجة ذكي, تخطيط مشاريع بالذكاء الاصطناعي">
+<meta name="author" content="Zunexa">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://zunexa.vercel.app/landing.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Zunexa">
+<meta property="og:title" content="Zunexa — وكيل ذكاء اصطناعي متكامل لإدارة مشاريعك">
+<meta property="og:description" content="فريق كامل من وكلاء الذكاء الاصطناعي (Coder, Planner, Tasker, Tester, Info) كيخدم على مشروعك 24/7. جرب مجاناً من غير بطاقة بنكية.">
+<meta property="og:url" content="https://zunexa.vercel.app/landing.html">
+<meta property="og:image" content="https://zunexa.vercel.app/zunexa-logo.svg">
+<meta property="og:locale" content="ar_MA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Zunexa — وكيل ذكاء اصطناعي متكامل لإدارة مشاريعك">
+<meta name="twitter:description" content="فريق وكلاء ذكاء اصطناعي كيدير مشروعك من الفكرة حتى التسليم — مجاناً للبداية.">
+<meta name="twitter:image" content="https://zunexa.vercel.app/zunexa-logo.svg">
+
+<link rel="icon" type="image/svg+xml" href="zunexa-logo.svg">
+<link rel="apple-touch-icon" href="zunexa-logo.svg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Zunexa",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web, Android, Linux, Windows",
+  "description": "وكيل ذكاء اصطناعي متعدد التخصصات لإدارة المشاريع: برمجة، تخطيط، تتبع مهام، واختبار.",
+  "offers": [
+    {"@type":"Offer","name":"Free","price":"0","priceCurrency":"USD"},
+    {"@type":"Offer","name":"Agent Pro","price":"30","priceCurrency":"USD"},
+    {"@type":"Offer","name":"Agent Max","price":"40","priceCurrency":"USD"}
+  ]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --void:#0B0C0F;--ink2:#0F1116;--card:#15171C;--card2:#1B1E24;--b1:#262A32;--b2:#33373F;
+  --gold:#D4AF37;--gold2:#E4C158;--gold3:#8a7022;--gbg:rgba(212,175,55,.10);--gbgh:rgba(212,175,55,.22);
+  --ink:#F2F3F5;--tg:#9AA0AC;--tm:#6B7280;
+  --emerald:#1F8A5F;--emerald2:#2FB37D;--red:#EF4444;
+  --r1:8px;--r2:14px;--r3:20px;--r4:28px;
+  --tr:.25s cubic-bezier(.4,0,.2,1);
+  --sg2:0 4px 20px rgba(212,175,55,.16),0 0 0 1px rgba(212,175,55,.14);
+  --wrap:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);color:var(--ink);font-family:'Rajdhani',sans-serif;
+  overflow-x:hidden;line-height:1.6;
+}
+h1,h2,h3,.disp{font-family:'Cinzel',serif}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+ul{list-style:none}
+::selection{background:var(--gold);color:#0B0C0F}
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:8px}
+::-webkit-scrollbar-track{background:var(--void)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}}
+
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+@media(max-width:600px){.wrap{padding:0 18px}}
+
+/* ═══════════ NAV ═══════════ */
+.nav{
+  position:sticky;top:0;z-index:100;background:rgba(11,12,15,.85);backdrop-filter:blur(14px) saturate(140%);
+  border-bottom:1px solid var(--b1);
+}
+.nav-in{display:flex;align-items:center;gap:14px;padding:14px 0}
+.nav-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-logo img{width:34px;height:34px;border-radius:50%;box-shadow:0 0 0 1px rgba(212,175,55,.4)}
+.nav-logo b{font-family:'Cinzel',serif;font-size:1.05rem;letter-spacing:.03em}
+.nav-links{display:flex;gap:6px;margin-inline-start:8px}
+.nav-links a{padding:9px 14px;border-radius:999px;font-size:.86rem;font-weight:600;color:var(--tg);transition:var(--tr)}
+.nav-links a:hover{color:var(--ink);background:var(--card)}
+.nav-cta{margin-inline-start:auto;display:flex;align-items:center;gap:10px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 22px;border-radius:999px;font-weight:700;font-size:.88rem;transition:var(--tr);white-space:nowrap;
+}
+.btn-gold{background:linear-gradient(135deg,var(--gold2),var(--gold3));color:#0B0C0F;box-shadow:var(--sg2)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(212,175,55,.28),0 0 0 1px rgba(212,175,55,.2)}
+.btn-ghost{background:var(--card);border:1px solid var(--b1);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--gold)}
+.nav-burger{display:none;width:38px;height:38px;border-radius:10px;background:var(--card);border:1px solid var(--b1);align-items:center;justify-content:center;font-size:1.1rem;color:var(--gold);flex-shrink:0}
+@media(max-width:860px){
+  .nav-links{display:none}
+  .nav-burger{display:flex}
+}
+@media(max-width:600px){
+  .nav-cta .btn-ghost{display:none}
+}
+
+/* ═══════════ HERO ═══════════ */
+.hero{position:relative;padding:88px 0 70px;overflow:hidden;isolation:isolate}
+.hero-glow{position:absolute;top:-180px;inset-inline-end:-180px;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle,var(--gbgh),transparent 70%);filter:blur(10px);z-index:-2;pointer-events:none}
+.zalij-signature{
+  position:absolute;top:50%;inset-inline-end:-6%;transform:translateY(-50%);width:640px;height:640px;
+  opacity:.14;z-index:-1;pointer-events:none;animation:zalijspin 90s linear infinite;
+}
+@keyframes zalijspin{to{transform:translateY(-50%) rotate(360deg)}}
+@media(max-width:960px){.zalij-signature{width:400px;height:400px;opacity:.10}}
+@media(max-width:600px){.zalij-signature{display:none}}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;padding:7px 15px;border-radius:999px;
+  background:var(--gbg);border:1px solid rgba(212,175,55,.3);color:var(--gold2);
+  font-size:.78rem;font-weight:700;letter-spacing:.03em;margin-bottom:22px;
+}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--emerald2);box-shadow:0 0 0 3px rgba(47,179,125,.25)}
+.hero h1{
+  font-size:clamp(2.1rem,5.2vw,3.6rem);font-weight:700;line-height:1.2;max-width:820px;
+  letter-spacing:.005em;
+}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--gold2),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{margin-top:22px;font-size:1.12rem;color:var(--tg);max-width:600px;line-height:1.85}
+.hero-ctas{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap}
+.hero-ctas .btn{padding:15px 28px;font-size:.95rem}
+.hero-note{margin-top:16px;font-size:.8rem;color:var(--tm);display:flex;align-items:center;gap:8px}
+.hero-note b{color:var(--emerald2)}
+
+.hero-stats{display:flex;gap:0;margin-top:56px;border-top:1px solid var(--b1);padding-top:26px;flex-wrap:wrap;gap:36px}
+.hstat b{display:block;font-family:'Cinzel',serif;font-size:1.6rem;color:var(--gold2)}
+.hstat span{font-size:.78rem;color:var(--tm)}
+
+/* ═══════════ SECTION SHELL ═══════════ */
+section{padding:86px 0}
+@media(max-width:600px){section{padding:56px 0}}
+.sec-head{max-width:640px;margin-bottom:52px}
+.sec-eyebrow{font-size:.76rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);margin-bottom:12px}
+.sec-head h2{font-size:clamp(1.6rem,3.4vw,2.3rem);font-weight:700;line-height:1.3}
+.sec-head p{margin-top:14px;color:var(--tg);font-size:1.02rem;line-height:1.8}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--b1) 20%,var(--b1) 80%,transparent)}
+
+/* ═══════════ AGENT COUNCIL ═══════════ */
+.council{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+@media(max-width:960px){.council{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.council{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.council{grid-template-columns:1fr}}
+.agent-card{
+  background:var(--card);border:1px solid var(--b1);border-radius:var(--r3);padding:22px 18px;
+  display:flex;flex-direction:column;gap:10px;transition:var(--tr);position:relative;overflow:hidden;
+}
+.agent-card:hover{border-color:var(--gold);transform:translateY(-4px)}
+.agent-card .aico{font-size:1.8rem}
+.agent-card h3{font-size:1rem;font-family:'Rajdhani',sans-serif;font-weight:700;color:var(--ink)}
+.agent-card .role-tag{font-size:.66rem;color:var(--gold2);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.agent-card p{font-size:.82rem;color:var(--tg);line-height:1.7}
+
+/* ═══════════ FEATURE GRID ═══════════ */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:860px){.feat-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.feat-grid{grid-template-columns:1fr}}
+.feat-card{background:var(--card2);border:1px solid var(--b1);border-radius:var(--r3);padding:24px;transition:var(--tr)}
+.feat-card:hover{border-color:var(--b2)}
+.feat-ico{
+  width:44px;height:44px;border-radius:12px;background:var(--gbg);border:1px solid rgba(212,175,55,.25);
+  display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:16px;
+}
+.feat-card h3{font-family:'Rajdhani',sans-serif;font-size:1.02rem;font-weight:700;margin-bottom:8px}
+.feat-card p{font-size:.85rem;color:var(--tg);line-height:1.75}
+
+/* ═══════════ WORKFLOW STRIP ═══════════ */
+.flow{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch}
+.flow-step{
+  flex:0 0 220px;background:var(--card);border:1px solid var(--b1);border-radius:var(--r3);padding:20px;
+  margin-inline-end:16px;position:relative;
+}
+.flow-step .fk{font-size:.7rem;color:var(--gold2);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.flow-step h4{margin-top:8px;font-size:.98rem;font-family:'Rajdhani',sans-serif;font-weight:700}
+.flow-step p{margin-top:6px;font-size:.8rem;color:var(--tg);line-height:1.7}
+.flow-arrow{align-self:center;color:var(--gold3);font-size:1.2rem;flex-shrink:0;margin-inline-end:16px}
+@media(max-width:640px){.flow{flex-direction:column}.flow-step{margin-inline-end:0;margin-bottom:14px;flex:1}.flow-arrow{display:none}}
+
+/* ═══════════ PRICING ═══════════ */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+@media(max-width:900px){.pricing-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}}
+.price-card{
+  background:var(--card);border:1px solid var(--b1);border-radius:var(--r4);padding:30px 26px;
+  display:flex;flex-direction:column;transition:var(--tr);position:relative;
+}
+.price-card.feat{border-color:var(--gold);box-shadow:var(--sg2);background:linear-gradient(180deg,var(--card2),var(--card))}
+.price-badge{
+  position:absolute;top:-13px;inset-inline-start:26px;background:var(--gold);color:#0B0C0F;
+  font-size:.7rem;font-weight:800;padding:5px 14px;border-radius:999px;letter-spacing:.03em;
+}
+.price-card h3{font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold2)}
+.price-card .pnum{margin-top:14px;display:flex;align-items:baseline;gap:6px}
+.price-card .pnum b{font-family:'Cinzel',serif;font-size:2.6rem;color:var(--ink)}
+.price-card .pnum span{color:var(--tm);font-size:.85rem}
+.price-card .ptag{margin-top:6px;font-size:.8rem;color:var(--tg)}
+.price-list{margin-top:24px;display:flex;flex-direction:column;gap:11px;flex:1}
+.price-list li{display:flex;align-items:flex-start;gap:9px;font-size:.85rem;color:var(--tg)}
+.price-list li b{color:var(--emerald2);flex-shrink:0}
+.price-card .btn{margin-top:26px;width:100%}
+
+/* ═══════════ COMPARISON ═══════════ */
+.cmp-wrap{overflow-x:auto;border:1px solid var(--b1);border-radius:var(--r3);background:var(--card)}
+table.cmp{width:100%;border-collapse:collapse;min-width:560px}
+table.cmp th,table.cmp td{padding:15px 18px;text-align:center;font-size:.85rem;border-bottom:1px solid var(--b1)}
+table.cmp th{color:var(--gold2);font-weight:700;background:var(--card2)}
+table.cmp td:first-child,table.cmp th:first-child{text-align:start;color:var(--ink);font-weight:600}
+table.cmp tr:last-child td{border-bottom:none}
+table.cmp td.yes{color:var(--emerald2);font-weight:700}
+table.cmp td.no{color:var(--tm)}
+
+/* ═══════════ DEVICES / MOBILE ═══════════ */
+.device-row{display:flex;align-items:center;justify-content:center;gap:36px;flex-wrap:wrap;margin-top:10px}
+.device-chip{
+  display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--b1);
+  border-radius:999px;padding:11px 18px;font-size:.84rem;font-weight:600;color:var(--tg);
+}
+.device-chip span.i{font-size:1.1rem}
+
+/* ═══════════ FAQ ═══════════ */
+.faq-list{max-width:760px;display:flex;flex-direction:column;gap:10px}
+.faq-item{background:var(--card);border:1px solid var(--b1);border-radius:var(--r2);overflow:hidden}
+.faq-q{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:18px 20px;font-size:.94rem;font-weight:700;color:var(--ink);text-align:start;
+}
+.faq-q .chev{color:var(--gold);transition:transform .25s;flex-shrink:0}
+.faq-item.open .faq-q .chev{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.faq-a p{padding:0 20px 18px;font-size:.86rem;color:var(--tg);line-height:1.8}
+
+/* ═══════════ FINAL CTA ═══════════ */
+.final-cta{
+  text-align:center;background:radial-gradient(ellipse at center, var(--card2), var(--void) 75%);
+  border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);
+}
+.final-cta h2{font-size:clamp(1.7rem,4vw,2.5rem);max-width:640px;margin:0 auto}
+.final-cta p{margin-top:16px;color:var(--tg);max-width:520px;margin-inline:auto}
+.final-cta .hero-ctas{justify-content:center}
+
+/* ═══════════ FOOTER ═══════════ */
+footer{padding:52px 0 32px;border-top:1px solid var(--b1)}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px}
+@media(max-width:760px){.foot-grid{grid-template-columns:1fr 1fr;gap:24px}}
+@media(max-width:480px){.foot-grid{grid-template-columns:1fr}}
+.foot-brand{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.foot-brand img{width:30px;height:30px;border-radius:50%}
+.foot-brand b{font-family:'Cinzel',serif;font-size:1rem}
+.foot-grid p{font-size:.82rem;color:var(--tm);line-height:1.8;max-width:280px}
+.foot-col h5{font-size:.78rem;color:var(--gold2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+.foot-col a{display:block;font-size:.84rem;color:var(--tg);margin-bottom:10px;transition:var(--tr)}
+.foot-col a:hover{color:var(--gold)}
+.foot-bottom{margin-top:40px;padding-top:20px;border-top:1px solid var(--b1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.foot-bottom span{font-size:.78rem;color:var(--tm)}
+
+/* reveal-on-scroll */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-in">
+    <a href="#top" class="nav-logo">
+      <img src="zunexa-logo.svg" alt="Zunexa">
+      <b>Zunexa</b>
+    </a>
+    <div class="nav-links">
+      <a href="#agents">الوكلاء</a>
+      <a href="#features">المزايا</a>
+      <a href="#workflow">كيفاش كيخدم</a>
+      <a href="#pricing">الأسعار</a>
+      <a href="#faq">الأسئلة</a>
+    </div>
+    <div class="nav-cta">
+      <a href="index.html" class="btn btn-ghost">تسجيل الدخول</a>
+      <a href="index.html" class="btn btn-gold">جرب مجاناً</a>
+    </div>
+    <button class="nav-burger" aria-label="القائمة" onclick="document.querySelector('.nav-links').style.display='flex';document.querySelector('.nav-links').style.cssText='display:flex;position:absolute;top:100%;inset-inline:0;flex-direction:column;background:var(--void);border-bottom:1px solid var(--b1);padding:10px 24px'">☰</button>
+  </div>
+</nav>
+
+<main id="top">
+
+  <!-- ═══════ HERO ═══════ -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <svg class="zalij-signature" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <g fill="none" stroke="#D4AF37" stroke-width="1">
+        <path d="M100 10 L120 70 L182 70 L132 108 L152 168 L100 130 L48 168 L68 108 L18 70 L80 70 Z"/>
+        <circle cx="100" cy="100" r="60"/>
+        <circle cx="100" cy="100" r="88"/>
+      </g>
+    </svg>
+    <div class="wrap">
+      <div class="eyebrow"><span class="dot"></span> Project Intelligence Agent — جديد</div>
+      <h1>وكيل ذكاء اصطناعي <em>واحد</em><br>كيدير مشروعك من الفكرة حتى التسليم</h1>
+      <p class="lead">
+        Zunexa كتجمع لك فريق كامل من وكلاء الذكاء الاصطناعي المتخصصين — Coder، Planner، Tasker، Tester، وInfo —
+        فمنصة واحدة. بلا ما تبدل بين ChatGPT وNotion وTrello وGitHub Copilot. كتخلق المشروع، وهوما كيخدمو.
+      </p>
+      <div class="hero-ctas">
+        <a href="index.html" class="btn btn-gold">ابدا مجاناً الآن ↗</a>
+        <a href="#workflow" class="btn btn-ghost">شوف كيفاش كيخدم</a>
+      </div>
+      <div class="hero-note"><b>✓</b> بلا بطاقة بنكية · <b>✓</b> خطة مجانية دائمة · <b>✓</b> ابدا فأقل من دقيقة</div>
+
+      <div class="hero-stats">
+        <div class="hstat"><b>5</b><span>وكلاء متخصصين</span></div>
+        <div class="hstat"><b>3</b><span>محركات ذكاء اصطناعي</span></div>
+        <div class="hstat"><b>0DH</b><span>خطة مجانية دائمة</span></div>
+        <div class="hstat"><b>24/7</b><span>متاح فأي وقت</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="divider"></div></div>
+
+  <!-- ═══════ AGENT COUNCIL ═══════ -->
+  <section id="agents">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="sec-eyebrow">فريق الوكلاء</div>
+        <h2>خمسة متخصصين، بلا ما توظف حتى واحد فيهم</h2>
+        <p>كل وكيل عندو دور محدد ومهارة مركزة — كيخدمو مع بعض على نفس المشروع، ونتا كتوجههم بالحوار مباشرة.</p>
+      </div>
+      <div class="council">
+        <div class="agent-card reveal">
+          <div class="aico">💻</div>
+          <div class="role-tag">Coder Agent</div>
+          <h3>البرمجة والتنفيذ</h3>
+          <p>كيكتب كود إنتاجي كامل حسب الـ stack اللي اخترتي، بلا اختصارات أو placeholders.</p>
+        </div>
+        <div class="agent-card reveal">
+          <div class="aico">🧭</div>
+          <div class="role-tag">Planner Agent</div>
+          <h3>التخطيط الاستراتيجي</h3>
+          <p>كيقسم المشروع لمراحل واضحة، وكيحدد الأولويات من الاكتشاف حتى التسليم.</p>
+        </div>
+        <div class="agent-card reveal">
+          <div class="aico">✅</div>
+          <div class="role-tag">Tasker Agent</div>
+          <h3>تحويل الأفكار لمهام</h3>
+          <p>كياخد الأهداف الكبيرة ويحولها لمهام قابلة للتنفيذ بأولوية وتاريخ استحقاق.</p>
+        </div>
+        <div class="agent-card reveal">
+          <div class="aico">🧪</div>
+          <div class="role-tag">Tester Agent</div>
+          <h3>المراجعة والاختبار</h3>
+          <p>كيكشف الثغرات وحالات الحافة، وكيقترح اختبارات محددة قبل ما تسلم المشروع.</p>
+        </div>
+        <div class="agent-card reveal">
+          <div class="aico">📋</div>
+          <div class="role-tag">Info Agent</div>
+          <h3>الملخصات والمتابعة</h3>
+          <p>كيلخص حالة المشروع فأي لحظة، بصيغة يمكن حفظها كسجل تقدم واضح.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ FEATURES ═══════ -->
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="sec-eyebrow">المزايا</div>
+        <h2>مبني للجدية، ماشي غير ديمو</h2>
+        <p>كل تفصيل فـ Zunexa مصمم باش يخدم فالإنتاج الحقيقي — من الأمان حتى الأداء على الهاتف.</p>
+      </div>
+      <div class="feat-grid">
+        <div class="feat-card reveal">
+          <div class="feat-ico">🔒</div>
+          <h3>حدود الخطة محمية من السيرفر</h3>
+          <p>كل قيود الاستعمال (عدد المشاريع، التوكنات) محسوبة فقاعدة البيانات نفسها — ماكاينش طريقة للتحايل عليها من المتصفح.</p>
+        </div>
+        <div class="feat-card reveal">
+          <div class="feat-ico">📱</div>
+          <h3>متكامل مع جميع الهواتف</h3>
+          <p>واجهة متجاوبة بنسبة عالية على iOS وAndroid وأي حجم شاشة، مع دعم كامل للعربية RTL.</p>
+        </div>
+        <div class="feat-card reveal">
+          <div class="feat-ico">⚡</div>
+          <h3>3 محركات ذكاء اصطناعي</h3>
+          <p>OpenRouter وGemini وDeepSeek كيخدمو مع بعض تلقائياً باش الوكيل يبقى شغال حتى لو محرك واحد توقف.</p>
+        </div>
+        <div class="feat-card reveal">
+          <div class="feat-ico">☁️</div>
+          <h3>مزامنة عبر الأجهزة</h3>
+          <p>المشاريع، المهام، والمحادثات محفوظين فـ Supabase — كتلقاهم فأي جهاز دخلتي بيه.</p>
+        </div>
+        <div class="feat-card reveal">
+          <div class="feat-ico">🎯</div>
+          <h3>Stack اختياري بالكامل</h3>
+          <p>اختر التقنيات اللي بغيتي تخدم بيها (React، Python، Supabase...) والوكلاء كيتأقلمو معاها.</p>
+        </div>
+        <div class="feat-card reveal">
+          <div class="feat-ico">📄</div>
+          <h3>ملخصات وسجل تقدم</h3>
+          <p>وكيل Info كيولد ملخصات دورية للمشروع، باش ماتضيعش خيط التقدم حتى فالمشاريع الطويلة.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ WORKFLOW ═══════ -->
+  <section id="workflow">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="sec-eyebrow">كيفاش كيخدم</div>
+        <h2>من الفكرة للتسليم فأربع خطوات</h2>
+      </div>
+      <div class="flow reveal">
+        <div class="flow-step">
+          <div class="fk">تعريف</div>
+          <h4>خلق المشروع</h4>
+          <p>دخل الاسم، الوصف، والـ stack. اختر الوكلاء اللي بغيتي تفعلهم.</p>
+        </div>
+        <span class="flow-arrow">←</span>
+        <div class="flow-step">
+          <div class="fk">تخطيط</div>
+          <h4>حاور Planner</h4>
+          <p>خطط المراحل والأولويات مباشرة مع وكيل التخطيط.</p>
+        </div>
+        <span class="flow-arrow">←</span>
+        <div class="flow-step">
+          <div class="fk">تنفيذ</div>
+          <h4>خدم مع Coder وTasker</h4>
+          <p>اطلب كود، تابع المهام، وتقدم فالمشروع خطوة بخطوة.</p>
+        </div>
+        <span class="flow-arrow">←</span>
+        <div class="flow-step">
+          <div class="fk">تسليم</div>
+          <h4>راجع مع Tester</h4>
+          <p>اكشف الثغرات قبل التسليم، وولد ملخص نهائي بوكيل Info.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ DEVICES ═══════ -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head reveal" style="text-align:center;margin-inline:auto">
+        <div class="sec-eyebrow">متاح فكل مكان</div>
+        <h2>خدم من أي جهاز، بلا فرق</h2>
+      </div>
+      <div class="device-row reveal">
+        <div class="device-chip"><span class="i">📱</span> iPhone / Android</div>
+        <div class="device-chip"><span class="i">💻</span> Windows / Linux</div>
+        <div class="device-chip"><span class="i">🌐</span> أي متصفح ويب</div>
+        <div class="device-chip"><span class="i">📶</span> واجهة خفيفة وسريعة</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ PRICING ═══════ -->
+  <section id="pricing">
+    <div class="wrap">
+      <div class="sec-head reveal" style="max-width:100%;text-align:center;margin-inline:auto">
+        <div class="sec-eyebrow">الأسعار</div>
+        <h2>ابدا مجاناً، رقّي فأي وقت</h2>
+        <p style="margin-inline:auto">بلا التزام طويل، بلا رسوم مخفية. غيّر أو ألغي خطتك فأي لحظة.</p>
+      </div>
+      <div class="pricing-grid reveal">
+        <div class="price-card">
+          <h3>Free</h3>
+          <div class="pnum"><b>$0</b><span>/دائماً</span></div>
+          <div class="ptag">باش تجرب وتبدا مشروعك الأول</div>
+          <ul class="price-list">
+            <li><b>✓</b> مشروع واحد نشط</li>
+            <li><b>✓</b> وكيلين: Coder + Planner</li>
+            <li><b>✓</b> 20K توكن شهرياً</li>
+            <li><b>✓</b> دعم عبر المجتمع</li>
+          </ul>
+          <a href="index.html" class="btn btn-ghost">ابدا مجاناً</a>
+        </div>
+        <div class="price-card feat">
+          <div class="price-badge">الأكثر طلباً</div>
+          <h3>Agent Pro</h3>
+          <div class="pnum"><b>$30</b><span>/شهر</span></div>
+          <div class="ptag">لأصحاب المشاريع النشيطة</div>
+          <ul class="price-list">
+            <li><b>✓</b> 10 مشاريع نشطة</li>
+            <li><b>✓</b> 3 وكلاء متزامنين</li>
+            <li><b>✓</b> 400K توكن شهرياً</li>
+            <li><b>✓</b> Coder + Planner + Tasker</li>
+            <li><b>✓</b> دعم عبر الإيميل</li>
+            <li><b>✓</b> تصدير المشاريع</li>
+          </ul>
+          <a href="index.html" class="btn btn-gold">اختر Agent Pro</a>
+        </div>
+        <div class="price-card">
+          <h3>Agent Max</h3>
+          <div class="pnum"><b>$40</b><span>/شهر</span></div>
+          <div class="ptag">للوكالات والفرق الجدية</div>
+          <ul class="price-list">
+            <li><b>✓</b> 50 مشروع نشط</li>
+            <li><b>✓</b> 5 وكلاء متزامنين (الفريق كامل)</li>
+            <li><b>✓</b> 1.2M توكن شهرياً</li>
+            <li><b>✓</b> أولوية قصوى فالمعالجة</li>
+            <li><b>✓</b> نسخ احتياطي تلقائي</li>
+            <li><b>✓</b> تحليل كود متقدم (Tester)</li>
+          </ul>
+          <a href="index.html" class="btn btn-ghost">اختر Agent Max</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ COMPARISON ═══════ -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="sec-eyebrow">مقارنة</div>
+        <h2>شنو كتفرق بين الخطط بالضبط</h2>
+      </div>
+      <div class="cmp-wrap reveal">
+        <table class="cmp">
+          <tr><th>الميزة</th><th>Free</th><th>Agent Pro</th><th>Agent Max</th></tr>
+          <tr><td>المشاريع النشطة</td><td>1</td><td>10</td><td>50</td></tr>
+          <tr><td>الوكلاء المتزامنين</td><td>2</td><td>3</td><td>5</td></tr>
+          <tr><td>التوكنات الشهرية</td><td>20K</td><td>400K</td><td>1.2M</td></tr>
+          <tr><td>وكيل Tester</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>وكيل Info / ملخصات</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>نسخ احتياطي تلقائي</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+          <tr><td>دعم مخصص</td><td class="no">—</td><td class="yes">✓ إيميل</td><td class="yes">✓ أولوية</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ FAQ ═══════ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="sec-eyebrow">الأسئلة الشائعة</div>
+        <h2>واش عندك سؤال؟</h2>
+      </div>
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">واش خاصني بطاقة بنكية باش نجرب؟<span class="chev">+</span></button>
+          <div class="faq-a"><p>لا. الخطة المجانية متاحة دائماً بلا أي بطاقة بنكية أو التزام.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">شنو الفرق بين Agent Pro وAgent Max؟<span class="chev">+</span></button>
+          <div class="faq-a"><p>Agent Max عندو توكنات أكثر، مشاريع أكثر، وكيلين إضافيين (Tester وInfo)، ونسخ احتياطي تلقائي — مصمم للفرق والوكالات اللي عندها حجم خدمة أكبر.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">واش نقدر نبدل الـ stack التقني فمنتصف المشروع؟<span class="chev">+</span></button>
+          <div class="faq-a"><p>إيه، الـ stack اختياري وكتقدر تعدلو فأي وقت من إعدادات المشروع.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">واش المنصة كتخدم مزيان على الهاتف؟<span class="chev">+</span></button>
+          <div class="faq-a"><p>إيه، Zunexa مبنية باش تخدم بنسبة عالية على جميع الهواتف (iOS وAndroid) وعلى أي حجم شاشة، بلا ما تحتاج تحمل تطبيق.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" onclick="toggleFaq(this)">واش نقدر نلغي الاشتراك فأي وقت؟<span class="chev">+</span></button>
+          <div class="faq-a"><p>إيه، بلا التزام طويل. تقدر تلغي أو تبدل الخطة فأي لحظة من إعدادات الحساب.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ FINAL CTA ═══════ -->
+  <section class="final-cta">
+    <div class="wrap">
+      <h2 class="reveal">وقت تخلي الوكلاء يخدمو معاك</h2>
+      <p class="reveal">ابدا بمشروعك الأول دابا — مجاناً، بلا بطاقة بنكية، بلا تعقيد.</p>
+      <div class="hero-ctas reveal">
+        <a href="index.html" class="btn btn-gold">ابدا مجاناً الآن ↗</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">
+          <img src="zunexa-logo.svg" alt="Zunexa">
+          <b>Zunexa</b>
+        </div>
+        <p>وكيل ذكاء اصطناعي متعدد التخصصات كيدير مشاريعك من الفكرة حتى التسليم.</p>
+      </div>
+      <div class="foot-col">
+        <h5>المنصة</h5>
+        <a href="#agents">الوكلاء</a>
+        <a href="#features">المزايا</a>
+        <a href="#pricing">الأسعار</a>
+      </div>
+      <div class="foot-col">
+        <h5>الحساب</h5>
+        <a href="index.html">تسجيل الدخول</a>
+        <a href="ai.html">المحادثة</a>
+        <a href="agent.html">وكيل المشاريع</a>
+      </div>
+      <div class="foot-col">
+        <h5>الدعم</h5>
+        <a href="support.html">الدعم التقني</a>
+        <a href="#faq">الأسئلة الشائعة</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Zunexa — جميع الحقوق محفوظة</span>
+      <span>صُنع بذكاء اصطناعي، من أجل مشاريعك</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const answer = item.querySelector('.faq-a');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => {
+    el.classList.remove('open');
+    el.querySelector('.faq-a').style.maxHeight = null;
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+  }
+}
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
