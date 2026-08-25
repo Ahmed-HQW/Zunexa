@@ -4,17 +4,12 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/",          "destination": "/dashboard.html" },
-    { "source": "/ai",        "destination": "/ai.html" },
-    { "source": "/downloads", "destination": "/downloads.html" },
-    { "source": "/upgrade",   "destination": "/upgrade.html" },
-    { "source": "/app",       "destination": "/dashboard.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" },
+   { "source": "/ai",        "destination": "/ai.html" },
+    { "source": "/app",       "destination": "/ai.html" },
+    { "source": "/dashboard", "destination": "/ai.html" },
     { "source": "/home",      "destination": "/landing.html" },
     { "source": "/owner_admin", "destination": "/owner_admin.html" },
-    { "source": "/CONTACT",     "destination": "/CONTACT.html" },
-    { "source": "/affiliat",    "destination": "/affiliat.html" }
-  ],
+    ],
   "redirects": [
     { "source": "/admin",     "destination": "/owner_admin", "permanent": false },
     { "source": "/contact",   "destination": "/CONTACT",     "permanent": true  },
@@ -31,7 +26,7 @@
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(self), geolocation=(), payment=()" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://*.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https: https://*.supabase.co https://text.pollinations.ai; worker-src 'self' blob: https://cdnjs.cloudflare.com; frame-ancestors 'none';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://*.supabase.co https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https: https://*.supabase.co https://text.pollinations.ai https://accounts.google.com https://github.com; form-action 'self' https://*.supabase.co https://accounts.google.com https://github.com; frame-src 'self' https://accounts.google.com; worker-src 'self' blob: https://cdnjs.cloudflare.com; frame-ancestors 'none';"
         },
         {
           "key": "Strict-Transport-Security",
