@@ -11,16 +11,30 @@
 // sb-<project-ref>-auth-token. We read it directly here instead of
 // waiting for supabase-js to load + async getSession() to resolve,
 // so a logged-in user never sees index.html render at all.
+//
+// Perf note: this is the very first script in <head>, before any
+// external CSS/font/ad tag, so nothing upstream can block or delay
+// it — it runs the moment the parser reaches this line. The check
+// itself is a handful of synchronous localStorage reads plus one
+// JSON.parse, which on real devices resolves in well under a
+// millisecond; there is no network call and no waiting on
+// supabase-js. We do not print a literal "4ms" guarantee anywhere
+// in the code, because that number depends on device/browser and
+// can't be truthfully hard-coded as a promise — what we *can*
+// guarantee is that this is the fastest possible synchronous path
+// (no async/await, no library load, no layout) before the redirect
+// fires.
 (function(){
   try{
-    for (var i = 0; i < localStorage.length; i++){
+    var len = localStorage.length;
+    for (var i = 0; i < len; i++){
       var k = localStorage.key(i);
       // Only stop scanning once we find an actual auth-token key —
       // an unrelated 'sb-' key earlier in the list must not short-
       // circuit the loop before we reach the real session key.
       if (!(k && k.indexOf('sb-') === 0 && k.indexOf('-auth-token') !== -1)) continue;
       var raw = localStorage.getItem(k);
-      if (!raw) continue;
+      if (!raw) break;
       var parsed = JSON.parse(raw);
       var expiresAt = parsed && (parsed.expires_at || (parsed.session && parsed.session.expires_at));
       var hasToken = parsed && (parsed.access_token || (parsed.session && parsed.session.access_token));
@@ -61,6 +75,10 @@
 <meta name="chatgpt-plugin" content="enabled">
 
 <meta name="google-site-verification" content="5Yomr5oTQXDXwKjwIDfIxuxfeFDiLtag7RcHQqJhszo" />
+<!-- SEO Keywords Engine — deferred so it never blocks parsing/paint,
+     but runs early enough to have meta/JSON-LD in place well before
+     first render for crawlers. -->
+<script src="zunexa-seo-keywords.js" defer></script>
 
 <!-- Favicon & Fonts -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23080808'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%23D4AF37' stroke-width='.8' opacity='.6'/><text x='16' y='21' text-anchor='middle' font-size='17' font-family='Georgia,serif' fill='%23D4AF37' font-weight='bold'>Z</text></svg>">
@@ -158,6 +176,8 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
 @media(max-width:520px){.auth-card{padding:22px 16px}.auth-shell{padding:12px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- Google Identity Services — powers One Tap / Auto-Select sign-in -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 <div class="bg-layer"></div>
@@ -342,6 +362,73 @@ const _SB = supabase.createClient(
 // identically on localhost, preview deployments, and production —
 // no hardcoded domain to break in any environment.
 const ZX_ORIGIN = window.location.origin;
+
+/* ════════════════════════════════════════════════════════════
+   GOOGLE ONE TAP / AUTO-SELECT
+   ─────────────────────────────────────────────────────────────
+   ⚠ REPLACE ME: this is a placeholder Client ID and will NOT work
+   until you swap it for a real OAuth 2.0 Web Client ID from
+   https://console.cloud.google.com/apis/credentials (the "Web
+   application" type, with this site's origin(s) added under
+   "Authorized JavaScript origins" — One Tap requires that, not a
+   redirect URI). You also need the "Google" provider switched on
+   in Supabase → Authentication → Providers, using that same
+   Client ID/secret, so signInWithIdToken() below can verify it.
+
+   How it works: GSI silently shows the "Continue as <name>" bubble
+   for anyone with an active Google session in their browser/device.
+   On tap, Google hands back a signed id_token; we pass that straight
+   to Supabase (signInWithIdToken), which verifies it server-side and
+   creates the session — no email/password typing, no redirect round
+   trip like the classic OAuth button above.
+════════════════════════════════════════════════════════════ */
+const ZX_GOOGLE_CLIENT_ID = 'REPLACE_WITH_YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com';
+
+async function handleGoogleOneTap(response) {
+  if (!response || !response.credential) return;
+  try {
+    const { error } = await _SB.auth.signInWithIdToken({
+      provider: 'google',
+      token: response.credential,
+    });
+    if (error) throw error;
+    window.location.replace('ai.html');
+  } catch (e) {
+    console.warn('Google One Tap sign-in failed, falling back to the Google button', e);
+    // Fail open: One Tap not configured yet (bad client ID, provider
+    // off in Supabase, etc.) should never block sign-in entirely —
+    // the classic "Google" OAuth button above still works normally.
+  }
+}
+
+function initGoogleOneTap() {
+  try {
+    if (ZX_GOOGLE_CLIENT_ID.indexOf('REPLACE_WITH_YOUR') === 0) {
+      console.warn('Google One Tap: placeholder Client ID still in place — skipping prompt until a real one is set.');
+      return;
+    }
+    if (!(window.google && window.google.accounts && window.google.accounts.id)) return;
+    // Don't prompt someone who's already mid-session or already signed in.
+    _SB.auth.getSession().then(({ data }) => {
+      if (data && data.session) return;
+      window.google.accounts.id.initialize({
+        client_id: ZX_GOOGLE_CLIENT_ID,
+        callback: handleGoogleOneTap,
+        auto_select: true,   // one tap for a returning user with one Google account
+        cancel_on_tap_outside: false,
+      });
+      window.google.accounts.id.prompt(); // shows the One Tap bubble if eligible
+    });
+  } catch (e) {
+    console.warn('Google One Tap: init skipped (best-effort)', e);
+  }
+}
+// GSI's script tag is async; wait for it before initializing.
+if (window.google && window.google.accounts) {
+  initGoogleOneTap();
+} else {
+  window.addEventListener('load', initGoogleOneTap);
+}
 
 // ── 10-second post-failure lockout (client-side UX guard, see note above) ──
 const LOCKOUT_MS = 10000;
@@ -722,7 +809,5 @@ async function handleOAuth(provider){
   }
 })();
 </script>
-<!-- SEO Keywords Engine -->
-<script src="zunexa-seo-keywords.js"></script>
 </body>
 </html>

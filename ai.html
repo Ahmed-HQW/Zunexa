@@ -367,13 +367,23 @@ img{max-width:100%;display:block}
 .sb-uplan{font-size:8px;color:var(--gdim);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
 .sb-uemail{font-size:8px;color:var(--tg);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
 
-/* ── Download button — sits inside the user card, next to user info ── */
+/* ── Download button — sits inside the user card, next to user info ──
+   Touch-target fix: the visual box stays a compact 26px so the tight
+   sidebar layout is untouched, but an invisible ::after pseudo-element
+   expands the actual clickable/tappable area to the 44px minimum via
+   position:absolute + inset, centered on the visible button. Purely
+   hit-area — no visual change on desktop or mobile. */
 .user-icon-button{
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
   width:26px;height:26px;border-radius:var(--r1);
   background:transparent;border:1px solid var(--b1);
   color:var(--tw);cursor:pointer;transition:all var(--tr);
   position:relative;z-index:2;
+}
+.user-icon-button::after{
+  content:'';position:absolute;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;min-width:44px;min-height:44px;
 }
 .user-icon-button:hover{background:var(--gold);border-color:var(--gold);color:#fff}
 .user-icon-button .download-icon{width:14px;height:14px;flex-shrink:0;color:currentColor}
@@ -391,6 +401,12 @@ img{max-width:100%;display:block}
   border:1px solid var(--gold);
   color:var(--gold);cursor:pointer;transition:all var(--tr);
   position:relative;z-index:2;overflow:hidden;
+}
+.theme-toggle-btn::after{
+  content:'';position:absolute;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;min-width:44px;min-height:44px;
+  z-index:3; /* above the ::before dot-pattern overlay, still behind the svg icon visually since it's transparent */
 }
 .theme-toggle-btn::before{
   content:'';position:absolute;inset:0;opacity:.5;pointer-events:none;
@@ -499,7 +515,7 @@ img{max-width:100%;display:block}
   display:flex;align-items:center;gap:6px;
   padding:6px 8px;border-radius:var(--r1);
   color:var(--tg);font-size:10.5px;font-weight:500;
-  transition:all var(--tr);text-align:right;width:100%;min-height:32px;
+  transition:all var(--tr);text-align:right;width:100%;min-height:44px;
 }
 .sb-fbtn:hover{background:var(--card);color:var(--gold)}
 .sb-fbtn .fi{font-size:11px;opacity:.65}
@@ -665,16 +681,6 @@ img{max-width:100%;display:block}
 .wl-title span{color:var(--gold)}
 .wl-sub{font-size:13px;color:var(--tg);line-height:1.8;max-width:400px}
 
-/* ── Quick chips ── */
-.quick-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:4px}
-.qchip{
-  padding:9px 14px;background:var(--card);
-  border:1px solid var(--b1);border-radius:99px;
-  font-size:11.5px;color:var(--tg);cursor:pointer;
-  transition:all var(--tr);min-height:44px;display:inline-flex;align-items:center;
-}
-.qchip:hover{border-color:var(--b2);color:var(--gold);background:var(--hover)}
-
 /* ── KB Status bar ── */
 .kb-bar{
   display:flex;align-items:center;gap:8px;
@@ -704,6 +710,14 @@ img{max-width:100%;display:block}
 .bubble{
   max-width:76%;padding:12px 15px;
   border-radius:13px;font-size:14px;line-height:1.75;word-break:break-word;
+}
+/* On very wide viewports a pure % max-width still stretches lines to
+   unreadable widths (e.g. 76% of 3440px ≈ 2600px). Cap the absolute
+   width too so long-line readability holds on ultra-wide monitors
+   without changing anything on normal/mobile widths, where this
+   px cap is never reached. */
+@media(min-width:1400px){
+  .bubble{max-width:min(76%,820px)}
 }
 /* Typewriter live-typing cursor — only shown while a bot reply is
    still being animated in (see typewriteBubble()); removed the
@@ -803,6 +817,11 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 .persona-act-btn{
   width:32px;height:32px;border-radius:6px;border:1px solid var(--b1);
   background:transparent;color:var(--tg);font-size:11px;
+  position:relative; /* anchor for the ::after touch-target expansion below */
+}
+.persona-act-btn::after{
+  content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;min-width:44px;min-height:44px;
 }
 .persona-act-btn:hover{border-color:var(--gold);color:var(--gold)}
 .persona-act-btn.del:hover{border-color:var(--red);color:var(--red)}
@@ -822,7 +841,7 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 .code-btn{
   padding:5px 10px;border-radius:6px;border:1px solid var(--b1);
   background:transparent;color:var(--tg);font-size:10.5px;font-weight:600;
-  transition:all var(--tr);min-height:32px;
+  transition:all var(--tr);min-height:44px;
 }
 .code-btn:hover{border-color:var(--gold);color:var(--gold)}
 .code-btn.on{background:var(--gold);color:#fff;border-color:var(--gold)}
@@ -1043,6 +1062,12 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
   border-radius:var(--r2);padding:7px 7px 7px 13px;
   transition:border-color var(--tr),box-shadow var(--tr);
 }
+/* Match the .bubble ultra-wide cap above so the input bar lines up
+   with message width instead of stretching edge-to-edge on very
+   wide monitors. */
+@media(min-width:1400px){
+  .input-shell, .mode-row{max-width:820px;margin-inline:auto}
+}
 .input-shell:focus-within{
   border-color:var(--gold);
   box-shadow:0 0 0 3px rgba(17,17,17,.05);
@@ -1109,6 +1134,10 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
   position:absolute;top:14px;left:14px;width:32px;height:32px;
   border-radius:5px;border:1px solid var(--b1);color:var(--tg);
   font-size:12px;display:grid;place-items:center;transition:all var(--tr);
+}
+.modal-x::after{
+  content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;min-width:44px;min-height:44px;
 }
 .modal-x:hover{border-color:var(--red);color:var(--red)}
 .modal-title{
@@ -1222,11 +1251,11 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 @keyframes zxRippleAnim{
   to{transform:scale(2.6);opacity:0}
 }
-.send-btn,.sb-upgrade,.sb-new,.qchip,.mode-chip,.model-sel-btn,.modal-save,
+.send-btn,.sb-upgrade,.sb-new,.mode-chip,.model-sel-btn,.modal-save,
 .off-btn,.lim-upgrade,.mini-ghost-btn,.code-btn,.attach-btn{
   position:relative;overflow:hidden;
 }
-button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97)}
+button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
 
 /* ════════════════════════════════════════════════════════
    RESPONSIVE — MOBILE FIRST
@@ -1269,7 +1298,6 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
 
 @media(max-width:390px){
   .tb-title{font-size:10px;letter-spacing:.08em}
-  .qchip{font-size:10.5px;padding:7px 11px}
   .bubble{max-width:92%}
   .wl-title{font-size:18px}
 }
@@ -1487,7 +1515,7 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
     </div>
     <div class="tb-right">
       <div class="model-tag">Zunexa AI Engine</div>
-      <button id="tempChatBtn" onclick="toggleTempChat()" title="محادثة مؤقتة" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r1);color:var(--tg);transition:all var(--tr)"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="group" aria-hidden="true" style="flex-shrink: 0;"><g class="group-hover:animate-[look-around_2.4s_ease-in-out_infinite] group-active:animate-none"><path d="M6.99951 8.66672C7.5518 8.66672 7.99951 9.11443 7.99951 9.66672C7.9993 10.2188 7.55166 10.6667 6.99951 10.6667C6.44736 10.6667 5.99973 10.2188 5.99951 9.66672C5.99951 9.11443 6.44723 8.66672 6.99951 8.66672Z"></path><path d="M12.9995 8.66672C13.5518 8.66672 13.9995 9.11443 13.9995 9.66672C13.9993 10.2188 13.5517 10.6667 12.9995 10.6667C12.4474 10.6667 11.9997 10.2188 11.9995 9.66672C11.9995 9.11443 12.4472 8.66672 12.9995 8.66672Z"></path></g><path fill-rule="evenodd" clip-rule="evenodd" d="M10 2C14.326 2.00018 17.9998 5.67403 18 10V17.3123C17.9997 17.5427 17.8411 17.8079 17.6172 17.8623C17.3932 17.9165 17.1614 17.7456 17.0557 17.5408C16.7805 17.007 16.3658 16.5937 16.062 16.2878C15.7793 16.0034 15.4503 15.8338 14.9771 15.8337C14.2092 15.8339 13.4371 16.3862 12.9487 17.53C12.8701 17.7138 12.6887 17.8621 12.4888 17.8623C12.2888 17.8623 12.1076 17.7138 12.0288 17.53C11.5404 16.386 10.7674 15.8339 9.99951 15.8337C9.23161 15.8339 8.45959 16.386 7.97119 17.53C7.89253 17.7138 7.71118 17.8621 7.51123 17.8623C7.31122 17.8623 7.13006 17.7138 7.05127 17.53C6.56296 16.3862 5.78982 15.834 5.02197 15.8337C4.54861 15.8338 4.21974 16.0032 3.93701 16.2878C3.63309 16.5937 3.21952 17.0715 2.94434 17.6055C2.83865 17.8103 2.60589 17.9165 2.38184 17.8623C2.15801 17.8079 2.00033 17.6073 2 17.377V10C2.00018 5.67403 5.67403 2.00018 10 2ZM10 3C6.22631 3.00018 3.00018 6.22631 3 10V15.8633C3.0205 15.8414 3.20696 15.6049 3.22803 15.5837C3.67524 15.1336 4.251 14.8338 5.02197 14.8337C6.03838 14.8341 6.90232 15.4025 7.51025 16.2937C8.11828 15.4018 8.9824 14.8338 9.99951 14.8337C11.0163 14.8338 11.8798 15.4022 12.4878 16.2937C13.0959 15.4018 13.9601 14.8339 14.9771 14.8337C15.7481 14.8338 16.3247 15.1336 16.772 15.5837C16.772 15.5837 16.9796 15.812 17 15.8337V10C16.9998 6.22631 13.7737 3.00018 10 3Z"></path></svg></button>
+      <button id="tempChatBtn" onclick="toggleTempChat()" title="محادثة مؤقتة" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r1);color:var(--tg);transition:all var(--tr);position:relative"><span style="content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;min-width:44px;min-height:44px;pointer-events:none" aria-hidden="true"></span><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="group" aria-hidden="true" style="flex-shrink: 0;"><g class="group-hover:animate-[look-around_2.4s_ease-in-out_infinite] group-active:animate-none"><path d="M6.99951 8.66672C7.5518 8.66672 7.99951 9.11443 7.99951 9.66672C7.9993 10.2188 7.55166 10.6667 6.99951 10.6667C6.44736 10.6667 5.99973 10.2188 5.99951 9.66672C5.99951 9.11443 6.44723 8.66672 6.99951 8.66672Z"></path><path d="M12.9995 8.66672C13.5518 8.66672 13.9995 9.11443 13.9995 9.66672C13.9993 10.2188 13.5517 10.6667 12.9995 10.6667C12.4474 10.6667 11.9997 10.2188 11.9995 9.66672C11.9995 9.11443 12.4472 8.66672 12.9995 8.66672Z"></path></g><path fill-rule="evenodd" clip-rule="evenodd" d="M10 2C14.326 2.00018 17.9998 5.67403 18 10V17.3123C17.9997 17.5427 17.8411 17.8079 17.6172 17.8623C17.3932 17.9165 17.1614 17.7456 17.0557 17.5408C16.7805 17.007 16.3658 16.5937 16.062 16.2878C15.7793 16.0034 15.4503 15.8338 14.9771 15.8337C14.2092 15.8339 13.4371 16.3862 12.9487 17.53C12.8701 17.7138 12.6887 17.8621 12.4888 17.8623C12.2888 17.8623 12.1076 17.7138 12.0288 17.53C11.5404 16.386 10.7674 15.8339 9.99951 15.8337C9.23161 15.8339 8.45959 16.386 7.97119 17.53C7.89253 17.7138 7.71118 17.8621 7.51123 17.8623C7.31122 17.8623 7.13006 17.7138 7.05127 17.53C6.56296 16.3862 5.78982 15.834 5.02197 15.8337C4.54861 15.8338 4.21974 16.0032 3.93701 16.2878C3.63309 16.5937 3.21952 17.0715 2.94434 17.6055C2.83865 17.8103 2.60589 17.9165 2.38184 17.8623C2.15801 17.8079 2.00033 17.6073 2 17.377V10C2.00018 5.67403 5.67403 2.00018 10 2ZM10 3C6.22631 3.00018 3.00018 6.22631 3 10V15.8633C3.0205 15.8414 3.20696 15.6049 3.22803 15.5837C3.67524 15.1336 4.251 14.8338 5.02197 14.8337C6.03838 14.8341 6.90232 15.4025 7.51025 16.2937C8.11828 15.4018 8.9824 14.8338 9.99951 14.8337C11.0163 14.8338 11.8798 15.4022 12.4878 16.2937C13.0959 15.4018 13.9601 14.8339 14.9771 14.8337C15.7481 14.8338 16.3247 15.1336 16.772 15.5837C16.772 15.5837 16.9796 15.812 17 15.8337V10C16.9998 6.22631 13.7737 3.00018 10 3Z"></path></svg></button>
       <div class="model-sel" id="tbShortcuts">
         <button class="model-sel-btn" id="tbShortcutsBtn" onclick="toggleTbShortcuts()" title="المزيد" style="padding:6px 9px">⋯</button>
         <div class="sel-menu-backdrop" onclick="toggleTbShortcuts(false)"></div>
@@ -1509,9 +1537,6 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
       <div class="gold-hr"></div>
       <div class="wl-title">مرحباً في <span>Zunexa</span></div>
       <div class="wl-sub"></div>
-      <div class="quick-chips">
-        <!-- تم مسح جميع الأزرار القديمة -->
-      </div>
     </div>
   </div>
   <!-- Toast -->
@@ -2206,6 +2231,8 @@ async function checkSessionLimitOnBoot() {
 async function init() {
   renderHist();
   await loadUser();
+  await pullCloudHistory();  // cross-device sync: restore chats from other devices, if any
+  renderHist();
   checkSessionLimitOnBoot();
   await loadKB();
   initParticles();
@@ -2219,6 +2246,92 @@ async function init() {
   renderAvatarSettingsPreview();
   renderPersonaList();
   document.getElementById('aiInput').focus();
+}
+
+/* ════════════════════════════════════════════════════════════
+   CROSS-DEVICE CHAT SYNC — pull history from Supabase on login
+   ─────────────────────────────────────────────────────────────
+   Chat history has always lived in localStorage only (zx_hist_v3 +
+   zx_thread_<chatId>); logMsg() mirrors every turn to
+   zunexa_messages, but until now nothing ever read that mirror
+   back. A user logging in on a second device/browser saw an empty
+   sidebar even though their messages were sitting in Supabase.
+   This pulls that user's rows (matched by user_id — see logMsg's
+   uid write, above), rebuilds each chat_id into the same
+   {role,text,...} shape replayThread()/loadThread() already expect,
+   and only ADDS chat_ids this device doesn't already have — it
+   never overwrites or merges into a thread that already exists
+   locally, so nothing already open here can be clobbered by an
+   older/shorter cloud copy.
+
+   Best-effort like the rest of the sync layer: if user_id isn't a
+   column yet (ZUNEXA_DB_SETUP_SYNC.sql not run), Supabase returns
+   an error, we log a warning and skip — local-only mode keeps
+   working exactly as it always has.
+════════════════════════════════════════════════════════════ */
+async function pullCloudHistory() {
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) return; // guests have nothing to pull cross-device
+
+    const { data: rows, error } = await _SB
+      .from('zunexa_messages')
+      .select('chat_id, user_prompt, bot_response, source, tokens_used, file_url, file_name, created_at')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: true })
+      .limit(2000); // generous cap — this is a best-effort restore, not a full archive export
+    if (error) throw error;
+    if (!rows || !rows.length) return;
+
+    // Group rows by chat_id, in chronological order within each group.
+    const byChat = {};
+    rows.forEach(r => {
+      if (!r.chat_id) return;
+      (byChat[r.chat_id] = byChat[r.chat_id] || []).push(r);
+    });
+
+    const knownChatIds = new Set(hist.map(h => h.chatId));
+    let addedAny = false;
+
+    Object.keys(byChat).forEach(chatId => {
+      // Never touch a chat this device already has a local copy of —
+      // the local thread (open tab, in-progress edits, pinned state)
+      // always wins over the cloud mirror.
+      if (knownChatIds.has(chatId) || localStorage.getItem('zx_thread_' + chatId)) return;
+
+      const cloudRows = byChat[chatId];
+      const thread = [];
+      cloudRows.forEach(r => {
+        const ts = r.created_at ? new Date(r.created_at).getTime() : Date.now();
+        if (r.user_prompt) {
+          thread.push({ role: 'user', text: r.user_prompt, src: null, score: 0, imgUrl: null, audioUrl: null, ts });
+        }
+        if (r.bot_response) {
+          thread.push({
+            role: 'bot', text: r.bot_response, src: r.source || null,
+            score: (r.tokens_used || 0) / 100,
+            imgUrl: r.file_url || null, audioUrl: null, ts: ts + 1,
+          });
+        }
+      });
+      if (!thread.length) return;
+
+      localStorage.setItem('zx_thread_' + chatId, JSON.stringify(thread));
+
+      const firstUserMsg = cloudRows.find(r => r.user_prompt);
+      const title = (firstUserMsg && firstUserMsg.user_prompt || 'محادثة مستعادة').slice(0, 50);
+      const lastTs = new Date(cloudRows[cloudRows.length - 1].created_at || Date.now()).getTime();
+      hist.unshift({ chatId, t: title, ts: lastTs, pinned: false });
+      knownChatIds.add(chatId);
+      addedAny = true;
+    });
+
+    if (addedAny) {
+      localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
+    }
+  } catch (e) {
+    console.warn('pullCloudHistory: skipped (best-effort — table/column may not be set up yet)', e);
+  }
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -2249,11 +2362,19 @@ async function loadUser() {
     // Guest/Free" symptom. Reading the real columns fixes it for good.
     const { data, error } = await _SB
       .from('profiles')
-      .select('username, first_name, email, avatar_url')
+      .select('username, first_name, email, avatar_url, app_settings')
       .eq('id', uid)
       .maybeSingle();
     if (error) throw error;
     const u = data || {};
+
+    // Cross-device settings sync — see pushAppSettings()/pullCloudHistory()
+    // below. Best-effort: app_settings just comes back undefined if the
+    // column doesn't exist yet (ZUNEXA_DB_SETUP_SYNC.sql not run), and
+    // this silently no-ops instead of breaking the rest of loadUser().
+    if (u.app_settings && typeof u.app_settings === 'object') {
+      try { applyRemoteAppSettings(u.app_settings); } catch (e) { console.warn('applyRemoteAppSettings failed', e); }
+    }
 
     // Sync avatar from account (server) over any locally-cached one —
     // avatar_url column added by ZUNEXA_DB_SETUP_AVATAR.sql. Missing
@@ -3094,7 +3215,7 @@ async function zunexaBrain(messages, opts) {
       body: JSON.stringify({
         model: 'openai',
         messages,
-        max_tokens: opts.maxTokens || 800,
+        max_tokens: Math.min(opts.maxTokens || 800, FREE_TIER_TOKEN_CAP),
         temperature: opts.temperature || 0.7
       })
     });
@@ -3522,11 +3643,20 @@ async function ragSearch(userQ, matchCount = 5) {
 }
 
 // Effort → how hard Zunexa tries: local-only vs. local+brain, context depth, token budget.
+//
+// FREE_TIER_TOKEN_CAP: this app currently has no paid-tier gating
+// anywhere in the codebase (uPlan is a display label only — see
+// loadUser() — never wired into token limits). Per the token-cap
+// requirement, every effort level's maxTokens is clamped to this
+// constant, so even "max" effort can never exceed 2000 tokens for
+// any user. If a paid tier is added later, gate a *higher* constant
+// behind a verified plan check — never just raise these numbers.
+const FREE_TIER_TOKEN_CAP = 2000;
 const EFFORT_CFG = {
-  quick:    { useBrain: false, ctxTurns: 0,  maxTokens: 350  },
-  balanced: { useBrain: 'weak', ctxTurns: 4, maxTokens: 650  },
-  deep:     { useBrain: true,  ctxTurns: 8,  maxTokens: 1200 },
-  max:      { useBrain: true,  ctxTurns: 12, maxTokens: 2000 }
+  quick:    { useBrain: false, ctxTurns: 0,  maxTokens: Math.min(350,  FREE_TIER_TOKEN_CAP) },
+  balanced: { useBrain: 'weak', ctxTurns: 4, maxTokens: Math.min(650,  FREE_TIER_TOKEN_CAP) },
+  deep:     { useBrain: true,  ctxTurns: 8,  maxTokens: Math.min(1200, FREE_TIER_TOKEN_CAP) },
+  max:      { useBrain: true,  ctxTurns: 12, maxTokens: Math.min(2000, FREE_TIER_TOKEN_CAP) }
 };
 
 /* Follow-up detector — the root cause of "can't continue/understand
@@ -3972,6 +4102,18 @@ async function autoLearn(question, answerText, localScore) {
 async function logMsg(prompt, response, src, score) {
   if (tempChatOn) return; // Temporary Chat: nothing is written to Supabase
   try {
+    // user_id lets cross-device sync (pullCloudHistory, below) find a
+    // logged-in user's messages regardless of which device/browser
+    // wrote them — device_id alone can't do that since it's per-device
+    // by definition. Best-effort: if the zunexa_messages table doesn't
+    // have a user_id column yet (ZUNEXA_DB_SETUP_SYNC.sql not run),
+    // Supabase will just ignore/reject that one field or the whole
+    // insert fails silently here — chat still works locally either way.
+    let uid = null;
+    try {
+      const { data: { session } } = await _SB.auth.getSession();
+      uid = session ? session.user.id : null;
+    } catch (e) {}
     await _SB.from('zunexa_messages').insert({
       user_prompt:  prompt,
       bot_response: response,
@@ -3980,6 +4122,7 @@ async function logMsg(prompt, response, src, score) {
       platform:     'web',
       chat_id:      currentChatId,
       device_id:    getDeviceId(),
+      user_id:      uid,
       file_url:     (attachedFile && attachedFile.storageUrl) || null,
       file_name:    (attachedFile && attachedFile.name) || null,
       created_at:   new Date().toISOString()
@@ -4651,19 +4794,6 @@ function newChat() {
       <div class="wl-eyebrow">Zunexa Premium · Zunexa AI </div>
       <div class="gold-hr"></div>
       <div class="wl-title">مرحباً في <span>Zunexa</span></div>
-      <div class="quick-chips">
-        <div class="qchip" onclick="go('ما هي منصة Zunexa؟')">ما هي Zunexa؟</div>
-        <div class="qchip" onclick="go('التصميم Zalij Mode')">Zalij Mode</div>
-        <div class="qchip" onclick="go('من المطور؟')">المطور</div>
-        <div class="qchip" onclick="go('أداة SEO كيف تعمل؟')">SEO Tool</div>
-        <div class="qchip" onclick="go('Generator Hub شرح')">Generator Hub</div>
-        <div class="qchip" onclick="go('ما هي تقنيات المنصة؟')">التقنيات</div>
-        <div class="qchip" onclick="go('/طقس الدار البيضاء')">🌤 الطقس</div>
-        <div class="qchip" onclick="go('/صورة شعار ذهبي مغربي عصري')">🎨 توليد صورة</div>
-        <div class="qchip" onclick="go('/جيت zunexa')">🐙 GitHub</div>
-        <div class="qchip" onclick="go('/بحث أفضل ممارسات SEO 2026')">🔎 بحث ويب</div>
-        <div class="qchip" onclick="go('/صوت مرحبا بك في Zunexa')">🔊 نص لصوت</div>
-      </div>
     </div>`;
   closeSidebar();
 }
@@ -4972,25 +5102,61 @@ function renderLibFiles() {
    SETTINGS
 ════════════════════════════════════════════════════════════ */
 async function openSettings() {
-  const { data: { session } } = await _SB.auth.getSession();
-  const loggedInBox = document.getElementById('settLoggedInInfo');
-  const guestBox     = document.getElementById('settGuestInfo');
-  if (session) {
-    loggedInBox.style.display = 'block';
-    guestBox.style.display    = 'none';
-    document.getElementById('settRealName').textContent  = document.getElementById('uName').textContent  || '—';
-    document.getElementById('settRealEmail').textContent = document.getElementById('uEmail').textContent || session.user.email || '—';
-    document.getElementById('settRealPlan').textContent  = document.getElementById('uPlan').textContent  || '—';
-  } else {
-    loggedInBox.style.display = 'none';
-    guestBox.style.display    = 'block';
-    document.getElementById('fName').value = localStorage.getItem('zx_guest_name') || '';
+  // Hardened against the modal-crash bug: every DOM lookup is null-checked
+  // and the whole flow is wrapped in try/catch so a missing element, a
+  // slow/failed getSession() call, or any other surprise never leaves the
+  // app in a broken state — worst case the modal still opens with
+  // whatever info is available.
+  try {
+    let session = null;
+    try {
+      const res = await _SB.auth.getSession();
+      session = res && res.data && res.data.session;
+    } catch (e) {
+      console.warn('openSettings: getSession failed (best-effort)', e);
+    }
+
+    const loggedInBox = document.getElementById('settLoggedInInfo');
+    const guestBox     = document.getElementById('settGuestInfo');
+
+    if (session) {
+      if (loggedInBox) loggedInBox.style.display = 'block';
+      if (guestBox)    guestBox.style.display    = 'none';
+      const nameEl  = document.getElementById('settRealName');
+      const emailEl = document.getElementById('settRealEmail');
+      const planEl  = document.getElementById('settRealPlan');
+      const uName   = document.getElementById('uName');
+      const uEmail  = document.getElementById('uEmail');
+      const uPlan   = document.getElementById('uPlan');
+      if (nameEl)  nameEl.textContent  = (uName  && uName.textContent)  || '—';
+      if (emailEl) emailEl.textContent = (uEmail && uEmail.textContent) || session.user.email || '—';
+      if (planEl)  planEl.textContent  = (uPlan  && uPlan.textContent)  || '—';
+    } else {
+      if (loggedInBox) loggedInBox.style.display = 'none';
+      if (guestBox)    guestBox.style.display    = 'block';
+      const fNameEl = document.getElementById('fName');
+      if (fNameEl) fNameEl.value = localStorage.getItem('zx_guest_name') || '';
+    }
+
+    const modal = document.getElementById('settModal');
+    if (modal) modal.classList.add('on');
+
+    try { loadAllPrefsIntoUI(); } catch (e) { console.warn('openSettings: loadAllPrefsIntoUI failed', e); }
+    try { closeSidebar(); } catch (e) { console.warn('openSettings: closeSidebar failed', e); }
+  } catch (e) {
+    // Absolute last resort — still try to show the modal even if
+    // everything else above failed, instead of leaving the user with
+    // a dead button and a console error.
+    console.error('openSettings: unexpected failure', e);
+    const modal = document.getElementById('settModal');
+    if (modal) modal.classList.add('on');
   }
-  document.getElementById('settModal').classList.add('on');
-  loadAllPrefsIntoUI();
-  closeSidebar();
 }
-function closeSettings() { document.getElementById('settModal').classList.remove('on'); }
+
+function closeSettings() {
+  const modal = document.getElementById('settModal');
+  if (modal) modal.classList.remove('on');
+}
 
 /* ── Logout ─────────────────────────────────────────────────────
    Clears the real Supabase session (server + local token), then
@@ -5279,9 +5445,13 @@ function initParticles() {
 /* ════════════════════════════════════════════════════════════
    CLOSE MODAL ON OUTSIDE CLICK
 ════════════════════════════════════════════════════════════ */
-document.getElementById('settModal').addEventListener('click', function(e) {
-  if (e.target === this) closeSettings();
-});
+(function attachSettModalOutsideClick() {
+  const modal = document.getElementById('settModal');
+  if (!modal) return; // element not in DOM yet/removed — nothing to attach to, no crash
+  modal.addEventListener('click', function(e) {
+    if (e.target === this) closeSettings();
+  });
+})();
 
 /* ════════════════════════════════════════════════════════════
    THEME / MODEL / EFFORT — state + persistence
@@ -5303,8 +5473,9 @@ function setModel(v) {
   const descKey = { lite: 'modelLite', pro: 'modelPro', max: 'modelMax' }[v];
   const t = ZX_I18N[lang] || ZX_I18N.ary;
   if (tag) tag.textContent = (descKey && t[descKey]) || 'Zunexa AI Engine';
+  schedulePushAppSettings();
 }
-function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); }
+function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); schedulePushAppSettings(); }
 
 /* ── UI wrappers for the mode-row chips (speed modes + tier chips
    next to the input box). Keep the underlying setModel/setEffort as
@@ -5641,7 +5812,9 @@ function loadProfileIntoUI() {
 }
 
 function savePagePrefs() {
-  const lang = document.getElementById('setPageLang').value;
+  const el = document.getElementById('setPageLang');
+  if (!el) return;
+  const lang = el.value;
   localStorage.setItem('zx_page_lang', lang);
   applyPageLang(lang);
 }
@@ -5649,19 +5822,23 @@ function savePagePrefs() {
 function setChatFont(v) {
   localStorage.setItem('zx_font', v);
   const map = { rajdhani: "'Rajdhani',sans-serif", system: "system-ui,-apple-system,sans-serif", mono: "'Courier New',monospace" };
-  document.getElementById('conv').style.fontFamily = map[v] || map.rajdhani;
+  const conv = document.getElementById('conv');
+  if (conv) conv.style.fontFamily = map[v] || map.rajdhani;
 }
 
 function setReduceMotion(on) {
   localStorage.setItem('zx_reduce_motion', on ? '1' : '0');
   document.documentElement.classList.toggle('zx-reduce-motion', on);
+  schedulePushAppSettings();
 }
 
 function saveVoicePrefs() {
-  const lang  = document.getElementById('setVoiceLang').value;
-  const style = document.getElementById('setVoiceStyle').value;
-  const speed = document.getElementById('setVoiceSpeed').value;
-  localStorage.setItem('zx_voice', JSON.stringify({ lang, style, speed }));
+  const langEl  = document.getElementById('setVoiceLang');
+  const styleEl = document.getElementById('setVoiceStyle');
+  const speedEl = document.getElementById('setVoiceSpeed');
+  if (!langEl || !styleEl || !speedEl) return;
+  localStorage.setItem('zx_voice', JSON.stringify({ lang: langEl.value, style: styleEl.value, speed: speedEl.value }));
+  schedulePushAppSettings();
 }
 
 function setNotifPref(on) {
@@ -5669,13 +5846,72 @@ function setNotifPref(on) {
   if (on && 'Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
   }
+  schedulePushAppSettings();
 }
 
-function setLearnPref(on) { localStorage.setItem('zx_learn_enabled', on ? '1' : '0'); }
+function setLearnPref(on) { localStorage.setItem('zx_learn_enabled', on ? '1' : '0'); schedulePushAppSettings(); }
 function isLearnEnabled() { return localStorage.getItem('zx_learn_enabled') !== '0'; }
 
-function setToolsPref(on) { localStorage.setItem('zx_tools_enabled', on ? '1' : '0'); }
+function setToolsPref(on) { localStorage.setItem('zx_tools_enabled', on ? '1' : '0'); schedulePushAppSettings(); }
 function isToolsEnabled() { return localStorage.getItem('zx_tools_enabled') !== '0'; }
+
+/* ════════════════════════════════════════════════════════════
+   CROSS-DEVICE SETTINGS SYNC
+   ─────────────────────────────────────────────────────────────
+   Mirrors the same handful of preference values that
+   loadAllPrefsIntoUI() reads from localStorage into
+   profiles.app_settings (jsonb), so a user's font/motion/notif/
+   learn/tools/page-lang/model/effort/voice choices follow them to
+   a new device instead of resetting to defaults. Pulled back down
+   in loadUser() above via applyRemoteAppSettings(). Both directions
+   are best-effort: a missing app_settings column (before
+   ZUNEXA_DB_SETUP_SYNC.sql is run) just means these two functions
+   quietly no-op and everything keeps working locally, exactly as
+   before this feature existed. */
+function collectAppSettingsSnapshot() {
+  return {
+    font: localStorage.getItem('zx_font') || 'rajdhani',
+    reduce_motion: localStorage.getItem('zx_reduce_motion') === '1',
+    notif_done: localStorage.getItem('zx_notif_done') === '1',
+    learn_enabled: isLearnEnabled(),
+    tools_enabled: isToolsEnabled(),
+    page_lang: localStorage.getItem('zx_page_lang') || 'ar',
+    model: zxModel,
+    effort: zxEffort,
+    voice: JSON.parse(localStorage.getItem('zx_voice') || '{}'),
+  };
+}
+
+function applyRemoteAppSettings(s) {
+  if (!s || typeof s !== 'object') return;
+  if (s.font) localStorage.setItem('zx_font', s.font);
+  if (typeof s.reduce_motion === 'boolean') localStorage.setItem('zx_reduce_motion', s.reduce_motion ? '1' : '0');
+  if (typeof s.notif_done === 'boolean')    localStorage.setItem('zx_notif_done', s.notif_done ? '1' : '0');
+  if (typeof s.learn_enabled === 'boolean') localStorage.setItem('zx_learn_enabled', s.learn_enabled ? '1' : '0');
+  if (typeof s.tools_enabled === 'boolean') localStorage.setItem('zx_tools_enabled', s.tools_enabled ? '1' : '0');
+  if (s.page_lang) localStorage.setItem('zx_page_lang', s.page_lang);
+  if (s.model)  { zxModel = s.model; localStorage.setItem('zx_model', s.model); }
+  if (s.effort) { zxEffort = s.effort; localStorage.setItem('zx_effort', s.effort); }
+  if (s.voice && typeof s.voice === 'object') localStorage.setItem('zx_voice', JSON.stringify(s.voice));
+}
+
+let _pushSettingsTimer = null;
+function schedulePushAppSettings() {
+  // Debounced so a burst of toggle clicks doesn't fire one request each.
+  clearTimeout(_pushSettingsTimer);
+  _pushSettingsTimer = setTimeout(pushAppSettings, 800);
+}
+async function pushAppSettings() {
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) return; // nothing to sync for guests
+    await _SB.from('profiles')
+      .update({ app_settings: collectAppSettingsSnapshot() })
+      .eq('id', session.user.id);
+  } catch (e) {
+    console.warn('pushAppSettings: skipped (best-effort — column may not be set up yet)', e);
+  }
+}
 
 /* ── Optional free-tier API keys (user-pasted, localStorage-only) ── */
 function getApiKeys() { try { return JSON.parse(localStorage.getItem('zx_api_keys') || '{}'); } catch(e){ return {}; } }
@@ -7786,7 +8022,7 @@ try {
 <script>
 /* White ripple/glow feedback — purely additive UI polish, no app logic touched */
 (function(){
-  const RIPPLE_SEL = '.send-btn,.sb-upgrade,.sb-new,.qchip,.mode-chip,.model-sel-btn,.modal-save,.off-btn,.lim-upgrade,.mini-ghost-btn,.code-btn,.attach-btn';
+  const RIPPLE_SEL = '.send-btn,.sb-upgrade,.sb-new,.mode-chip,.model-sel-btn,.modal-save,.off-btn,.lim-upgrade,.mini-ghost-btn,.code-btn,.attach-btn';
   document.addEventListener('pointerdown', function(e){
     const el = e.target.closest(RIPPLE_SEL);
     if (!el || el.disabled) return;
