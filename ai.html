@@ -120,7 +120,7 @@ html, body,
   --blue:        #2563EB;
   --orange:      #D97706;
 
-  --sw: 272px;
+  --sw: 208px;
   --th: 58px;
   --tr: .2s cubic-bezier(.4,0,.2,1);
   --ts: .38s cubic-bezier(.4,0,.2,1);
@@ -281,16 +281,16 @@ img{max-width:100%;display:block}
 
 /* ── Logo ── */
 .sb-logo{
-  padding:18px 16px 14px;
-  display:flex;align-items:center;gap:11px;
+  padding:12px 10px 10px;
+  display:flex;align-items:center;gap:8px;
   border-bottom:1px solid var(--b1);
   position:relative;z-index:2;flex-shrink:0;
 }
 .sb-logo-mark{
-  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  width:28px;height:28px;border-radius:8px;flex-shrink:0;
   background:var(--gold);
   display:grid;place-items:center;overflow:hidden;
-  font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:#fff;
+  font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:#fff;
   box-shadow:var(--sg2);
   position:relative;
 }
@@ -300,8 +300,8 @@ img{max-width:100%;display:block}
   background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
   pointer-events:none;
 }
-.sb-logo-name{font-family:'Cinzel',serif;font-size:14px;font-weight:600;letter-spacing:.05em;color:var(--tw)}
-.sb-logo-ver{font-size:9px;color:var(--gdim);letter-spacing:.18em;text-transform:uppercase;margin-top:2px;opacity:.9}
+.sb-logo-name{font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:.03em;color:var(--tw)}
+.sb-logo-ver{font-size:7.5px;color:var(--gdim);letter-spacing:.14em;text-transform:uppercase;margin-top:1px;opacity:.9}
 .sb-close{
   display:none;margin-right:auto;flex-shrink:0;
   width:32px;height:32px;border-radius:6px;
@@ -313,11 +313,11 @@ img{max-width:100%;display:block}
 
 /* ── User Card ── */
 .sb-user{
-  margin:12px 10px 4px;
+  margin:8px 8px 4px;
   background:var(--card);
   border:1px solid var(--b1);border-radius:var(--r2);
-  padding:11px 13px;
-  display:flex;align-items:center;gap:10px;
+  padding:7px 9px;
+  display:flex;align-items:center;gap:7px;
   position:relative;overflow:hidden;flex-shrink:0;
 }
 .sb-user::before{
@@ -327,11 +327,11 @@ img{max-width:100%;display:block}
   pointer-events:none;
 }
 .sb-avatar{
-  width:35px;height:35px;border-radius:9px;flex-shrink:0;
+  width:26px;height:26px;border-radius:7px;flex-shrink:0;
   background:var(--card2);
   border:1px solid var(--b1);
   display:grid;place-items:center;overflow:hidden;
-  font-size:14px;font-weight:700;font-family:'Cinzel',serif;color:var(--gold);
+  font-size:11px;font-weight:700;font-family:'Cinzel',serif;color:var(--gold);
   cursor:pointer;position:relative;
 }
 .sb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:8px}
@@ -363,30 +363,30 @@ img{max-width:100%;display:block}
   min-height:48px;
 }
 .set-avatar-remove:hover{border-color:var(--red);color:var(--red)}
-.sb-uname{font-size:12.5px;font-weight:600;color:var(--tw);line-height:1.2}
-.sb-uplan{font-size:9.5px;color:var(--gdim);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
-.sb-uemail{font-size:9.5px;color:var(--tg);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.sb-uname{font-size:11px;font-weight:600;color:var(--tw);line-height:1.15}
+.sb-uplan{font-size:8px;color:var(--gdim);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
+.sb-uemail{font-size:8px;color:var(--tg);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
 
 /* ── Download button — sits inside the user card, next to user info ── */
 .user-icon-button{
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  width:34px;height:34px;border-radius:var(--r1);
+  width:26px;height:26px;border-radius:var(--r1);
   background:transparent;border:1px solid var(--b1);
   color:var(--tw);cursor:pointer;transition:all var(--tr);
   position:relative;z-index:2;
 }
 .user-icon-button:hover{background:var(--gold);border-color:var(--gold);color:#fff}
-.user-icon-button .download-icon{width:18px;height:18px;flex-shrink:0;color:currentColor}
+.user-icon-button .download-icon{width:14px;height:14px;flex-shrink:0;color:currentColor}
 .user-icon-button .download-icon path{fill:currentColor}
 @media(max-width:768px){
-  .user-icon-button{width:32px;height:32px}
-  .user-icon-button .download-icon{width:16px;height:16px}
+  .user-icon-button{width:26px;height:26px}
+  .user-icon-button .download-icon{width:14px;height:14px}
 }
 
 /* ── Dark Mode Toggle — Zalij gold/dark, sits beside the avatar ── */
 .theme-toggle-btn{
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  width:34px;height:34px;border-radius:var(--r1);
+  width:26px;height:26px;border-radius:var(--r1);
   background:linear-gradient(135deg,rgba(212,175,55,.14),rgba(15,17,21,.08));
   border:1px solid var(--gold);
   color:var(--gold);cursor:pointer;transition:all var(--tr);
@@ -402,23 +402,23 @@ img{max-width:100%;display:block}
 }
 .theme-toggle-btn:hover{background:var(--gold);color:#0B0C0F;box-shadow:var(--sg2)}
 .theme-toggle-btn:active{transform:scale(.93)}
-.theme-toggle-btn svg{width:17px;height:17px;position:relative;z-index:1;flex-shrink:0}
+.theme-toggle-btn svg{width:13px;height:13px;position:relative;z-index:1;flex-shrink:0}
 .theme-toggle-btn .icon-moon{display:none}
 [data-theme="dark"] .theme-toggle-btn .icon-sun{display:none}
 [data-theme="dark"] .theme-toggle-btn .icon-moon{display:block}
 @media(max-width:768px){
-  .theme-toggle-btn{width:32px;height:32px}
-  .theme-toggle-btn svg{width:15px;height:15px}
+  .theme-toggle-btn{width:26px;height:26px}
+  .theme-toggle-btn svg{width:13px;height:13px}
 }
 
 /* ── Upgrade CTA ── */
 .sb-upgrade{
-  margin:8px 10px 4px;flex-shrink:0;
-  display:flex;align-items:center;gap:8px;justify-content:center;
+  margin:6px 8px 3px;flex-shrink:0;
+  display:flex;align-items:center;gap:6px;justify-content:center;
   background:transparent;border:1px solid var(--b1);border-radius:var(--r1);
-  color:var(--gold);padding:9px;font-size:11.5px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;transition:all var(--tr);
-  position:relative;overflow:hidden;min-height:48px;
+  color:var(--gold);padding:6px;font-size:10px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;transition:all var(--tr);
+  position:relative;overflow:hidden;min-height:32px;
 }
 .sb-upgrade::before{
   content:'';position:absolute;inset:0;
@@ -430,27 +430,27 @@ img{max-width:100%;display:block}
 
 /* ── New Chat ── */
 .sb-new{
-  margin:8px 10px 4px;flex-shrink:0;
-  display:flex;align-items:center;gap:8px;justify-content:center;
+  margin:6px 8px 3px;flex-shrink:0;
+  display:flex;align-items:center;gap:6px;justify-content:center;
   background:transparent;border:1px solid var(--b1);border-radius:var(--r1);
-  color:var(--gold);padding:9px;font-size:11.5px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;transition:all var(--tr);
-  min-height:48px;
+  color:var(--gold);padding:6px;font-size:10px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;transition:all var(--tr);
+  min-height:32px;
 }
 .sb-new:hover{background:var(--gold);color:#fff;box-shadow:var(--sg2)}
 
 /* ── Section Label ── */
 .sb-label{
-  padding:10px 14px 4px;
-  font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--tm);
+  padding:7px 10px 3px;
+  font-size:8px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--tm);
 }
 
 /* ── History ── */
-.sb-history{flex:1;overflow-y:auto;padding:0 6px 6px}
+.sb-history{flex:1;overflow-y:auto;padding:0 4px 4px}
 .hist-search{
-  margin:6px 6px 4px;padding:10px 10px;border-radius:9px;
+  margin:4px 4px 3px;padding:6px 8px;border-radius:7px;
   background:var(--card2);border:1px solid var(--b1);color:var(--tw);
-  font-size:12.5px;width:calc(100% - 12px);min-height:44px;
+  font-size:11px;width:calc(100% - 8px);min-height:32px;
 }
 .hist-search:focus{outline:none;border-color:var(--gold)}
 .h-pin{
@@ -479,11 +479,11 @@ img{max-width:100%;display:block}
   color:var(--tm);line-height:1.9;
 }
 .h-item{
-  padding:10px 10px;border-radius:var(--r1);
-  color:var(--tg);cursor:pointer;font-size:11.5px;
+  padding:6px 8px;border-radius:var(--r1);
+  color:var(--tg);cursor:pointer;font-size:10.5px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   border:1px solid transparent;transition:all var(--tr);
-  display:flex;align-items:center;gap:7px;min-height:44px;
+  display:flex;align-items:center;gap:6px;min-height:32px;
 }
 .h-item:hover{background:var(--card);color:var(--tw);border-color:var(--b1)}
 .h-icon{font-size:9px;opacity:.45;flex-shrink:0}
@@ -492,17 +492,17 @@ img{max-width:100%;display:block}
 
 /* ── Sidebar Footer ── */
 .sb-footer{
-  border-top:1px solid var(--b1);padding:8px 6px;
-  display:flex;flex-direction:column;gap:2px;flex-shrink:0;
+  border-top:1px solid var(--b1);padding:5px 4px;
+  display:flex;flex-direction:column;gap:1px;flex-shrink:0;
 }
 .sb-fbtn{
-  display:flex;align-items:center;gap:9px;
-  padding:10px 10px;border-radius:var(--r1);
-  color:var(--tg);font-size:11.5px;font-weight:500;
-  transition:all var(--tr);text-align:right;width:100%;min-height:44px;
+  display:flex;align-items:center;gap:6px;
+  padding:6px 8px;border-radius:var(--r1);
+  color:var(--tg);font-size:10.5px;font-weight:500;
+  transition:all var(--tr);text-align:right;width:100%;min-height:32px;
 }
 .sb-fbtn:hover{background:var(--card);color:var(--gold)}
-.sb-fbtn .fi{font-size:13px;opacity:.65}
+.sb-fbtn .fi{font-size:11px;opacity:.65}
 
 .sb-fbtn.dl{border:1px solid transparent}
 .sb-fbtn.dl:hover{border-color:var(--b1);background:var(--card)}
@@ -1232,7 +1232,7 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
    RESPONSIVE — MOBILE FIRST
 ════════════════════════════════════════════════════════ */
 @media(max-width:768px){
-  :root{--sw:280px}
+  :root{--sw:220px}
   .sidebar{
     position:fixed;top:0;right:0;height:100vh;height:100dvh;
     transform:translateX(100%);
@@ -1454,11 +1454,6 @@ button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97
   <!-- Library -->
   <button class="sb-fbtn" onclick="openLibrary()" style="margin:6px 6px 0">
     <span class="fi">🖼</span> الصور والملفات
-  </button>
-
-  <!-- Tasks / Calendar -->
-  <button class="sb-fbtn" onclick="openTasks()" style="margin:2px 6px 0">
-    <span class="fi">🗓</span> التقويم والمهام
   </button>
 
   <!-- Project Intelligence Agent -->
@@ -5291,8 +5286,8 @@ document.getElementById('settModal').addEventListener('click', function(e) {
 /* ════════════════════════════════════════════════════════════
    THEME / MODEL / EFFORT — state + persistence
 ════════════════════════════════════════════════════════════ */
-let zxModel    = localStorage.getItem('zx_model')    || 'lite';
-let zxEffort   = localStorage.getItem('zx_effort')   || 'balanced';
+let zxModel    = localStorage.getItem('zx_model')    || 'max';
+let zxEffort   = localStorage.getItem('zx_effort')   || 'max';
 /* zxProvider ماعادش مخزّن ولا مختار من اليوزر — كل رسالة كتختار
    مزوّد عشوائياً (انظر randomProvider() و zunexaBrain) باش يتوزع
    الضغط بالتساوي على الأربعة Edge Functions. */
