@@ -1755,72 +1755,21 @@ if (!_SB) {
     }
 
     // 2. من بعد نتأكد من الـsession الحقيقية
- (async function verifyAiSession() {
-  try {
-    const sb = await zxWaitForGlobal('supabase', 8000);
-
-    if (!sb || typeof sb.createClient !== 'function') {
-      console.error('[Zunexa Auth] Supabase SDK unavailable.');
-      window.location.replace('index.html');
-      return;
-    }
-
-    if (!_SB) {
-      _SB = sb.createClient(
-        ZX_SUPABASE_URL,
-        ZX_SUPABASE_ANON_KEY
-      );
-    }
-
-    const hash = window.location.hash;
-
-    if (hash.includes('access_token')) {
-      const params = new URLSearchParams(hash.substring(1));
-
-      const access_token = params.get('access_token');
-      const refresh_token = params.get('refresh_token');
-
-      if (access_token && refresh_token) {
-        const { error } = await _SB.auth.setSession({
-          access_token,
-          refresh_token
-        });
-
-        if (error) {
-          console.error('[Zunexa Auth] OAuth error:', error);
-          window.location.replace('index.html');
-          return;
-        }
-
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname + window.location.search
-        );
-      }
-    }
-
     const {
       data: { session },
       error
-    } = await _SB.auth.getSession();
+    } = await _SB?.auth.getSession();
 
-    if (error) {
-      console.error('[Zunexa Auth] getSession error:', error);
+    if (error || !session) {
       window.location.replace('index.html');
       return;
     }
 
-    if (!session) {
-      console.warn('[Zunexa Auth] No active session.');
-      window.location.replace('index.html');
-      return;
-    }
-
+    // 3. Session صحيحة → بقا في ai.html
     console.log('✅ Authenticated:', session.user.email);
 
   } catch (err) {
-    console.error('[Zunexa Auth] Verification failed:', err);
+    console.error('Authentication verification failed:', err);
     window.location.replace('index.html');
   }
 })();
