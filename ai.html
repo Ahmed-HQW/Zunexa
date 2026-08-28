@@ -12,33 +12,34 @@
 <html lang="ar" dir="rtl">
 <head>
   <script>
-    /* Dark (Zalij) mode is now the official default. Applied before
-       first paint to avoid a light/dark flash. A user who explicitly
-       switched to light before (zunexa-theme === 'light') keeps their
-       choice — this only changes what NEW visitors see by default. */
+    (function() {
+        const sessionKey = 'sb-xrldhfsytysznyyhwjlr-auth-token';
+        if (!localStorage.getItem(sessionKey)) {
+            window.location.replace('index.html');
+        }
+    })()
+</script>
+  <script>
+    /* Apply saved theme before first paint — avoids a light/dark flash */
     (function() {
         try {
             const savedTheme = localStorage.getItem('zunexa-theme');
-            if (savedTheme !== 'light') {
+            if (savedTheme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
-                if (!savedTheme) localStorage.setItem('zunexa-theme', 'dark');
             }
-        } catch (e) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        } catch (e) {}
     })()
 </script>
   <script src="zunexa-seo-keywords.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#0B0C0F">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Zunexa AI">
 <title>Zunexa — Zunexa AI</title>
-<link rel="icon" type="image/svg+xml" href="zunexa-logo.svg">
-<link rel="apple-touch-icon" href="zunexa-logo.svg">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
 <!-- PWA: installable on Android / Windows / Linux (Chrome, Edge) and
      "Add to Home Screen" on iOS/Safari + desktop Safari -->
 <link rel="manifest" href="manifest.json">
@@ -48,45 +49,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<!-- Syntax highlighting for code blocks in chat replies -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<!-- QR code reading (from uploaded/attached images) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-/* ════════════════════════════════════════════════════════
-   THEME TRANSITION — smooth light↔dark (Zalij) crossfade
-   Applies to the elements that actually flip color on
-   [data-theme] change. Animations that already have their
-   own timing (spinners, badges, keyframes) are excluded via
-   the transition:none rule below so this never fights them.
-════════════════════════════════════════════════════════ */
-html, body,
-.sidebar, .topbar, .input-zone, .modal-box, .modal-wrap,
-.msg, .msg-av, .bubble, .h-item, .persona-card, .zx-select,
-.sb-user, .sb-new, .sb-upgrade, .theme-toggle-btn, .wl-icon,
-.badge-ai, .code-btn, .attach-btn, .hist-search {
-  transition:
-    background-color .45s cubic-bezier(.4,0,.2,1),
-    border-color      .45s cubic-bezier(.4,0,.2,1),
-    color             .45s cubic-bezier(.4,0,.2,1),
-    box-shadow        .45s cubic-bezier(.4,0,.2,1);
-}
-/* rotating rings / spinners keep their own animation untouched */
-.wl-ring, .billing-spinner, .ts-dot { transition: none; }
-
-@media (prefers-reduced-motion: reduce) {
-  html, body,
-  .sidebar, .topbar, .input-zone, .modal-box, .modal-wrap,
-  .msg, .msg-av, .bubble, .h-item, .persona-card, .zx-select,
-  .sb-user, .sb-new, .sb-upgrade, .theme-toggle-btn, .wl-icon,
-  .badge-ai, .code-btn, .attach-btn, .hist-search {
-    transition: none;
-  }
-}
-
 /* ════════════════════════════════════════════════════════
    DESIGN TOKENS — White Phone Mode
 ════════════════════════════════════════════════════════ */
@@ -120,7 +85,7 @@ html, body,
   --blue:        #2563EB;
   --orange:      #D97706;
 
-  --sw: 208px;
+  --sw: 272px;
   --th: 58px;
   --tr: .2s cubic-bezier(.4,0,.2,1);
   --ts: .38s cubic-bezier(.4,0,.2,1);
@@ -281,27 +246,26 @@ img{max-width:100%;display:block}
 
 /* ── Logo ── */
 .sb-logo{
-  padding:12px 10px 10px;
-  display:flex;align-items:center;gap:8px;
+  padding:18px 16px 14px;
+  display:flex;align-items:center;gap:11px;
   border-bottom:1px solid var(--b1);
   position:relative;z-index:2;flex-shrink:0;
 }
 .sb-logo-mark{
-  width:28px;height:28px;border-radius:8px;flex-shrink:0;
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
   background:var(--gold);
-  display:grid;place-items:center;overflow:hidden;
-  font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:#fff;
+  display:grid;place-items:center;
+  font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:#fff;
   box-shadow:var(--sg2);
   position:relative;
 }
-.sb-logo-mark img{width:100%;height:100%;object-fit:cover;display:block}
 .sb-logo-mark::after{
   content:'';position:absolute;inset:-1px;border-radius:11px;
   background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
   pointer-events:none;
 }
-.sb-logo-name{font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:.03em;color:var(--tw)}
-.sb-logo-ver{font-size:7.5px;color:var(--gdim);letter-spacing:.14em;text-transform:uppercase;margin-top:1px;opacity:.9}
+.sb-logo-name{font-family:'Cinzel',serif;font-size:14px;font-weight:600;letter-spacing:.05em;color:var(--tw)}
+.sb-logo-ver{font-size:9px;color:var(--gdim);letter-spacing:.18em;text-transform:uppercase;margin-top:2px;opacity:.9}
 .sb-close{
   display:none;margin-right:auto;flex-shrink:0;
   width:32px;height:32px;border-radius:6px;
@@ -313,11 +277,11 @@ img{max-width:100%;display:block}
 
 /* ── User Card ── */
 .sb-user{
-  margin:8px 8px 4px;
+  margin:12px 10px 4px;
   background:var(--card);
   border:1px solid var(--b1);border-radius:var(--r2);
-  padding:7px 9px;
-  display:flex;align-items:center;gap:7px;
+  padding:11px 13px;
+  display:flex;align-items:center;gap:10px;
   position:relative;overflow:hidden;flex-shrink:0;
 }
 .sb-user::before{
@@ -327,11 +291,11 @@ img{max-width:100%;display:block}
   pointer-events:none;
 }
 .sb-avatar{
-  width:26px;height:26px;border-radius:7px;flex-shrink:0;
+  width:35px;height:35px;border-radius:9px;flex-shrink:0;
   background:var(--card2);
   border:1px solid var(--b1);
   display:grid;place-items:center;overflow:hidden;
-  font-size:11px;font-weight:700;font-family:'Cinzel',serif;color:var(--gold);
+  font-size:14px;font-weight:700;font-family:'Cinzel',serif;color:var(--gold);
   cursor:pointer;position:relative;
 }
 .sb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:8px}
@@ -363,50 +327,34 @@ img{max-width:100%;display:block}
   min-height:48px;
 }
 .set-avatar-remove:hover{border-color:var(--red);color:var(--red)}
-.sb-uname{font-size:11px;font-weight:600;color:var(--tw);line-height:1.15}
-.sb-uplan{font-size:8px;color:var(--gdim);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
-.sb-uemail{font-size:8px;color:var(--tg);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px}
+.sb-uname{font-size:12.5px;font-weight:600;color:var(--tw);line-height:1.2}
+.sb-uplan{font-size:9.5px;color:var(--gdim);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.sb-uemail{font-size:9.5px;color:var(--tg);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
 
-/* ── Download button — sits inside the user card, next to user info ──
-   Touch-target fix: the visual box stays a compact 26px so the tight
-   sidebar layout is untouched, but an invisible ::after pseudo-element
-   expands the actual clickable/tappable area to the 44px minimum via
-   position:absolute + inset, centered on the visible button. Purely
-   hit-area — no visual change on desktop or mobile. */
+/* ── Download button — sits inside the user card, next to user info ── */
 .user-icon-button{
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  width:26px;height:26px;border-radius:var(--r1);
+  width:34px;height:34px;border-radius:var(--r1);
   background:transparent;border:1px solid var(--b1);
   color:var(--tw);cursor:pointer;transition:all var(--tr);
   position:relative;z-index:2;
 }
-.user-icon-button::after{
-  content:'';position:absolute;
-  top:50%;left:50%;transform:translate(-50%,-50%);
-  width:44px;height:44px;min-width:44px;min-height:44px;
-}
 .user-icon-button:hover{background:var(--gold);border-color:var(--gold);color:#fff}
-.user-icon-button .download-icon{width:14px;height:14px;flex-shrink:0;color:currentColor}
+.user-icon-button .download-icon{width:18px;height:18px;flex-shrink:0;color:currentColor}
 .user-icon-button .download-icon path{fill:currentColor}
 @media(max-width:768px){
-  .user-icon-button{width:26px;height:26px}
-  .user-icon-button .download-icon{width:14px;height:14px}
+  .user-icon-button{width:32px;height:32px}
+  .user-icon-button .download-icon{width:16px;height:16px}
 }
 
 /* ── Dark Mode Toggle — Zalij gold/dark, sits beside the avatar ── */
 .theme-toggle-btn{
   flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  width:26px;height:26px;border-radius:var(--r1);
+  width:34px;height:34px;border-radius:var(--r1);
   background:linear-gradient(135deg,rgba(212,175,55,.14),rgba(15,17,21,.08));
   border:1px solid var(--gold);
   color:var(--gold);cursor:pointer;transition:all var(--tr);
   position:relative;z-index:2;overflow:hidden;
-}
-.theme-toggle-btn::after{
-  content:'';position:absolute;
-  top:50%;left:50%;transform:translate(-50%,-50%);
-  width:44px;height:44px;min-width:44px;min-height:44px;
-  z-index:3; /* above the ::before dot-pattern overlay, still behind the svg icon visually since it's transparent */
 }
 .theme-toggle-btn::before{
   content:'';position:absolute;inset:0;opacity:.5;pointer-events:none;
@@ -418,23 +366,23 @@ img{max-width:100%;display:block}
 }
 .theme-toggle-btn:hover{background:var(--gold);color:#0B0C0F;box-shadow:var(--sg2)}
 .theme-toggle-btn:active{transform:scale(.93)}
-.theme-toggle-btn svg{width:13px;height:13px;position:relative;z-index:1;flex-shrink:0}
+.theme-toggle-btn svg{width:17px;height:17px;position:relative;z-index:1;flex-shrink:0}
 .theme-toggle-btn .icon-moon{display:none}
 [data-theme="dark"] .theme-toggle-btn .icon-sun{display:none}
 [data-theme="dark"] .theme-toggle-btn .icon-moon{display:block}
 @media(max-width:768px){
-  .theme-toggle-btn{width:26px;height:26px}
-  .theme-toggle-btn svg{width:13px;height:13px}
+  .theme-toggle-btn{width:32px;height:32px}
+  .theme-toggle-btn svg{width:15px;height:15px}
 }
 
 /* ── Upgrade CTA ── */
 .sb-upgrade{
-  margin:6px 8px 3px;flex-shrink:0;
-  display:flex;align-items:center;gap:6px;justify-content:center;
+  margin:8px 10px 4px;flex-shrink:0;
+  display:flex;align-items:center;gap:8px;justify-content:center;
   background:transparent;border:1px solid var(--b1);border-radius:var(--r1);
-  color:var(--gold);padding:6px;font-size:10px;font-weight:700;
-  letter-spacing:.06em;text-transform:uppercase;transition:all var(--tr);
-  position:relative;overflow:hidden;min-height:32px;
+  color:var(--gold);padding:9px;font-size:11.5px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;transition:all var(--tr);
+  position:relative;overflow:hidden;min-height:48px;
 }
 .sb-upgrade::before{
   content:'';position:absolute;inset:0;
@@ -446,27 +394,27 @@ img{max-width:100%;display:block}
 
 /* ── New Chat ── */
 .sb-new{
-  margin:6px 8px 3px;flex-shrink:0;
-  display:flex;align-items:center;gap:6px;justify-content:center;
+  margin:8px 10px 4px;flex-shrink:0;
+  display:flex;align-items:center;gap:8px;justify-content:center;
   background:transparent;border:1px solid var(--b1);border-radius:var(--r1);
-  color:var(--gold);padding:6px;font-size:10px;font-weight:700;
-  letter-spacing:.06em;text-transform:uppercase;transition:all var(--tr);
-  min-height:32px;
+  color:var(--gold);padding:9px;font-size:11.5px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;transition:all var(--tr);
+  min-height:48px;
 }
 .sb-new:hover{background:var(--gold);color:#fff;box-shadow:var(--sg2)}
 
 /* ── Section Label ── */
 .sb-label{
-  padding:7px 10px 3px;
-  font-size:8px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--tm);
+  padding:10px 14px 4px;
+  font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--tm);
 }
 
 /* ── History ── */
-.sb-history{flex:1;overflow-y:auto;padding:0 4px 4px}
+.sb-history{flex:1;overflow-y:auto;padding:0 6px 6px}
 .hist-search{
-  margin:4px 4px 3px;padding:6px 8px;border-radius:7px;
+  margin:6px 6px 4px;padding:10px 10px;border-radius:9px;
   background:var(--card2);border:1px solid var(--b1);color:var(--tw);
-  font-size:11px;width:calc(100% - 8px);min-height:32px;
+  font-size:12.5px;width:calc(100% - 12px);min-height:44px;
 }
 .hist-search:focus{outline:none;border-color:var(--gold)}
 .h-pin{
@@ -495,11 +443,11 @@ img{max-width:100%;display:block}
   color:var(--tm);line-height:1.9;
 }
 .h-item{
-  padding:6px 8px;border-radius:var(--r1);
-  color:var(--tg);cursor:pointer;font-size:10.5px;
+  padding:10px 10px;border-radius:var(--r1);
+  color:var(--tg);cursor:pointer;font-size:11.5px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   border:1px solid transparent;transition:all var(--tr);
-  display:flex;align-items:center;gap:6px;min-height:32px;
+  display:flex;align-items:center;gap:7px;min-height:44px;
 }
 .h-item:hover{background:var(--card);color:var(--tw);border-color:var(--b1)}
 .h-icon{font-size:9px;opacity:.45;flex-shrink:0}
@@ -508,17 +456,17 @@ img{max-width:100%;display:block}
 
 /* ── Sidebar Footer ── */
 .sb-footer{
-  border-top:1px solid var(--b1);padding:5px 4px;
-  display:flex;flex-direction:column;gap:1px;flex-shrink:0;
+  border-top:1px solid var(--b1);padding:8px 6px;
+  display:flex;flex-direction:column;gap:2px;flex-shrink:0;
 }
 .sb-fbtn{
-  display:flex;align-items:center;gap:6px;
-  padding:6px 8px;border-radius:var(--r1);
-  color:var(--tg);font-size:10.5px;font-weight:500;
+  display:flex;align-items:center;gap:9px;
+  padding:10px 10px;border-radius:var(--r1);
+  color:var(--tg);font-size:11.5px;font-weight:500;
   transition:all var(--tr);text-align:right;width:100%;min-height:44px;
 }
 .sb-fbtn:hover{background:var(--card);color:var(--gold)}
-.sb-fbtn .fi{font-size:11px;opacity:.65}
+.sb-fbtn .fi{font-size:13px;opacity:.65}
 
 .sb-fbtn.dl{border:1px solid transparent}
 .sb-fbtn.dl:hover{border-color:var(--b1);background:var(--card)}
@@ -623,17 +571,6 @@ img{max-width:100%;display:block}
 .file-chip .fc-x:hover{color:var(--red)}
 .file-chip img{max-height:34px;border-radius:4px}
 
-.qr-result-chip{
-  display:flex;align-items:center;gap:8px;max-width:100%;
-  margin:0 0 8px;padding:6px 10px;background:var(--card2);
-  border:1px solid var(--gold);border-radius:10px;font-size:11.5px;color:var(--tw);
-}
-.qr-result-chip span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.qr-result-chip .qr-insert{
-  cursor:pointer;color:var(--gold);font-weight:700;flex-shrink:0;white-space:nowrap;
-}
-.qr-result-chip .qr-insert:hover{text-decoration:underline}
-
 /* ════════════════════════════════════════════════════════
    CONVERSATION
 ════════════════════════════════════════════════════════ */
@@ -681,6 +618,16 @@ img{max-width:100%;display:block}
 .wl-title span{color:var(--gold)}
 .wl-sub{font-size:13px;color:var(--tg);line-height:1.8;max-width:400px}
 
+/* ── Quick chips ── */
+.quick-chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:4px}
+.qchip{
+  padding:9px 14px;background:var(--card);
+  border:1px solid var(--b1);border-radius:99px;
+  font-size:11.5px;color:var(--tg);cursor:pointer;
+  transition:all var(--tr);min-height:44px;display:inline-flex;align-items:center;
+}
+.qchip:hover{border-color:var(--b2);color:var(--gold);background:var(--hover)}
+
 /* ── KB Status bar ── */
 .kb-bar{
   display:flex;align-items:center;gap:8px;
@@ -711,22 +658,6 @@ img{max-width:100%;display:block}
   max-width:76%;padding:12px 15px;
   border-radius:13px;font-size:14px;line-height:1.75;word-break:break-word;
 }
-/* On very wide viewports a pure % max-width still stretches lines to
-   unreadable widths (e.g. 76% of 3440px ≈ 2600px). Cap the absolute
-   width too so long-line readability holds on ultra-wide monitors
-   without changing anything on normal/mobile widths, where this
-   px cap is never reached. */
-@media(min-width:1400px){
-  .bubble{max-width:min(76%,820px)}
-}
-/* Typewriter live-typing cursor — only shown while a bot reply is
-   still being animated in (see typewriteBubble()); removed the
-   instant the full text finishes rendering. */
-.bubble.typing::after{
-  content:'';display:inline-block;width:2px;height:1em;margin-inline-start:2px;
-  background:var(--gold);vertical-align:-2px;animation:bubbleCursorBlink .8s steps(1) infinite;
-}
-@keyframes bubbleCursorBlink{50%{opacity:0}}
 .msg.bot  .bubble{
   background:var(--card2);border:1px solid var(--b1);
   border-top-right-radius:3px;color:var(--tw);
@@ -792,10 +723,35 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 .typing span:nth-child(3){animation-delay:.36s}
 @keyframes bop{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-5px);opacity:1}}
 
-/* أنماط CSS الخاصة بقائمة/محرر الشخصيات (persona-list, persona-card,
-   persona-editor...) انتقلت بالكامل إلى settings.html — لم تعد
-   العناصر التي تستعملها موجودة فـ ai.html. .persona-card بقي مذكوراً
-   فقط فـ selector انتقال الثيم العام أعلاه (سطر ~68) وهذا غير ضار. */
+/* ════════════════════════════════════════════════════════
+   PERSONAS
+════════════════════════════════════════════════════════ */
+.persona-list{display:flex;flex-direction:column;gap:8px}
+.persona-card{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;
+  border-radius:10px;border:1px solid var(--b1);background:var(--card2);
+  cursor:pointer;transition:all var(--tr);
+}
+.persona-card:hover{border-color:var(--b2)}
+.persona-card.on{border-color:var(--gold);background:var(--card)}
+.persona-icon{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  display:grid;place-items:center;font-size:16px;
+  background:var(--card);border:1px solid var(--b1);
+}
+.persona-card.on .persona-icon{border-color:var(--gold)}
+.persona-info{flex:1;min-width:0}
+.persona-name{font-size:12.5px;font-weight:700;color:var(--tw)}
+.persona-desc{font-size:10.5px;color:var(--tg);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.persona-badge{font-size:9px;color:var(--gold);letter-spacing:.05em}
+.persona-actions{display:flex;gap:4px;flex-shrink:0}
+.persona-act-btn{
+  width:32px;height:32px;border-radius:6px;border:1px solid var(--b1);
+  background:transparent;color:var(--tg);font-size:11px;
+}
+.persona-act-btn:hover{border-color:var(--gold);color:var(--gold)}
+.persona-act-btn.del:hover{border-color:var(--red);color:var(--red)}
+.persona-editor{margin-top:14px;padding-top:14px;border-top:1px solid var(--b1)}
 
 /* ════════════════════════════════════════════════════════
    CODE BLOCKS + LIVE SANDBOX
@@ -811,7 +767,7 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 .code-btn{
   padding:5px 10px;border-radius:6px;border:1px solid var(--b1);
   background:transparent;color:var(--tg);font-size:10.5px;font-weight:600;
-  transition:all var(--tr);min-height:44px;
+  transition:all var(--tr);min-height:32px;
 }
 .code-btn:hover{border-color:var(--gold);color:var(--gold)}
 .code-btn.on{background:var(--gold);color:#fff;border-color:var(--gold)}
@@ -1032,12 +988,6 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
   border-radius:var(--r2);padding:7px 7px 7px 13px;
   transition:border-color var(--tr),box-shadow var(--tr);
 }
-/* Match the .bubble ultra-wide cap above so the input bar lines up
-   with message width instead of stretching edge-to-edge on very
-   wide monitors. */
-@media(min-width:1400px){
-  .input-shell, .mode-row{max-width:820px;margin-inline:auto}
-}
 .input-shell:focus-within{
   border-color:var(--gold);
   box-shadow:0 0 0 3px rgba(17,17,17,.05);
@@ -1105,10 +1055,6 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
   border-radius:5px;border:1px solid var(--b1);color:var(--tg);
   font-size:12px;display:grid;place-items:center;transition:all var(--tr);
 }
-.modal-x::after{
-  content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:44px;height:44px;min-width:44px;min-height:44px;
-}
 .modal-x:hover{border-color:var(--red);color:var(--red)}
 .modal-title{
   font-family:'Cinzel',serif;font-size:14px;font-weight:600;
@@ -1135,12 +1081,43 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 }
 .modal-save:hover{box-shadow:var(--sg2)}
 
-/* .modal-box.wide لا يزال مستعملاً من طرف billingModal/libModal/
-   tasksModal — بقي هنا. باقي أنماط CSS الخاصة بمودال الإعدادات
-   القديم (tabs/rows/switch/persona-editor/referral) انتقلت بالكامل
-   إلى settings.html لأن العناصر التي كانت تستعملها لم تعد موجودة
-   فـ ai.html. */
+/* ── Expanded Settings modal (tabs + toggles) ── */
 .modal-box.wide{max-width:560px;max-height:86vh;overflow-y:auto}
+.set-tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--b1);margin-bottom:16px;padding-bottom:2px;scrollbar-width:thin}
+.set-tab{padding:9px 12px;font-size:11.5px;color:var(--tg);border-radius:7px 7px 0 0;cursor:pointer;white-space:nowrap;transition:all var(--tr);min-height:40px;display:flex;align-items:center}
+.set-tab:hover{color:var(--gold)}
+.set-tab.on{color:var(--gold);background:var(--card2);font-weight:700}
+.set-pane{display:none}
+.set-pane.on{display:block;animation:fadeUp .18s ease}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--b1)}
+.set-row:last-child{border-bottom:none}
+.set-row-txt{flex:1;min-width:0}
+.set-row-title{font-size:13px;color:var(--tw);font-weight:600}
+.set-row-desc{font-size:11px;color:var(--tg);margin-top:3px;line-height:1.6}
+.switch{position:relative;width:40px;height:22px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.slider{position:absolute;inset:0;background:var(--b2);border-radius:99px;cursor:pointer;transition:.2s}
+.slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(15,17,21,.25)}
+.switch input:checked + .slider{background:var(--gold)}
+.switch input:checked + .slider::before{background:#fff;transform:translateX(-18px)}
+textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-height:1.5}
+
+/* ── Referral / Viral Loop panel ── */
+.ref-hero{
+  background:var(--card);
+  border:1px solid var(--b1);border-radius:var(--r3);
+  padding:16px;margin-bottom:14px;text-align:center;
+}
+.ref-hero-credits{font-family:'Cinzel',serif;font-size:26px;color:var(--gold);font-weight:700}
+.ref-hero-label{font-size:10.5px;color:var(--tg);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.ref-hero-sub{font-size:11.5px;color:var(--tg);margin-top:10px;line-height:1.7}
+.ref-link-row{display:flex;gap:6px;margin-bottom:10px}
+.ref-link-row .field-input{margin-bottom:0;font-size:12px;direction:ltr;text-align:left;color:var(--gold2)}
+.ref-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.ref-stat{background:var(--card2);border:1px solid var(--b1);border-radius:var(--r2);padding:10px;text-align:center}
+.ref-stat b{display:block;font-size:18px;color:var(--tw);font-family:'Cinzel',serif}
+.ref-stat span{font-size:10px;color:var(--tg);letter-spacing:.06em}
+.ref-share-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 
 .mini-ghost-btn{
   display:inline-flex;align-items:center;gap:5px;
@@ -1190,17 +1167,17 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 @keyframes zxRippleAnim{
   to{transform:scale(2.6);opacity:0}
 }
-.send-btn,.sb-upgrade,.sb-new,.mode-chip,.model-sel-btn,.modal-save,
+.send-btn,.sb-upgrade,.sb-new,.qchip,.mode-chip,.model-sel-btn,.modal-save,
 .off-btn,.lim-upgrade,.mini-ghost-btn,.code-btn,.attach-btn{
   position:relative;overflow:hidden;
 }
-button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
+button:active:not(:disabled),.qchip:active,.mode-chip:active{transform:scale(.97)}
 
 /* ════════════════════════════════════════════════════════
    RESPONSIVE — MOBILE FIRST
 ════════════════════════════════════════════════════════ */
 @media(max-width:768px){
-  :root{--sw:220px}
+  :root{--sw:280px}
   .sidebar{
     position:fixed;top:0;right:0;height:100vh;height:100dvh;
     transform:translateX(100%);
@@ -1237,6 +1214,7 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
 
 @media(max-width:390px){
   .tb-title{font-size:10px;letter-spacing:.08em}
+  .qchip{font-size:10.5px;padding:7px 11px}
   .bubble{max-width:92%}
   .wl-title{font-size:18px}
 }
@@ -1372,7 +1350,7 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
 
   <!-- Logo -->
   <div class="sb-logo">
-    <div class="sb-logo-mark"><img src="zunexa-logo.svg" alt="Zunexa"></div>
+    <div class="sb-logo-mark">Z</div>
     <div>
       <div class="sb-logo-name">Zunexa</div>
       <div class="sb-logo-ver">Zunexa V12 · Zalij Mode</div>
@@ -1423,9 +1401,9 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
     <span class="fi">🖼</span> الصور والملفات
   </button>
 
-  <!-- Project Intelligence Agent -->
-  <button class="sb-fbtn" onclick="window.location.href='agent.html'" style="margin:2px 6px 0">
-    <span class="fi">🤖</span> وكيل إدارة المشاريع
+  <!-- Tasks / Calendar -->
+  <button class="sb-fbtn" onclick="openTasks()" style="margin:2px 6px 0">
+    <span class="fi">🗓</span> التقويم والمهام
   </button>
 
   <!-- Footer -->
@@ -1433,7 +1411,7 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
     <button class="sb-fbtn" id="installBtn" onclick="installPWA()" style="display:none">
       <span class="fi">📲</span> تثبيت Zunexa
     </button>
-    <button class="sb-fbtn" onclick="goToSettings()">
+    <button class="sb-fbtn" onclick="openSettings()">
       <span class="fi">⚙</span> الإعدادات
     </button>
     <button class="sb-fbtn" onclick="clearAll()">
@@ -1454,7 +1432,7 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
     </div>
     <div class="tb-right">
       <div class="model-tag">Zunexa AI Engine</div>
-      <button id="tempChatBtn" onclick="toggleTempChat()" title="محادثة مؤقتة" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r1);color:var(--tg);transition:all var(--tr);position:relative"><span style="content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;min-width:44px;min-height:44px;pointer-events:none" aria-hidden="true"></span><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="group" aria-hidden="true" style="flex-shrink: 0;"><g class="group-hover:animate-[look-around_2.4s_ease-in-out_infinite] group-active:animate-none"><path d="M6.99951 8.66672C7.5518 8.66672 7.99951 9.11443 7.99951 9.66672C7.9993 10.2188 7.55166 10.6667 6.99951 10.6667C6.44736 10.6667 5.99973 10.2188 5.99951 9.66672C5.99951 9.11443 6.44723 8.66672 6.99951 8.66672Z"></path><path d="M12.9995 8.66672C13.5518 8.66672 13.9995 9.11443 13.9995 9.66672C13.9993 10.2188 13.5517 10.6667 12.9995 10.6667C12.4474 10.6667 11.9997 10.2188 11.9995 9.66672C11.9995 9.11443 12.4472 8.66672 12.9995 8.66672Z"></path></g><path fill-rule="evenodd" clip-rule="evenodd" d="M10 2C14.326 2.00018 17.9998 5.67403 18 10V17.3123C17.9997 17.5427 17.8411 17.8079 17.6172 17.8623C17.3932 17.9165 17.1614 17.7456 17.0557 17.5408C16.7805 17.007 16.3658 16.5937 16.062 16.2878C15.7793 16.0034 15.4503 15.8338 14.9771 15.8337C14.2092 15.8339 13.4371 16.3862 12.9487 17.53C12.8701 17.7138 12.6887 17.8621 12.4888 17.8623C12.2888 17.8623 12.1076 17.7138 12.0288 17.53C11.5404 16.386 10.7674 15.8339 9.99951 15.8337C9.23161 15.8339 8.45959 16.386 7.97119 17.53C7.89253 17.7138 7.71118 17.8621 7.51123 17.8623C7.31122 17.8623 7.13006 17.7138 7.05127 17.53C6.56296 16.3862 5.78982 15.834 5.02197 15.8337C4.54861 15.8338 4.21974 16.0032 3.93701 16.2878C3.63309 16.5937 3.21952 17.0715 2.94434 17.6055C2.83865 17.8103 2.60589 17.9165 2.38184 17.8623C2.15801 17.8079 2.00033 17.6073 2 17.377V10C2.00018 5.67403 5.67403 2.00018 10 2ZM10 3C6.22631 3.00018 3.00018 6.22631 3 10V15.8633C3.0205 15.8414 3.20696 15.6049 3.22803 15.5837C3.67524 15.1336 4.251 14.8338 5.02197 14.8337C6.03838 14.8341 6.90232 15.4025 7.51025 16.2937C8.11828 15.4018 8.9824 14.8338 9.99951 14.8337C11.0163 14.8338 11.8798 15.4022 12.4878 16.2937C13.0959 15.4018 13.9601 14.8339 14.9771 14.8337C15.7481 14.8338 16.3247 15.1336 16.772 15.5837C16.772 15.5837 16.9796 15.812 17 15.8337V10C16.9998 6.22631 13.7737 3.00018 10 3Z"></path></svg></button>
+      <button id="tempChatBtn" onclick="toggleTempChat()" title="محادثة مؤقتة" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r1);color:var(--tg);transition:all var(--tr)"><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="group" aria-hidden="true" style="flex-shrink: 0;"><g class="group-hover:animate-[look-around_2.4s_ease-in-out_infinite] group-active:animate-none"><path d="M6.99951 8.66672C7.5518 8.66672 7.99951 9.11443 7.99951 9.66672C7.9993 10.2188 7.55166 10.6667 6.99951 10.6667C6.44736 10.6667 5.99973 10.2188 5.99951 9.66672C5.99951 9.11443 6.44723 8.66672 6.99951 8.66672Z"></path><path d="M12.9995 8.66672C13.5518 8.66672 13.9995 9.11443 13.9995 9.66672C13.9993 10.2188 13.5517 10.6667 12.9995 10.6667C12.4474 10.6667 11.9997 10.2188 11.9995 9.66672C11.9995 9.11443 12.4472 8.66672 12.9995 8.66672Z"></path></g><path fill-rule="evenodd" clip-rule="evenodd" d="M10 2C14.326 2.00018 17.9998 5.67403 18 10V17.3123C17.9997 17.5427 17.8411 17.8079 17.6172 17.8623C17.3932 17.9165 17.1614 17.7456 17.0557 17.5408C16.7805 17.007 16.3658 16.5937 16.062 16.2878C15.7793 16.0034 15.4503 15.8338 14.9771 15.8337C14.2092 15.8339 13.4371 16.3862 12.9487 17.53C12.8701 17.7138 12.6887 17.8621 12.4888 17.8623C12.2888 17.8623 12.1076 17.7138 12.0288 17.53C11.5404 16.386 10.7674 15.8339 9.99951 15.8337C9.23161 15.8339 8.45959 16.386 7.97119 17.53C7.89253 17.7138 7.71118 17.8621 7.51123 17.8623C7.31122 17.8623 7.13006 17.7138 7.05127 17.53C6.56296 16.3862 5.78982 15.834 5.02197 15.8337C4.54861 15.8338 4.21974 16.0032 3.93701 16.2878C3.63309 16.5937 3.21952 17.0715 2.94434 17.6055C2.83865 17.8103 2.60589 17.9165 2.38184 17.8623C2.15801 17.8079 2.00033 17.6073 2 17.377V10C2.00018 5.67403 5.67403 2.00018 10 2ZM10 3C6.22631 3.00018 3.00018 6.22631 3 10V15.8633C3.0205 15.8414 3.20696 15.6049 3.22803 15.5837C3.67524 15.1336 4.251 14.8338 5.02197 14.8337C6.03838 14.8341 6.90232 15.4025 7.51025 16.2937C8.11828 15.4018 8.9824 14.8338 9.99951 14.8337C11.0163 14.8338 11.8798 15.4022 12.4878 16.2937C13.0959 15.4018 13.9601 14.8339 14.9771 14.8337C15.7481 14.8338 16.3247 15.1336 16.772 15.5837C16.772 15.5837 16.9796 15.812 17 15.8337V10C16.9998 6.22631 13.7737 3.00018 10 3Z"></path></svg></button>
       <div class="model-sel" id="tbShortcuts">
         <button class="model-sel-btn" id="tbShortcutsBtn" onclick="toggleTbShortcuts()" title="المزيد" style="padding:6px 9px">⋯</button>
         <div class="sel-menu-backdrop" onclick="toggleTbShortcuts(false)"></div>
@@ -1476,6 +1454,9 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
       <div class="gold-hr"></div>
       <div class="wl-title">مرحباً في <span>Zunexa</span></div>
       <div class="wl-sub"></div>
+      <div class="quick-chips">
+        <!-- تم مسح جميع الأزرار القديمة -->
+      </div>
     </div>
   </div>
   <!-- Toast -->
@@ -1653,6 +1634,213 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
   </div>
 </div>
 
+<div class="modal-wrap" id="settModal">
+
+  <div class="modal-box wide">
+    <button class="modal-x" onclick="closeSettings()">✕</button>
+    <div class="modal-title">⚙ الإعدادات</div>
+
+    <div class="set-tabs">
+      <div class="set-tab on" onclick="setSTab('profile')" id="tab-profile">الملف الشخصي</div>
+      <div class="set-tab" onclick="setSTab('personas')" id="tab-personas">الشخصيات</div>
+      <div class="set-tab" onclick="setSTab('prefs')" id="tab-prefs">التفضيلات</div>
+      <div class="set-tab" onclick="setSTab('voice')" id="tab-voice">الصوت</div>
+      <div class="set-tab" onclick="setSTab('notif')" id="tab-notif">الإشعارات</div>
+      <div class="set-tab" onclick="setSTab('memory')" id="tab-memory">الذاكرة</div>
+      <div class="set-tab" onclick="setSTab('tools')" id="tab-tools">الأدوات</div>
+      <div class="set-tab" onclick="setSTab('referral')" id="tab-referral">الإحالة</div>
+      <div class="set-tab" onclick="setSTab('account')" id="tab-account">الحساب</div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="set-pane on" id="pane-profile">
+      <label class="field-label">الاسم الكامل</label>
+      <input class="field-input" id="setFullName" placeholder="اسمك الكامل">
+      <label class="field-label">كيفاش تبغي Zunexa يناديك؟</label>
+      <input class="field-input" id="setCallName" placeholder="مثلاً: أحمد">
+      <label class="field-label">شنو كيوصف خدمتك بزاف؟</label>
+      <input class="field-input" id="setWork" placeholder="مثلاً: مطور Full-Stack">
+      <label class="field-label">تعليمات لـ Zunexa (كيبقاها فبالو فكل محادثة)</label>
+      <textarea class="field-input" id="setInstructions" placeholder="مثلاً: نخدم بلغة Python وDarija، جاوبني بإيجاز، ديما قترح حلول عملية..."></textarea>
+      <button class="modal-save" onclick="saveProfileSettings()">✓ حفظ الملف الشخصي</button>
+    </div>
+
+    <!-- PERSONAS -->
+    <div class="set-pane" id="pane-personas">
+      <p style="font-size:11px;color:var(--tg);line-height:1.7;margin-bottom:12px">
+        اختار أو أنشئ شخصية لـ Zunexa — كل شخصية عندها أسلوبها وتعليماتها الخاصة، وتبقى مفعّلة فكل المحادثات الجديدة حتى تبدّلها.
+      </p>
+      <div id="personaList" class="persona-list"></div>
+
+      <div class="persona-editor" id="personaEditor" style="display:none">
+        <label class="field-label">اسم الشخصية</label>
+        <input class="field-input" id="pEditName" placeholder="مثلاً: مساعد SEO">
+        <label class="field-label">وصف قصير</label>
+        <input class="field-input" id="pEditDesc" placeholder="مثلاً: متخصص فتحسين محركات البحث">
+        <label class="field-label">أيقونة (emoji واحد)</label>
+        <input class="field-input" id="pEditIcon" placeholder="🧠" maxlength="4" style="max-width:80px">
+        <label class="field-label">تعليمات النظام (System Prompt)</label>
+        <textarea class="field-input" id="pEditPrompt" style="min-height:110px" placeholder="مثلاً: أنت خبير SEO، جاوب دائماً بخطوات عملية مرقمة، ركّز على الكلمات المفتاحية والنية من البحث..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="modal-save" style="margin-top:0" onclick="savePersonaFromEditor()">✓ حفظ الشخصية</button>
+          <button class="modal-save" style="margin-top:0;background:transparent;border:1px solid var(--b1);color:var(--tg)" onclick="closePersonaEditor()">إلغاء</button>
+        </div>
+      </div>
+
+      <button class="modal-save" style="margin-top:14px;background:transparent;border:1px solid var(--bg);color:var(--gold)" onclick="openPersonaEditor(null)">＋ شخصية جديدة</button>
+    </div>
+
+    <!-- PREFERENCES -->
+    <div class="set-pane" id="pane-prefs">
+      <label class="field-label">لغة الواجهة</label>
+      <select class="field-input" id="setPageLang" onchange="savePagePrefs()">
+        <option value="ary">الدارجة المغربية</option>
+        <option value="ar">العربية الفصحى</option>
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="de">Deutsch</option>
+        <option value="it">Italiano</option>
+        <option value="pt">Português</option>
+        <option value="ru">Русский</option>
+        <option value="zh">中文</option>
+        <option value="tr">Türkçe</option>
+        <option value="hi">हिन्दी</option>
+      </select>
+      <label class="field-label">نموذج Zunexa</label>
+      <select class="field-input" id="setModelSel2" onchange="setModelUI(this.value)">
+        <option value="lite">Zunexa Lite · محلي فقط</option>
+        <option value="pro">Zunexa Pro · محلي + Zunexa Brain</option>
+        <option value="max">Zunexa Max · أقصى سياق</option>
+      </select>
+      <label class="field-label">مستوى الجهد</label>
+      <select class="field-input" id="setEffortSel2" onchange="setEffortUI(this.value)">
+        <option value="quick">⚡ سريع</option>
+        <option value="balanced">⚖ متوازن</option>
+        <option value="deep">🔍 عميق</option>
+        <option value="max">🚀 أقصى</option>
+      </select>
+      <label class="field-label">خط المحادثة</label>
+      <select class="field-input" id="setFontSel" onchange="setChatFont(this.value)">
+        <option value="rajdhani">Rajdhani (افتراضي)</option>
+        <option value="system">خط النظام</option>
+        <option value="mono">Monospace</option>
+      </select>
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">تقليل الحركة</div><div class="set-row-desc">إيقاف/تقليل الأنيميشن أثناء ظهور الردود والواجهة.</div></div>
+        <label class="switch"><input type="checkbox" id="setReduceMotion" onchange="setReduceMotion(this.checked)"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <!-- VOICE -->
+    <div class="set-pane" id="pane-voice">
+      <label class="field-label">الصوت</label>
+      <select class="field-input" id="setVoiceLang" onchange="saveVoicePrefs()">
+        <option value="ar-MA">العربية (المغرب)</option>
+        <option value="ar-SA">العربية (فصحى)</option>
+        <option value="fr-FR">Français</option>
+        <option value="en-US">English</option>
+      </select>
+      <input type="hidden" id="setVoiceStyle" value="normal">
+      <input type="hidden" id="setVoiceSpeed" value="1">
+      <p style="font-size:11px;color:var(--tg);line-height:1.6">تُستعمل عبر Web Speech API المدمجة فالمتصفح، بدون أي مفتاح API.</p>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="set-pane" id="pane-notif">
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">إشعار عند اكتمال الرد</div><div class="set-row-desc">إشعار من المتصفح عند ما يخلص Zunexa من رد طويل — مفيد إذا بدلت التبويب فالمتصفح.</div></div>
+        <label class="switch"><input type="checkbox" id="setNotifDone" onchange="setNotifPref(this.checked)"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <!-- MEMORY -->
+    <div class="set-pane" id="pane-memory">
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">تعلّم من المحادثات</div><div class="set-row-desc">يخلي Zunexa يسجل الأسئلة الجديدة اللي ما عندوش جواب عليها ويقوّي قاعدة المعرفة تلقائياً (Supabase ai_learning / ai_knowledge).</div></div>
+        <label class="switch"><input type="checkbox" id="setLearnToggle" checked onchange="setLearnPref(this.checked)"><span class="slider"></span></label>
+      </div>
+      <button class="modal-save" style="margin-top:14px;background:transparent;border:1px solid var(--red);color:var(--red)" onclick="clearAll()">🗑 مسح كل السجل والذاكرة المحلية</button>
+    </div>
+
+    <!-- TOOLS -->
+    <div class="set-pane" id="pane-tools">
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">الأدوات الخارجية</div><div class="set-row-desc">تفعيل الأوامر السريعة /طقس /خريطة /جيت /اخبار /صورة والاتصال بـ APIs مجانية خارجية بدون مفتاح.</div></div>
+        <label class="switch"><input type="checkbox" id="setToolsToggle" checked onchange="setToolsPref(this.checked)"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <!-- REFERRAL / VIRAL LOOP — invite friends, earn free credits.
+         RPC-driven (get_or_create_referral_code / redeem_referral_code,
+         security definer) — same trust pattern as redeem_plan_code
+         above; the client never assigns credits directly. -->
+    <div class="set-pane" id="pane-referral">
+      <div id="refLoggedOut" style="display:none;text-align:center;padding:22px 10px">
+        <p style="font-size:12.5px;color:var(--tg);line-height:1.8;margin-bottom:12px">خاصك تدخل لحسابك باش تحصل على رابط الإحالة ديالك وتبدا تربح رصيد إضافي.</p>
+        <button class="modal-save" onclick="window.location.href='index.html'">تسجيل الدخول</button>
+      </div>
+      <div id="refLoggedIn" style="display:none">
+        <div class="ref-hero">
+          <div class="ref-hero-credits" id="refCreditsVal">—</div>
+          <div class="ref-hero-label">رصيد إحالة مكتسب</div>
+          <p class="ref-hero-sub">عاود ادعُ أصدقاءك للتسجيل عبر الرابط الخاص ديالك، وربح رصيد إضافي (Free Credits) مع كل صديق يسجل ويفعّل حسابه.</p>
+        </div>
+
+        <label class="field-label">الرابط الخاص ديالك</label>
+        <div class="ref-link-row">
+          <input class="field-input" type="text" id="refLinkInput" readonly>
+          <button class="mini-ghost-btn" id="refCopyBtn" onclick="copyReferralLink()">📋 نسخ</button>
+        </div>
+        <div class="ref-share-row">
+          <button class="mini-ghost-btn" onclick="shareReferral('whatsapp')">🟢 واتساب</button>
+          <button class="mini-ghost-btn" onclick="shareReferral('x')">✕ X</button>
+          <button class="mini-ghost-btn" onclick="shareReferral('telegram')">✈ تيليغرام</button>
+          <button class="mini-ghost-btn" onclick="shareReferral('native')">↗ مشاركة</button>
+        </div>
+
+        <div class="ref-stats">
+          <div class="ref-stat"><b id="refCountVal">0</b><span>أصدقاء انضافو</span></div>
+          <div class="ref-stat"><b id="refPendingVal">0</b><span>فالانتظار</span></div>
+        </div>
+
+        <label class="field-label" style="margin-top:6px">عندك كود إحالة من صديق؟</label>
+        <div class="ref-link-row">
+          <input class="field-input" type="text" id="refRedeemInput" placeholder="مثلاً: ZX-AB12CD" style="direction:ltr;text-align:left">
+          <button class="mini-ghost-btn" id="refRedeemBtn" onclick="redeemReferralCode()">تفعيل</button>
+        </div>
+        <div class="billing-status-msg" id="refRedeemStatus"></div>
+      </div>
+    </div>
+
+    <!-- ACCOUNT (existing security-audited content) -->
+    <div class="set-pane" id="pane-account">
+      <label class="field-label">الصورة الشخصية</label>
+      <div class="set-avatar-row">
+        <div class="set-avatar-preview" id="setAvatarPreview">Z</div>
+        <div class="set-avatar-btns">
+          <button class="set-avatar-upload" onclick="document.getElementById('avatarFileInput').click()">📷 رفع صورة</button>
+          <button class="set-avatar-remove" onclick="removeAvatar()">🗑 إزالة الصورة</button>
+        </div>
+      </div>
+      <div id="settLoggedInInfo" style="display:none">
+        <label class="field-label">الاسم</label>
+        <div class="field-input" style="opacity:.7" id="settRealName">—</div>
+        <label class="field-label">البريد الإلكتروني</label>
+        <div class="field-input" style="opacity:.7" id="settRealEmail">—</div>
+        <label class="field-label">الخطة</label>
+        <div class="field-input" style="opacity:.7" id="settRealPlan">—</div>
+        <p style="font-size:11px;color:var(--text-muted,#888);margin:6px 0 14px">لتغيير معلومات حسابك أو خطتك، توجه إلى صفحة الإعدادات الكاملة.</p>
+        <button class="modal-save" onclick="window.location.href='settings.html'">⚙ إدارة الحساب</button>
+      </div>
+      <div id="settGuestInfo" style="display:none">
+        <label class="field-label">اسم الضيف (محلي فقط، لا يؤثر على أي حساب)</label>
+        <input class="field-input" type="text" id="fName" placeholder="اسمك">
+        <button class="modal-save" onclick="saveSettings()">✓ حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ════════════════════════════════════════════════════════════
@@ -1674,105 +1862,8 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
  * via the SDK client below instead of raw fetch + manual headers. */
 const ZX_SUPABASE_URL      = 'https://xrldhfsytysznyyhwjlr.supabase.co';
 const ZX_SUPABASE_ANON_KEY = 'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F';
+const _SB = supabase.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY);
 
-/* FIX (root cause of "JS ماخدامش/مكسّر — كل شي واقف بلا خطأ ظاهر"):
-   the Supabase UMD bundle is loaded from a CDN <script> tag in <head>
-   with no guarantee it finishes (or even loads at all — slow
-   connection, blocked CDN, ad-blocker) before this inline <script>
-   block runs. `supabase` was then undefined, and
-   `supabase.createClient(...)` threw a ReferenceError at the very
-   TOP LEVEL of this file — which aborted the ENTIRE ~5700-line
-   script right here. Nothing below this line (answer(),
-   zunexaModeSystemPrompt, all DOM wiring, everything) ever ran.
-   That's exactly the "js ماخدامش وماكاينش والو" symptom: no visible
-   error unless devtools console was open.
-   Fix: poll for `supabase` to attach (cheap, synchronous, blocks
-   only this one line) with a short hard cap, so a slightly slow CDN
-   no longer nukes the whole app. If the SDK truly never loads (CDN
-   down), _SB stays null and Supabase-backed calls below will throw
-   their own (contained, catchable) errors instead of killing
-   everything upfront. */
-function zxWaitForGlobal(name, timeoutMs) {
-  const deadline = Date.now() + (timeoutMs || 8000);
-  return new Promise(resolve => {
-    (function poll() {
-      if (typeof window[name] !== 'undefined' && window[name]) return resolve(window[name]);
-      if (Date.now() >= deadline) {
-        console.warn(`[Zunexa] "${name}" لم يتحمّل من الـ CDN خلال ${timeoutMs}ms — بعض الميزات قد لا تعمل.`);
-        return resolve(null);
-      }
-      setTimeout(poll, 50);
-    })();
-  });
-}
-let _SB = (typeof supabase !== 'undefined' && supabase && typeof supabase.createClient === 'function')
-  ? supabase.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY)
-  : null;
-if (!_SB) {
-  // Supabase SDK not attached yet — wait for it, then build the real
-  // client. Anything that runs before this resolves and reads a
-  // still-null `_SB` should already be guarding for null (see the
-  // `_SB?.` optional-chaining pattern used at call sites), so no call
-  // site needs to change.
-  zxWaitForGlobal('supabase', 8000).then(sb => {
-    if (sb && !_SB) {
-      try { _SB = sb.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY); }
-      catch (e) { console.error('[Zunexa] فشل إنشاء Supabase client:', e.message); }
-    }
-  });
-}
-
-(async () => {
-  try {
-    // 1. أولاً نعالج OAuth token إذا رجع في URL
-    const hash = window.location.hash;
-
-    if (hash.includes('access_token')) {
-      const params = new URLSearchParams(hash.substring(1));
-
-      const access_token = params.get('access_token');
-      const refresh_token = params.get('refresh_token');
-
-      if (access_token && refresh_token) {
-        const { error } = await _SB?.auth.setSession({
-          access_token,
-          refresh_token
-        });
-
-        if (error) {
-          console.error('OAuth session error:', error);
-          window.location.replace('index.html');
-          return;
-        }
-
-        // نحيد الـtokens من URL
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname + window.location.search
-        );
-      }
-    }
-
-    // 2. من بعد نتأكد من الـsession الحقيقية
-    const {
-      data: { session },
-      error
-    } = await _SB?.auth.getSession();
-
-    if (error || !session) {
-      window.location.replace('index.html');
-      return;
-    }
-
-    // 3. Session صحيحة → بقا في ai.html
-    console.log('✅ Authenticated:', session.user.email);
-
-  } catch (err) {
-    console.error('Authentication verification failed:', err);
-    window.location.replace('index.html');
-  }
-})();
 /* ── Storage bucket used for chat attachments (images/PDF/text files).
  * Must exist in the Supabase project — see ZUNEXA_DB_SETUP.sql for the
  * bucket + policy statements to run once in the Supabase SQL editor. ── */
@@ -1939,7 +2030,7 @@ function detectZxPlatform() {
 const ZX_DOWNLOAD_MAP = {
   android: { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_signed.apk',            label: 'تطبيق Android (APK)' },
   linux:   { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_0.1.0_amd64.AppImage',    label: 'تطبيق Linux (AppImage)' },
-  debian:  { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_0.1.0_amd64.deb', label: 'تطبيق Debian (DEB)' },
+  debian:  { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_0.1.0_amd64.deb', label:'debian (deb))'app },
   windows: { url: 'app/windows/zunexa.exe',                   label: 'تطبيق Windows (EXE)' },
 };
 
@@ -2008,107 +2099,19 @@ async function checkSessionLimitOnBoot() {
 async function init() {
   renderHist();
   await loadUser();
-  await pullCloudHistory();  // cross-device sync: restore chats from other devices, if any
-  renderHist();
   checkSessionLimitOnBoot();
   await loadKB();
   initParticles();
   initPWAInstall();
   applyPageLang(localStorage.getItem('zx_page_lang') || 'ary');
-  setChatFont(localStorage.getItem('zx_font') || 'rajdhani');
-  document.documentElement.classList.toggle('zx-reduce-motion', localStorage.getItem('zx_reduce_motion') === '1');
   setModelUI(zxModel, true);
   setEffortUI(zxEffort, true);
   setModel(zxModel);
   document.body.setAttribute('data-zunexa-mode', zxZunexaMode);
   if (loadThread(currentChatId).length) replayThread(currentChatId);
+  renderAvatarSettingsPreview();
+  renderPersonaList();
   document.getElementById('aiInput').focus();
-}
-
-/* ════════════════════════════════════════════════════════════
-   CROSS-DEVICE CHAT SYNC — pull history from Supabase on login
-   ─────────────────────────────────────────────────────────────
-   Chat history has always lived in localStorage only (zx_hist_v3 +
-   zx_thread_<chatId>); logMsg() mirrors every turn to
-   zunexa_messages, but until now nothing ever read that mirror
-   back. A user logging in on a second device/browser saw an empty
-   sidebar even though their messages were sitting in Supabase.
-   This pulls that user's rows (matched by user_id — see logMsg's
-   uid write, above), rebuilds each chat_id into the same
-   {role,text,...} shape replayThread()/loadThread() already expect,
-   and only ADDS chat_ids this device doesn't already have — it
-   never overwrites or merges into a thread that already exists
-   locally, so nothing already open here can be clobbered by an
-   older/shorter cloud copy.
-
-   Best-effort like the rest of the sync layer: if user_id isn't a
-   column yet (ZUNEXA_DB_SETUP_SYNC.sql not run), Supabase returns
-   an error, we log a warning and skip — local-only mode keeps
-   working exactly as it always has.
-════════════════════════════════════════════════════════════ */
-async function pullCloudHistory() {
-  try {
-    const { data: { session } } = await _SB?.auth.getSession();
-    if (!session) return; // guests have nothing to pull cross-device
-
-    const { data: rows, error } = await _SB
-      .from('zunexa_messages')
-      .select('chat_id, user_prompt, bot_response, source, tokens_used, file_url, file_name, created_at')
-      .eq('user_id', session.user.id)
-      .order('created_at', { ascending: true })
-      .limit(2000); // generous cap — this is a best-effort restore, not a full archive export
-    if (error) throw error;
-    if (!rows || !rows.length) return;
-
-    // Group rows by chat_id, in chronological order within each group.
-    const byChat = {};
-    rows.forEach(r => {
-      if (!r.chat_id) return;
-      (byChat[r.chat_id] = byChat[r.chat_id] || []).push(r);
-    });
-
-    const knownChatIds = new Set(hist.map(h => h.chatId));
-    let addedAny = false;
-
-    Object.keys(byChat).forEach(chatId => {
-      // Never touch a chat this device already has a local copy of —
-      // the local thread (open tab, in-progress edits, pinned state)
-      // always wins over the cloud mirror.
-      if (knownChatIds.has(chatId) || localStorage.getItem('zx_thread_' + chatId)) return;
-
-      const cloudRows = byChat[chatId];
-      const thread = [];
-      cloudRows.forEach(r => {
-        const ts = r.created_at ? new Date(r.created_at).getTime() : Date.now();
-        if (r.user_prompt) {
-          thread.push({ role: 'user', text: r.user_prompt, src: null, score: 0, imgUrl: null, audioUrl: null, ts });
-        }
-        if (r.bot_response) {
-          thread.push({
-            role: 'bot', text: r.bot_response, src: r.source || null,
-            score: (r.tokens_used || 0) / 100,
-            imgUrl: r.file_url || null, audioUrl: null, ts: ts + 1,
-          });
-        }
-      });
-      if (!thread.length) return;
-
-      localStorage.setItem('zx_thread_' + chatId, JSON.stringify(thread));
-
-      const firstUserMsg = cloudRows.find(r => r.user_prompt);
-      const title = (firstUserMsg && firstUserMsg.user_prompt || 'محادثة مستعادة').slice(0, 50);
-      const lastTs = new Date(cloudRows[cloudRows.length - 1].created_at || Date.now()).getTime();
-      hist.unshift({ chatId, t: title, ts: lastTs, pinned: false });
-      knownChatIds.add(chatId);
-      addedAny = true;
-    });
-
-    if (addedAny) {
-      localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
-    }
-  } catch (e) {
-    console.warn('pullCloudHistory: skipped (best-effort — table/column may not be set up yet)', e);
-  }
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -2119,7 +2122,7 @@ async function loadUser() {
   // pattern, which let anyone declare themselves any user id with zero
   // verification (see security note above _SB init).
   try {
-    const { data: { session } } = await _SB?.auth.getSession();
+    const { data: { session } } = await _SB.auth.getSession();
     if (!session) {
       // Not logged in: a real guest, not a fake "Premium" user. The old
       // code defaulted anonymous visitors to Premium, which both hides
@@ -2139,19 +2142,11 @@ async function loadUser() {
     // Guest/Free" symptom. Reading the real columns fixes it for good.
     const { data, error } = await _SB
       .from('profiles')
-      .select('username, first_name, email, avatar_url, app_settings')
+      .select('username, first_name, email, avatar_url')
       .eq('id', uid)
       .maybeSingle();
     if (error) throw error;
     const u = data || {};
-
-    // Cross-device settings sync — see pushAppSettings()/pullCloudHistory()
-    // below. Best-effort: app_settings just comes back undefined if the
-    // column doesn't exist yet (ZUNEXA_DB_SETUP_SYNC.sql not run), and
-    // this silently no-ops instead of breaking the rest of loadUser().
-    if (u.app_settings && typeof u.app_settings === 'object') {
-      try { applyRemoteAppSettings(u.app_settings); } catch (e) { console.warn('applyRemoteAppSettings failed', e); }
-    }
 
     // Sync avatar from account (server) over any locally-cached one —
     // avatar_url column added by ZUNEXA_DB_SETUP_AVATAR.sql. Missing
@@ -2241,15 +2236,15 @@ async function onAvatarPicked(ev) {
 
   toast('⏳ جاري رفع الصورة...');
   try {
-    const { data: { session } } = await _SB?.auth.getSession();
+    const { data: { session } } = await _SB.auth.getSession();
     const ownerId = session ? session.user.id : getDeviceId();
     const ext = (file.name.split('.').pop() || 'png').toLowerCase();
     const path = `avatars/${ownerId}/${Date.now()}.${ext}`;
 
-    const { error: upErr } = await _SB?.storage.from(ZX_BUCKET).upload(path, file, { upsert: true, contentType: file.type });
+    const { error: upErr } = await _SB.storage.from(ZX_BUCKET).upload(path, file, { upsert: true, contentType: file.type });
     if (upErr) throw upErr;
 
-    const { data: pub } = _SB?.storage.from(ZX_BUCKET).getPublicUrl(path);
+    const { data: pub } = _SB.storage.from(ZX_BUCKET).getPublicUrl(path);
     const url = pub.publicUrl;
 
     zxAvatarUrl = url;
@@ -2259,7 +2254,7 @@ async function onAvatarPicked(ev) {
     document.querySelectorAll('.msg.user .msg-av').forEach(el => renderAvatarInto(el));
 
     if (session) {
-      try { await _SB?.from('profiles').update({ avatar_url: url }).eq('id', session.user.id); }
+      try { await _SB.from('profiles').update({ avatar_url: url }).eq('id', session.user.id); }
       catch (e) { console.warn('avatar_url column missing? run ZUNEXA_DB_SETUP_AVATAR.sql', e); }
     }
     toast('✓ تم تحديث الصورة الشخصية');
@@ -2276,8 +2271,8 @@ async function removeAvatar() {
   renderAvatarSettingsPreview();
   document.querySelectorAll('.msg.user .msg-av').forEach(el => renderAvatarInto(el));
   try {
-    const { data: { session } } = await _SB?.auth.getSession();
-    if (session) await _SB?.from('profiles').update({ avatar_url: null }).eq('id', session.user.id);
+    const { data: { session } } = await _SB.auth.getSession();
+    if (session) await _SB.from('profiles').update({ avatar_url: null }).eq('id', session.user.id);
   } catch (e) {}
   toast('✓ تمت إزالة الصورة الشخصية');
 }
@@ -2914,7 +2909,7 @@ async function callEdgeFunction(provider, messages, opts) {
   const fnName = PROVIDER_FN[provider];
   if (!fnName) return { ok: false, error: 'unknown_provider' };
 
-  const { data: { session } } = await _SB?.auth.getSession();
+  const { data: { session } } = await _SB.auth.getSession();
   if (!session) {
     return { ok: false, error: 'not_authenticated', status: 401 };
   }
@@ -2992,7 +2987,7 @@ async function zunexaBrain(messages, opts) {
       body: JSON.stringify({
         model: 'openai',
         messages,
-        max_tokens: Math.min(opts.maxTokens || 800, FREE_TIER_TOKEN_CAP),
+        max_tokens: opts.maxTokens || 800,
         temperature: opts.temperature || 0.7
       })
     });
@@ -3237,10 +3232,87 @@ function getActivePersona() {
   return loadPersonas().find(p => p.id === id) || null;
 }
 
-/* واجهة إدارة الشخصيات (عرض/إنشاء/تعديل/حذف) انتقلت بالكامل إلى
-   settings.html — بقيت هنا فقط الدوال الأساسية (loadPersonas،
-   saveCustomPersonas، getActivePersonaId، getActivePersona) لأن
-   محرك الدردشة يحتاجها مباشرة لبناء الـ System Prompt. */
+function renderPersonaList() {
+  const wrap = document.getElementById('personaList');
+  if (!wrap) return;
+  const activeId = getActivePersonaId();
+  const list = loadPersonas();
+  wrap.innerHTML = list.map(p => `
+    <div class="persona-card ${p.id === activeId ? 'on' : ''}" onclick="activatePersona('${p.id}')">
+      <div class="persona-icon">${p.icon || '🤖'}</div>
+      <div class="persona-info">
+        <div class="persona-name">${esc(p.name)}${p.id === activeId ? ' <span class="persona-badge">· نشطة</span>' : ''}</div>
+        <div class="persona-desc">${esc(p.desc || 'بدون وصف')}</div>
+      </div>
+      <div class="persona-actions" onclick="event.stopPropagation()">
+        ${!p.builtin ? `<button class="persona-act-btn" onclick="openPersonaEditor('${p.id}')" title="تعديل">✎</button>
+        <button class="persona-act-btn del" onclick="deletePersona('${p.id}')" title="حذف">🗑</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function activatePersona(id) {
+  localStorage.setItem('zx_active_persona', id);
+  renderPersonaList();
+  const p = loadPersonas().find(x => x.id === id);
+  toast('✓ الشخصية النشطة: ' + (p ? p.name : 'Zunexa'));
+}
+
+let _personaEditingId = null;
+function openPersonaEditor(id) {
+  _personaEditingId = id;
+  const editor = document.getElementById('personaEditor');
+  editor.style.display = 'block';
+  if (id) {
+    const p = loadPersonas().find(x => x.id === id);
+    document.getElementById('pEditName').value = p ? p.name : '';
+    document.getElementById('pEditDesc').value = p ? p.desc : '';
+    document.getElementById('pEditIcon').value = p ? p.icon : '';
+    document.getElementById('pEditPrompt').value = p ? p.prompt : '';
+  } else {
+    document.getElementById('pEditName').value = '';
+    document.getElementById('pEditDesc').value = '';
+    document.getElementById('pEditIcon').value = '';
+    document.getElementById('pEditPrompt').value = '';
+  }
+  editor.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function closePersonaEditor() {
+  _personaEditingId = null;
+  document.getElementById('personaEditor').style.display = 'none';
+}
+
+function savePersonaFromEditor() {
+  const name = document.getElementById('pEditName').value.trim();
+  const desc = document.getElementById('pEditDesc').value.trim();
+  const icon = document.getElementById('pEditIcon').value.trim();
+  const prompt = document.getElementById('pEditPrompt').value.trim();
+  if (!name) { toast('⚠ لازم اسم للشخصية'); return; }
+  if (!prompt) { toast('⚠ لازم تعليمات نظام للشخصية'); return; }
+
+  const list = loadPersonas();
+  if (_personaEditingId) {
+    const idx = list.findIndex(p => p.id === _personaEditingId);
+    if (idx !== -1) list[idx] = { ...list[idx], name, desc, icon, prompt };
+  } else {
+    list.push({ id: 'p_' + Date.now().toString(36), builtin: false, name, desc, icon, prompt });
+  }
+  saveCustomPersonas(list);
+  renderPersonaList();
+  closePersonaEditor();
+  toast('✓ تم حفظ الشخصية');
+}
+
+function deletePersona(id) {
+  let list = loadPersonas().filter(p => p.id !== id);
+  saveCustomPersonas(list);
+  if (getActivePersonaId() === id) {
+    localStorage.setItem('zx_active_persona', '_default');
+  }
+  renderPersonaList();
+  toast('🗑 تم حذف الشخصية');
+}
 
 
 
@@ -3315,7 +3387,7 @@ async function ragSearch(userQ, matchCount = 5) {
   const embedding = await ragGetEmbedding(userQ);
 
   // 2. بحث دلالي في Supabase بـ pgvector
-  const { data, error } = await _SB?.rpc('match_zunexa_knowledge', {
+  const { data, error } = await _SB.rpc('match_zunexa_knowledge', {
     query_embedding: embedding,
     match_threshold: 0.45,  // حد أدنى للتشابه (0-1، كلما زاد كلما كان أدق)
     match_count:     matchCount,
@@ -3326,7 +3398,7 @@ async function ragSearch(userQ, matchCount = 5) {
 
   // 3. زيادة وزن أفضل نتيجة (best-effort، لا يوقف التدفق إذا فشل)
   if (data[0]?.id) {
-    _SB?.rpc('increment_knowledge_weight', { knowledge_id: data[0].id }).catch(() => {});
+    _SB.rpc('increment_knowledge_weight', { knowledge_id: data[0].id }).catch(() => {});
   }
 
   // 4. بناء الـ context للـ Brain من أقرب النتائج
@@ -3343,20 +3415,11 @@ async function ragSearch(userQ, matchCount = 5) {
 }
 
 // Effort → how hard Zunexa tries: local-only vs. local+brain, context depth, token budget.
-//
-// FREE_TIER_TOKEN_CAP: this app currently has no paid-tier gating
-// anywhere in the codebase (uPlan is a display label only — see
-// loadUser() — never wired into token limits). Per the token-cap
-// requirement, every effort level's maxTokens is clamped to this
-// constant, so even "max" effort can never exceed 2000 tokens for
-// any user. If a paid tier is added later, gate a *higher* constant
-// behind a verified plan check — never just raise these numbers.
-const FREE_TIER_TOKEN_CAP = 2000;
 const EFFORT_CFG = {
-  quick:    { useBrain: false, ctxTurns: 0,  maxTokens: Math.min(350,  FREE_TIER_TOKEN_CAP) },
-  balanced: { useBrain: 'weak', ctxTurns: 4, maxTokens: Math.min(650,  FREE_TIER_TOKEN_CAP) },
-  deep:     { useBrain: true,  ctxTurns: 8,  maxTokens: Math.min(1200, FREE_TIER_TOKEN_CAP) },
-  max:      { useBrain: true,  ctxTurns: 12, maxTokens: Math.min(2000, FREE_TIER_TOKEN_CAP) }
+  quick:    { useBrain: false, ctxTurns: 0,  maxTokens: 350  },
+  balanced: { useBrain: 'weak', ctxTurns: 4, maxTokens: 650  },
+  deep:     { useBrain: true,  ctxTurns: 8,  maxTokens: 1200 },
+  max:      { useBrain: true,  ctxTurns: 12, maxTokens: 2000 }
 };
 
 /* Follow-up detector — the root cause of "can't continue/understand
@@ -3750,7 +3813,7 @@ function buildUnknown(q, onTopic){
 async function learnQ(q) {
   if (!isLearnEnabled() || tempChatOn) return;
   try {
-    await _SB?.from('ai_learning').insert({ question: q, category: detectCat(q), source: 'user_chat', status: 'pending', device_id: getDeviceId() });
+    await _SB.from('ai_learning').insert({ question: q, category: detectCat(q), source: 'user_chat', status: 'pending', device_id: getDeviceId() });
   } catch(e){}
 }
 
@@ -3784,7 +3847,7 @@ async function autoLearn(question, answerText, localScore) {
   if (looksLikeFailure) return;
   const normalizedQuestion = norm(question) || question.trim();
   try {
-    await _SB?.from('ai_knowledge').upsert({
+    await _SB.from('ai_knowledge').upsert({
       question:      normalizedQuestion,
       answer:        answerText,
       keywords:      tok(question).slice(0, 8),
@@ -3802,19 +3865,7 @@ async function autoLearn(question, answerText, localScore) {
 async function logMsg(prompt, response, src, score) {
   if (tempChatOn) return; // Temporary Chat: nothing is written to Supabase
   try {
-    // user_id lets cross-device sync (pullCloudHistory, below) find a
-    // logged-in user's messages regardless of which device/browser
-    // wrote them — device_id alone can't do that since it's per-device
-    // by definition. Best-effort: if the zunexa_messages table doesn't
-    // have a user_id column yet (ZUNEXA_DB_SETUP_SYNC.sql not run),
-    // Supabase will just ignore/reject that one field or the whole
-    // insert fails silently here — chat still works locally either way.
-    let uid = null;
-    try {
-      const { data: { session } } = await _SB?.auth.getSession();
-      uid = session ? session.user.id : null;
-    } catch (e) {}
-    await _SB?.from('zunexa_messages').insert({
+    await _SB.from('zunexa_messages').insert({
       user_prompt:  prompt,
       bot_response: response,
       source:       src,
@@ -3822,7 +3873,6 @@ async function logMsg(prompt, response, src, score) {
       platform:     'web',
       chat_id:      currentChatId,
       device_id:    getDeviceId(),
-      user_id:      uid,
       file_url:     (attachedFile && attachedFile.storageUrl) || null,
       file_name:    (attachedFile && attachedFile.name) || null,
       created_at:   new Date().toISOString()
@@ -3839,11 +3889,11 @@ async function logMsg(prompt, response, src, score) {
 // schema change than this pass covers — flagged for a follow-up.
 async function incrWeight(question) {
   try {
-    const { data: d, error } = await _SB?.from('ai_knowledge').select('weight,used_count').eq('question', question).limit(1);
+    const { data: d, error } = await _SB.from('ai_knowledge').select('weight,used_count').eq('question', question).limit(1);
     if (error || !d || !d[0]) return;
     const newWeight = Math.min(2, (parseFloat(d[0].weight) || 1.0) + 0.04);
     const newUsed   = (d[0].used_count || 0) + 1;
-    await _SB?.from('ai_knowledge').update({ weight: newWeight, used_count: newUsed }).eq('question', question);
+    await _SB.from('ai_knowledge').update({ weight: newWeight, used_count: newUsed }).eq('question', question);
   } catch(e){}
 }
 
@@ -3904,7 +3954,7 @@ async function shareCurrentChat() {
     const title = (msgs.find(m => m.role === 'user') || {}).text || 'محادثة Zunexa AI';
     const identityId = await zxIdentityId();
 
-    const { error } = await _SB?.from('shared_chats').insert({
+    const { error } = await _SB.from('shared_chats').insert({
       share_id: shareId,
       owner_id: identityId,
       title: title.slice(0, 80),
@@ -3940,7 +3990,7 @@ const ZX_LOCK_SECONDS   = 3600;   // 1h lockout once exceeded, per spec
 let _zxLimitTimerHandle = null;
 
 async function zxIdentityId() {
-  const { data: { session } } = await _SB?.auth.getSession();
+  const { data: { session } } = await _SB.auth.getSession();
   return session ? session.user.id : getDeviceId();
 }
 
@@ -3981,7 +4031,7 @@ function hideLimitOverlay() {
 async function checkSessionLimit() {
   try {
     const identityId = await zxIdentityId();
-    const { data, error } = await _SB?.rpc('zx_check_and_increment_usage', {
+    const { data, error } = await _SB.rpc('zx_check_and_increment_usage', {
       p_identity_id: identityId,
       p_window_seconds: ZX_WINDOW_SECONDS,
       p_max_messages: ZX_MAX_MESSAGES,
@@ -4036,7 +4086,7 @@ async function send() {
 
   if (containsBlockedContent(q)) {
     const refusal = '🚫 ما نقدرش نجاوب على هاد النوع ديال الطلبات — عندي حدود واضحة بخصوص المحتوى الجنسي الصريح أو العنيف. اسألني على شي حاجة أخرى وأنا معاك.';
-    addMsg(refusal, 'bot', 'blocked', 0, null, false, null, true);
+    addMsg(refusal, 'bot', 'blocked', 0);
     await logMsg(q, refusal, 'blocked', 0);
     clearFile();
     busy = false;
@@ -4048,7 +4098,7 @@ async function send() {
   // Exact-match cache — skip API entirely on a known question
   const cached = findExactKBMatch(q);
   if (cached) {
-    addMsg(cached.a, 'bot', cached.src || 'cache', cached.w || 1, null, false, null, true);
+    addMsg(cached.a, 'bot', cached.src || 'cache', cached.w || 1);
     ctx.push({ role:'user', text:q });
     ctx.push({ role:'bot',  text:cached.a });
     if (ctx.length > 12) ctx = ctx.slice(-12);
@@ -4084,7 +4134,7 @@ async function send() {
     }
     removeTyping();
     if (!res || !res.text) res = { text: '⚠ خطأ في المعالجة. حاول مرة أخرى.', src: 'error', score: 0 };
-    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl, true);
+    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl);
 
     // Update context
     ctx.push({ role:'user', text:q });
@@ -4107,7 +4157,7 @@ async function send() {
     console.error('Zunexa send() error:', err);
     thinkEnd();
     removeTyping();
-    addMsg('⚠ خطأ في المعالجة. حاول مرة أخرى.', 'bot', 'error', 0, null, false, null, true);
+    addMsg('⚠ خطأ في المعالجة. حاول مرة أخرى.', 'bot', 'error', 0);
   }
 
   busy = false;
@@ -4118,7 +4168,7 @@ async function send() {
 /* ════════════════════════════════════════════════════════════
    DOM HELPERS
 ════════════════════════════════════════════════════════════ */
-function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate) {
+function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl) {
   const conv = document.getElementById('conv');
   const div  = document.createElement('div');
   div.className = 'msg ' + role;
@@ -4145,8 +4195,7 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate) {
 
   const bub = document.createElement('div');
   bub.className = 'bubble';
-  const shouldAnimate = animate && role === 'bot' && typeof text === 'string' && text.length > 0;
-  if (!shouldAnimate) { bub.innerHTML = fmt(text); highlightCodeIn(bub); }
+  bub.innerHTML = fmt(text);
   if (imgUrl) {
     const img = document.createElement('img');
     img.src = imgUrl;
@@ -4208,54 +4257,6 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate) {
   conv.scrollTop = conv.scrollHeight;
 
   if (!skipSave) saveThreadMsg(role, text, src, score, imgUrl, audioUrl);
-
-  if (shouldAnimate) typewriteBubble(bub, text, conv);
-}
-
-/* ── Typewriter effect for live bot replies ────────────────────────
-   Renders the raw text progressively (plain text, not the final
-   markdown) so no half-parsed HTML tag can ever appear mid-typing,
-   then swaps in the real fmt(text) HTML once typing finishes so code
-   blocks/bold/etc render correctly. Auto-scrolls on every tick so the
-   conversation follows the reply as it's "written" instead of the
-   whole message popping in at once and leaving the user scrolled up. */
-function typewriteBubble(bub, fullText, conv) {
-  const CHARS_PER_TICK = 3;   // small chunks read as smooth typing, not a per-letter crawl
-  const TICK_MS = 16;         // ~60fps
-  let i = 0;
-  bub.textContent = '';
-  bub.classList.add('typing');
-
-  function tick() {
-    i = Math.min(fullText.length, i + CHARS_PER_TICK);
-    bub.textContent = fullText.slice(0, i);
-    // Only auto-scroll if the user is already near the bottom, so
-    // someone who scrolled up to re-read earlier messages isn't
-    // yanked back down mid-stream.
-    const nearBottom = conv.scrollHeight - conv.scrollTop - conv.clientHeight < 120;
-    if (nearBottom) conv.scrollTop = conv.scrollHeight;
-
-    if (i < fullText.length) {
-      setTimeout(tick, TICK_MS);
-    } else {
-      bub.classList.remove('typing');
-      bub.innerHTML = fmt(fullText);
-      highlightCodeIn(bub);
-      if (conv.scrollHeight - conv.scrollTop - conv.clientHeight < 120) {
-        conv.scrollTop = conv.scrollHeight;
-      }
-    }
-  }
-  tick();
-}
-
-/* ── Syntax highlighting hook — best-effort, never breaks the chat
-   if highlight.js failed to load (CDN down, blocked, etc). ── */
-function highlightCodeIn(container) {
-  try {
-    if (typeof hljs === 'undefined') return;
-    container.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
-  } catch (e) { /* best-effort */ }
 }
 
 /* ── Live-previewable languages: rendered directly (HTML/SVG), or
@@ -4285,7 +4286,7 @@ function buildCodeBlockHtml(lang, code) {
           <button class="code-btn" onclick="copyCodeBlock('${id}')">⧉ نسخ</button>
         </div>
       </div>
-      <pre><code id="${id}" class="language-${langLabel}" data-lang="${langLabel}" data-preview-kind="${previewKind || ''}">${escaped}</code></pre>
+      <pre><code id="${id}" data-lang="${langLabel}" data-preview-kind="${previewKind || ''}">${escaped}</code></pre>
       ${previewKind ? `<div class="sandbox-wrap" id="${id}_sandbox"></div>` : ''}
     </div>`;
 }
@@ -4494,6 +4495,19 @@ function newChat() {
       <div class="wl-eyebrow">Zunexa Premium · Zunexa AI </div>
       <div class="gold-hr"></div>
       <div class="wl-title">مرحباً في <span>Zunexa</span></div>
+      <div class="quick-chips">
+        <div class="qchip" onclick="go('ما هي منصة Zunexa؟')">ما هي Zunexa؟</div>
+        <div class="qchip" onclick="go('التصميم Zalij Mode')">Zalij Mode</div>
+        <div class="qchip" onclick="go('من المطور؟')">المطور</div>
+        <div class="qchip" onclick="go('أداة SEO كيف تعمل؟')">SEO Tool</div>
+        <div class="qchip" onclick="go('Generator Hub شرح')">Generator Hub</div>
+        <div class="qchip" onclick="go('ما هي تقنيات المنصة؟')">التقنيات</div>
+        <div class="qchip" onclick="go('/طقس الدار البيضاء')">🌤 الطقس</div>
+        <div class="qchip" onclick="go('/صورة شعار ذهبي مغربي عصري')">🎨 توليد صورة</div>
+        <div class="qchip" onclick="go('/جيت zunexa')">🐙 GitHub</div>
+        <div class="qchip" onclick="go('/بحث أفضل ممارسات SEO 2026')">🔎 بحث ويب</div>
+        <div class="qchip" onclick="go('/صوت مرحبا بك في Zunexa')">🔊 نص لصوت</div>
+      </div>
     </div>`;
   closeSidebar();
 }
@@ -4615,7 +4629,7 @@ function switchTasksTab(tab) {
 
 async function loadTasks() {
   try {
-    const { data: { session } } = await _SB?.auth.getSession();
+    const { data: { session } } = await _SB.auth.getSession();
     if (session) {
       const { data, error } = await _SB
         .from('zx_tasks')
@@ -4667,7 +4681,7 @@ async function addTask() {
 
   if (_zxTasksMode === 'remote') {
     try {
-      const { data: { session } } = await _SB?.auth.getSession();
+      const { data: { session } } = await _SB.auth.getSession();
       const { data, error } = await _SB
         .from('zx_tasks')
         .insert({ user_id: session.user.id, title, due_at, all_day: true })
@@ -4696,7 +4710,7 @@ async function toggleTaskDone(id, done) {
   if (!t) return;
   t.done = done;
   if (_zxTasksMode === 'remote') {
-    try { await _SB?.from('zx_tasks').update({ done }).eq('id', id); }
+    try { await _SB.from('zx_tasks').update({ done }).eq('id', id); }
     catch (e) {}
   } else {
     _localTasksWrite(_zxTasksCache);
@@ -4707,7 +4721,7 @@ async function toggleTaskDone(id, done) {
 async function deleteTask(id) {
   _zxTasksCache = _zxTasksCache.filter(x => String(x.id) !== String(id));
   if (_zxTasksMode === 'remote') {
-    try { await _SB?.from('zx_tasks').delete().eq('id', id); }
+    try { await _SB.from('zx_tasks').delete().eq('id', id); }
     catch (e) {}
   } else {
     _localTasksWrite(_zxTasksCache);
@@ -4800,21 +4814,32 @@ function renderLibFiles() {
 
 /* ════════════════════════════════════════════════════════════
    SETTINGS
-   الإعدادات (الملف الشخصي/الشخصيات/التفضيلات/الصوت/الإشعارات/
-   الذاكرة/الأدوات/الإحالة/الحساب) أصبحت صفحة مستقلة settings.html.
-   openSettings() القديمة (Modal داخلي) استُبدلت بتنقّل بسيط لتلك
-   الصفحة — كل الحالة (localStorage + Supabase profiles.app_settings)
-   تبقى مشتركة بين الصفحتين فلا يضيع أي إعداد. تسجيل الخروج
-   (logoutUser) انتقل بالكامل إلى settings.html ← تبويب الحساب. */
-function goToSettings() {
-  try { closeSidebar(); } catch (e) {}
-  window.location.href = 'settings.html';
+════════════════════════════════════════════════════════════ */
+async function openSettings() {
+  const { data: { session } } = await _SB.auth.getSession();
+  const loggedInBox = document.getElementById('settLoggedInInfo');
+  const guestBox     = document.getElementById('settGuestInfo');
+  if (session) {
+    loggedInBox.style.display = 'block';
+    guestBox.style.display    = 'none';
+    document.getElementById('settRealName').textContent  = document.getElementById('uName').textContent  || '—';
+    document.getElementById('settRealEmail').textContent = document.getElementById('uEmail').textContent || session.user.email || '—';
+    document.getElementById('settRealPlan').textContent  = document.getElementById('uPlan').textContent  || '—';
+  } else {
+    loggedInBox.style.display = 'none';
+    guestBox.style.display    = 'block';
+    document.getElementById('fName').value = localStorage.getItem('zx_guest_name') || '';
+  }
+  document.getElementById('settModal').classList.add('on');
+  loadAllPrefsIntoUI();
+  closeSidebar();
 }
+function closeSettings() { document.getElementById('settModal').classList.remove('on'); }
 
 /* ════════════════════════════════════════════════════════════
    BILLING MODAL — restored from the previous ai.html, adapted to
    this file's real auth: every write (redeem, request-plan) reads
-   the live session via _SB?.auth.getSession() instead of trusting a
+   the live session via _SB.auth.getSession() instead of trusting a
    cached `currentSession` global, so it can't act on a stale/expired
    session. Plan display always comes from #uPlan (populated by
    loadUser()/refreshUserPlan() elsewhere in this file from the DB),
@@ -4906,7 +4931,7 @@ document.getElementById('btnRedeem').onclick = async () => {
     return;
   }
 
-  const { data: { session } } = await _SB?.auth.getSession();
+  const { data: { session } } = await _SB.auth.getSession();
   if (!session) {
     statusEl.textContent = 'خاصك تدخل لحسابك أولاً.';
     statusEl.classList.add('err', 'show');
@@ -4921,7 +4946,7 @@ document.getElementById('btnRedeem').onclick = async () => {
   try {
     // الدالة الآمنة redeem_plan_code (security definer) فـ Postgres —
     // كتتحقق من auth.uid() بنفسها فالسيرفر، مستحيل تخدم بحساب مزور.
-    const { data, error } = await _SB?.rpc('redeem_plan_code', { code_input: code });
+    const { data, error } = await _SB.rpc('redeem_plan_code', { code_input: code });
     if (error) throw error;
 
     if (data.success) {
@@ -4972,8 +4997,8 @@ document.getElementById('btnRequestPlan').onclick = async () => {
   btn.innerHTML = '<span class="billing-spinner"></span>';
 
   try {
-    const { data: { session } } = await _SB?.auth.getSession();
-    const { error } = await _SB?.from('request_plan').insert({
+    const { data: { session } } = await _SB.auth.getSession();
+    const { error } = await _SB.from('request_plan').insert({
       user_id: session ? session.user.id : null,
       name, email,
       phone: phone || null,
@@ -4997,8 +5022,16 @@ document.getElementById('btnRequestPlan').onclick = async () => {
   }
 };
 
-/* saveSettings() (اسم الضيف) انتقلت إلى settings.html — تكتب لنفس
-   المفتاح zx_guest_name، فتنعكس هنا تلقائياً عند رجوع المستخدم. */
+function saveSettings() {
+  // Guest-only, cosmetic display name. Never writes an id or plan —
+  // those can only ever come from a real authenticated session.
+  const name = document.getElementById('fName').value.trim();
+  if (name) {
+    localStorage.setItem('zx_guest_name', name);
+    setUserUI(name, 'Free', '', name[0].toUpperCase());
+  }
+  closeSettings();
+}
 
 /* ════════════════════════════════════════════════════════════
    PARTICLES — Gold floating dots
@@ -5068,10 +5101,17 @@ function initParticles() {
 }
 
 /* ════════════════════════════════════════════════════════════
+   CLOSE MODAL ON OUTSIDE CLICK
+════════════════════════════════════════════════════════════ */
+document.getElementById('settModal').addEventListener('click', function(e) {
+  if (e.target === this) closeSettings();
+});
+
+/* ════════════════════════════════════════════════════════════
    THEME / MODEL / EFFORT — state + persistence
 ════════════════════════════════════════════════════════════ */
-let zxModel    = localStorage.getItem('zx_model')    || 'max';
-let zxEffort   = localStorage.getItem('zx_effort')   || 'max';
+let zxModel    = localStorage.getItem('zx_model')    || 'lite';
+let zxEffort   = localStorage.getItem('zx_effort')   || 'balanced';
 /* zxProvider ماعادش مخزّن ولا مختار من اليوزر — كل رسالة كتختار
    مزوّد عشوائياً (انظر randomProvider() و zunexaBrain) باش يتوزع
    الضغط بالتساوي على الأربعة Edge Functions. */
@@ -5087,9 +5127,8 @@ function setModel(v) {
   const descKey = { lite: 'modelLite', pro: 'modelPro', max: 'modelMax' }[v];
   const t = ZX_I18N[lang] || ZX_I18N.ary;
   if (tag) tag.textContent = (descKey && t[descKey]) || 'Zunexa AI Engine';
-  schedulePushAppSettings();
 }
-function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); schedulePushAppSettings(); }
+function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); }
 
 /* ── UI wrappers for the mode-row chips (speed modes + tier chips
    next to the input box). Keep the underlying setModel/setEffort as
@@ -5221,7 +5260,7 @@ function applyPageLang(lang) {
   const histLabel = document.querySelector('.sb-label');
   if (histLabel) histLabel.textContent = t.history;
   document.querySelectorAll('.sb-fbtn').forEach(btn => {
-    if (btn.getAttribute('onclick') === 'goToSettings()') btn.lastChild.textContent = ' ' + t.settings.replace('⚙ ', '');
+    if (btn.onclick && btn.getAttribute('onclick') === 'openSettings()') btn.lastChild.textContent = ' ' + t.settings.replace('⚙ ', '');
     if (btn.getAttribute('onclick') === 'clearAll()') btn.lastChild.textContent = ' ' + t.clear.replace('🗑 ', '');
   });
   const installBtn = document.getElementById('installBtn');
@@ -5237,36 +5276,216 @@ function applyPageLang(lang) {
 }
 
 /* ════════════════════════════════════════════════════════════
-   SETTINGS — كل واجهة الإعدادات (التبويبات، الملف الشخصي،
-   الشخصيات، الإحالة، الفوترة، الحساب) انتقلت بالكامل إلى
-   settings.html. الدوال الباقية هنا (setChatFont، setReduceMotion،
-   setNotifPref، setLearnPref/isLearnEnabled، setToolsPref/
-   isToolsEnabled، applyPageLang، دوال مزامنة app_settings، ودوال
-   الشخصيات الأساسية أعلاه) هي فقط ما يحتاجه محرك الدردشة نفسه،
-   وتبقى تكتب/تقرأ نفس مفاتيح localStorage و Supabase التي
-   تستعملها settings.html، فيبقى كل شيء متزامناً بين الصفحتين.
+   SETTINGS — Tabs + Profile/Preferences/Voice/Notifications/
+   Memory/Tools (adapted equivalents, not a literal copy of any
+   other product's settings screen — these are wired to real,
+   working Zunexa/Supabase/browser functionality).
 ════════════════════════════════════════════════════════════ */
+function setSTab(name) {
+  document.querySelectorAll('.set-tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.set-pane').forEach(p => p.classList.remove('on'));
+  document.getElementById('tab-' + name).classList.add('on');
+  document.getElementById('pane-' + name).classList.add('on');
+  if (name === 'personas') renderPersonaList();
+  if (name === 'referral') loadReferralPanel();
+}
+
+async function saveProfileSettings() {
+  const full = document.getElementById('setFullName').value.trim();
+  const call = document.getElementById('setCallName').value.trim();
+  const work = document.getElementById('setWork').value.trim();
+  const inst = document.getElementById('setInstructions').value.trim();
+  localStorage.setItem('zx_profile', JSON.stringify({ full, call, work, inst }));
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (session) {
+      await _SB.from('profiles').update({
+        full_name: full, call_name: call, work_desc: work, instructions: inst
+      }).eq('id', session.user.id);
+    }
+    toast('✓ تم حفظ الملف الشخصي');
+  } catch (e) { toast('⚠ تعذّر الحفظ في الحساب — تم الحفظ محلياً فقط'); }
+}
+
+/* ════════════════════════════════════════════════════════════
+   REFERRAL / VIRAL LOOP
+   ─────────────────────────────────────────────────────────────
+   Every credit-affecting write goes through a Postgres RPC
+   (security definer) that reads auth.uid() itself server-side —
+   same trust pattern as redeem_plan_code above. The client never
+   inserts/updates the credits balance directly; it only ever
+   displays what the RPC/select returns. See ZUNEXA_DB_SETUP_REFERRALS.sql
+   (run once in the Supabase SQL editor) for the full schema + functions
+   this expects:
+     - referral_codes(user_id, code, created_at)
+     - referrals(id, referrer_id, referred_id, status, created_at,
+                 credited_at)
+     - profiles.referral_credits (int, default 0)
+     - RPC get_or_create_referral_code() -> text
+     - RPC redeem_referral_code(code_input text) -> jsonb
+   ════════════════════════════════════════════════════════════ */
+let _refCodeCache = null;
+
+async function loadReferralPanel() {
+  const { data: { session } } = await _SB.auth.getSession();
+  const loggedOutBox = document.getElementById('refLoggedOut');
+  const loggedInBox  = document.getElementById('refLoggedIn');
+
+  if (!session) {
+    loggedOutBox.style.display = 'block';
+    loggedInBox.style.display  = 'none';
+    return;
+  }
+  loggedOutBox.style.display = 'none';
+  loggedInBox.style.display  = 'block';
+
+  document.getElementById('refCreditsVal').textContent = '…';
+  document.getElementById('refLinkInput').value = 'جارٍ التحميل…';
+
+  try {
+    // 1) رابط الإحالة — كود ثابت لكل مستخدم، كيتولد أول مرة عبر RPC آمنة.
+    if (!_refCodeCache) {
+      const { data: code, error: codeErr } = await _SB.rpc('get_or_create_referral_code');
+      if (codeErr) throw codeErr;
+      _refCodeCache = code;
+    }
+    const link = `${window.location.origin}/index.html?ref=${encodeURIComponent(_refCodeCache)}`;
+    document.getElementById('refLinkInput').value = link;
+
+    // 2) رصيد الإحالة الحالي + إحصائيات — قراءة مباشرة، RLS كتقيّد
+    // كل مستخدم بصفوفو الخاصة فقط (نفس مبدأ profiles/redeem أعلاه).
+    const [{ data: profRow }, { data: refRows }] = await Promise.all([
+      _SB.from('profiles').select('referral_credits').eq('id', session.user.id).maybeSingle(),
+      _SB.from('referrals').select('status').eq('referrer_id', session.user.id),
+    ]);
+
+    document.getElementById('refCreditsVal').textContent = (profRow && profRow.referral_credits) || 0;
+    const rows = refRows || [];
+    document.getElementById('refCountVal').textContent   = rows.filter(r => r.status === 'credited').length;
+    document.getElementById('refPendingVal').textContent = rows.filter(r => r.status === 'pending').length;
+  } catch (e) {
+    document.getElementById('refLinkInput').value = '';
+    toast('⚠ تعذّر تحميل بيانات الإحالة: ' + e.message);
+  }
+}
+
+function copyReferralLink() {
+  const input = document.getElementById('refLinkInput');
+  if (!input.value) return;
+  input.select();
+  navigator.clipboard.writeText(input.value).then(() => {
+    const btn = document.getElementById('refCopyBtn');
+    const original = btn.innerHTML;
+    btn.classList.add('copied');
+    btn.innerHTML = '✓ تم النسخ';
+    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1800);
+  }).catch(() => toast('⚠ تعذّر النسخ'));
+}
+
+function shareReferral(channel) {
+  const link = document.getElementById('refLinkInput').value;
+  if (!link) return;
+  const text = 'جرّب Zunexa AI — مساعد ذكاء اصطناعي مغربي، وسجّل عبر الرابط ديالي باش نربحو رصيد إضافي بجوج:';
+  const urls = {
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + link)}`,
+    x:        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`,
+    telegram: `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`,
+  };
+  if (channel === 'native' && navigator.share) {
+    navigator.share({ title: 'Zunexa AI', text, url: link }).catch(() => {});
+    return;
+  }
+  if (urls[channel]) window.open(urls[channel], '_blank', 'noopener');
+  else copyReferralLink();
+}
+
+async function redeemReferralCode() {
+  const codeInput = document.getElementById('refRedeemInput');
+  const statusEl  = document.getElementById('refRedeemStatus');
+  const btn       = document.getElementById('refRedeemBtn');
+  const code = codeInput.value.trim();
+  statusEl.classList.remove('show', 'ok', 'err');
+
+  if (!code) {
+    statusEl.textContent = 'دخل كود الإحالة أولاً.';
+    statusEl.classList.add('err', 'show');
+    return;
+  }
+
+  const { data: { session } } = await _SB.auth.getSession();
+  if (!session) {
+    statusEl.textContent = 'خاصك تدخل لحسابك أولاً.';
+    statusEl.classList.add('err', 'show');
+    return;
+  }
+
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.textContent = '…';
+
+  try {
+    // redeem_referral_code (security definer) كتتحقق سيرفرياً:
+    // الكود موجود، ماشي كود ديال نفس المستخدم، وماسبقش تفعّل من قبل —
+    // وهي لي كتزيد الرصيد فـ profiles.referral_credits لجوج الأطراف.
+    const { data, error } = await _SB.rpc('redeem_referral_code', { code_input: code });
+    if (error) throw error;
+
+    if (data.success) {
+      statusEl.textContent = `✓ تم التفعيل! ربحتي ${data.credits_awarded || ''} رصيد إضافي.`;
+      statusEl.classList.add('ok', 'show');
+      codeInput.value = '';
+      loadReferralPanel();
+    } else {
+      const errorMap = {
+        code_not_found: 'الكود غير صحيح.',
+        self_referral: 'ما تقدرش تستعمل الكود ديالك نفسو.',
+        already_redeemed: 'سبق لك واستعملتي كود إحالة من قبل.',
+        not_authenticated: 'خاصك تدخل لحسابك أولاً.',
+      };
+      statusEl.textContent = errorMap[data.error] || 'وقع خطأ، حاول مرة أخرى.';
+      statusEl.classList.add('err', 'show');
+    }
+  } catch (err) {
+    statusEl.textContent = 'وقع خطأ فالسيرفر: ' + err.message;
+    statusEl.classList.add('err', 'show');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+}
+
+function loadProfileIntoUI() {
+  try {
+    const p = JSON.parse(localStorage.getItem('zx_profile') || '{}');
+    if (document.getElementById('setFullName')) document.getElementById('setFullName').value = p.full || '';
+    if (document.getElementById('setCallName')) document.getElementById('setCallName').value = p.call || '';
+    if (document.getElementById('setWork')) document.getElementById('setWork').value = p.work || '';
+    if (document.getElementById('setInstructions')) document.getElementById('setInstructions').value = p.inst || '';
+  } catch(e){}
+}
+
+function savePagePrefs() {
+  const lang = document.getElementById('setPageLang').value;
+  localStorage.setItem('zx_page_lang', lang);
+  applyPageLang(lang);
+}
 
 function setChatFont(v) {
   localStorage.setItem('zx_font', v);
   const map = { rajdhani: "'Rajdhani',sans-serif", system: "system-ui,-apple-system,sans-serif", mono: "'Courier New',monospace" };
-  const conv = document.getElementById('conv');
-  if (conv) conv.style.fontFamily = map[v] || map.rajdhani;
+  document.getElementById('conv').style.fontFamily = map[v] || map.rajdhani;
 }
 
 function setReduceMotion(on) {
   localStorage.setItem('zx_reduce_motion', on ? '1' : '0');
   document.documentElement.classList.toggle('zx-reduce-motion', on);
-  schedulePushAppSettings();
 }
 
 function saveVoicePrefs() {
-  const langEl  = document.getElementById('setVoiceLang');
-  const styleEl = document.getElementById('setVoiceStyle');
-  const speedEl = document.getElementById('setVoiceSpeed');
-  if (!langEl || !styleEl || !speedEl) return;
-  localStorage.setItem('zx_voice', JSON.stringify({ lang: langEl.value, style: styleEl.value, speed: speedEl.value }));
-  schedulePushAppSettings();
+  const lang  = document.getElementById('setVoiceLang').value;
+  const style = document.getElementById('setVoiceStyle').value;
+  const speed = document.getElementById('setVoiceSpeed').value;
+  localStorage.setItem('zx_voice', JSON.stringify({ lang, style, speed }));
 }
 
 function setNotifPref(on) {
@@ -5274,85 +5493,53 @@ function setNotifPref(on) {
   if (on && 'Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
   }
-  schedulePushAppSettings();
 }
 
-function setLearnPref(on) { localStorage.setItem('zx_learn_enabled', on ? '1' : '0'); schedulePushAppSettings(); }
+function setLearnPref(on) { localStorage.setItem('zx_learn_enabled', on ? '1' : '0'); }
 function isLearnEnabled() { return localStorage.getItem('zx_learn_enabled') !== '0'; }
 
-function setToolsPref(on) { localStorage.setItem('zx_tools_enabled', on ? '1' : '0'); schedulePushAppSettings(); }
+function setToolsPref(on) { localStorage.setItem('zx_tools_enabled', on ? '1' : '0'); }
 function isToolsEnabled() { return localStorage.getItem('zx_tools_enabled') !== '0'; }
 
-/* ════════════════════════════════════════════════════════════
-   CROSS-DEVICE SETTINGS SYNC
-   ─────────────────────────────────────────────────────────────
-   Mirrors the same handful of preference values that
-   loadAllPrefsIntoUI() reads from localStorage into
-   profiles.app_settings (jsonb), so a user's font/motion/notif/
-   learn/tools/page-lang/model/effort/voice choices follow them to
-   a new device instead of resetting to defaults. Pulled back down
-   in loadUser() above via applyRemoteAppSettings(). Both directions
-   are best-effort: a missing app_settings column (before
-   ZUNEXA_DB_SETUP_SYNC.sql is run) just means these two functions
-   quietly no-op and everything keeps working locally, exactly as
-   before this feature existed. */
-function collectAppSettingsSnapshot() {
-  return {
-    font: localStorage.getItem('zx_font') || 'rajdhani',
-    reduce_motion: localStorage.getItem('zx_reduce_motion') === '1',
-    notif_done: localStorage.getItem('zx_notif_done') === '1',
-    learn_enabled: isLearnEnabled(),
-    tools_enabled: isToolsEnabled(),
-    page_lang: localStorage.getItem('zx_page_lang') || 'ar',
-    model: zxModel,
-    effort: zxEffort,
-    voice: JSON.parse(localStorage.getItem('zx_voice') || '{}'),
-  };
-}
-
-function applyRemoteAppSettings(s) {
-  if (!s || typeof s !== 'object') return;
-  if (s.font) localStorage.setItem('zx_font', s.font);
-  if (typeof s.reduce_motion === 'boolean') localStorage.setItem('zx_reduce_motion', s.reduce_motion ? '1' : '0');
-  if (typeof s.notif_done === 'boolean')    localStorage.setItem('zx_notif_done', s.notif_done ? '1' : '0');
-  if (typeof s.learn_enabled === 'boolean') localStorage.setItem('zx_learn_enabled', s.learn_enabled ? '1' : '0');
-  if (typeof s.tools_enabled === 'boolean') localStorage.setItem('zx_tools_enabled', s.tools_enabled ? '1' : '0');
-  if (s.page_lang) localStorage.setItem('zx_page_lang', s.page_lang);
-  if (s.model)  { zxModel = s.model; localStorage.setItem('zx_model', s.model); }
-  if (s.effort) { zxEffort = s.effort; localStorage.setItem('zx_effort', s.effort); }
-  if (s.voice && typeof s.voice === 'object') localStorage.setItem('zx_voice', JSON.stringify(s.voice));
-}
-
-let _pushSettingsTimer = null;
-function schedulePushAppSettings() {
-  // Debounced so a burst of toggle clicks doesn't fire one request each.
-  clearTimeout(_pushSettingsTimer);
-  _pushSettingsTimer = setTimeout(pushAppSettings, 800);
-}
-async function pushAppSettings() {
-  try {
-    const { data: { session } } = await _SB?.auth.getSession();
-    if (!session) return; // nothing to sync for guests
-    await _SB?.from('profiles')
-      .update({ app_settings: collectAppSettingsSnapshot() })
-      .eq('id', session.user.id);
-  } catch (e) {
-    console.warn('pushAppSettings: skipped (best-effort — column may not be set up yet)', e);
-  }
-}
-
 /* ── Optional free-tier API keys (user-pasted, localStorage-only) ── */
-/* مفاتيح API الاختيارية — تُقرأ هنا مباشرة عند استعمال أدوات مثل
-   /صورة_hf أو الترجمة عبر DeepL. واجهة إدخال/حفظ هاذ المفاتيح
-   (loadApiKeysIntoUI القديمة) انتقلت إلى settings.html، لكنها تكتب
-   لنفس مفتاح localStorage['zx_api_keys'] فتبقى القراءة هنا صحيحة. */
 function getApiKeys() { try { return JSON.parse(localStorage.getItem('zx_api_keys') || '{}'); } catch(e){ return {}; } }
 function getApiKey(name) { return (getApiKeys()[name] || '').trim(); }
+function loadApiKeysIntoUI() {
+  const k = getApiKeys();
+  if (document.getElementById('keyHF'))       document.getElementById('keyHF').value = k.hf || '';
+  if (document.getElementById('keyDeepL'))    document.getElementById('keyDeepL').value = k.deepl || '';
+  if (document.getElementById('keyVoiceRSS')) document.getElementById('keyVoiceRSS').value = k.voicerss || '';
+  if (document.getElementById('keyTavily'))   document.getElementById('keyTavily').value = k.tavily || '';
+  if (document.getElementById('keySerper'))   document.getElementById('keySerper').value = k.serper || '';
+}
 
-/* loadAllPrefsIntoUI() (تعمير كل حقول المودال) انتقلت إلى
-   settings.html — تطبيق التفضيلات الفعلي عند الإقلاع (applyPageLang،
-   setChatFont، تقليل الحركة) يبقى يتم مباشرة عند تحميل ai.html
-   (انظر أعلى loadUser/DOMContentLoaded). */
+function loadAllPrefsIntoUI() {
+  loadProfileIntoUI();
+  loadApiKeysIntoUI();
+  const font = localStorage.getItem('zx_font') || 'rajdhani';
+  const motion = localStorage.getItem('zx_reduce_motion') === '1';
+  const notif = localStorage.getItem('zx_notif_done') === '1';
+  const learn = isLearnEnabled();
+  const tools = isToolsEnabled();
+  const pageLang = localStorage.getItem('zx_page_lang') || 'ar';
+  const voice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
+
+  if (document.getElementById('setFontSel'))    document.getElementById('setFontSel').value = font;
+  if (document.getElementById('setReduceMotion')) document.getElementById('setReduceMotion').checked = motion;
+  if (document.getElementById('setNotifDone'))   document.getElementById('setNotifDone').checked = notif;
+  if (document.getElementById('setLearnToggle')) document.getElementById('setLearnToggle').checked = learn;
+  if (document.getElementById('setToolsToggle')) document.getElementById('setToolsToggle').checked = tools;
+  if (document.getElementById('setPageLang'))    document.getElementById('setPageLang').value = pageLang;
+  applyPageLang(pageLang);
+  if (document.getElementById('setModelSel2'))    document.getElementById('setModelSel2').value = zxModel;
+  if (document.getElementById('setEffortSel2'))   document.getElementById('setEffortSel2').value = zxEffort;
+  if (document.getElementById('setVoiceLang') && voice.lang)   document.getElementById('setVoiceLang').value = voice.lang;
+  if (document.getElementById('setVoiceStyle') && voice.style) document.getElementById('setVoiceStyle').value = voice.style;
+  if (document.getElementById('setVoiceSpeed') && voice.speed) document.getElementById('setVoiceSpeed').value = voice.speed;
+
+  setChatFont(font);
+  document.documentElement.classList.toggle('zx-reduce-motion', motion);
+}
 
 /* ════════════════════════════════════════════════════════════
    FILE / PHOTO / PDF ATTACHMENT
@@ -5369,9 +5556,9 @@ async function uploadFileToSupabase(file) {
   try {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
     const path = `${getDeviceId()}/${Date.now()}_${safeName}`;
-    const { error } = await _SB?.storage.from(ZX_BUCKET).upload(path, file, { upsert: false });
+    const { error } = await _SB.storage.from(ZX_BUCKET).upload(path, file, { upsert: false });
     if (error) throw error;
-    const { data } = _SB?.storage.from(ZX_BUCKET).getPublicUrl(path);
+    const { data } = _SB.storage.from(ZX_BUCKET).getPublicUrl(path);
     return (data && data.publicUrl) || null;
   } catch (e) {
     console.warn('Zunexa: Supabase Storage upload skipped/failed', e);
@@ -5474,8 +5661,6 @@ async function onFilePicked(e) {
       </div>`;
     toast('✓ تم إرفاق الملف — اسأل عنه الآن');
 
-    if (attachedFile.kind === 'image') scanAttachedImageForQR(attachedFile.dataUrl);
-
     // Mirror the raw file to Supabase Storage (best-effort, doesn't
     // block the chat if it fails) so it isn't only in browser memory —
     // works for guests too via getDeviceId(), no login required.
@@ -5508,51 +5693,6 @@ function readAsDataURL(file) {
     r.onerror = () => rej(r.error);
     r.readAsDataURL(file);
   });
-}
-
-/* ── QR code reading ────────────────────────────────────────────
-   Best-effort: decodes any QR code inside an attached image using
-   jsQR (client-side, no server round-trip). If found, shows the
-   decoded text as a chip the user can tap to insert into the
-   message box — never auto-sends anything on its own. Silently
-   does nothing if jsQR failed to load or no QR code is present. */
-function scanAttachedImageForQR(dataUrl) {
-  try {
-    if (typeof jsQR === 'undefined' || !dataUrl) return;
-    const img = new Image();
-    img.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        const ctx2d = canvas.getContext('2d');
-        ctx2d.drawImage(img, 0, 0);
-        const imageData = ctx2d.getImageData(0, 0, canvas.width, canvas.height);
-        const result = jsQR(imageData.data, imageData.width, imageData.height);
-        if (result && result.data) showQRResultChip(result.data);
-      } catch (e) { /* best-effort — never breaks the attach flow */ }
-    };
-    img.src = dataUrl;
-  } catch (e) { /* best-effort */ }
-}
-
-function showQRResultChip(text) {
-  const zone = document.getElementById('fileChipZone');
-  if (!zone) return;
-  const existing = zone.querySelector('.qr-result-chip');
-  if (existing) existing.remove();
-  const chip = document.createElement('div');
-  chip.className = 'qr-result-chip';
-  chip.innerHTML = `
-    <span>📷 QR: ${esc(text.length > 60 ? text.slice(0, 60) + '…' : text)}</span>
-    <span class="qr-insert" title="إدراج في الرسالة">➕ إدراج</span>
-  `;
-  chip.querySelector('.qr-insert').onclick = () => {
-    const inp = document.getElementById('aiInput');
-    if (inp) { inp.value = (inp.value ? inp.value + '\n' : '') + text; inp.focus(); }
-  };
-  zone.appendChild(chip);
-  toast('✓ تم قراءة QR Code من الصورة');
 }
 function readAsText(file) {
   return new Promise((res, rej) => {
@@ -7423,7 +7563,7 @@ try {
 <script>
 /* White ripple/glow feedback — purely additive UI polish, no app logic touched */
 (function(){
-  const RIPPLE_SEL = '.send-btn,.sb-upgrade,.sb-new,.mode-chip,.model-sel-btn,.modal-save,.off-btn,.lim-upgrade,.mini-ghost-btn,.code-btn,.attach-btn';
+  const RIPPLE_SEL = '.send-btn,.sb-upgrade,.sb-new,.qchip,.mode-chip,.model-sel-btn,.modal-save,.off-btn,.lim-upgrade,.mini-ghost-btn,.code-btn,.attach-btn';
   document.addEventListener('pointerdown', function(e){
     const el = e.target.closest(RIPPLE_SEL);
     if (!el || el.disabled) return;
