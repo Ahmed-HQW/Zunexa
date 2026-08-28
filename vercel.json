@@ -16,6 +16,8 @@
     { "source": "/affiliat",    "destination": "/affiliat.html" }
   ],
   "redirects": [
+    { "source": "/ai.html",    "destination": "/ex.html",     "permanent": false },
+    { "source": "/agent.html", "destination": "/ex.html",     "permanent": false },
     { "source": "/admin",     "destination": "/owner_admin", "permanent": false },
     { "source": "/contact",   "destination": "/CONTACT",     "permanent": true  },
     { "source": "/affiliate", "destination": "/affiliat",    "permanent": true  }
