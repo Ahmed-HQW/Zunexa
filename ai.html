@@ -792,40 +792,10 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 .typing span:nth-child(3){animation-delay:.36s}
 @keyframes bop{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-5px);opacity:1}}
 
-/* ════════════════════════════════════════════════════════
-   PERSONAS
-════════════════════════════════════════════════════════ */
-.persona-list{display:flex;flex-direction:column;gap:8px}
-.persona-card{
-  display:flex;align-items:center;gap:11px;padding:10px 12px;
-  border-radius:10px;border:1px solid var(--b1);background:var(--card2);
-  cursor:pointer;transition:all var(--tr);
-}
-.persona-card:hover{border-color:var(--b2)}
-.persona-card.on{border-color:var(--gold);background:var(--card)}
-.persona-icon{
-  width:34px;height:34px;border-radius:9px;flex-shrink:0;
-  display:grid;place-items:center;font-size:16px;
-  background:var(--card);border:1px solid var(--b1);
-}
-.persona-card.on .persona-icon{border-color:var(--gold)}
-.persona-info{flex:1;min-width:0}
-.persona-name{font-size:12.5px;font-weight:700;color:var(--tw)}
-.persona-desc{font-size:10.5px;color:var(--tg);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.persona-badge{font-size:9px;color:var(--gold);letter-spacing:.05em}
-.persona-actions{display:flex;gap:4px;flex-shrink:0}
-.persona-act-btn{
-  width:32px;height:32px;border-radius:6px;border:1px solid var(--b1);
-  background:transparent;color:var(--tg);font-size:11px;
-  position:relative; /* anchor for the ::after touch-target expansion below */
-}
-.persona-act-btn::after{
-  content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:44px;height:44px;min-width:44px;min-height:44px;
-}
-.persona-act-btn:hover{border-color:var(--gold);color:var(--gold)}
-.persona-act-btn.del:hover{border-color:var(--red);color:var(--red)}
-.persona-editor{margin-top:14px;padding-top:14px;border-top:1px solid var(--b1)}
+/* أنماط CSS الخاصة بقائمة/محرر الشخصيات (persona-list, persona-card,
+   persona-editor...) انتقلت بالكامل إلى settings.html — لم تعد
+   العناصر التي تستعملها موجودة فـ ai.html. .persona-card بقي مذكوراً
+   فقط فـ selector انتقال الثيم العام أعلاه (سطر ~68) وهذا غير ضار. */
 
 /* ════════════════════════════════════════════════════════
    CODE BLOCKS + LIVE SANDBOX
@@ -1165,43 +1135,12 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 }
 .modal-save:hover{box-shadow:var(--sg2)}
 
-/* ── Expanded Settings modal (tabs + toggles) ── */
+/* .modal-box.wide لا يزال مستعملاً من طرف billingModal/libModal/
+   tasksModal — بقي هنا. باقي أنماط CSS الخاصة بمودال الإعدادات
+   القديم (tabs/rows/switch/persona-editor/referral) انتقلت بالكامل
+   إلى settings.html لأن العناصر التي كانت تستعملها لم تعد موجودة
+   فـ ai.html. */
 .modal-box.wide{max-width:560px;max-height:86vh;overflow-y:auto}
-.set-tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--b1);margin-bottom:16px;padding-bottom:2px;scrollbar-width:thin}
-.set-tab{padding:9px 12px;font-size:11.5px;color:var(--tg);border-radius:7px 7px 0 0;cursor:pointer;white-space:nowrap;transition:all var(--tr);min-height:40px;display:flex;align-items:center}
-.set-tab:hover{color:var(--gold)}
-.set-tab.on{color:var(--gold);background:var(--card2);font-weight:700}
-.set-pane{display:none}
-.set-pane.on{display:block;animation:fadeUp .18s ease}
-.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--b1)}
-.set-row:last-child{border-bottom:none}
-.set-row-txt{flex:1;min-width:0}
-.set-row-title{font-size:13px;color:var(--tw);font-weight:600}
-.set-row-desc{font-size:11px;color:var(--tg);margin-top:3px;line-height:1.6}
-.switch{position:relative;width:40px;height:22px;flex-shrink:0}
-.switch input{opacity:0;width:0;height:0;position:absolute}
-.slider{position:absolute;inset:0;background:var(--b2);border-radius:99px;cursor:pointer;transition:.2s}
-.slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(15,17,21,.25)}
-.switch input:checked + .slider{background:var(--gold)}
-.switch input:checked + .slider::before{background:#fff;transform:translateX(-18px)}
-textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-height:1.5}
-
-/* ── Referral / Viral Loop panel ── */
-.ref-hero{
-  background:var(--card);
-  border:1px solid var(--b1);border-radius:var(--r3);
-  padding:16px;margin-bottom:14px;text-align:center;
-}
-.ref-hero-credits{font-family:'Cinzel',serif;font-size:26px;color:var(--gold);font-weight:700}
-.ref-hero-label{font-size:10.5px;color:var(--tg);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
-.ref-hero-sub{font-size:11.5px;color:var(--tg);margin-top:10px;line-height:1.7}
-.ref-link-row{display:flex;gap:6px;margin-bottom:10px}
-.ref-link-row .field-input{margin-bottom:0;font-size:12px;direction:ltr;text-align:left;color:var(--gold2)}
-.ref-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
-.ref-stat{background:var(--card2);border:1px solid var(--b1);border-radius:var(--r2);padding:10px;text-align:center}
-.ref-stat b{display:block;font-size:18px;color:var(--tw);font-family:'Cinzel',serif}
-.ref-stat span{font-size:10px;color:var(--tg);letter-spacing:.06em}
-.ref-share-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 
 .mini-ghost-btn{
   display:inline-flex;align-items:center;gap:5px;
@@ -1494,7 +1433,7 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
     <button class="sb-fbtn" id="installBtn" onclick="installPWA()" style="display:none">
       <span class="fi">📲</span> تثبيت Zunexa
     </button>
-    <button class="sb-fbtn" onclick="openSettings()">
+    <button class="sb-fbtn" onclick="goToSettings()">
       <span class="fi">⚙</span> الإعدادات
     </button>
     <button class="sb-fbtn" onclick="clearAll()">
@@ -1714,214 +1653,6 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
   </div>
 </div>
 
-<div class="modal-wrap" id="settModal">
-
-  <div class="modal-box wide">
-    <button class="modal-x" onclick="closeSettings()">✕</button>
-    <div class="modal-title">⚙ الإعدادات</div>
-
-    <div class="set-tabs">
-      <div class="set-tab on" onclick="setSTab('profile')" id="tab-profile">الملف الشخصي</div>
-      <div class="set-tab" onclick="setSTab('personas')" id="tab-personas">الشخصيات</div>
-      <div class="set-tab" onclick="setSTab('prefs')" id="tab-prefs">التفضيلات</div>
-      <div class="set-tab" onclick="setSTab('voice')" id="tab-voice">الصوت</div>
-      <div class="set-tab" onclick="setSTab('notif')" id="tab-notif">الإشعارات</div>
-      <div class="set-tab" onclick="setSTab('memory')" id="tab-memory">الذاكرة</div>
-      <div class="set-tab" onclick="setSTab('tools')" id="tab-tools">الأدوات</div>
-      <div class="set-tab" onclick="setSTab('referral')" id="tab-referral">الإحالة</div>
-      <div class="set-tab" onclick="setSTab('account')" id="tab-account">الحساب</div>
-    </div>
-
-    <!-- PROFILE -->
-    <div class="set-pane on" id="pane-profile">
-      <label class="field-label">الاسم الكامل</label>
-      <input class="field-input" id="setFullName" placeholder="اسمك الكامل">
-      <label class="field-label">كيفاش تبغي Zunexa يناديك؟</label>
-      <input class="field-input" id="setCallName" placeholder="مثلاً: أحمد">
-      <label class="field-label">شنو كيوصف خدمتك بزاف؟</label>
-      <input class="field-input" id="setWork" placeholder="مثلاً: مطور Full-Stack">
-      <label class="field-label">تعليمات لـ Zunexa (كيبقاها فبالو فكل محادثة)</label>
-      <textarea class="field-input" id="setInstructions" placeholder="مثلاً: نخدم بلغة Python وDarija، جاوبني بإيجاز، ديما قترح حلول عملية..."></textarea>
-      <button class="modal-save" onclick="saveProfileSettings()">✓ حفظ الملف الشخصي</button>
-    </div>
-
-    <!-- PERSONAS -->
-    <div class="set-pane" id="pane-personas">
-      <p style="font-size:11px;color:var(--tg);line-height:1.7;margin-bottom:12px">
-        اختار أو أنشئ شخصية لـ Zunexa — كل شخصية عندها أسلوبها وتعليماتها الخاصة، وتبقى مفعّلة فكل المحادثات الجديدة حتى تبدّلها.
-      </p>
-      <div id="personaList" class="persona-list"></div>
-
-      <div class="persona-editor" id="personaEditor" style="display:none">
-        <label class="field-label">اسم الشخصية</label>
-        <input class="field-input" id="pEditName" placeholder="مثلاً: مساعد SEO">
-        <label class="field-label">وصف قصير</label>
-        <input class="field-input" id="pEditDesc" placeholder="مثلاً: متخصص فتحسين محركات البحث">
-        <label class="field-label">أيقونة (emoji واحد)</label>
-        <input class="field-input" id="pEditIcon" placeholder="🧠" maxlength="4" style="max-width:80px">
-        <label class="field-label">تعليمات النظام (System Prompt)</label>
-        <textarea class="field-input" id="pEditPrompt" style="min-height:110px" placeholder="مثلاً: أنت خبير SEO، جاوب دائماً بخطوات عملية مرقمة، ركّز على الكلمات المفتاحية والنية من البحث..."></textarea>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="modal-save" style="margin-top:0" onclick="savePersonaFromEditor()">✓ حفظ الشخصية</button>
-          <button class="modal-save" style="margin-top:0;background:transparent;border:1px solid var(--b1);color:var(--tg)" onclick="closePersonaEditor()">إلغاء</button>
-        </div>
-      </div>
-
-      <button class="modal-save" style="margin-top:14px;background:transparent;border:1px solid var(--bg);color:var(--gold)" onclick="openPersonaEditor(null)">＋ شخصية جديدة</button>
-    </div>
-
-    <!-- PREFERENCES -->
-    <div class="set-pane" id="pane-prefs">
-      <label class="field-label">لغة الواجهة</label>
-      <select class="field-input" id="setPageLang" onchange="savePagePrefs()">
-        <option value="ary">الدارجة المغربية</option>
-        <option value="ar">العربية الفصحى</option>
-        <option value="fr">Français</option>
-        <option value="en">English</option>
-        <option value="es">Español</option>
-        <option value="de">Deutsch</option>
-        <option value="it">Italiano</option>
-        <option value="pt">Português</option>
-        <option value="ru">Русский</option>
-        <option value="zh">中文</option>
-        <option value="tr">Türkçe</option>
-        <option value="hi">हिन्दी</option>
-      </select>
-      <label class="field-label">نموذج Zunexa</label>
-      <select class="field-input" id="setModelSel2" onchange="setModelUI(this.value)">
-        <option value="lite">Zunexa Lite · محلي فقط</option>
-        <option value="pro">Zunexa Pro · محلي + Zunexa Brain</option>
-        <option value="max">Zunexa Max · أقصى سياق</option>
-      </select>
-      <label class="field-label">مستوى الجهد</label>
-      <select class="field-input" id="setEffortSel2" onchange="setEffortUI(this.value)">
-        <option value="quick">⚡ سريع</option>
-        <option value="balanced">⚖ متوازن</option>
-        <option value="deep">🔍 عميق</option>
-        <option value="max">🚀 أقصى</option>
-      </select>
-      <label class="field-label">خط المحادثة</label>
-      <select class="field-input" id="setFontSel" onchange="setChatFont(this.value)">
-        <option value="rajdhani">Rajdhani (افتراضي)</option>
-        <option value="system">خط النظام</option>
-        <option value="mono">Monospace</option>
-      </select>
-      <div class="set-row">
-        <div class="set-row-txt"><div class="set-row-title">تقليل الحركة</div><div class="set-row-desc">إيقاف/تقليل الأنيميشن أثناء ظهور الردود والواجهة.</div></div>
-        <label class="switch"><input type="checkbox" id="setReduceMotion" onchange="setReduceMotion(this.checked)"><span class="slider"></span></label>
-      </div>
-    </div>
-
-    <!-- VOICE -->
-    <div class="set-pane" id="pane-voice">
-      <label class="field-label">الصوت</label>
-      <select class="field-input" id="setVoiceLang" onchange="saveVoicePrefs()">
-        <option value="ar-MA">العربية (المغرب)</option>
-        <option value="ar-SA">العربية (فصحى)</option>
-        <option value="fr-FR">Français</option>
-        <option value="en-US">English</option>
-      </select>
-      <input type="hidden" id="setVoiceStyle" value="normal">
-      <input type="hidden" id="setVoiceSpeed" value="1">
-      <p style="font-size:11px;color:var(--tg);line-height:1.6">تُستعمل عبر Web Speech API المدمجة فالمتصفح، بدون أي مفتاح API.</p>
-    </div>
-
-    <!-- NOTIFICATIONS -->
-    <div class="set-pane" id="pane-notif">
-      <div class="set-row">
-        <div class="set-row-txt"><div class="set-row-title">إشعار عند اكتمال الرد</div><div class="set-row-desc">إشعار من المتصفح عند ما يخلص Zunexa من رد طويل — مفيد إذا بدلت التبويب فالمتصفح.</div></div>
-        <label class="switch"><input type="checkbox" id="setNotifDone" onchange="setNotifPref(this.checked)"><span class="slider"></span></label>
-      </div>
-    </div>
-
-    <!-- MEMORY -->
-    <div class="set-pane" id="pane-memory">
-      <div class="set-row">
-        <div class="set-row-txt"><div class="set-row-title">تعلّم من المحادثات</div><div class="set-row-desc">يخلي Zunexa يسجل الأسئلة الجديدة اللي ما عندوش جواب عليها ويقوّي قاعدة المعرفة تلقائياً (Supabase ai_learning / ai_knowledge).</div></div>
-        <label class="switch"><input type="checkbox" id="setLearnToggle" checked onchange="setLearnPref(this.checked)"><span class="slider"></span></label>
-      </div>
-      <button class="modal-save" style="margin-top:14px;background:transparent;border:1px solid var(--red);color:var(--red)" onclick="clearAll()">🗑 مسح كل السجل والذاكرة المحلية</button>
-    </div>
-
-    <!-- TOOLS -->
-    <div class="set-pane" id="pane-tools">
-      <div class="set-row">
-        <div class="set-row-txt"><div class="set-row-title">الأدوات الخارجية</div><div class="set-row-desc">تفعيل الأوامر السريعة /طقس /خريطة /جيت /اخبار /صورة والاتصال بـ APIs مجانية خارجية بدون مفتاح.</div></div>
-        <label class="switch"><input type="checkbox" id="setToolsToggle" checked onchange="setToolsPref(this.checked)"><span class="slider"></span></label>
-      </div>
-    </div>
-
-    <!-- REFERRAL / VIRAL LOOP — invite friends, earn free credits.
-         RPC-driven (get_or_create_referral_code / redeem_referral_code,
-         security definer) — same trust pattern as redeem_plan_code
-         above; the client never assigns credits directly. -->
-    <div class="set-pane" id="pane-referral">
-      <div id="refLoggedOut" style="display:none;text-align:center;padding:22px 10px">
-        <p style="font-size:12.5px;color:var(--tg);line-height:1.8;margin-bottom:12px">خاصك تدخل لحسابك باش تحصل على رابط الإحالة ديالك وتبدا تربح رصيد إضافي.</p>
-        <button class="modal-save" onclick="window.location.href='index.html'">تسجيل الدخول</button>
-      </div>
-      <div id="refLoggedIn" style="display:none">
-        <div class="ref-hero">
-          <div class="ref-hero-credits" id="refCreditsVal">—</div>
-          <div class="ref-hero-label">رصيد إحالة مكتسب</div>
-          <p class="ref-hero-sub">عاود ادعُ أصدقاءك للتسجيل عبر الرابط الخاص ديالك، وربح رصيد إضافي (Free Credits) مع كل صديق يسجل ويفعّل حسابه.</p>
-        </div>
-
-        <label class="field-label">الرابط الخاص ديالك</label>
-        <div class="ref-link-row">
-          <input class="field-input" type="text" id="refLinkInput" readonly>
-          <button class="mini-ghost-btn" id="refCopyBtn" onclick="copyReferralLink()">📋 نسخ</button>
-        </div>
-        <div class="ref-share-row">
-          <button class="mini-ghost-btn" onclick="shareReferral('whatsapp')">🟢 واتساب</button>
-          <button class="mini-ghost-btn" onclick="shareReferral('x')">✕ X</button>
-          <button class="mini-ghost-btn" onclick="shareReferral('telegram')">✈ تيليغرام</button>
-          <button class="mini-ghost-btn" onclick="shareReferral('native')">↗ مشاركة</button>
-        </div>
-
-        <div class="ref-stats">
-          <div class="ref-stat"><b id="refCountVal">0</b><span>أصدقاء انضافو</span></div>
-          <div class="ref-stat"><b id="refPendingVal">0</b><span>فالانتظار</span></div>
-        </div>
-
-        <label class="field-label" style="margin-top:6px">عندك كود إحالة من صديق؟</label>
-        <div class="ref-link-row">
-          <input class="field-input" type="text" id="refRedeemInput" placeholder="مثلاً: ZX-AB12CD" style="direction:ltr;text-align:left">
-          <button class="mini-ghost-btn" id="refRedeemBtn" onclick="redeemReferralCode()">تفعيل</button>
-        </div>
-        <div class="billing-status-msg" id="refRedeemStatus"></div>
-      </div>
-    </div>
-
-    <!-- ACCOUNT (existing security-audited content) -->
-    <div class="set-pane" id="pane-account">
-      <label class="field-label">الصورة الشخصية</label>
-      <div class="set-avatar-row">
-        <div class="set-avatar-preview" id="setAvatarPreview">Z</div>
-        <div class="set-avatar-btns">
-          <button class="set-avatar-upload" onclick="document.getElementById('avatarFileInput').click()">📷 رفع صورة</button>
-          <button class="set-avatar-remove" onclick="removeAvatar()">🗑 إزالة الصورة</button>
-        </div>
-      </div>
-      <div id="settLoggedInInfo" style="display:none">
-        <label class="field-label">الاسم</label>
-        <div class="field-input" style="opacity:.7" id="settRealName">—</div>
-        <label class="field-label">البريد الإلكتروني</label>
-        <div class="field-input" style="opacity:.7" id="settRealEmail">—</div>
-        <label class="field-label">الخطة</label>
-        <div class="field-input" style="opacity:.7" id="settRealPlan">—</div>
-        <p style="font-size:11px;color:var(--text-muted,#888);margin:6px 0 14px">لتغيير معلومات حسابك أو خطتك، توجه إلى صفحة الإعدادات الكاملة.</p>
-        <button class="modal-save" onclick="window.location.href='settings.html'">⚙ إدارة الحساب</button>
-        <button class="modal-save" id="logoutBtn" onclick="logoutUser()" style="margin-top:10px;background:var(--red);border-color:var(--red);color:#fff">🚪 تسجيل الخروج</button>
-      </div>
-      <div id="settGuestInfo" style="display:none">
-        <label class="field-label">اسم الضيف (محلي فقط، لا يؤثر على أي حساب)</label>
-        <input class="field-input" type="text" id="fName" placeholder="اسمك">
-        <button class="modal-save" onclick="saveSettings()">✓ حفظ</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script>
 /* ════════════════════════════════════════════════════════════
@@ -2238,13 +1969,13 @@ async function init() {
   initParticles();
   initPWAInstall();
   applyPageLang(localStorage.getItem('zx_page_lang') || 'ary');
+  setChatFont(localStorage.getItem('zx_font') || 'rajdhani');
+  document.documentElement.classList.toggle('zx-reduce-motion', localStorage.getItem('zx_reduce_motion') === '1');
   setModelUI(zxModel, true);
   setEffortUI(zxEffort, true);
   setModel(zxModel);
   document.body.setAttribute('data-zunexa-mode', zxZunexaMode);
   if (loadThread(currentChatId).length) replayThread(currentChatId);
-  renderAvatarSettingsPreview();
-  renderPersonaList();
   document.getElementById('aiInput').focus();
 }
 
@@ -3460,87 +3191,10 @@ function getActivePersona() {
   return loadPersonas().find(p => p.id === id) || null;
 }
 
-function renderPersonaList() {
-  const wrap = document.getElementById('personaList');
-  if (!wrap) return;
-  const activeId = getActivePersonaId();
-  const list = loadPersonas();
-  wrap.innerHTML = list.map(p => `
-    <div class="persona-card ${p.id === activeId ? 'on' : ''}" onclick="activatePersona('${p.id}')">
-      <div class="persona-icon">${p.icon || '🤖'}</div>
-      <div class="persona-info">
-        <div class="persona-name">${esc(p.name)}${p.id === activeId ? ' <span class="persona-badge">· نشطة</span>' : ''}</div>
-        <div class="persona-desc">${esc(p.desc || 'بدون وصف')}</div>
-      </div>
-      <div class="persona-actions" onclick="event.stopPropagation()">
-        ${!p.builtin ? `<button class="persona-act-btn" onclick="openPersonaEditor('${p.id}')" title="تعديل">✎</button>
-        <button class="persona-act-btn del" onclick="deletePersona('${p.id}')" title="حذف">🗑</button>` : ''}
-      </div>
-    </div>
-  `).join('');
-}
-
-function activatePersona(id) {
-  localStorage.setItem('zx_active_persona', id);
-  renderPersonaList();
-  const p = loadPersonas().find(x => x.id === id);
-  toast('✓ الشخصية النشطة: ' + (p ? p.name : 'Zunexa'));
-}
-
-let _personaEditingId = null;
-function openPersonaEditor(id) {
-  _personaEditingId = id;
-  const editor = document.getElementById('personaEditor');
-  editor.style.display = 'block';
-  if (id) {
-    const p = loadPersonas().find(x => x.id === id);
-    document.getElementById('pEditName').value = p ? p.name : '';
-    document.getElementById('pEditDesc').value = p ? p.desc : '';
-    document.getElementById('pEditIcon').value = p ? p.icon : '';
-    document.getElementById('pEditPrompt').value = p ? p.prompt : '';
-  } else {
-    document.getElementById('pEditName').value = '';
-    document.getElementById('pEditDesc').value = '';
-    document.getElementById('pEditIcon').value = '';
-    document.getElementById('pEditPrompt').value = '';
-  }
-  editor.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-function closePersonaEditor() {
-  _personaEditingId = null;
-  document.getElementById('personaEditor').style.display = 'none';
-}
-
-function savePersonaFromEditor() {
-  const name = document.getElementById('pEditName').value.trim();
-  const desc = document.getElementById('pEditDesc').value.trim();
-  const icon = document.getElementById('pEditIcon').value.trim();
-  const prompt = document.getElementById('pEditPrompt').value.trim();
-  if (!name) { toast('⚠ لازم اسم للشخصية'); return; }
-  if (!prompt) { toast('⚠ لازم تعليمات نظام للشخصية'); return; }
-
-  const list = loadPersonas();
-  if (_personaEditingId) {
-    const idx = list.findIndex(p => p.id === _personaEditingId);
-    if (idx !== -1) list[idx] = { ...list[idx], name, desc, icon, prompt };
-  } else {
-    list.push({ id: 'p_' + Date.now().toString(36), builtin: false, name, desc, icon, prompt });
-  }
-  saveCustomPersonas(list);
-  renderPersonaList();
-  closePersonaEditor();
-  toast('✓ تم حفظ الشخصية');
-}
-
-function deletePersona(id) {
-  let list = loadPersonas().filter(p => p.id !== id);
-  saveCustomPersonas(list);
-  if (getActivePersonaId() === id) {
-    localStorage.setItem('zx_active_persona', '_default');
-  }
-  renderPersonaList();
-  toast('🗑 تم حذف الشخصية');
-}
+/* واجهة إدارة الشخصيات (عرض/إنشاء/تعديل/حذف) انتقلت بالكامل إلى
+   settings.html — بقيت هنا فقط الدوال الأساسية (loadPersonas،
+   saveCustomPersonas، getActivePersonaId، getActivePersona) لأن
+   محرك الدردشة يحتاجها مباشرة لبناء الـ System Prompt. */
 
 
 
@@ -5100,82 +4754,15 @@ function renderLibFiles() {
 
 /* ════════════════════════════════════════════════════════════
    SETTINGS
-════════════════════════════════════════════════════════════ */
-async function openSettings() {
-  // Hardened against the modal-crash bug: every DOM lookup is null-checked
-  // and the whole flow is wrapped in try/catch so a missing element, a
-  // slow/failed getSession() call, or any other surprise never leaves the
-  // app in a broken state — worst case the modal still opens with
-  // whatever info is available.
-  try {
-    let session = null;
-    try {
-      const res = await _SB.auth.getSession();
-      session = res && res.data && res.data.session;
-    } catch (e) {
-      console.warn('openSettings: getSession failed (best-effort)', e);
-    }
-
-    const loggedInBox = document.getElementById('settLoggedInInfo');
-    const guestBox     = document.getElementById('settGuestInfo');
-
-    if (session) {
-      if (loggedInBox) loggedInBox.style.display = 'block';
-      if (guestBox)    guestBox.style.display    = 'none';
-      const nameEl  = document.getElementById('settRealName');
-      const emailEl = document.getElementById('settRealEmail');
-      const planEl  = document.getElementById('settRealPlan');
-      const uName   = document.getElementById('uName');
-      const uEmail  = document.getElementById('uEmail');
-      const uPlan   = document.getElementById('uPlan');
-      if (nameEl)  nameEl.textContent  = (uName  && uName.textContent)  || '—';
-      if (emailEl) emailEl.textContent = (uEmail && uEmail.textContent) || session.user.email || '—';
-      if (planEl)  planEl.textContent  = (uPlan  && uPlan.textContent)  || '—';
-    } else {
-      if (loggedInBox) loggedInBox.style.display = 'none';
-      if (guestBox)    guestBox.style.display    = 'block';
-      const fNameEl = document.getElementById('fName');
-      if (fNameEl) fNameEl.value = localStorage.getItem('zx_guest_name') || '';
-    }
-
-    const modal = document.getElementById('settModal');
-    if (modal) modal.classList.add('on');
-
-    try { loadAllPrefsIntoUI(); } catch (e) { console.warn('openSettings: loadAllPrefsIntoUI failed', e); }
-    try { closeSidebar(); } catch (e) { console.warn('openSettings: closeSidebar failed', e); }
-  } catch (e) {
-    // Absolute last resort — still try to show the modal even if
-    // everything else above failed, instead of leaving the user with
-    // a dead button and a console error.
-    console.error('openSettings: unexpected failure', e);
-    const modal = document.getElementById('settModal');
-    if (modal) modal.classList.add('on');
-  }
-}
-
-function closeSettings() {
-  const modal = document.getElementById('settModal');
-  if (modal) modal.classList.remove('on');
-}
-
-/* ── Logout ─────────────────────────────────────────────────────
-   Clears the real Supabase session (server + local token), then
-   wipes the local-only device/session identity fields so nothing
-   from the previous account bleeds into the guest state that
-   follows, and redirects to index.html — the same page the
-   top-of-file guard sends unauthenticated visitors to. */
-async function logoutUser() {
-  const btn = document.getElementById('logoutBtn');
-  if (btn) { btn.disabled = true; btn.textContent = '... جارٍ تسجيل الخروج'; }
-  try {
-    await _SB.auth.signOut();
-  } catch (e) {
-    console.warn('logoutUser: signOut failed (best-effort, continuing)', e);
-  }
-  try {
-    localStorage.removeItem('sb-xrldhfsytysznyyhwjlr-auth-token');
-  } catch (e) {}
-  window.location.replace('index.html');
+   الإعدادات (الملف الشخصي/الشخصيات/التفضيلات/الصوت/الإشعارات/
+   الذاكرة/الأدوات/الإحالة/الحساب) أصبحت صفحة مستقلة settings.html.
+   openSettings() القديمة (Modal داخلي) استُبدلت بتنقّل بسيط لتلك
+   الصفحة — كل الحالة (localStorage + Supabase profiles.app_settings)
+   تبقى مشتركة بين الصفحتين فلا يضيع أي إعداد. تسجيل الخروج
+   (logoutUser) انتقل بالكامل إلى settings.html ← تبويب الحساب. */
+function goToSettings() {
+  try { closeSidebar(); } catch (e) {}
+  window.location.href = 'settings.html';
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -5364,16 +4951,8 @@ document.getElementById('btnRequestPlan').onclick = async () => {
   }
 };
 
-function saveSettings() {
-  // Guest-only, cosmetic display name. Never writes an id or plan —
-  // those can only ever come from a real authenticated session.
-  const name = document.getElementById('fName').value.trim();
-  if (name) {
-    localStorage.setItem('zx_guest_name', name);
-    setUserUI(name, 'Free', '', name[0].toUpperCase());
-  }
-  closeSettings();
-}
+/* saveSettings() (اسم الضيف) انتقلت إلى settings.html — تكتب لنفس
+   المفتاح zx_guest_name، فتنعكس هنا تلقائياً عند رجوع المستخدم. */
 
 /* ════════════════════════════════════════════════════════════
    PARTICLES — Gold floating dots
@@ -5441,17 +5020,6 @@ function initParticles() {
   }
   frame();
 }
-
-/* ════════════════════════════════════════════════════════════
-   CLOSE MODAL ON OUTSIDE CLICK
-════════════════════════════════════════════════════════════ */
-(function attachSettModalOutsideClick() {
-  const modal = document.getElementById('settModal');
-  if (!modal) return; // element not in DOM yet/removed — nothing to attach to, no crash
-  modal.addEventListener('click', function(e) {
-    if (e.target === this) closeSettings();
-  });
-})();
 
 /* ════════════════════════════════════════════════════════════
    THEME / MODEL / EFFORT — state + persistence
@@ -5607,7 +5175,7 @@ function applyPageLang(lang) {
   const histLabel = document.querySelector('.sb-label');
   if (histLabel) histLabel.textContent = t.history;
   document.querySelectorAll('.sb-fbtn').forEach(btn => {
-    if (btn.onclick && btn.getAttribute('onclick') === 'openSettings()') btn.lastChild.textContent = ' ' + t.settings.replace('⚙ ', '');
+    if (btn.getAttribute('onclick') === 'goToSettings()') btn.lastChild.textContent = ' ' + t.settings.replace('⚙ ', '');
     if (btn.getAttribute('onclick') === 'clearAll()') btn.lastChild.textContent = ' ' + t.clear.replace('🗑 ', '');
   });
   const installBtn = document.getElementById('installBtn');
@@ -5623,201 +5191,15 @@ function applyPageLang(lang) {
 }
 
 /* ════════════════════════════════════════════════════════════
-   SETTINGS — Tabs + Profile/Preferences/Voice/Notifications/
-   Memory/Tools (adapted equivalents, not a literal copy of any
-   other product's settings screen — these are wired to real,
-   working Zunexa/Supabase/browser functionality).
+   SETTINGS — كل واجهة الإعدادات (التبويبات، الملف الشخصي،
+   الشخصيات، الإحالة، الفوترة، الحساب) انتقلت بالكامل إلى
+   settings.html. الدوال الباقية هنا (setChatFont، setReduceMotion،
+   setNotifPref، setLearnPref/isLearnEnabled، setToolsPref/
+   isToolsEnabled، applyPageLang، دوال مزامنة app_settings، ودوال
+   الشخصيات الأساسية أعلاه) هي فقط ما يحتاجه محرك الدردشة نفسه،
+   وتبقى تكتب/تقرأ نفس مفاتيح localStorage و Supabase التي
+   تستعملها settings.html، فيبقى كل شيء متزامناً بين الصفحتين.
 ════════════════════════════════════════════════════════════ */
-function setSTab(name) {
-  document.querySelectorAll('.set-tab').forEach(t => t.classList.remove('on'));
-  document.querySelectorAll('.set-pane').forEach(p => p.classList.remove('on'));
-  document.getElementById('tab-' + name).classList.add('on');
-  document.getElementById('pane-' + name).classList.add('on');
-  if (name === 'personas') renderPersonaList();
-  if (name === 'referral') loadReferralPanel();
-}
-
-async function saveProfileSettings() {
-  const full = document.getElementById('setFullName').value.trim();
-  const call = document.getElementById('setCallName').value.trim();
-  const work = document.getElementById('setWork').value.trim();
-  const inst = document.getElementById('setInstructions').value.trim();
-  localStorage.setItem('zx_profile', JSON.stringify({ full, call, work, inst }));
-  try {
-    const { data: { session } } = await _SB.auth.getSession();
-    if (session) {
-      await _SB.from('profiles').update({
-        full_name: full, call_name: call, work_desc: work, instructions: inst
-      }).eq('id', session.user.id);
-    }
-    toast('✓ تم حفظ الملف الشخصي');
-  } catch (e) { toast('⚠ تعذّر الحفظ في الحساب — تم الحفظ محلياً فقط'); }
-}
-
-/* ════════════════════════════════════════════════════════════
-   REFERRAL / VIRAL LOOP
-   ─────────────────────────────────────────────────────────────
-   Every credit-affecting write goes through a Postgres RPC
-   (security definer) that reads auth.uid() itself server-side —
-   same trust pattern as redeem_plan_code above. The client never
-   inserts/updates the credits balance directly; it only ever
-   displays what the RPC/select returns. See ZUNEXA_DB_SETUP_REFERRALS.sql
-   (run once in the Supabase SQL editor) for the full schema + functions
-   this expects:
-     - referral_codes(user_id, code, created_at)
-     - referrals(id, referrer_id, referred_id, status, created_at,
-                 credited_at)
-     - profiles.referral_credits (int, default 0)
-     - RPC get_or_create_referral_code() -> text
-     - RPC redeem_referral_code(code_input text) -> jsonb
-   ════════════════════════════════════════════════════════════ */
-let _refCodeCache = null;
-
-async function loadReferralPanel() {
-  const { data: { session } } = await _SB.auth.getSession();
-  const loggedOutBox = document.getElementById('refLoggedOut');
-  const loggedInBox  = document.getElementById('refLoggedIn');
-
-  if (!session) {
-    loggedOutBox.style.display = 'block';
-    loggedInBox.style.display  = 'none';
-    return;
-  }
-  loggedOutBox.style.display = 'none';
-  loggedInBox.style.display  = 'block';
-
-  document.getElementById('refCreditsVal').textContent = '…';
-  document.getElementById('refLinkInput').value = 'جارٍ التحميل…';
-
-  try {
-    // 1) رابط الإحالة — كود ثابت لكل مستخدم، كيتولد أول مرة عبر RPC آمنة.
-    if (!_refCodeCache) {
-      const { data: code, error: codeErr } = await _SB.rpc('get_or_create_referral_code');
-      if (codeErr) throw codeErr;
-      _refCodeCache = code;
-    }
-    const link = `${window.location.origin}/index.html?ref=${encodeURIComponent(_refCodeCache)}`;
-    document.getElementById('refLinkInput').value = link;
-
-    // 2) رصيد الإحالة الحالي + إحصائيات — قراءة مباشرة، RLS كتقيّد
-    // كل مستخدم بصفوفو الخاصة فقط (نفس مبدأ profiles/redeem أعلاه).
-    const [{ data: profRow }, { data: refRows }] = await Promise.all([
-      _SB.from('profiles').select('referral_credits').eq('id', session.user.id).maybeSingle(),
-      _SB.from('referrals').select('status').eq('referrer_id', session.user.id),
-    ]);
-
-    document.getElementById('refCreditsVal').textContent = (profRow && profRow.referral_credits) || 0;
-    const rows = refRows || [];
-    document.getElementById('refCountVal').textContent   = rows.filter(r => r.status === 'credited').length;
-    document.getElementById('refPendingVal').textContent = rows.filter(r => r.status === 'pending').length;
-  } catch (e) {
-    document.getElementById('refLinkInput').value = '';
-    toast('⚠ تعذّر تحميل بيانات الإحالة: ' + e.message);
-  }
-}
-
-function copyReferralLink() {
-  const input = document.getElementById('refLinkInput');
-  if (!input.value) return;
-  input.select();
-  navigator.clipboard.writeText(input.value).then(() => {
-    const btn = document.getElementById('refCopyBtn');
-    const original = btn.innerHTML;
-    btn.classList.add('copied');
-    btn.innerHTML = '✓ تم النسخ';
-    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1800);
-  }).catch(() => toast('⚠ تعذّر النسخ'));
-}
-
-function shareReferral(channel) {
-  const link = document.getElementById('refLinkInput').value;
-  if (!link) return;
-  const text = 'جرّب Zunexa AI — مساعد ذكاء اصطناعي مغربي، وسجّل عبر الرابط ديالي باش نربحو رصيد إضافي بجوج:';
-  const urls = {
-    whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + link)}`,
-    x:        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`,
-    telegram: `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`,
-  };
-  if (channel === 'native' && navigator.share) {
-    navigator.share({ title: 'Zunexa AI', text, url: link }).catch(() => {});
-    return;
-  }
-  if (urls[channel]) window.open(urls[channel], '_blank', 'noopener');
-  else copyReferralLink();
-}
-
-async function redeemReferralCode() {
-  const codeInput = document.getElementById('refRedeemInput');
-  const statusEl  = document.getElementById('refRedeemStatus');
-  const btn       = document.getElementById('refRedeemBtn');
-  const code = codeInput.value.trim();
-  statusEl.classList.remove('show', 'ok', 'err');
-
-  if (!code) {
-    statusEl.textContent = 'دخل كود الإحالة أولاً.';
-    statusEl.classList.add('err', 'show');
-    return;
-  }
-
-  const { data: { session } } = await _SB.auth.getSession();
-  if (!session) {
-    statusEl.textContent = 'خاصك تدخل لحسابك أولاً.';
-    statusEl.classList.add('err', 'show');
-    return;
-  }
-
-  btn.disabled = true;
-  const originalLabel = btn.textContent;
-  btn.textContent = '…';
-
-  try {
-    // redeem_referral_code (security definer) كتتحقق سيرفرياً:
-    // الكود موجود، ماشي كود ديال نفس المستخدم، وماسبقش تفعّل من قبل —
-    // وهي لي كتزيد الرصيد فـ profiles.referral_credits لجوج الأطراف.
-    const { data, error } = await _SB.rpc('redeem_referral_code', { code_input: code });
-    if (error) throw error;
-
-    if (data.success) {
-      statusEl.textContent = `✓ تم التفعيل! ربحتي ${data.credits_awarded || ''} رصيد إضافي.`;
-      statusEl.classList.add('ok', 'show');
-      codeInput.value = '';
-      loadReferralPanel();
-    } else {
-      const errorMap = {
-        code_not_found: 'الكود غير صحيح.',
-        self_referral: 'ما تقدرش تستعمل الكود ديالك نفسو.',
-        already_redeemed: 'سبق لك واستعملتي كود إحالة من قبل.',
-        not_authenticated: 'خاصك تدخل لحسابك أولاً.',
-      };
-      statusEl.textContent = errorMap[data.error] || 'وقع خطأ، حاول مرة أخرى.';
-      statusEl.classList.add('err', 'show');
-    }
-  } catch (err) {
-    statusEl.textContent = 'وقع خطأ فالسيرفر: ' + err.message;
-    statusEl.classList.add('err', 'show');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = originalLabel;
-  }
-}
-
-function loadProfileIntoUI() {
-  try {
-    const p = JSON.parse(localStorage.getItem('zx_profile') || '{}');
-    if (document.getElementById('setFullName')) document.getElementById('setFullName').value = p.full || '';
-    if (document.getElementById('setCallName')) document.getElementById('setCallName').value = p.call || '';
-    if (document.getElementById('setWork')) document.getElementById('setWork').value = p.work || '';
-    if (document.getElementById('setInstructions')) document.getElementById('setInstructions').value = p.inst || '';
-  } catch(e){}
-}
-
-function savePagePrefs() {
-  const el = document.getElementById('setPageLang');
-  if (!el) return;
-  const lang = el.value;
-  localStorage.setItem('zx_page_lang', lang);
-  applyPageLang(lang);
-}
 
 function setChatFont(v) {
   localStorage.setItem('zx_font', v);
@@ -5914,44 +5296,17 @@ async function pushAppSettings() {
 }
 
 /* ── Optional free-tier API keys (user-pasted, localStorage-only) ── */
+/* مفاتيح API الاختيارية — تُقرأ هنا مباشرة عند استعمال أدوات مثل
+   /صورة_hf أو الترجمة عبر DeepL. واجهة إدخال/حفظ هاذ المفاتيح
+   (loadApiKeysIntoUI القديمة) انتقلت إلى settings.html، لكنها تكتب
+   لنفس مفتاح localStorage['zx_api_keys'] فتبقى القراءة هنا صحيحة. */
 function getApiKeys() { try { return JSON.parse(localStorage.getItem('zx_api_keys') || '{}'); } catch(e){ return {}; } }
 function getApiKey(name) { return (getApiKeys()[name] || '').trim(); }
-function loadApiKeysIntoUI() {
-  const k = getApiKeys();
-  if (document.getElementById('keyHF'))       document.getElementById('keyHF').value = k.hf || '';
-  if (document.getElementById('keyDeepL'))    document.getElementById('keyDeepL').value = k.deepl || '';
-  if (document.getElementById('keyVoiceRSS')) document.getElementById('keyVoiceRSS').value = k.voicerss || '';
-  if (document.getElementById('keyTavily'))   document.getElementById('keyTavily').value = k.tavily || '';
-  if (document.getElementById('keySerper'))   document.getElementById('keySerper').value = k.serper || '';
-}
 
-function loadAllPrefsIntoUI() {
-  loadProfileIntoUI();
-  loadApiKeysIntoUI();
-  const font = localStorage.getItem('zx_font') || 'rajdhani';
-  const motion = localStorage.getItem('zx_reduce_motion') === '1';
-  const notif = localStorage.getItem('zx_notif_done') === '1';
-  const learn = isLearnEnabled();
-  const tools = isToolsEnabled();
-  const pageLang = localStorage.getItem('zx_page_lang') || 'ar';
-  const voice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
-
-  if (document.getElementById('setFontSel'))    document.getElementById('setFontSel').value = font;
-  if (document.getElementById('setReduceMotion')) document.getElementById('setReduceMotion').checked = motion;
-  if (document.getElementById('setNotifDone'))   document.getElementById('setNotifDone').checked = notif;
-  if (document.getElementById('setLearnToggle')) document.getElementById('setLearnToggle').checked = learn;
-  if (document.getElementById('setToolsToggle')) document.getElementById('setToolsToggle').checked = tools;
-  if (document.getElementById('setPageLang'))    document.getElementById('setPageLang').value = pageLang;
-  applyPageLang(pageLang);
-  if (document.getElementById('setModelSel2'))    document.getElementById('setModelSel2').value = zxModel;
-  if (document.getElementById('setEffortSel2'))   document.getElementById('setEffortSel2').value = zxEffort;
-  if (document.getElementById('setVoiceLang') && voice.lang)   document.getElementById('setVoiceLang').value = voice.lang;
-  if (document.getElementById('setVoiceStyle') && voice.style) document.getElementById('setVoiceStyle').value = voice.style;
-  if (document.getElementById('setVoiceSpeed') && voice.speed) document.getElementById('setVoiceSpeed').value = voice.speed;
-
-  setChatFont(font);
-  document.documentElement.classList.toggle('zx-reduce-motion', motion);
-}
+/* loadAllPrefsIntoUI() (تعمير كل حقول المودال) انتقلت إلى
+   settings.html — تطبيق التفضيلات الفعلي عند الإقلاع (applyPageLang،
+   setChatFont، تقليل الحركة) يبقى يتم مباشرة عند تحميل ai.html
+   (انظر أعلى loadUser/DOMContentLoaded). */
 
 /* ════════════════════════════════════════════════════════════
    FILE / PHOTO / PDF ATTACHMENT

@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  ZUNEXA — الإعدادات (Settings)                                   ║
+  ║  Author  : ahmed_dev_a                                          ║
+  ║  Stack   : HTML5 · CSS3 · Vanilla JS                            ║
+  ║  Design  : Zalij Mode — Premium Moroccan Noir & Gold            ║
+  ║  ملاحظة  : صفحة مستقلة تمت إزالتها من ai.html (كانت Modal داخلي) ║
+  ║            وتتزامن مع باقي التطبيق عبر localStorage + Supabase.  ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="ar" dir="rtl">
+<head>
+  <script>
+    /* نفس منطق ai.html بالضبط: الوضع الداكن (Zalij) هو الافتراضي الرسمي،
+       يُطبَّق قبل أول رسم لتفادي وميض بين الوضعين. */
+    (function() {
+        try {
+            const savedTheme = localStorage.getItem('zunexa-theme');
+            if (savedTheme !== 'light') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                if (!savedTheme) localStorage.setItem('zunexa-theme', 'dark');
+            }
+        } catch (e) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    })()
+  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0B0C0F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Zunexa AI">
+<title>الإعدادات — Zunexa AI</title>
+<link rel="icon" type="image/svg+xml" href="zunexa-logo.svg">
+<link rel="apple-touch-icon" href="zunexa-logo.svg">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+/* ════════════════════════════════════════════════════════
+   THEME TRANSITION — نفس ai.html
+════════════════════════════════════════════════════════ */
+html, body,
+.modal-box, .modal-wrap, .persona-card, .zx-select, .theme-toggle-btn {
+  transition:
+    background-color .45s cubic-bezier(.4,0,.2,1),
+    border-color      .45s cubic-bezier(.4,0,.2,1),
+    color             .45s cubic-bezier(.4,0,.2,1),
+    box-shadow        .45s cubic-bezier(.4,0,.2,1);
+}
+.billing-spinner { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  html, body, .modal-box, .modal-wrap, .persona-card, .zx-select, .theme-toggle-btn { transition: none; }
+}
+
+/* ════════════════════════════════════════════════════════
+   DESIGN TOKENS — White Phone Mode (مطابقة لـ ai.html)
+════════════════════════════════════════════════════════ */
+:root {
+  --void:        #FFFFFF;
+  --deep:        #FFFFFF;
+  --card:        #F7F8FA;
+  --card2:       #F1F2F5;
+  --hover:       #EBEDF1;
+  --input-bg:    #FFFFFF;
+
+  --b1:          #E5E7EB;
+  --b2:          #D8DBE0;
+  --bg:          rgba(212,175,55,.10);
+  --bgh:         rgba(212,175,55,.28);
+  --bgp:         rgba(212,175,55,.05);
+
+  --gold:        #D4AF37;
+  --gold2:       #B8922E;
+  --gold3:       #8a7022;
+  --gdim:        #8a7022;
+  --gglow:       rgba(212,175,55,.14);
+  --gtrace:      rgba(212,175,55,.06);
+
+  --tw:          #111111;
+  --tg:          #6B7280;
+  --tm:          #9CA3AF;
+
+  --green:       #16A34A;
+  --red:         #DC2626;
+  --blue:        #2563EB;
+  --orange:      #D97706;
+
+  --tr: .2s cubic-bezier(.4,0,.2,1);
+  --r1: 6px;
+  --r2: 11px;
+  --r3: 17px;
+  --r4: 24px;
+
+  --sg: 0 0 0 1px rgba(212,175,55,.10) inset, 0 2px 14px rgba(212,175,55,.08);
+  --sg2: 0 2px 10px rgba(212,175,55,.18), 0 0 0 1px rgba(212,175,55,.10);
+}
+
+/* ════════════════════════════════════════════════════════
+   DESIGN TOKENS — Dark Zalij Mode
+════════════════════════════════════════════════════════ */
+[data-theme="dark"]{
+  --void:        #0B0C0F;
+  --deep:        #0B0C0F;
+  --card:        #15171C;
+  --card2:       #1B1E24;
+  --hover:       #22252C;
+  --input-bg:    #15171C;
+
+  --b1:          #262A32;
+  --b2:          #33373F;
+  --bg:          rgba(212,175,55,.12);
+  --bgh:         rgba(212,175,55,.30);
+  --bgp:         rgba(212,175,55,.07);
+
+  --gold:        #D4AF37;
+  --gold2:       #E4C158;
+  --gold3:       #B8922E;
+  --gdim:        #B8922E;
+  --gglow:       rgba(212,175,55,.18);
+  --gtrace:      rgba(212,175,55,.09);
+
+  --tw:          #F2F3F5;
+  --tg:          #9AA0AC;
+  --tm:          #6B7280;
+
+  --green:       #22C55E;
+  --red:         #EF4444;
+  --blue:        #3B82F6;
+  --orange:      #F59E0B;
+
+  --sg: 0 0 0 1px rgba(212,175,55,.14) inset, 0 2px 14px rgba(212,175,55,.10);
+  --sg2: 0 2px 10px rgba(212,175,55,.24), 0 0 0 1px rgba(212,175,55,.14);
+}
+[data-theme="dark"] body{background:var(--void)}
+
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;height:100%}
+body{
+  font-family:'Rajdhani',sans-serif;
+  background:var(--void);
+  color:var(--tw);
+  min-height:100vh;
+  min-height:100dvh;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+input,textarea{user-select:text;-webkit-user-select:text}
+button,input,textarea,select{font-family:'Rajdhani',sans-serif;outline:none}
+button{cursor:pointer;background:none;border:none;-webkit-tap-highlight-color:transparent}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:99px}
+
+/* ════════════════════════════════════════════════════════
+   TOP BAR — رجوع لـ ai.html
+════════════════════════════════════════════════════════ */
+.settings-topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px;background:var(--void);
+  border-bottom:1px solid var(--b1);
+}
+.settings-back{
+  width:38px;height:38px;border-radius:9px;
+  border:1px solid var(--b1);color:var(--tg);
+  display:grid;place-items:center;font-size:16px;
+  transition:all var(--tr);flex-shrink:0;
+}
+.settings-back:hover{border-color:var(--gold);color:var(--gold)}
+.settings-topbar-title{
+  font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--gold);
+}
+.settings-page-wrap{
+  max-width:640px;margin:0 auto;padding:20px 16px 60px;
+}
+
+/* ════════════════════════════════════════════════════════
+   MODAL BOX styling reused as a plain page card (no overlay/backdrop
+   here since this is now a full standalone page, not a popup)
+════════════════════════════════════════════════════════ */
+.modal-box{
+  background:var(--card);border:1px solid var(--b1);border-radius:var(--r3);
+  padding:22px;max-width:100%;width:100%;
+  box-shadow:0 20px 60px rgba(15,17,21,.10);
+  position:relative;
+}
+.modal-box.wide{max-width:100%}
+.modal-title{
+  font-family:'Cinzel',serif;font-size:14px;font-weight:600;
+  color:var(--gold);text-align:center;margin-bottom:18px;
+}
+.field-label{
+  font-size:10px;color:var(--tg);display:block;
+  margin-bottom:5px;letter-spacing:.1em;text-transform:uppercase;
+}
+.field-input{
+  width:100%;padding:11px 11px;
+  background:var(--input-bg);border:1px solid var(--b2);border-radius:7px;
+  color:var(--tw);font-size:13px;margin-bottom:12px;
+  transition:border-color var(--tr);min-height:44px;
+}
+.field-input:focus{border-color:var(--gold)}
+.modal-save{
+  width:100%;margin-top:6px;padding:12px;
+  background:var(--gold);
+  border:none;border-radius:8px;color:#fff;
+  font-weight:700;font-size:13px;letter-spacing:.08em;
+  transition:all var(--tr);min-height:48px;
+  position:relative;overflow:hidden;
+}
+.modal-save:hover{box-shadow:var(--sg2)}
+
+/* ── Settings modal (tabs + toggles) ── */
+.set-tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--b1);margin-bottom:16px;padding-bottom:2px;scrollbar-width:thin}
+.set-tab{padding:9px 12px;font-size:11.5px;color:var(--tg);border-radius:7px 7px 0 0;cursor:pointer;white-space:nowrap;transition:all var(--tr);min-height:40px;display:flex;align-items:center}
+.set-tab:hover{color:var(--gold)}
+.set-tab.on{color:var(--gold);background:var(--card2);font-weight:700}
+.set-pane{display:none}
+.set-pane.on{display:block;animation:fadeUp .18s ease}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--b1)}
+.set-row:last-child{border-bottom:none}
+.set-row-txt{flex:1;min-width:0}
+.set-row-title{font-size:13px;color:var(--tw);font-weight:600}
+.set-row-desc{font-size:11px;color:var(--tg);margin-top:3px;line-height:1.6}
+.switch{position:relative;width:40px;height:22px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.slider{position:absolute;inset:0;background:var(--b2);border-radius:99px;cursor:pointer;transition:.2s}
+.slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(15,17,21,.25)}
+.switch input:checked + .slider{background:var(--gold)}
+.switch input:checked + .slider::before{background:#fff;transform:translateX(-18px)}
+textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-height:1.5}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PERSONAS ── */
+.persona-list{display:flex;flex-direction:column;gap:8px}
+.persona-card{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;
+  border-radius:10px;border:1px solid var(--b1);background:var(--card2);
+  cursor:pointer;transition:all var(--tr);
+}
+.persona-card:hover{border-color:var(--b2)}
+.persona-card.on{border-color:var(--gold);background:var(--card)}
+.persona-icon{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  display:grid;place-items:center;font-size:16px;
+  background:var(--card);border:1px solid var(--b1);
+}
+.persona-card.on .persona-icon{border-color:var(--gold)}
+.persona-info{flex:1;min-width:0}
+.persona-name{font-size:12.5px;font-weight:700;color:var(--tw)}
+.persona-desc{font-size:10.5px;color:var(--tg);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.persona-badge{font-size:9px;color:var(--gold);letter-spacing:.05em}
+.persona-actions{display:flex;gap:4px;flex-shrink:0}
+.persona-act-btn{
+  width:32px;height:32px;border-radius:6px;border:1px solid var(--b1);
+  background:transparent;color:var(--tg);font-size:11px;
+  position:relative;
+}
+.persona-act-btn::after{
+  content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;min-width:44px;min-height:44px;
+}
+.persona-act-btn:hover{border-color:var(--gold);color:var(--gold)}
+.persona-act-btn.del:hover{border-color:var(--red);color:var(--red)}
+.persona-editor{margin-top:14px;padding-top:14px;border-top:1px solid var(--b1)}
+
+/* ── Referral / Viral Loop panel ── */
+.ref-hero{
+  background:var(--card2);
+  border:1px solid var(--b1);border-radius:var(--r3);
+  padding:16px;margin-bottom:14px;text-align:center;
+}
+.ref-hero-credits{font-family:'Cinzel',serif;font-size:26px;color:var(--gold);font-weight:700}
+.ref-hero-label{font-size:10.5px;color:var(--tg);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.ref-hero-sub{font-size:11.5px;color:var(--tg);margin-top:10px;line-height:1.7}
+.ref-link-row{display:flex;gap:6px;margin-bottom:10px}
+.ref-link-row .field-input{margin-bottom:0;font-size:12px;direction:ltr;text-align:left;color:var(--gold2)}
+.ref-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.ref-stat{background:var(--card2);border:1px solid var(--b1);border-radius:10px;padding:12px;text-align:center}
+.ref-stat b{display:block;font-family:'Cinzel',serif;font-size:20px;color:var(--gold)}
+.ref-stat span{font-size:10px;color:var(--tg);letter-spacing:.05em}
+.ref-share-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.mini-ghost-btn{
+  padding:9px 14px;border-radius:8px;border:1px solid var(--b1);
+  color:var(--tg);font-size:11.5px;background:transparent;
+  transition:all var(--tr);min-height:40px;
+}
+.mini-ghost-btn:hover{border-color:var(--gold);color:var(--gold)}
+.mini-ghost-btn.copied{border-color:var(--green);color:var(--green)}
+.billing-status-msg{font-size:11.5px;margin-top:8px;display:none;line-height:1.6}
+.billing-status-msg.show{display:block}
+.billing-status-msg.ok{color:var(--green)}
+.billing-status-msg.err{color:var(--red)}
+
+/* ── Account / Avatar ── */
+.set-avatar-row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.set-avatar-preview{
+  width:60px;height:60px;border-radius:16px;overflow:hidden;flex-shrink:0;
+  display:grid;place-items:center;background:var(--card2);border:1px solid var(--b1);
+  color:var(--gold);font-family:'Cinzel',serif;font-size:22px;font-weight:700;
+}
+.set-avatar-preview img{width:100%;height:100%;object-fit:cover}
+.set-avatar-btns{display:flex;flex-direction:column;gap:6px;flex:1}
+.set-avatar-upload,.set-avatar-remove{
+  padding:9px 12px;border-radius:8px;border:1px solid var(--b1);
+  font-size:11.5px;text-align:center;transition:all var(--tr);min-height:40px;
+}
+.set-avatar-upload{color:var(--gold);border-color:var(--gold)}
+.set-avatar-upload:hover{background:var(--bgp)}
+.set-avatar-remove{color:var(--red)}
+.set-avatar-remove:hover{background:rgba(220,38,38,.06)}
+
+/* ── Billing (accessible via الحساب → إدارة الحساب, or ?tab=billing) ── */
+.billing-toggle{display:flex;gap:6px;background:var(--card2);border-radius:10px;padding:4px;margin-bottom:18px;width:fit-content}
+.billing-toggle button{padding:8px 16px;border-radius:8px;font-size:12px;color:var(--tg);transition:all var(--tr)}
+.billing-toggle button.on{background:var(--gold);color:#fff;font-weight:700}
+.billing-section-title{font-size:12px;color:var(--gold);font-weight:700;margin:22px 0 10px;letter-spacing:.03em}
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.plan-card{
+  position:relative;background:var(--card2);border:1px solid var(--b1);border-radius:14px;
+  padding:16px 14px;display:flex;flex-direction:column;gap:8px;
+}
+.plan-card.featured{border-color:var(--gold);box-shadow:var(--sg)}
+.plan-card .tag{
+  position:absolute;top:-9px;right:12px;background:var(--gold);color:#fff;
+  font-size:9px;padding:3px 8px;border-radius:99px;font-weight:700;letter-spacing:.03em;
+}
+.plan-card h3{font-family:'Cinzel',serif;font-size:14px;color:var(--tw)}
+.plan-price{font-size:20px;font-weight:700;color:var(--gold)}
+.plan-price small{font-size:10px;color:var(--tg);font-weight:400}
+.plan-card ul{list-style:none;display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--tg);line-height:1.5}
+.plan-card ul li::before{content:'✓ ';color:var(--gold)}
+.plan-card .btn{
+  margin-top:auto;padding:10px;border-radius:8px;font-size:11.5px;font-weight:700;
+  border:1px solid var(--b1);color:var(--tg);min-height:40px;
+}
+.plan-card .btn.btn-gold{background:var(--gold);color:#fff;border-color:var(--gold)}
+.redeem-box{display:flex;gap:8px;margin-bottom:6px}
+.redeem-box input{flex:1}
+.billing-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.billing-field{display:flex;flex-direction:column}
+@media(max-width:480px){.billing-form-grid{grid-template-columns:1fr}}
+.billing-spinner{
+  display:inline-block;width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.4);border-top-color:#fff;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Toast ── */
+#zxToast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--tw);color:var(--void);padding:11px 20px;border-radius:99px;
+  font-size:12.5px;font-weight:600;opacity:0;pointer-events:none;
+  transition:all .3s cubic-bezier(.4,0,.2,1);z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.2);
+  white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;
+}
+#zxToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.zx-reduce-motion *{animation-duration:0.001s!important;transition-duration:0.001s!important}
+</style>
+</head>
+<body>
+
+<div class="settings-topbar">
+  <button class="settings-back" onclick="goBackToApp()" title="رجوع">→</button>
+  <div class="settings-topbar-title">⚙ الإعدادات</div>
+</div>
+
+<div class="settings-page-wrap">
+
+  <!-- ══════════════════════════════════════════════════
+       SETTINGS PANEL (كانت Modal داخل ai.html، الآن صفحة مستقلة)
+  ══════════════════════════════════════════════════ -->
+  <div class="modal-box wide">
+
+    <div class="set-tabs">
+      <div class="set-tab on" onclick="setSTab('profile')" id="tab-profile">الملف الشخصي</div>
+      <div class="set-tab" onclick="setSTab('personas')" id="tab-personas">الشخصيات</div>
+      <div class="set-tab" onclick="setSTab('prefs')" id="tab-prefs">التفضيلات</div>
+      <div class="set-tab" onclick="setSTab('voice')" id="tab-voice">الصوت</div>
+      <div class="set-tab" onclick="setSTab('notif')" id="tab-notif">الإشعارات</div>
+      <div class="set-tab" onclick="setSTab('memory')" id="tab-memory">الذاكرة</div>
+      <div class="set-tab" onclick="setSTab('tools')" id="tab-tools">الأدوات</div>
+      <div class="set-tab" onclick="setSTab('referral')" id="tab-referral">الإحالة</div>
+      <div class="set-tab" onclick="setSTab('billing')" id="tab-billing">الخطط والفوترة</div>
+      <div class="set-tab" onclick="setSTab('account')" id="tab-account">الحساب</div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="set-pane on" id="pane-profile">
+      <label class="field-label">الاسم الكامل</label>
+      <input class="field-input" id="setFullName" placeholder="اسمك الكامل">
+      <label class="field-label">كيفاش تبغي Zunexa يناديك؟</label>
+      <input class="field-input" id="setCallName" placeholder="مثلاً: أحمد">
+      <label class="field-label">شنو كيوصف خدمتك بزاف؟</label>
+      <input class="field-input" id="setWork" placeholder="مثلاً: مطور Full-Stack">
+      <label class="field-label">تعليمات لـ Zunexa (كيبقاها فبالو فكل محادثة)</label>
+      <textarea class="field-input" id="setInstructions" placeholder="مثلاً: نخدم بلغة Python وDarija، جاوبني بإيجاز، ديما قترح حلول عملية..."></textarea>
+      <button class="modal-save" onclick="saveProfileSettings()">✓ حفظ الملف الشخصي</button>
+    </div>
+
+    <!-- PERSONAS -->
+    <div class="set-pane" id="pane-personas">
+      <p style="font-size:11px;color:var(--tg);line-height:1.7;margin-bottom:12px">
+        اختار أو أنشئ شخصية لـ Zunexa — كل شخصية عندها أسلوبها وتعليماتها الخاصة، وتبقى مفعّلة فكل المحادثات الجديدة حتى تبدّلها.
+      </p>
+      <div id="personaList" class="persona-list"></div>
+
+      <div class="persona-editor" id="personaEditor" style="display:none">
+        <label class="field-label">اسم الشخصية</label>
+        <input class="field-input" id="pEditName" placeholder="مثلاً: مساعد SEO">
+        <label class="field-label">وصف قصير</label>
+        <input class="field-input" id="pEditDesc" placeholder="مثلاً: متخصص فتحسين محركات البحث">
+        <label class="field-label">أيقونة (emoji واحد)</label>
+        <input class="field-input" id="pEditIcon" placeholder="🧠" maxlength="4" style="max-width:80px">
+        <label class="field-label">تعليمات النظام (System Prompt)</label>
+        <textarea class="field-input" id="pEditPrompt" style="min-height:110px" placeholder="مثلاً: أنت خبير SEO، جاوب دائماً بخطوات عملية مرقمة، ركّز على الكلمات المفتاحية والنية من البحث..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="modal-save" style="margin-top:0" onclick="savePersonaFromEditor()">✓ حفظ الشخصية</button>
+          <button class="modal-save" style="margin-top:0;background:transparent;border:1px solid var(--b1);color:var(--tg)" onclick="closePersonaEditor()">إلغاء</button>
+        </div>
+      </div>
+
+      <button class="modal-save" style="margin-top:14px;background:transparent;border:1px solid var(--bg);color:var(--gold)" onclick="openPersonaEditor(null)">＋ شخصية جديدة</button>
+    </div>
+
+    <!-- PREFERENCES -->
+    <div class="set-pane" id="pane-prefs">
+      <label class="field-label">لغة الواجهة</label>
+      <select class="field-input" id="setPageLang" onchange="savePagePrefs()">
+        <option value="ary">الدارجة المغربية</option>
+        <option value="ar">العربية الفصحى</option>
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="de">Deutsch</option>
+        <option value="it">Italiano</option>
+        <option value="pt">Português</option>
+        <option value="ru">Русский</option>
+        <option value="zh">中文</option>
+        <option value="tr">Türkçe</option>
+        <option value="hi">हिन्दी</option>
+      </select>
+      <label class="field-label">نموذج Zunexa</label>
+      <select class="field-input" id="setModelSel2" onchange="setModelUI(this.value)">
+        <option value="lite">Zunexa Lite · محلي فقط</option>
+        <option value="pro">Zunexa Pro · محلي + Zunexa Brain</option>
+        <option value="max">Zunexa Max · أقصى سياق</option>
+      </select>
+      <label class="field-label">مستوى الجهد</label>
+      <select class="field-input" id="setEffortSel2" onchange="setEffortUI(this.value)">
+        <option value="quick">⚡ سريع</option>
+        <option value="balanced">⚖ متوازن</option>
+        <option value="deep">🔍 عميق</option>
+        <option value="max">🚀 أقصى</option>
+      </select>
+      <label class="field-label">خط المحادثة</label>
+      <select class="field-input" id="setFontSel" onchange="setChatFont(this.value)">
+        <option value="rajdhani">Rajdhani (افتراضي)</option>
+        <option value="system">خط النظام</option>
+        <option value="mono">Monospace</option>
+      </select>
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">تقليل الحركة</div><div class="set-row-desc">إيقاف/تقليل الأنيميشن أثناء ظهور الردود والواجهة.</div></div>
+        <label class="switch"><input type="checkbox" id="setReduceMotion" onchange="setReduceMotion(this.checked)"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <!-- VOICE -->
+    <div class="set-pane" id="pane-voice">
+      <label class="field-label">الصوت</label>
+      <select class="field-input" id="setVoiceLang" onchange="saveVoicePrefs()">
+        <option value="ar-MA">العربية (المغرب)</option>
+        <option value="ar-SA">العربية (فصحى)</option>
+        <option value="fr-FR">Français</option>
+        <option value="en-US">English</option>
+      </select>
+      <input type="hidden" id="setVoiceStyle" value="normal">
+      <input type="hidden" id="setVoiceSpeed" value="1">
+      <p style="font-size:11px;color:var(--tg);line-height:1.6">تُستعمل عبر Web Speech API المدمجة فالمتصفح، بدون أي مفتاح API.</p>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="set-pane" id="pane-notif">
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">إشعار عند اكتمال الرد</div><div class="set-row-desc">إشعار من المتصفح عند ما يخلص Zunexa من رد طويل — مفيد إذا بدلت التبويب فالمتصفح.</div></div>
+        <label class="switch"><input type="checkbox" id="setNotifDone" onchange="setNotifPref(this.checked)"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <!-- MEMORY -->
+    <div class="set-pane" id="pane-memory">
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">تعلّم من المحادثات</div><div class="set-row-desc">يخلي Zunexa يسجل الأسئلة الجديدة اللي ما عندوش جواب عليها ويقوّي قاعدة المعرفة تلقائياً (Supabase ai_learning / ai_knowledge).</div></div>
+        <label class="switch"><input type="checkbox" id="setLearnToggle" checked onchange="setLearnPref(this.checked)"><span class="slider"></span></label>
+      </div>
+      <button class="modal-save" style="margin-top:14px;background:transparent;border:1px solid var(--red);color:var(--red)" onclick="clearAll()">🗑 مسح كل السجل والذاكرة المحلية</button>
+    </div>
+
+    <!-- TOOLS -->
+    <div class="set-pane" id="pane-tools">
+      <div class="set-row">
+        <div class="set-row-txt"><div class="set-row-title">الأدوات الخارجية</div><div class="set-row-desc">تفعيل الأوامر السريعة /طقس /خريطة /جيت /اخبار /صورة والاتصال بـ APIs مجانية خارجية بدون مفتاح.</div></div>
+        <label class="switch"><input type="checkbox" id="setToolsToggle" checked onchange="setToolsPref(this.checked)"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <!-- REFERRAL / VIRAL LOOP -->
+    <div class="set-pane" id="pane-referral">
+      <div id="refLoggedOut" style="display:none;text-align:center;padding:22px 10px">
+        <p style="font-size:12.5px;color:var(--tg);line-height:1.8;margin-bottom:12px">خاصك تدخل لحسابك باش تحصل على رابط الإحالة ديالك وتبدا تربح رصيد إضافي.</p>
+        <button class="modal-save" onclick="window.location.href='index.html'">تسجيل الدخول</button>
+      </div>
+      <div id="refLoggedIn" style="display:none">
+        <div class="ref-hero">
+          <div class="ref-hero-credits" id="refCreditsVal">—</div>
+          <div class="ref-hero-label">رصيد إحالة مكتسب</div>
+          <p class="ref-hero-sub">عاود ادعُ أصدقاءك للتسجيل عبر الرابط الخاص ديالك، وربح رصيد إضافي (Free Credits) مع كل صديق يسجل ويفعّل حسابه.</p>
+        </div>
+
+        <label class="field-label">الرابط الخاص ديالك</label>
+        <div class="ref-link-row">
+          <input class="field-input" type="text" id="refLinkInput" readonly>
+          <button class="mini-ghost-btn" id="refCopyBtn" onclick="copyReferralLink()">📋 نسخ</button>
+        </div>
+        <div class="ref-share-row">
+          <button class="mini-ghost-btn" onclick="shareReferral('whatsapp')">🟢 واتساب</button>
+          <button class="mini-ghost-btn" onclick="shareReferral('x')">✕ X</button>
+          <button class="mini-ghost-btn" onclick="shareReferral('telegram')">✈ تيليغرام</button>
+          <button class="mini-ghost-btn" onclick="shareReferral('native')">↗ مشاركة</button>
+        </div>
+
+        <div class="ref-stats">
+          <div class="ref-stat"><b id="refCountVal">0</b><span>أصدقاء انضافو</span></div>
+          <div class="ref-stat"><b id="refPendingVal">0</b><span>فالانتظار</span></div>
+        </div>
+
+        <label class="field-label" style="margin-top:6px">عندك كود إحالة من صديق؟</label>
+        <div class="ref-link-row">
+          <input class="field-input" type="text" id="refRedeemInput" placeholder="مثلاً: ZX-AB12CD" style="direction:ltr;text-align:left">
+          <button class="mini-ghost-btn" id="refRedeemBtn" onclick="redeemReferralCode()">تفعيل</button>
+        </div>
+        <div class="billing-status-msg" id="refRedeemStatus"></div>
+      </div>
+    </div>
+
+    <!-- BILLING (كان Modal منفصل billingModal، دمجناه هنا كتبويب) -->
+    <div class="set-pane" id="pane-billing">
+      <p style="text-align:center;color:var(--tg);margin:-6px 0 20px" id="billingSubtitle">اختار الخطة اللي كتناسبك</p>
+
+      <div class="billing-toggle">
+        <button id="toggleMonthly" class="on">شهري</button>
+        <button id="toggleYearly">سنوي (وفر 20%)</button>
+      </div>
+
+      <div class="billing-section-title">الأفراد (Individual)</div>
+      <div class="plans-grid" id="individualPlans"></div>
+
+      <div class="billing-section-title">الفرق والشركات (Team &amp; Enterprise) — 5 إلى 150 مستخدم</div>
+      <div class="plans-grid" id="teamPlans"></div>
+
+      <div class="billing-section-title">عندك كود تفعيل؟ (Redeem Code)</div>
+      <div class="redeem-box">
+        <input type="text" class="field-input" id="redeemInput" placeholder="مثال: ZUNEXA-PRO-XYZ123" style="margin-bottom:0"/>
+        <button class="mini-ghost-btn" style="flex:none;background:var(--gold);color:#fff;border-color:var(--gold)" id="btnRedeem">تفعيل</button>
+      </div>
+      <div class="billing-status-msg" id="redeemStatus"></div>
+
+      <div class="billing-section-title">ما لقيتيش الخطة اللي بغيتي؟ اطلب واحدة</div>
+      <div class="billing-form-grid">
+        <div class="billing-field"><label class="field-label">الاسم الكامل</label><input type="text" class="field-input" id="reqName"/></div>
+        <div class="billing-field"><label class="field-label">الإيميل</label><input type="email" class="field-input" id="reqEmail"/></div>
+        <div class="billing-field"><label class="field-label">رقم الهاتف (اختياري)</label><input type="tel" class="field-input" id="reqPhone"/></div>
+        <div class="billing-field">
+          <label class="field-label">الخطة المطلوبة</label>
+          <select class="field-input" id="reqPlan">
+            <option value="pro">Pro</option>
+            <option value="max">Max</option>
+            <option value="standard">Standard (فريق)</option>
+            <option value="premium">Premium (فريق)</option>
+          </select>
+        </div>
+      </div>
+      <label class="field-label">رسالة إضافية (اختياري)</label>
+      <textarea class="field-input" id="reqMessage" rows="3"></textarea>
+      <button class="modal-save" id="btnRequestPlan">إرسال الطلب</button>
+      <div class="billing-status-msg" id="requestStatus"></div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="set-pane" id="pane-account">
+      <label class="field-label">الصورة الشخصية</label>
+      <div class="set-avatar-row">
+        <div class="set-avatar-preview" id="setAvatarPreview">Z</div>
+        <div class="set-avatar-btns">
+          <button class="set-avatar-upload" onclick="document.getElementById('avatarFileInput').click()">📷 رفع صورة</button>
+          <button class="set-avatar-remove" onclick="removeAvatar()">🗑 إزالة الصورة</button>
+        </div>
+      </div>
+      <input type="file" id="avatarFileInput" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none" onchange="onAvatarPicked(event)">
+      <div id="settLoggedInInfo" style="display:none">
+        <label class="field-label">الاسم</label>
+        <div class="field-input" style="opacity:.7" id="settRealName">—</div>
+        <label class="field-label">البريد الإلكتروني</label>
+        <div class="field-input" style="opacity:.7" id="settRealEmail">—</div>
+        <label class="field-label">الخطة</label>
+        <div class="field-input" style="opacity:.7" id="settRealPlan">—</div>
+        <button class="modal-save" id="logoutBtn" onclick="logoutUser()" style="margin-top:10px;background:var(--red);border-color:var(--red);color:#fff">🚪 تسجيل الخروج</button>
+      </div>
+      <div id="settGuestInfo" style="display:none">
+        <label class="field-label">اسم الضيف (محلي فقط، لا يؤثر على أي حساب)</label>
+        <input class="field-input" type="text" id="fName" placeholder="اسمك">
+        <button class="modal-save" onclick="saveSettings()">✓ حفظ</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="zxToast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   ZUNEXA — SETTINGS PAGE LOGIC
+   صفحة مستقلة (استُخرجت بالكامل من ai.html). تتواصل مع باقي
+   التطبيق حصرياً عبر localStorage (نفس المفاتيح بالضبط) و
+   Supabase (نفس الجدول profiles.app_settings)، بحيث أي تغيير
+   هنا ينعكس تلقائياً فـ ai.html عند رجوع المستخدم لها (وعكس ذلك:
+   loadAllPrefsIntoUI هنا كتقرا كل الإعدادات التي كتبتها ai.html).
+════════════════════════════════════════════════════════════ */
+
+/* ── Supabase client (نفس المشروع بالضبط) ── */
+const ZX_SUPABASE_URL      = 'https://xrldhfsytysznyyhwjlr.supabase.co';
+const ZX_SUPABASE_ANON_KEY = 'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F';
+const _SB = supabase.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY);
+const ZX_BUCKET = 'zunexa-uploads';
+const ZX_DEFAULT_AVATAR = 'icon-512-maskable.png';
+let zxAvatarUrl = localStorage.getItem('zx_avatar_url') || '';
+
+/* ── رجوع للتطبيق الرئيسي ── */
+function goBackToApp() {
+  window.location.href = 'ai.html';
+}
+
+/* ── Toast (نفس منطق ai.html) ── */
+let _toastTimer = null;
+function toast(msg) {
+  const el = document.getElementById('zxToast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── Device id (لتتبّع الضيوف، نفس منطق ai.html) ── */
+function getDeviceId() {
+  let id = localStorage.getItem('zx_device_id');
+  if (!id) {
+    id = 'dev_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem('zx_device_id', id);
+  }
+  return id;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SETTINGS — تبويبات
+════════════════════════════════════════════════════════════ */
+function setSTab(name) {
+  document.querySelectorAll('.set-tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.set-pane').forEach(p => p.classList.remove('on'));
+  document.getElementById('tab-' + name).classList.add('on');
+  document.getElementById('pane-' + name).classList.add('on');
+  if (name === 'personas') renderPersonaList();
+  if (name === 'referral') loadReferralPanel();
+  if (name === 'billing') renderPlans();
+}
+
+async function saveProfileSettings() {
+  const full = document.getElementById('setFullName').value.trim();
+  const call = document.getElementById('setCallName').value.trim();
+  const work = document.getElementById('setWork').value.trim();
+  const inst = document.getElementById('setInstructions').value.trim();
+  localStorage.setItem('zx_profile', JSON.stringify({ full, call, work, inst }));
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (session) {
+      await _SB.from('profiles').update({
+        full_name: full, call_name: call, work_desc: work, instructions: inst
+      }).eq('id', session.user.id);
+    }
+    toast('✓ تم حفظ الملف الشخصي');
+  } catch (e) { toast('⚠ تعذّر الحفظ في الحساب — تم الحفظ محلياً فقط'); }
+}
+
+function saveSettings() {
+  // ضيف فقط، اسم عرض تجميلي محلي. لا يكتب أبداً id أو plan —
+  // هاذوك ما كيجيوش إلا من جلسة Supabase حقيقية.
+  const name = document.getElementById('fName').value.trim();
+  if (name) {
+    localStorage.setItem('zx_guest_name', name);
+  }
+  toast('✓ تم الحفظ');
+}
+
+/* ── Logout — نفس منطق ai.html بالضبط ── */
+async function logoutUser() {
+  const btn = document.getElementById('logoutBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '... جارٍ تسجيل الخروج'; }
+  try {
+    await _SB.auth.signOut();
+  } catch (e) {
+    console.warn('logoutUser: signOut failed (best-effort, continuing)', e);
+  }
+  try {
+    localStorage.removeItem('sb-xrldhfsytysznyyhwjlr-auth-token');
+  } catch (e) {}
+  window.location.replace('index.html');
+}
+
+/* ════════════════════════════════════════════════════════════
+   PERSONAS
+════════════════════════════════════════════════════════════ */
+const ZX_BUILTIN_PERSONAS = [
+  { id: '_default', builtin: true, icon: '✦', name: 'Zunexa (افتراضي)', desc: 'المساعد العام لـ Zunexa', prompt: '' }
+];
+
+function loadPersonas() {
+  try {
+    const custom = JSON.parse(localStorage.getItem('zx_personas') || '[]');
+    return [...ZX_BUILTIN_PERSONAS, ...custom];
+  } catch (e) { return ZX_BUILTIN_PERSONAS; }
+}
+function saveCustomPersonas(list) {
+  const custom = list.filter(p => !p.builtin);
+  localStorage.setItem('zx_personas', JSON.stringify(custom));
+}
+function getActivePersonaId() { return localStorage.getItem('zx_active_persona') || '_default'; }
+
+function renderPersonaList() {
+  const wrap = document.getElementById('personaList');
+  if (!wrap) return;
+  const activeId = getActivePersonaId();
+  const list = loadPersonas();
+  wrap.innerHTML = list.map(p => `
+    <div class="persona-card ${p.id === activeId ? 'on' : ''}" onclick="activatePersona('${p.id}')">
+      <div class="persona-icon">${p.icon || '🤖'}</div>
+      <div class="persona-info">
+        <div class="persona-name">${esc(p.name)}${p.id === activeId ? ' <span class="persona-badge">· نشطة</span>' : ''}</div>
+        <div class="persona-desc">${esc(p.desc || 'بدون وصف')}</div>
+      </div>
+      <div class="persona-actions" onclick="event.stopPropagation()">
+        ${!p.builtin ? `<button class="persona-act-btn" onclick="openPersonaEditor('${p.id}')" title="تعديل">✎</button>
+        <button class="persona-act-btn del" onclick="deletePersona('${p.id}')" title="حذف">🗑</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function activatePersona(id) {
+  localStorage.setItem('zx_active_persona', id);
+  renderPersonaList();
+  const p = loadPersonas().find(x => x.id === id);
+  toast('✓ الشخصية النشطة: ' + (p ? p.name : 'Zunexa'));
+}
+
+let _personaEditingId = null;
+function openPersonaEditor(id) {
+  _personaEditingId = id;
+  const editor = document.getElementById('personaEditor');
+  editor.style.display = 'block';
+  if (id) {
+    const p = loadPersonas().find(x => x.id === id);
+    document.getElementById('pEditName').value = p ? p.name : '';
+    document.getElementById('pEditDesc').value = p ? p.desc : '';
+    document.getElementById('pEditIcon').value = p ? p.icon : '';
+    document.getElementById('pEditPrompt').value = p ? p.prompt : '';
+  } else {
+    document.getElementById('pEditName').value = '';
+    document.getElementById('pEditDesc').value = '';
+    document.getElementById('pEditIcon').value = '';
+    document.getElementById('pEditPrompt').value = '';
+  }
+  editor.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function closePersonaEditor() {
+  _personaEditingId = null;
+  document.getElementById('personaEditor').style.display = 'none';
+}
+
+function savePersonaFromEditor() {
+  const name = document.getElementById('pEditName').value.trim();
+  const desc = document.getElementById('pEditDesc').value.trim();
+  const icon = document.getElementById('pEditIcon').value.trim();
+  const prompt = document.getElementById('pEditPrompt').value.trim();
+  if (!name) { toast('⚠ لازم اسم للشخصية'); return; }
+  if (!prompt) { toast('⚠ لازم تعليمات نظام للشخصية'); return; }
+
+  const list = loadPersonas();
+  if (_personaEditingId) {
+    const idx = list.findIndex(p => p.id === _personaEditingId);
+    if (idx !== -1) list[idx] = { ...list[idx], name, desc, icon, prompt };
+  } else {
+    list.push({ id: 'p_' + Date.now().toString(36), builtin: false, name, desc, icon, prompt });
+  }
+  saveCustomPersonas(list);
+  renderPersonaList();
+  closePersonaEditor();
+  toast('✓ تم حفظ الشخصية');
+}
+
+function deletePersona(id) {
+  let list = loadPersonas().filter(p => p.id !== id);
+  saveCustomPersonas(list);
+  if (getActivePersonaId() === id) {
+    localStorage.setItem('zx_active_persona', '_default');
+  }
+  renderPersonaList();
+  toast('🗑 تم حذف الشخصية');
+}
+
+/* ════════════════════════════════════════════════════════════
+   BILLING
+════════════════════════════════════════════════════════════ */
+const PLANS_INDIVIDUAL = [
+  { id: 'free', name: 'Free', monthly: 0, yearly: 0,
+    features: ['استعمال محدود يومياً', 'نموذج أساسي واحد', 'دعم عبر المجتمع'] },
+  { id: 'pro', name: 'Pro', monthly: 15, yearly: 12, featured: true, tag: 'الأكثر طلباً',
+    features: ['استعمال موسّع', 'كل نماذج Zunexa', 'أولوية فالاستجابة', 'دعم عبر الإيميل'] },
+  { id: 'max', name: 'Max', monthly: 70, yearly: 56,
+    features: ['استعمال بلا حدود تقريباً', 'أعلى جودة نماذج', 'أولوية قصوى', 'دعم مخصص'] },
+];
+const PLANS_TEAM = [
+  { id: 'standard', name: 'Standard', monthly: 15, yearly: 12,
+    features: ['من 5 إلى 150 مستخدم', 'لوحة تحكم للفريق', 'دعم عبر الإيميل'] },
+  { id: 'premium', name: 'Premium', monthly: 70, yearly: 56, featured: true, tag: 'مُوصى بها',
+    features: ['من 5 إلى 150 مستخدم', 'كل الميزات ديال Max لكل عضو', 'مدير حساب مخصص', 'SLA'] },
+];
+
+let billingCycle = 'monthly';
+
+function renderPlans() {
+  const indivEl = document.getElementById('individualPlans');
+  const teamEl  = document.getElementById('teamPlans');
+  if (!indivEl || !teamEl) return;
+  indivEl.innerHTML = '';
+  teamEl.innerHTML  = '';
+
+  const renderCard = (p) => {
+    const price = billingCycle === 'monthly' ? p.monthly : p.yearly;
+    const card = document.createElement('div');
+    card.className = 'plan-card' + (p.featured ? ' featured' : '');
+    card.innerHTML = `
+      ${p.tag ? `<span class="tag">${p.tag}</span>` : ''}
+      <h3>${p.name}</h3>
+      <div class="plan-price">${price === 0 ? 'مجاني' : `$${price}<small>/شهر</small>`}</div>
+      <ul>${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
+      <button class="btn ${p.id !== 'free' ? 'btn-gold' : ''}" data-plan="${p.id}">
+        ${p.id === 'free' ? 'الخطة الحالية' : 'اطلب هاد الخطة'}
+      </button>
+    `;
+    card.querySelector('button').onclick = () => {
+      if (p.id === 'free') return;
+      document.getElementById('reqPlan').value = p.id;
+      document.getElementById('reqPlan').scrollIntoView({ behavior: 'smooth' });
+    };
+    return card;
+  };
+
+  PLANS_INDIVIDUAL.forEach(p => indivEl.appendChild(renderCard(p)));
+  PLANS_TEAM.forEach(p => teamEl.appendChild(renderCard(p)));
+}
+
+document.getElementById('toggleMonthly').onclick = () => {
+  billingCycle = 'monthly';
+  document.getElementById('toggleMonthly').classList.add('on');
+  document.getElementById('toggleYearly').classList.remove('on');
+  renderPlans();
+};
+document.getElementById('toggleYearly').onclick = () => {
+  billingCycle = 'yearly';
+  document.getElementById('toggleYearly').classList.add('on');
+  document.getElementById('toggleMonthly').classList.remove('on');
+  renderPlans();
+};
+
+/* ---------- Redeem Code ---------- */
+document.getElementById('btnRedeem').onclick = async () => {
+  const code = document.getElementById('redeemInput').value.trim();
+  const statusEl = document.getElementById('redeemStatus');
+  statusEl.classList.remove('show', 'ok', 'err');
+
+  if (!code) {
+    statusEl.textContent = 'دخل الكود أولاً.';
+    statusEl.classList.add('err', 'show');
+    return;
+  }
+
+  const { data: { session } } = await _SB.auth.getSession();
+  if (!session) {
+    statusEl.textContent = 'خاصك تدخل لحسابك أولاً.';
+    statusEl.classList.add('err', 'show');
+    return;
+  }
+
+  const btn = document.getElementById('btnRedeem');
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.innerHTML = '<span class="billing-spinner"></span>';
+
+  try {
+    // الدالة الآمنة redeem_plan_code (security definer) فـ Postgres —
+    // كتتحقق من auth.uid() بنفسها فالسيرفر، مستحيل تخدم بحساب مزور.
+    const { data, error } = await _SB.rpc('redeem_plan_code', { code_input: code });
+    if (error) throw error;
+
+    if (data.success) {
+      statusEl.textContent = `تم تفعيل خطة ${data.plan} بنجاح! صالحة حتى ${new Date(data.expires_at).toLocaleDateString('ar')}.`;
+      statusEl.classList.add('ok', 'show');
+      setTimeout(() => { setSTab('account'); }, 2000);
+    } else {
+      const errorMap = {
+        code_not_found: 'الكود غير صحيح.',
+        code_inactive: 'هاد الكود ماعادش صالح.',
+        code_expired: 'هاد الكود منتهي الصلاحية.',
+        code_exhausted: 'هاد الكود تم استعمالو بزاف من مرة.',
+        not_authenticated: 'خاصك تدخل لحسابك أولاً.',
+      };
+      statusEl.textContent = errorMap[data.error] || 'وقع خطأ، حاول مرة أخرى.';
+      statusEl.classList.add('err', 'show');
+    }
+  } catch (err) {
+    statusEl.textContent = 'وقع خطأ فالسيرفر: ' + err.message;
+    statusEl.classList.add('err', 'show');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+};
+
+/* ---------- Request Plan ---------- */
+document.getElementById('btnRequestPlan').onclick = async () => {
+  const name    = document.getElementById('reqName').value.trim();
+  const email   = document.getElementById('reqEmail').value.trim();
+  const phone   = document.getElementById('reqPhone').value.trim();
+  const plan    = document.getElementById('reqPlan').value;
+  const message = document.getElementById('reqMessage').value.trim();
+  const statusEl = document.getElementById('requestStatus');
+  statusEl.classList.remove('show', 'ok', 'err');
+
+  if (!name || !email) {
+    statusEl.textContent = 'الاسم والإيميل خاصهم يكونو معمرين.';
+    statusEl.classList.add('err', 'show');
+    return;
+  }
+
+  const btn = document.getElementById('btnRequestPlan');
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.innerHTML = '<span class="billing-spinner"></span>';
+
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    const { error } = await _SB.from('request_plan').insert({
+      user_id: session ? session.user.id : null,
+      name, email,
+      phone: phone || null,
+      requested_plan: plan,
+      message: message || null,
+    });
+    if (error) throw error;
+
+    statusEl.textContent = 'تم إرسال طلبك بنجاح! غادي نتواصلو معاك عبر الإيميل قريباً.';
+    statusEl.classList.add('ok', 'show');
+    document.getElementById('reqName').value = '';
+    document.getElementById('reqEmail').value = '';
+    document.getElementById('reqPhone').value = '';
+    document.getElementById('reqMessage').value = '';
+  } catch (err) {
+    statusEl.textContent = 'وقع خطأ: ' + err.message;
+    statusEl.classList.add('err', 'show');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+};
+
+/* ════════════════════════════════════════════════════════════
+   REFERRAL / VIRAL LOOP
+════════════════════════════════════════════════════════════ */
+let _refCodeCache = null;
+
+async function loadReferralPanel() {
+  const { data: { session } } = await _SB.auth.getSession();
+  const loggedOutBox = document.getElementById('refLoggedOut');
+  const loggedInBox  = document.getElementById('refLoggedIn');
+
+  if (!session) {
+    loggedOutBox.style.display = 'block';
+    loggedInBox.style.display  = 'none';
+    return;
+  }
+  loggedOutBox.style.display = 'none';
+  loggedInBox.style.display  = 'block';
+
+  document.getElementById('refCreditsVal').textContent = '…';
+  document.getElementById('refLinkInput').value = 'جارٍ التحميل…';
+
+  try {
+    if (!_refCodeCache) {
+      const { data: code, error: codeErr } = await _SB.rpc('get_or_create_referral_code');
+      if (codeErr) throw codeErr;
+      _refCodeCache = code;
+    }
+    const link = `${window.location.origin}/index.html?ref=${encodeURIComponent(_refCodeCache)}`;
+    document.getElementById('refLinkInput').value = link;
+
+    const [{ data: profRow }, { data: refRows }] = await Promise.all([
+      _SB.from('profiles').select('referral_credits').eq('id', session.user.id).maybeSingle(),
+      _SB.from('referrals').select('status').eq('referrer_id', session.user.id),
+    ]);
+
+    document.getElementById('refCreditsVal').textContent = (profRow && profRow.referral_credits) || 0;
+    const rows = refRows || [];
+    document.getElementById('refCountVal').textContent   = rows.filter(r => r.status === 'credited').length;
+    document.getElementById('refPendingVal').textContent = rows.filter(r => r.status === 'pending').length;
+  } catch (e) {
+    document.getElementById('refLinkInput').value = '';
+    toast('⚠ تعذّر تحميل بيانات الإحالة: ' + e.message);
+  }
+}
+
+function copyReferralLink() {
+  const input = document.getElementById('refLinkInput');
+  if (!input.value) return;
+  input.select();
+  navigator.clipboard.writeText(input.value).then(() => {
+    const btn = document.getElementById('refCopyBtn');
+    const original = btn.innerHTML;
+    btn.classList.add('copied');
+    btn.innerHTML = '✓ تم النسخ';
+    setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1800);
+  }).catch(() => toast('⚠ تعذّر النسخ'));
+}
+
+function shareReferral(channel) {
+  const link = document.getElementById('refLinkInput').value;
+  if (!link) return;
+  const text = 'جرّب Zunexa AI — مساعد ذكاء اصطناعي مغربي، وسجّل عبر الرابط ديالي باش نربحو رصيد إضافي بجوج:';
+  const urls = {
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + link)}`,
+    x:        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`,
+    telegram: `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`,
+  };
+  if (channel === 'native' && navigator.share) {
+    navigator.share({ title: 'Zunexa AI', text, url: link }).catch(() => {});
+    return;
+  }
+  if (urls[channel]) window.open(urls[channel], '_blank', 'noopener');
+  else copyReferralLink();
+}
+
+async function redeemReferralCode() {
+  const codeInput = document.getElementById('refRedeemInput');
+  const statusEl  = document.getElementById('refRedeemStatus');
+  const btn       = document.getElementById('refRedeemBtn');
+  const code = codeInput.value.trim();
+  statusEl.classList.remove('show', 'ok', 'err');
+
+  if (!code) {
+    statusEl.textContent = 'دخل كود الإحالة أولاً.';
+    statusEl.classList.add('err', 'show');
+    return;
+  }
+
+  const { data: { session } } = await _SB.auth.getSession();
+  if (!session) {
+    statusEl.textContent = 'خاصك تدخل لحسابك أولاً.';
+    statusEl.classList.add('err', 'show');
+    return;
+  }
+
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.textContent = '…';
+
+  try {
+    const { data, error } = await _SB.rpc('redeem_referral_code', { code_input: code });
+    if (error) throw error;
+
+    if (data.success) {
+      statusEl.textContent = `✓ تم التفعيل! ربحتي ${data.credits_awarded || ''} رصيد إضافي.`;
+      statusEl.classList.add('ok', 'show');
+      codeInput.value = '';
+      loadReferralPanel();
+    } else {
+      const errorMap = {
+        code_not_found: 'الكود غير صحيح.',
+        self_referral: 'ما تقدرش تستعمل الكود ديالك نفسو.',
+        already_redeemed: 'سبق لك واستعملتي كود إحالة من قبل.',
+        not_authenticated: 'خاصك تدخل لحسابك أولاً.',
+      };
+      statusEl.textContent = errorMap[data.error] || 'وقع خطأ، حاول مرة أخرى.';
+      statusEl.classList.add('err', 'show');
+    }
+  } catch (err) {
+    statusEl.textContent = 'وقع خطأ فالسيرفر: ' + err.message;
+    statusEl.classList.add('err', 'show');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   PREFERENCES / VOICE / NOTIFICATIONS / MEMORY / TOOLS
+════════════════════════════════════════════════════════════ */
+function loadProfileIntoUI() {
+  try {
+    const p = JSON.parse(localStorage.getItem('zx_profile') || '{}');
+    if (document.getElementById('setFullName')) document.getElementById('setFullName').value = p.full || '';
+    if (document.getElementById('setCallName')) document.getElementById('setCallName').value = p.call || '';
+    if (document.getElementById('setWork')) document.getElementById('setWork').value = p.work || '';
+    if (document.getElementById('setInstructions')) document.getElementById('setInstructions').value = p.inst || '';
+  } catch(e){}
+}
+
+function savePagePrefs() {
+  const el = document.getElementById('setPageLang');
+  if (!el) return;
+  const lang = el.value;
+  localStorage.setItem('zx_page_lang', lang);
+  schedulePushAppSettings();
+}
+
+function setChatFont(v) {
+  localStorage.setItem('zx_font', v);
+  schedulePushAppSettings();
+}
+
+function setReduceMotion(on) {
+  localStorage.setItem('zx_reduce_motion', on ? '1' : '0');
+  document.documentElement.classList.toggle('zx-reduce-motion', on);
+  schedulePushAppSettings();
+}
+
+function saveVoicePrefs() {
+  const langEl  = document.getElementById('setVoiceLang');
+  const styleEl = document.getElementById('setVoiceStyle');
+  const speedEl = document.getElementById('setVoiceSpeed');
+  if (!langEl || !styleEl || !speedEl) return;
+  localStorage.setItem('zx_voice', JSON.stringify({ lang: langEl.value, style: styleEl.value, speed: speedEl.value }));
+  schedulePushAppSettings();
+}
+
+function setNotifPref(on) {
+  localStorage.setItem('zx_notif_done', on ? '1' : '0');
+  if (on && 'Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+  schedulePushAppSettings();
+}
+
+function setLearnPref(on) { localStorage.setItem('zx_learn_enabled', on ? '1' : '0'); schedulePushAppSettings(); }
+function isLearnEnabled() { return localStorage.getItem('zx_learn_enabled') !== '0'; }
+
+function setToolsPref(on) { localStorage.setItem('zx_tools_enabled', on ? '1' : '0'); schedulePushAppSettings(); }
+function isToolsEnabled() { return localStorage.getItem('zx_tools_enabled') !== '0'; }
+
+/* ── نموذج Zunexa / مستوى الجهد (فقط كتابة الحالة، ai.html هو لي
+   كيدير التطبيق الفعلي عند إعادة تحميلها) ── */
+let zxModel  = localStorage.getItem('zx_model')  || 'max';
+let zxEffort = localStorage.getItem('zx_effort') || 'max';
+function setModelUI(v) { zxModel = v; localStorage.setItem('zx_model', v); schedulePushAppSettings(); }
+function setEffortUI(v) { zxEffort = v; localStorage.setItem('zx_effort', v); schedulePushAppSettings(); }
+
+/* مسح كامل السجل والذاكرة المحلية (نفس مفاتيح ai.html) */
+function clearAll() {
+  if (!confirm('متأكد؟ غادي يتمسح كل السجل والذاكرة المحلية ديال هاد المتصفح.')) return;
+  const keysToKeep = ['zunexa-theme', 'sb-xrldhfsytysznyyhwjlr-auth-token'];
+  Object.keys(localStorage).forEach(k => {
+    if (!keysToKeep.includes(k)) localStorage.removeItem(k);
+  });
+  toast('🗑 تم مسح السجل والذاكرة المحلية');
+  setTimeout(() => { window.location.href = 'ai.html'; }, 1200);
+}
+
+/* ════════════════════════════════════════════════════════════
+   CROSS-DEVICE SETTINGS SYNC — نفس منطق ai.html بالضبط، بحيث
+   الإعدادات المحفوظة هنا تنعكس على أي جهاز آخر دخل بنفس الحساب.
+════════════════════════════════════════════════════════════ */
+function collectAppSettingsSnapshot() {
+  return {
+    font: localStorage.getItem('zx_font') || 'rajdhani',
+    reduce_motion: localStorage.getItem('zx_reduce_motion') === '1',
+    notif_done: localStorage.getItem('zx_notif_done') === '1',
+    learn_enabled: isLearnEnabled(),
+    tools_enabled: isToolsEnabled(),
+    page_lang: localStorage.getItem('zx_page_lang') || 'ar',
+    model: zxModel,
+    effort: zxEffort,
+    voice: JSON.parse(localStorage.getItem('zx_voice') || '{}'),
+  };
+}
+
+function applyRemoteAppSettings(s) {
+  if (!s || typeof s !== 'object') return;
+  if (s.font) localStorage.setItem('zx_font', s.font);
+  if (typeof s.reduce_motion === 'boolean') localStorage.setItem('zx_reduce_motion', s.reduce_motion ? '1' : '0');
+  if (typeof s.notif_done === 'boolean')    localStorage.setItem('zx_notif_done', s.notif_done ? '1' : '0');
+  if (typeof s.learn_enabled === 'boolean') localStorage.setItem('zx_learn_enabled', s.learn_enabled ? '1' : '0');
+  if (typeof s.tools_enabled === 'boolean') localStorage.setItem('zx_tools_enabled', s.tools_enabled ? '1' : '0');
+  if (s.page_lang) localStorage.setItem('zx_page_lang', s.page_lang);
+  if (s.model)  { zxModel = s.model; localStorage.setItem('zx_model', s.model); }
+  if (s.effort) { zxEffort = s.effort; localStorage.setItem('zx_effort', s.effort); }
+  if (s.voice && typeof s.voice === 'object') localStorage.setItem('zx_voice', JSON.stringify(s.voice));
+}
+
+let _pushSettingsTimer = null;
+function schedulePushAppSettings() {
+  clearTimeout(_pushSettingsTimer);
+  _pushSettingsTimer = setTimeout(pushAppSettings, 800);
+}
+async function pushAppSettings() {
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) return; // ماكاينش شي حاجة نزامنو بالنسبة للضيوف
+    await _SB.from('profiles')
+      .update({ app_settings: collectAppSettingsSnapshot() })
+      .eq('id', session.user.id);
+  } catch (e) {
+    console.warn('pushAppSettings: skipped (best-effort — column may not be set up yet)', e);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   ACCOUNT / AVATAR
+════════════════════════════════════════════════════════════ */
+function renderAvatarInto(el, initialFallbackLetter) {
+  if (!el) return;
+  const src = zxAvatarUrl || ZX_DEFAULT_AVATAR;
+  el.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = 'avatar';
+  img.onerror = () => { el.innerHTML = ''; el.textContent = initialFallbackLetter || 'Z'; };
+  el.appendChild(img);
+}
+
+function renderAvatarSettingsPreview() {
+  const prev = document.getElementById('setAvatarPreview');
+  if (prev) renderAvatarInto(prev, (document.getElementById('settRealName')?.textContent || 'Z')[0]);
+}
+
+async function onAvatarPicked(ev) {
+  const file = ev.target.files && ev.target.files[0];
+  ev.target.value = '';
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { toast('⚠ اختر صورة صالحة (PNG/JPG/WEBP/GIF)'); return; }
+  if (file.size > 5 * 1024 * 1024) { toast('⚠ الحجم الأقصى 5MB'); return; }
+
+  toast('⏳ جاري رفع الصورة...');
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    const ownerId = session ? session.user.id : getDeviceId();
+    const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+    const path = `avatars/${ownerId}/${Date.now()}.${ext}`;
+
+    const { error: upErr } = await _SB.storage.from(ZX_BUCKET).upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) throw upErr;
+
+    const { data: pub } = _SB.storage.from(ZX_BUCKET).getPublicUrl(path);
+    const url = pub.publicUrl;
+
+    zxAvatarUrl = url;
+    localStorage.setItem('zx_avatar_url', url);
+    renderAvatarSettingsPreview();
+
+    if (session) {
+      try { await _SB.from('profiles').update({ avatar_url: url }).eq('id', session.user.id); }
+      catch (e) { console.warn('avatar_url column missing? run ZUNEXA_DB_SETUP_AVATAR.sql', e); }
+    }
+    toast('✓ تم تحديث الصورة الشخصية');
+  } catch (e) {
+    console.error('avatar upload failed', e);
+    toast('⚠ تعذّر رفع الصورة — تحقق من إعدادات Supabase Storage');
+  }
+}
+
+async function removeAvatar() {
+  zxAvatarUrl = '';
+  localStorage.removeItem('zx_avatar_url');
+  renderAvatarSettingsPreview();
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (session) await _SB.from('profiles').update({ avatar_url: null }).eq('id', session.user.id);
+  } catch (e) {}
+  toast('✓ تمت إزالة الصورة الشخصية');
+}
+
+/* ════════════════════════════════════════════════════════════
+   API KEYS (مفاتيح API الاختيارية — مخزّنة محلياً فقط)
+   ملاحظة: hooks الحفظ/القراءة هاذي موجودة أصلاً فـ ai.html
+   (getApiKeys / getApiKey) لكن ما كانش عندها حقول HTML فالمودال
+   الأصلي — نفس الوضعية محفوظة هنا للتوافق التام مع باقي الكود
+   (زر /صورة_hf و DeepL كيقرا مباشرة من localStorage['zx_api_keys']
+   بغض النظر عن وجود واجهة ليها هنا أم لا).
+════════════════════════════════════════════════════════════ */
+function getApiKeys() { try { return JSON.parse(localStorage.getItem('zx_api_keys') || '{}'); } catch(e){ return {}; } }
+function getApiKey(name) { return (getApiKeys()[name] || '').trim(); }
+function loadApiKeysIntoUI() {
+  const k = getApiKeys();
+  if (document.getElementById('keyHF'))       document.getElementById('keyHF').value = k.hf || '';
+  if (document.getElementById('keyDeepL'))    document.getElementById('keyDeepL').value = k.deepl || '';
+  if (document.getElementById('keyVoiceRSS')) document.getElementById('keyVoiceRSS').value = k.voicerss || '';
+  if (document.getElementById('keyTavily'))   document.getElementById('keyTavily').value = k.tavily || '';
+  if (document.getElementById('keySerper'))   document.getElementById('keySerper').value = k.serper || '';
+}
+
+/* ════════════════════════════════════════════════════════════
+   تحميل كل التفضيلات + معلومات الحساب عند فتح الصفحة
+════════════════════════════════════════════════════════════ */
+function loadAllPrefsIntoUI() {
+  loadProfileIntoUI();
+  loadApiKeysIntoUI();
+  const font = localStorage.getItem('zx_font') || 'rajdhani';
+  const motion = localStorage.getItem('zx_reduce_motion') === '1';
+  const notif = localStorage.getItem('zx_notif_done') === '1';
+  const learn = isLearnEnabled();
+  const tools = isToolsEnabled();
+  const pageLang = localStorage.getItem('zx_page_lang') || 'ar';
+  const voice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
+
+  if (document.getElementById('setFontSel'))    document.getElementById('setFontSel').value = font;
+  if (document.getElementById('setReduceMotion')) document.getElementById('setReduceMotion').checked = motion;
+  if (document.getElementById('setNotifDone'))   document.getElementById('setNotifDone').checked = notif;
+  if (document.getElementById('setLearnToggle')) document.getElementById('setLearnToggle').checked = learn;
+  if (document.getElementById('setToolsToggle')) document.getElementById('setToolsToggle').checked = tools;
+  if (document.getElementById('setPageLang'))    document.getElementById('setPageLang').value = pageLang;
+  if (document.getElementById('setModelSel2'))    document.getElementById('setModelSel2').value = zxModel;
+  if (document.getElementById('setEffortSel2'))   document.getElementById('setEffortSel2').value = zxEffort;
+  if (document.getElementById('setVoiceLang') && voice.lang)   document.getElementById('setVoiceLang').value = voice.lang;
+  if (document.getElementById('setVoiceStyle') && voice.style) document.getElementById('setVoiceStyle').value = voice.style;
+  if (document.getElementById('setVoiceSpeed') && voice.speed) document.getElementById('setVoiceSpeed').value = voice.speed;
+
+  document.documentElement.classList.toggle('zx-reduce-motion', motion);
+}
+
+async function initSettingsPage() {
+  try {
+    let session = null;
+    try {
+      const res = await _SB.auth.getSession();
+      session = res && res.data && res.data.session;
+    } catch (e) {
+      console.warn('initSettingsPage: getSession failed (best-effort)', e);
+    }
+
+    const loggedInBox = document.getElementById('settLoggedInInfo');
+    const guestBox     = document.getElementById('settGuestInfo');
+
+    if (session) {
+      if (loggedInBox) loggedInBox.style.display = 'block';
+      if (guestBox)    guestBox.style.display    = 'none';
+
+      const nameEl  = document.getElementById('settRealName');
+      const emailEl = document.getElementById('settRealEmail');
+      const planEl  = document.getElementById('settRealPlan');
+      if (emailEl) emailEl.textContent = session.user.email || '—';
+
+      try {
+        const { data: prof } = await _SB
+          .from('profiles')
+          .select('username, first_name, email, avatar_url, plan, app_settings')
+          .eq('id', session.user.id)
+          .maybeSingle();
+        if (prof) {
+          if (nameEl) nameEl.textContent = prof.first_name || prof.username || '—';
+          if (planEl) planEl.textContent = prof.plan || 'Free';
+          if (prof.avatar_url) {
+            zxAvatarUrl = prof.avatar_url;
+            localStorage.setItem('zx_avatar_url', prof.avatar_url);
+          }
+          if (prof.app_settings && typeof prof.app_settings === 'object') {
+            try { applyRemoteAppSettings(prof.app_settings); } catch (e) { console.warn('applyRemoteAppSettings failed', e); }
+          }
+        }
+      } catch (e) {
+        console.warn('initSettingsPage: profile fetch failed (best-effort)', e);
+      }
+    } else {
+      if (loggedInBox) loggedInBox.style.display = 'none';
+      if (guestBox)    guestBox.style.display    = 'block';
+      const fNameEl = document.getElementById('fName');
+      if (fNameEl) fNameEl.value = localStorage.getItem('zx_guest_name') || '';
+    }
+
+    try { loadAllPrefsIntoUI(); } catch (e) { console.warn('initSettingsPage: loadAllPrefsIntoUI failed', e); }
+    renderAvatarSettingsPreview();
+
+    // فتح تبويب معيّن مباشرة عبر ?tab=xxx (مثلاً settings.html?tab=billing)
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    const validTabs = ['profile','personas','prefs','voice','notif','memory','tools','referral','billing','account'];
+    if (tab && validTabs.includes(tab)) setSTab(tab);
+
+  } catch (e) {
+    console.error('initSettingsPage: unexpected failure', e);
+  }
+}
+
+initSettingsPage();
+</script>
+</body>
+</html>
