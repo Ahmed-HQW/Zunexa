@@ -38,7 +38,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <!-- Syntax highlighting for code blocks in chat replies -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<!-- highlight.js atom-one-dark theme, inlined (2026-09-04): the external
+     <link> was blocked by the site's CSP (style-src only allows 'self',
+     'unsafe-inline' and fonts.googleapis.com — cdnjs.cloudflare.com isn't
+     in that list, and that's a hosting-level header this file can't
+     override). Inlining as <style> uses 'unsafe-inline' instead, so it
+     loads under the existing policy with no CSP change needed. -->
+<style>
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#282c34}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <!-- QR code reading (from uploaded/attached images) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
@@ -121,14 +129,41 @@ input[type="checkbox"], input[type="radio"] {
    fit at the smallest tier, wrapping is force-enabled as the
    final guarantee that nothing gets cut off. */
 [data-fit="row"]{ overflow: visible !important; }
-[data-fit="row"].fit-1{ gap:.85em }
-[data-fit="row"].fit-1 > *{ font-size:.92em; padding-left:.85em; padding-right:.85em }
-[data-fit="row"].fit-2{ gap:.6em }
-[data-fit="row"].fit-2 > *{ font-size:.84em; padding-left:.65em; padding-right:.65em }
-[data-fit="row"].fit-3{ gap:.4em }
-[data-fit="row"].fit-3 > *{ font-size:.76em; padding-left:.5em; padding-right:.5em }
-[data-fit="row"].fit-4{ gap:.3em }
-[data-fit="row"].fit-4 > *{ font-size:.7em; padding-left:.4em; padding-right:.4em }
+/* Descendant selectors (not just direct children) so nested controls —
+   e.g. #effortSelBtn/#tbShortcutsBtn inside a .model-sel wrapper div
+   inside .tb-right — are actually reached. !important is required
+   because several buttons (#tbShortcutsBtn, #tempChatBtn) carry an
+   inline style="padding:..." which otherwise wins over any class rule
+   regardless of specificity — that's why the previous > * version had
+   no visible effect on them. */
+[data-fit="row"].fit-1{ gap:.85em !important }
+[data-fit="row"].fit-1 button,
+[data-fit="row"].fit-1 .model-sel-btn,
+[data-fit="row"].fit-1 .mode-chip,
+[data-fit="row"].fit-1 .model-sel-item{ font-size:.92em !important; padding-left:.7em !important; padding-right:.7em !important }
+[data-fit="row"].fit-1 svg{ width:.92em !important; height:.92em !important }
+
+[data-fit="row"].fit-2{ gap:.6em !important }
+[data-fit="row"].fit-2 button,
+[data-fit="row"].fit-2 .model-sel-btn,
+[data-fit="row"].fit-2 .mode-chip,
+[data-fit="row"].fit-2 .model-sel-item{ font-size:.84em !important; padding-left:.55em !important; padding-right:.55em !important }
+[data-fit="row"].fit-2 svg{ width:.84em !important; height:.84em !important }
+
+[data-fit="row"].fit-3{ gap:.4em !important }
+[data-fit="row"].fit-3 button,
+[data-fit="row"].fit-3 .model-sel-btn,
+[data-fit="row"].fit-3 .mode-chip,
+[data-fit="row"].fit-3 .model-sel-item{ font-size:.76em !important; padding-left:.4em !important; padding-right:.4em !important }
+[data-fit="row"].fit-3 svg{ width:.76em !important; height:.76em !important }
+
+[data-fit="row"].fit-4{ gap:.3em !important }
+[data-fit="row"].fit-4 button,
+[data-fit="row"].fit-4 .model-sel-btn,
+[data-fit="row"].fit-4 .mode-chip,
+[data-fit="row"].fit-4 .model-sel-item{ font-size:.68em !important; padding-left:.3em !important; padding-right:.3em !important }
+[data-fit="row"].fit-4 svg{ width:.68em !important; height:.68em !important }
+
 [data-fit="row"].fit-wrap{ flex-wrap:wrap !important; overflow-x:visible !important }
 /* ════════════════════════════════════════════════════════
    THEME TRANSITION — smooth light↔dark (Zalij) crossfade
@@ -7941,8 +7976,32 @@ function toggleWeb() {
 (function () {
   const TIERS = ['fit-1', 'fit-2', 'fit-3', 'fit-4'];
 
+  // The row itself never self-clips (flex-shrink:0, overflow:visible) —
+  // it just pushes wider than its PARENT (.topbar / .input-zone), so
+  // comparing the row's own scrollWidth vs clientWidth is always equal
+  // and never detects the real overflow. Instead: available space =
+  // parent's inner width minus every sibling that isn't this row.
+  function availableWidth(el) {
+    const parent = el.parentElement;
+    if (!parent) return Infinity;
+    const parentStyle = getComputedStyle(parent);
+    let w = parent.clientWidth
+          - parseFloat(parentStyle.paddingLeft || 0)
+          - parseFloat(parentStyle.paddingRight || 0);
+    Array.from(parent.children).forEach(sib => {
+      if (sib === el) return;
+      const cs = getComputedStyle(sib);
+      if (cs.display === 'none' || cs.position === 'absolute' || cs.position === 'fixed') return;
+      const rect = sib.getBoundingClientRect();
+      w -= rect.width
+         + parseFloat(cs.marginLeft || 0)
+         + parseFloat(cs.marginRight || 0);
+    });
+    return Math.max(0, w - 4); // small safety margin
+  }
+
   function fits(el) {
-    return el.scrollWidth <= el.clientWidth + 1;
+    return el.scrollWidth <= availableWidth(el) + 1;
   }
 
   function fitRow(el) {
@@ -7952,12 +8011,13 @@ function toggleWeb() {
     for (const tier of TIERS) {
       el.classList.add(tier);
       if (fits(el)) return;
+      el.classList.remove(tier);
     }
 
     // Still doesn't fit even at the smallest tier — guarantee every
     // button/toggle stays fully visible by wrapping to more than one
     // row instead of clipping/scrolling any of them out of sight.
-    el.classList.add('fit-wrap');
+    el.classList.add('fit-4', 'fit-wrap');
   }
 
   function fitAllRows() {
