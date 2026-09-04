@@ -5,8 +5,10 @@ All notable changes to the Zunexa front-end are documented in this file, merged 
 
 ## [Unreleased] - 2026-09-04
 
-### Changed
-- **ai.html — welcome-screen logo**: `.wl-icon`'s `✦` glyph + spinning `.wl-ring` replaced with the real `zunexa-logo.svg` mark, inlined directly as SVG (gold gradient circle/star/"Z", same artwork as the standalone file) so it themes correctly with no extra HTTP request.
+### Added
+- **ai.html — auto-fit button rows**: `.mode-row`, `.tb-right`, `.billing-toggle`, `.set-tabs` marked `[data-fit="row"]` and driven by a new `fitButtonRows()` script (runs on load, on resize debounced 120ms, and via a `MutationObserver` when a row's contents change, e.g. the effort-selector label swapping). Guarantees every button/toggle in these rows stays fully visible — never clipped, never hidden behind a scrollbar: the row steps down through 4 real shrink tiers (`fit-1`…`fit-4`, actual font-size/padding/gap reduction, not a transform hack) until it stops overflowing; if it's still too tight at the smallest tier, wrapping is force-enabled (`fit-wrap`) as the final guarantee instead of ever clipping content.
+
+: `.wl-icon`'s `✦` glyph + spinning `.wl-ring` replaced with the real `zunexa-logo.svg` mark, inlined directly as SVG (gold gradient circle/star/"Z", same artwork as the standalone file) so it themes correctly with no extra HTTP request.
 - **ai.html — logo sizing made responsive** via `sm:`/`md:`/`lg:`-equivalent breakpoints (640 / 768 / 1024px) instead of one JS-driven size: 56px base → 66px ≥640px → 76px ≥768px → 84px ≥1024px. The old fixed 66px mobile override at the 768px breakpoint was removed since sizing is now handled by the dedicated rules.
 - **ai.html — global mobile touch layer** applied to every button/toggle on the page (`button`, `.btn`, any `*-btn`/`btn*` class, `.mode-chip`, `.model-sel-item`, `.persona-act-btn`, `.toggle`, `[role="switch"]`, `[role="button"]`, checkboxes/radios), not component-by-component:
   - `-webkit-tap-highlight-color: transparent` + disabled `-webkit-touch-callout`/`user-select` so repeated taps on phones no longer flash the gray highlight or select the label text.

@@ -109,6 +109,27 @@ input[type="checkbox"], input[type="radio"] {
     transform: scale(0.97);
   }
 }
+
+/* ════════════════════════════════════════════════════════
+   AUTO-FIT BUTTON ROWS (2026-09-04) — driven by fitButtonRows()
+   in <script> below. Any row marked [data-fit="row"] (mode-row,
+   tb-right, billing-toggle, set-tabs) must show ALL its
+   buttons/toggles fully — never clipped, never hidden behind a
+   horizontal scroll. The script steps a row through these
+   shrink tiers (real font-size/padding/gap reduction, not a
+   transform hack) until everything fits; if it still doesn't
+   fit at the smallest tier, wrapping is force-enabled as the
+   final guarantee that nothing gets cut off. */
+[data-fit="row"]{ overflow: visible !important; }
+[data-fit="row"].fit-1{ gap:.85em }
+[data-fit="row"].fit-1 > *{ font-size:.92em; padding-left:.85em; padding-right:.85em }
+[data-fit="row"].fit-2{ gap:.6em }
+[data-fit="row"].fit-2 > *{ font-size:.84em; padding-left:.65em; padding-right:.65em }
+[data-fit="row"].fit-3{ gap:.4em }
+[data-fit="row"].fit-3 > *{ font-size:.76em; padding-left:.5em; padding-right:.5em }
+[data-fit="row"].fit-4{ gap:.3em }
+[data-fit="row"].fit-4 > *{ font-size:.7em; padding-left:.4em; padding-right:.4em }
+[data-fit="row"].fit-wrap{ flex-wrap:wrap !important; overflow-x:visible !important }
 /* ════════════════════════════════════════════════════════
    THEME TRANSITION — smooth light↔dark (Zalij) crossfade
    Applies to the elements that actually flip color on
@@ -1455,7 +1476,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     <div class="tb-left">
       <button class="hamburger" onclick="openSidebar()">☰</button>
     </div>
-    <div class="tb-right">
+    <div class="tb-right" data-fit="row">
       <button id="tempChatBtn" onclick="toggleTempChat()" title="محادثة مؤقتة" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r1);color:var(--tg);transition:all var(--tr);position:relative"><span style="content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;min-width:44px;min-height:44px;pointer-events:none" aria-hidden="true"></span><svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="group" aria-hidden="true" style="flex-shrink: 0;"><g class="group-hover:animate-[look-around_2.4s_ease-in-out_infinite] group-active:animate-none"><path d="M6.99951 8.66672C7.5518 8.66672 7.99951 9.11443 7.99951 9.66672C7.9993 10.2188 7.55166 10.6667 6.99951 10.6667C6.44736 10.6667 5.99973 10.2188 5.99951 9.66672C5.99951 9.11443 6.44723 8.66672 6.99951 8.66672Z"></path><path d="M12.9995 8.66672C13.5518 8.66672 13.9995 9.11443 13.9995 9.66672C13.9993 10.2188 13.5517 10.6667 12.9995 10.6667C12.4474 10.6667 11.9997 10.2188 11.9995 9.66672C11.9995 9.11443 12.4472 8.66672 12.9995 8.66672Z"></path></g><path fill-rule="evenodd" clip-rule="evenodd" d="M10 2C14.326 2.00018 17.9998 5.67403 18 10V17.3123C17.9997 17.5427 17.8411 17.8079 17.6172 17.8623C17.3932 17.9165 17.1614 17.7456 17.0557 17.5408C16.7805 17.007 16.3658 16.5937 16.062 16.2878C15.7793 16.0034 15.4503 15.8338 14.9771 15.8337C14.2092 15.8339 13.4371 16.3862 12.9487 17.53C12.8701 17.7138 12.6887 17.8621 12.4888 17.8623C12.2888 17.8623 12.1076 17.7138 12.0288 17.53C11.5404 16.386 10.7674 15.8339 9.99951 15.8337C9.23161 15.8339 8.45959 16.386 7.97119 17.53C7.89253 17.7138 7.71118 17.8621 7.51123 17.8623C7.31122 17.8623 7.13006 17.7138 7.05127 17.53C6.56296 16.3862 5.78982 15.834 5.02197 15.8337C4.54861 15.8338 4.21974 16.0032 3.93701 16.2878C3.63309 16.5937 3.21952 17.0715 2.94434 17.6055C2.83865 17.8103 2.60589 17.9165 2.38184 17.8623C2.15801 17.8079 2.00033 17.6073 2 17.377V10C2.00018 5.67403 5.67403 2.00018 10 2ZM10 3C6.22631 3.00018 3.00018 6.22631 3 10V15.8633C3.0205 15.8414 3.20696 15.6049 3.22803 15.5837C3.67524 15.1336 4.251 14.8338 5.02197 14.8337C6.03838 14.8341 6.90232 15.4025 7.51025 16.2937C8.11828 15.4018 8.9824 14.8338 9.99951 14.8337C11.0163 14.8338 11.8798 15.4022 12.4878 16.2937C13.0959 15.4018 13.9601 14.8339 14.9771 14.8337C15.7481 14.8338 16.3247 15.1336 16.772 15.5837C16.772 15.5837 16.9796 15.812 17 15.8337V10C16.9998 6.22631 13.7737 3.00018 10 3Z"></path></svg></button>
       <div class="model-sel" id="tbShortcuts">
         <button class="model-sel-btn" id="tbShortcutsBtn" onclick="toggleTbShortcuts()" title="المزيد" style="padding:6px 9px">⋯</button>
@@ -1498,7 +1519,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 
   <!-- Input -->
   <div class="input-zone">
-    <div class="mode-row">
+    <div class="mode-row" data-fit="row">
       <div class="model-sel" id="effortSel">
         <button class="model-sel-btn" id="effortSelBtn" onclick="toggleEffortSel()">
           <span id="effortSelLabel">⚡ سريع</span>
@@ -1573,7 +1594,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     <div class="modal-title" id="billingTitle">الخطط والفوترة</div>
     <p style="text-align:center;color:var(--tg);margin:-6px 0 20px" id="billingSubtitle">اختار الخطة اللي كتناسبك</p>
 
-    <div class="billing-toggle">
+    <div class="billing-toggle" data-fit="row">
       <button id="toggleMonthly" class="on">شهري</button>
       <button id="toggleYearly">سنوي (وفر 20%)</button>
     </div>
@@ -1676,7 +1697,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     <button class="modal-x" onclick="closeSettings()">✕</button>
     <div class="modal-title">⚙ الإعدادات</div>
 
-    <div class="set-tabs">
+    <div class="set-tabs" data-fit="row">
       <div class="set-tab on" onclick="setSTab('profile')" id="tab-profile">الملف الشخصي</div>
       <div class="set-tab" onclick="setSTab('personas')" id="tab-personas">الشخصيات</div>
       <div class="set-tab" onclick="setSTab('prefs')" id="tab-prefs">التفضيلات</div>
@@ -7904,6 +7925,65 @@ function toggleWeb() {
     el.appendChild(span);
     span.addEventListener('animationend', () => span.remove());
   }, { passive: true });
+})();
+</script>
+<script>
+/* ════════════════════════════════════════════════════════
+   AUTO-FIT BUTTON ROWS (2026-09-04)
+   Every [data-fit="row"] container (.mode-row, .tb-right,
+   .billing-toggle, .set-tabs) must show ALL its buttons/toggles
+   fully on load and on every resize — nothing clipped, nothing
+   hidden behind a scrollbar. Steps the row down through
+   fit-1 → fit-2 → fit-3 → fit-4 (real font-size/padding/gap
+   shrink) until it stops overflowing; if it's still too tight
+   at the smallest tier, force-wraps as the final guarantee.
+════════════════════════════════════════════════════════ */
+(function () {
+  const TIERS = ['fit-1', 'fit-2', 'fit-3', 'fit-4'];
+
+  function fits(el) {
+    return el.scrollWidth <= el.clientWidth + 1;
+  }
+
+  function fitRow(el) {
+    el.classList.remove(...TIERS, 'fit-wrap');
+    if (fits(el)) return; // already all visible at full size
+
+    for (const tier of TIERS) {
+      el.classList.add(tier);
+      if (fits(el)) return;
+    }
+
+    // Still doesn't fit even at the smallest tier — guarantee every
+    // button/toggle stays fully visible by wrapping to more than one
+    // row instead of clipping/scrolling any of them out of sight.
+    el.classList.add('fit-wrap');
+  }
+
+  function fitAllRows() {
+    document.querySelectorAll('[data-fit="row"]').forEach(fitRow);
+  }
+
+  window.fitButtonRows = fitAllRows; // exposed so menu-toggle code can re-fit on demand
+
+  window.addEventListener('load', fitAllRows);
+  window.addEventListener('resize', () => {
+    clearTimeout(window.__fitRowsT);
+    window.__fitRowsT = setTimeout(fitAllRows, 120);
+  });
+
+  // Re-fit whenever buttons/toggles are added or swapped inside a
+  // tracked row (e.g. model/effort selector rebuilding its label).
+  const mo = new MutationObserver(() => {
+    clearTimeout(window.__fitRowsT);
+    window.__fitRowsT = setTimeout(fitAllRows, 60);
+  });
+  document.addEventListener('DOMContentLoaded', () => {
+    fitAllRows();
+    document.querySelectorAll('[data-fit="row"]').forEach(el => {
+      mo.observe(el, { childList: true, subtree: true, characterData: true });
+    });
+  });
 })();
 </script>
 </body>
