@@ -46,6 +46,70 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 /* ════════════════════════════════════════════════════════
+   MOBILE TOUCH LAYER — applies to every button/toggle on
+   the page (2026-09-04 pass). Three problems fixed globally
+   instead of per-component:
+   1) Touch targets < 44x44px on phones.
+   2) The gray tap-highlight flash + accidental text selection
+      when a button/toggle is tapped repeatedly on mobile.
+   3) `:hover` effects that only make sense with a mouse now
+      also fire an immediate `:active` state on touch, and
+      `:hover` itself is scoped to hover-capable pointers so it
+      doesn't "stick" after a tap on touchscreens.
+════════════════════════════════════════════════════════ */
+button,
+.btn, [class*="-btn"], [class$="btn"],
+.mode-chip, .model-sel-item, .persona-act-btn,
+.toggle, [role="switch"], [role="button"],
+input[type="checkbox"], input[type="radio"] {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* Guaranteed ≥44x44 hit area on phones/tablets, even for icon-only
+   buttons that are visually smaller — via an invisible ::after overlay
+   so the visible shape/size of the control never changes. */
+@media (max-width: 1024px) {
+  button, .btn, [class*="-btn"], [class$="btn"],
+  .mode-chip, .model-sel-item, .persona-act-btn,
+  .toggle, [role="switch"], [role="button"] {
+    position: relative;
+  }
+  button::after, .btn::after, [class*="-btn"]::after, [class$="btn"]::after,
+  .mode-chip::after, .model-sel-item::after, .persona-act-btn::after,
+  .toggle::after, [role="switch"]::after, [role="button"]::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    pointer-events: none;
+  }
+}
+
+/* Hover only where a real hover device exists; touch gets an instant
+   :active response instead so nothing feels unresponsive on tap. */
+@media (hover: hover) and (pointer: fine) {
+  button:hover, .btn:hover, [class*="-btn"]:hover, [class$="btn"]:hover,
+  .mode-chip:hover, .model-sel-item:hover, .persona-act-btn:hover,
+  .toggle:hover, [role="switch"]:hover, [role="button"]:hover {
+    filter: brightness(1.06);
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  button:active, .btn:active, [class*="-btn"]:active, [class$="btn"]:active,
+  .mode-chip:active, .model-sel-item:active, .persona-act-btn:active,
+  .toggle:active, [role="switch"]:active, [role="button"]:active {
+    filter: brightness(0.92);
+    transform: scale(0.97);
+  }
+}
+/* ════════════════════════════════════════════════════════
    THEME TRANSITION — smooth light↔dark (Zalij) crossfade
    Applies to the elements that actually flip color on
    [data-theme] change. Animations that already have their
@@ -63,8 +127,8 @@ html, body,
     color             .45s cubic-bezier(.4,0,.2,1),
     box-shadow        .45s cubic-bezier(.4,0,.2,1);
 }
-/* rotating rings / spinners keep their own animation untouched */
-.wl-ring, .billing-spinner, .ts-dot { transition: none; }
+/* spinners keep their own animation untouched */
+.billing-spinner, .ts-dot { transition: none; }
 
 @media (prefers-reduced-motion: reduce) {
   html, body,
@@ -571,29 +635,23 @@ img{max-width:100%;display:block}
   text-align:center;gap:16px;padding:32px 20px;
   animation:fadeUp .5s ease;
 }
+/* Logo mark — sized responsively via sm:/md:/lg: equivalent breakpoints
+   (640 / 768 / 1024) instead of a single fixed size + JS. No rotating
+   ring: the ✦ ring/spin gimmick was removed, the SVG mark stands alone. */
 .wl-icon{
-  width:76px;height:76px;
+  width:56px;height:56px;
   background:var(--card);
-  border:1px solid var(--b1);border-radius:20px;
-  display:grid;place-items:center;font-size:34px;
+  border:1px solid var(--b1);border-radius:18px;
+  display:grid;place-items:center;
   box-shadow:var(--sg);
   position:relative;flex-shrink:0;
+  overflow:hidden;
+  padding:8px;
 }
-.wl-icon::before{
-  content:'';position:absolute;inset:-1px;border-radius:21px;
-  background:linear-gradient(135deg,rgba(17,17,17,.08),transparent);
-  pointer-events:none;
-}
-
-/* Rotating ring */
-.wl-ring{
-  position:absolute;inset:-8px;border-radius:28px;
-  border:1px solid transparent;
-  border-top-color:var(--b2);border-right-color:var(--b1);
-  animation:spin 8s linear infinite;
-  pointer-events:none;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
+.wl-icon svg{width:100%;height:100%;display:block}
+@media(min-width:640px){ .wl-icon{width:66px;height:66px;border-radius:19px;padding:9px} }
+@media(min-width:768px){ .wl-icon{width:76px;height:76px;border-radius:20px;padding:10px} }
+@media(min-width:1024px){ .wl-icon{width:84px;height:84px;border-radius:22px;padding:11px} }
 
 .wl-eyebrow{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--gdim);font-weight:700}
 .gold-hr{width:48px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto}
@@ -1122,7 +1180,6 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
   .bubble{max-width:86%;font-size:13.5px}
   .wl-title{font-size:20px}
   .wl-sub{font-size:12.5px}
-  .wl-icon{width:66px;height:66px;font-size:30px}
 
   .overlay{background:rgba(15,17,21,.5)}
   .sb-user{background:var(--card)}
@@ -1414,7 +1471,21 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   <div class="conv" id="conv">
     <div class="welcome" id="welcome">
       <div class="wl-icon">
-        ✦
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Zunexa">
+          <defs>
+            <linearGradient id="zxGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#E4C158"/>
+              <stop offset="55%" stop-color="#D4AF37"/>
+              <stop offset="100%" stop-color="#8a7022"/>
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="48" fill="#0B0C0F"/>
+          <circle cx="50" cy="50" r="48" fill="none" stroke="url(#zxGoldGrad)" stroke-width="2"/>
+          <path d="M50 8 L58 34 L86 34 L63 50 L71 76 L50 60 L29 76 L37 50 L14 34 L42 34 Z"
+                fill="none" stroke="url(#zxGoldGrad)" stroke-width="1.4" opacity="0.55"/>
+          <text x="50" y="66" font-family="Cinzel, serif" font-size="46" font-weight="700"
+                text-anchor="middle" fill="url(#zxGoldGrad)">Z</text>
+        </svg>
       </div>
       <div class="wl-eyebrow">Zunexa Premium · Zunexa AI</div>
       <div class="gold-hr"></div>
@@ -1820,8 +1891,13 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   </div>
 </div>
 <script>
-const ZUNEXA_QA_FINAL = []; // TODO: inline real content of zunexa_qa_final.json here (file not provided in this pass)
-const ZUNEXA_MULTI_LLM_CONFIG = {}; // TODO: inline real content of zunexa_multi_llm_config.json here (file not provided in this pass)
+// zunexa_qa_final.json / zunexa_multi_llm_config.json disconnected (2026-09-04):
+// both were empty placeholders (never actually inlined), so the "local KB"
+// path always produced 0 entries and the multi-LLM config always fell back
+// to {}. Rather than keep dead plumbing around empty objects, the local-KB
+// branch and the multi-LLM config lookups below were simplified to go
+// straight to their real fallback (cloud ai_knowledge / default single
+// model), removing the console noise this used to generate.
 /* ════════════════════════════════════════════════════════════
    ZUNEXA AI ENGINE
    Stack   : HTML5 · CSS3 · Vanilla JS
@@ -1933,7 +2009,6 @@ if (!_SB) {
     }
 
     // 3. Session صحيحة → بقا في ai.html
-    console.log('✅ Authenticated:', session.user.email);
 
   } catch (err) {
     console.error('Authentication verification failed:', err);
@@ -2473,41 +2548,11 @@ async function removeAvatar() {
 // older/smaller files — an old file loading "successfully" while silently
 // missing hundreds of entries is worse than a loud, visible failure.
 async function loadKB() {
+  // Local inline KB (zunexa_qa_final.json) disconnected 2026-09-04 — it was
+  // an empty placeholder that never held real entries. KB now comes solely
+  // from the reviewed/approved Supabase ai_knowledge table below.
   let local = [];
   let cloud = [];
-  let localLoadFailed = false;
-
-  try {
-    if (!Array.isArray(ZUNEXA_QA_FINAL)) throw new Error('ZUNEXA_QA_FINAL is not an array');
-    local = ZUNEXA_QA_FINAL.map(i => ({
-      id:  i.id || null,
-      q:   i.q || (i.kw||[]).join(' '),
-      a:   Array.isArray(i.tech) && i.tech.length
-             ? `${i.a}\n\n${i.tech.join('\n')}`
-             : (i.a || ''),
-      kw:  i.kw || [],
-      src: i.src || 'qa',
-      w:   parseFloat(i.w) || 1.0,
-      cat: i.category || 'general'
-    })).filter(i => i.a);
-    console.log(`Zunexa KB: loaded ${local.length} entries from inlined ZUNEXA_QA_FINAL`);
-  } catch (e) {
-    console.error('Zunexa: ZUNEXA_QA_FINAL failed to load — no fallback will be used', e);
-    localLoadFailed = true;
-  }
-
-  // Surface the failure to the user/developer instead of silently running
-  // on an empty or stale KB (item 6). Best-effort: only touches the DOM
-  // if a toast()/banner helper already exists on the page.
-  if (localLoadFailed) {
-    try {
-      if (typeof toast === 'function') {
-        toast('⚠ تعذّر تحميل قاعدة المعرفة — الإجابات المحلية لن تعمل بشكل صحيح');
-      } else {
-        console.error('⚠ Zunexa KB load failure — local answers will be degraded/unavailable.');
-      }
-    } catch (_) {}
-  }
 
   // Supabase ai_knowledge (learned entries) — only rows a human has
   // reviewed and approved are is_active:true (see autoLearn, item 21).
@@ -6080,7 +6125,6 @@ try {
     get() { return ctx; },
     set(v) { ctx = v; }
   });
-  console.log('[ZunexaBridge] الروابط الأصلية (tok/norm/rankKB/answerLocal/answer/KB/THRESHOLDS/ctx) متوفرة الآن عبر window.');
 } catch (e) {
   console.warn('[ZunexaBridge] فشل الربط مع window:', e.message);
 }
@@ -7377,7 +7421,6 @@ try {
       };
     }
 
-    console.log('[ZunexaExt] التكامل تم بنجاح — rankKB وanswerLocal مدعومين الآن بـ BM25F/Jaccard/Math Engine.');
     return true;
   }
 
@@ -7440,43 +7483,16 @@ try {
     return { getClient, isConnected, refreshKnowledgeBase, recordInteraction };
   })();
 
+  // zunexa_multi_llm_config.json disconnected 2026-09-04 — it was always an
+  // empty {} placeholder, so pickModel()/getFallbackChain() always fell
+  // through to null/[]. Kept as explicit no-ops (instead of dead logic
+  // branching on an object that never has data) so any future caller sees
+  // exactly what's live: single default model, no fallback chain, no
+  // per-role routing, until a real config is wired in.
   const ZUNEXA_CONFIG = (function () {
-    function pickModel(decision, cfg) {
-      cfg = cfg || ZUNEXA_MULTI_LLM_CONFIG;
-      if (!cfg || !Array.isArray(cfg.models)) return null;
-
-      const route = decision && decision.route;
-      const meta  = (decision && decision.meta) || {};
-
-      if (route === 'lite_instant' || route === 'cache' || route === 'math' || route === 'date') {
-        return null;
-      }
-
-      const enabledModels = cfg.models.filter(m => m.enabled !== false);
-      const byId = id => enabledModels.find(m => m.id === id);
-      const byRole = role => enabledModels.find(m => m.role === role);
-
-      if (meta.codingMode) {
-        const coding = byRole('coding_specialist');
-        if (coding) return coding;
-      }
-      if (meta.intent === 'quick_classification') {
-        const fast = byRole('fast_fallback');
-        if (fast) return fast;
-      }
-
-      const defaultId = cfg.defaults && cfg.defaults.primary_model;
-      return (defaultId && byId(defaultId)) || byRole('primary_general') || enabledModels[0] || null;
-    }
-
-    function getFallbackChain(cfg, key) {
-      cfg = cfg || ZUNEXA_MULTI_LLM_CONFIG;
-      if (!cfg || !cfg.fallback_chain) return [];
-      const ids = cfg.fallback_chain[key] || [];
-      return ids.map(id => (cfg.models || []).find(m => m.id === id)).filter(m => m && m.enabled !== false);
-    }
-
-    return { get: () => ZUNEXA_MULTI_LLM_CONFIG, pickModel, getFallbackChain };
+    function pickModel() { return null; }
+    function getFallbackChain() { return []; }
+    return { get: () => ({}), pickModel, getFallbackChain };
   })();
 
   /* ═══════════════════════════════════════════════════════════════════
@@ -7547,10 +7563,8 @@ try {
       };
       wrapped._zunexaExtWrapped = true;
       window.archonModeSystemPrompt = wrapped;
-      console.log('[ZunexaExt.SystemPrompt] archonModeSystemPrompt مربوط الآن بـ zunexa_master_system.md.');
     }
 
-    console.log('[ZunexaExt] طبقة التكامل البعيد (Config + System Prompt، فوق نفس ai_knowledge/ai_learning القديمين) جاهزة.');
     return true;
   }
 
