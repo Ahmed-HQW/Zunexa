@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-	<script>
-  window.location.replace('/ex.html');
-</script>
 <script>
 (function() {
   const sessionKey = 'sb-xrldhfsytysznyyhwjlr-auth-token';
@@ -36,6 +33,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
 :root{
   --void:#FFFFFF;--card:#F7F8FA;--card2:#F1F2F5;--hover:#EBEDF1;--input-bg:#FFFFFF;
@@ -93,6 +91,27 @@ button{font-family:inherit;cursor:pointer}
   border-radius:999px;padding:6px 14px;font-size:.75rem;color:var(--tg);flex-shrink:0;
 }
 .tb-usage b{color:var(--gold)}
+
+/* ── Language selector ── */
+.lang-sel{position:relative;flex-shrink:0}
+.lang-sel-btn{
+  display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--b1);
+  color:var(--tw);border-radius:999px;padding:8px 13px;font-size:.78rem;font-weight:600;
+  transition:var(--tr);
+}
+.lang-sel-btn:hover{border-color:var(--gold);color:var(--gold)}
+.lang-sel-menu{
+  position:absolute;top:calc(100% + 6px);inset-inline-end:0;background:var(--card);
+  border:1px solid var(--b1);border-radius:var(--r2);padding:5px;min-width:150px;
+  box-shadow:0 10px 30px rgba(0,0,0,.18);display:none;flex-direction:column;gap:2px;z-index:60;
+}
+.lang-sel.open .lang-sel-menu{display:flex}
+.lang-sel-menu button{
+  background:none;border:none;color:var(--tw);text-align:start;padding:8px 10px;border-radius:6px;
+  font-size:.82rem;font-family:inherit;
+}
+.lang-sel-menu button:hover{background:var(--hover)}
+@media(max-width:640px){ .lang-sel-btn span{display:none} }
 .usage-bar{width:70px;height:5px;border-radius:3px;background:var(--b1);overflow:hidden}
 .usage-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold3),var(--gold))}
 
@@ -376,7 +395,7 @@ button{font-family:inherit;cursor:pointer}
 <body>
 
 <div class="topbar">
-  <a href="ai.html" class="tb-back">→ رجوع</a>
+  <a href="ai.html" class="tb-back"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i> رجوع</a>
   <div class="tb-title">
     <div class="mark"><img src="zunexa-logo.svg" alt="Zunexa"></div>
     <div>
@@ -388,13 +407,25 @@ button{font-family:inherit;cursor:pointer}
     <span>التوكنات: <b id="tokLabel">—</b></span>
     <div class="usage-bar"><i id="tokBar" style="width:0%"></i></div>
   </div>
+  <div class="lang-sel" id="langSel">
+    <button class="lang-sel-btn" onclick="toggleLangSel()" aria-haspopup="listbox" aria-expanded="false" title="اللغة / Language">
+      <i class="fa-solid fa-globe" aria-hidden="true"></i>
+      <span id="langSelLabel">عربي</span>
+    </button>
+    <div class="lang-sel-menu" id="langSelMenu" role="listbox">
+      <button role="option" onclick="setPageLang('ary')">🇲🇦 الدارجة</button>
+      <button role="option" onclick="setPageLang('ar')">🇸🇦 العربية</button>
+      <button role="option" onclick="setPageLang('en')">🇬🇧 English</button>
+      <button role="option" onclick="setPageLang('fr')">🇫🇷 Français</button>
+    </div>
+  </div>
 </div>
 
 <div class="shell">
   <aside class="rail">
     <div class="rail-label">القائمة</div>
-    <div class="rail-item on" id="railProjects" onclick="showProjectsView()"><span class="ico">📁</span> المشاريع</div>
-    <div class="rail-item" onclick="openPricingModal()"><span class="ico">💳</span> الخطط والأسعار</div>
+    <div class="rail-item on" id="railProjects" onclick="showProjectsView()"><span class="ico"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></span> المشاريع</div>
+    <div class="rail-item" onclick="openPricingModal()"><span class="ico"><i class="fa-solid fa-credit-card" aria-hidden="true"></i></span> الخطط والأسعار</div>
     <div class="rail-plan" id="railPlan">
       <div class="pname" id="railPlanName">—</div>
       <div class="pline" id="railPlanLine">جاري التحميل...</div>
@@ -404,7 +435,7 @@ button{font-family:inherit;cursor:pointer}
 
   <main class="main" id="mainArea">
     <div class="empty-state" id="emptyState" style="display:none">
-      <div class="glyph">🗂</div>
+      <div class="glyph"><i class="fa-solid fa-box-archive" aria-hidden="true"></i></div>
       <h2>مرحباً بيك فـ وكيل إدارة المشاريع</h2>
       <p>مازال ما عندكش أي مشروع. أنشئ أول مشروع باش تبدا تخدم مع الوكلاء: Coder، Planner، Tasker، Tester، و Info.</p>
       <button class="cta" onclick="openNewProjectModal()">+ إنشاء مشروع جديد</button>
@@ -426,16 +457,16 @@ button{font-family:inherit;cursor:pointer}
 </div>
 
 <nav class="bottom-nav">
-  <a class="bn-item on" id="bnProjects" onclick="showProjectsView()"><span class="bn-ico">📁</span>المشاريع</a>
-  <a class="bn-item" onclick="openNewProjectModal()"><span class="bn-ico">➕</span>جديد</a>
-  <a class="bn-item" id="bnPricing" onclick="openPricingModal()"><span class="bn-ico">💳</span>الخطط</a>
-  <a class="bn-item" onclick="window.location.href='ai.html'"><span class="bn-ico">💬</span>الشات</a>
+  <a class="bn-item on" id="bnProjects" onclick="showProjectsView()"><span class="bn-ico"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></span>المشاريع</a>
+  <a class="bn-item" onclick="openNewProjectModal()"><span class="bn-ico"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>جديد</a>
+  <a class="bn-item" id="bnPricing" onclick="openPricingModal()"><span class="bn-ico"><i class="fa-solid fa-credit-card" aria-hidden="true"></i></span>الخطط</a>
+  <a class="bn-item" onclick="window.location.href='ai.html'"><span class="bn-ico"><i class="fa-solid fa-comments" aria-hidden="true"></i></span>الشات</a>
 </nav>
 
 <!-- New Project Modal -->
 <div class="modal-wrap" id="newProjModal">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeNewProjectModal()">✕</button>
+    <button class="modal-close" onclick="closeNewProjectModal()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     <h2>مشروع جديد</h2>
     <div class="field">
       <label>اسم المشروع *</label>
@@ -498,7 +529,7 @@ button{font-family:inherit;cursor:pointer}
 <!-- Pricing Modal -->
 <div class="modal-wrap" id="pricingModal">
   <div class="modal-box" style="max-width:820px">
-    <button class="modal-close" onclick="closePricingModal()">✕</button>
+    <button class="modal-close" onclick="closePricingModal()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     <h2>الخطط والأسعار</h2>
     <div id="pricingCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px"></div>
   </div>
@@ -520,9 +551,17 @@ let CURRENT_PROJECT = null;
 let CURRENT_ROLE = 'planner';
 let CHAT_HISTORY = [];
 
+const ZX_EMOJI_ICON_MAP = { '✓': 'fa-solid fa-check', '⚠': 'fa-solid fa-triangle-exclamation', '✕': 'fa-solid fa-xmark' };
 function toast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
+  const firstChar = [...msg][0];
+  const iconClass = ZX_EMOJI_ICON_MAP[firstChar];
+  if (iconClass) {
+    const rest = [...msg].slice(1).join('').trim();
+    t.innerHTML = `<i class="${iconClass}" aria-hidden="true" style="margin-inline-end:6px"></i>${escapeHtml(rest)}`;
+  } else {
+    t.textContent = msg;
+  }
   t.classList.add('show');
   clearTimeout(t._h);
   t._h = setTimeout(() => t.classList.remove('show'), 2600);
@@ -533,8 +572,110 @@ function escapeHtml(s) {
 function stageLabel(s) {
   return {discovery:'اكتشاف', planning:'تخطيط', in_progress:'قيد التنفيذ', testing:'اختبار', delivered:'تم التسليم', archived:'مؤرشف'}[s] || s;
 }
-const ROLE_LABEL = {coder:'Coder', planner:'Planner', tasker:'Tasker', tester:'Tester', info:'Info'};
-const ROLE_ICON  = {coder:'💻', planner:'🧭', tasker:'✅', tester:'🧪', info:'📋'};
+const ROLE_LABEL = {
+  info:    'Nexus',
+  planner: 'Architect',
+  tasker:  'Orchestrator',
+  coder:   'Forge',
+  tester:  'Inspector',
+};
+const ROLE_DESC = {
+  info:    'مركز تجميع وتقصي المعلومات والبيانات',
+  planner: 'التخطيط الهيكلي ورسم خرائط العمليات',
+  tasker:  'توزيع المهام وإدارة سير العمل والتنفيذ',
+  coder:   'بناء وكتابة الأكواد والحلول البرمجية',
+  tester:  'الفحص، الجودة، وتتبع الأخطاء والتصحيح',
+};
+const ROLE_ICON = {
+  info:    '<i class="fa-solid fa-database" aria-hidden="true"></i>',
+  planner: '<i class="fa-solid fa-drafting-compass" aria-hidden="true"></i>',
+  tasker:  '<i class="fa-solid fa-diagram-project" aria-hidden="true"></i>',
+  coder:   '<i class="fa-solid fa-code" aria-hidden="true"></i>',
+  tester:  '<i class="fa-solid fa-vial-circle-check" aria-hidden="true"></i>',
+};
+
+/* ══════════════ ACCESSIBILITY — page language toggle ══════════════
+   Lightweight i18n for this page's static chrome (topbar, rail,
+   workspace tabs). Persisted in localStorage so it's remembered
+   across visits; does not touch dynamic content pulled from
+   Supabase (project names/descriptions stay in the language the
+   user typed them in). */
+const AGENT_I18N = {
+  ary: { pageTitle:'وكيل إدارة المشاريع', pageSub:'Project Intelligence Agent', back:'رجوع', menu:'القائمة', navProjects:'المشاريع', navPricing:'الخطط والأسعار', bnNew:'جديد', bnChat:'الشات', allProjects:'كل المشاريع', tabAgents:'الوكلاء', tabTasks:'المهام', tabResume:'السيرة/الملخص', tokens:'التوكنات', langLabel:'عربي' },
+  ar:  { pageTitle:'وكيل إدارة المشاريع', pageSub:'Project Intelligence Agent', back:'رجوع', menu:'القائمة', navProjects:'المشاريع', navPricing:'الخطط والأسعار', bnNew:'جديد', bnChat:'المحادثة', allProjects:'جميع المشاريع', tabAgents:'الوكلاء', tabTasks:'المهام', tabResume:'الملخص', tokens:'الرموز', langLabel:'العربية' },
+  en:  { pageTitle:'Project Management Agent', pageSub:'Project Intelligence Agent', back:'Back', menu:'Menu', navProjects:'Projects', navPricing:'Plans & Pricing', bnNew:'New', bnChat:'Chat', allProjects:'All projects', tabAgents:'Agents', tabTasks:'Tasks', tabResume:'Résumé/Summary', tokens:'Tokens', langLabel:'English' },
+  fr:  { pageTitle:'Agent de gestion de projets', pageSub:'Project Intelligence Agent', back:'Retour', menu:'Menu', navProjects:'Projets', navPricing:'Offres et tarifs', bnNew:'Nouveau', bnChat:'Discussion', allProjects:'Tous les projets', tabAgents:'Agents', tabTasks:'Tâches', tabResume:'Résumé', tokens:'Jetons', langLabel:'Français' },
+};
+function toggleLangSel() {
+  const el = document.getElementById('langSel');
+  const btn = el.querySelector('.lang-sel-btn');
+  const willOpen = !el.classList.contains('open');
+  el.classList.toggle('open', willOpen);
+  btn.setAttribute('aria-expanded', String(willOpen));
+}
+document.addEventListener('click', (e) => {
+  const el = document.getElementById('langSel');
+  if (el && el.classList.contains('open') && !el.contains(e.target)) el.classList.remove('open');
+});
+function setPageLang(lang) {
+  const t = AGENT_I18N[lang] || AGENT_I18N.ary;
+  localStorage.setItem('zx_page_lang', lang);
+  document.documentElement.setAttribute('lang', lang === 'ary' ? 'ar' : lang);
+  document.documentElement.setAttribute('dir', (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl');
+
+  document.querySelector('.tb-title h1').textContent = t.pageTitle;
+  document.querySelector('.tb-title small').textContent = t.pageSub;
+  document.querySelector('.tb-back').lastChild.textContent = ' ' + t.back;
+  document.querySelector('.rail-label').textContent = t.menu;
+  document.getElementById('railProjects').lastChild.textContent = ' ' + t.navProjects;
+  document.querySelectorAll('.rail-item')[1].lastChild.textContent = ' ' + t.navPricing;
+  const bnProjects = document.getElementById('bnProjects');
+  if (bnProjects) bnProjects.lastChild.textContent = t.navProjects;
+  document.querySelectorAll('.bn-item')[1].lastChild.textContent = t.bnNew;
+  document.querySelectorAll('.bn-item')[3].lastChild.textContent = t.bnChat;
+  const backBtn = document.querySelector('.ws-back button, [onclick="showProjectsView()"].tb-back, button[onclick="showProjectsView()"]');
+  document.querySelectorAll('button[onclick="showProjectsView()"]').forEach(b => { b.lastChild.textContent = ' ' + t.allProjects; });
+  const tabAgents = document.querySelector('[data-tab="agents"]');
+  const tabTasks = document.querySelector('[data-tab="tasks"]');
+  const tabResume = document.querySelector('[data-tab="resume"]');
+  if (tabAgents) tabAgents.lastChild.textContent = ' ' + t.tabAgents;
+  if (tabTasks) tabTasks.lastChild.textContent = ' ' + t.tabTasks;
+  if (tabResume) tabResume.lastChild.textContent = ' ' + t.tabResume;
+  const tokensSpan = document.querySelector('#tbUsage span');
+  if (tokensSpan) tokensSpan.firstChild.textContent = t.tokens + ': ';
+  document.getElementById('langSelLabel').textContent = t.langLabel;
+  toggleLangSel();
+}
+(function initPageLang() {
+  const saved = localStorage.getItem('zx_page_lang');
+  if (saved && AGENT_I18N[saved]) {
+    document.addEventListener('DOMContentLoaded', () => setPageLangSilent(saved));
+  }
+})();
+function setPageLangSilent(lang) {
+  // Same as setPageLang but does not toggle the (already-closed) menu.
+  const t = AGENT_I18N[lang] || AGENT_I18N.ary;
+  document.documentElement.setAttribute('lang', lang === 'ary' ? 'ar' : lang);
+  document.documentElement.setAttribute('dir', (lang === 'en' || lang === 'fr') ? 'ltr' : 'rtl');
+  document.querySelector('.tb-title h1').textContent = t.pageTitle;
+  document.querySelector('.tb-title small').textContent = t.pageSub;
+  document.querySelector('.tb-back').lastChild.textContent = ' ' + t.back;
+  document.querySelector('.rail-label').textContent = t.menu;
+  document.getElementById('railProjects').lastChild.textContent = ' ' + t.navProjects;
+  document.querySelectorAll('.rail-item')[1].lastChild.textContent = ' ' + t.navPricing;
+  document.querySelectorAll('.bn-item')[1].lastChild.textContent = t.bnNew;
+  document.querySelectorAll('.bn-item')[3].lastChild.textContent = t.bnChat;
+  document.querySelectorAll('button[onclick="showProjectsView()"]').forEach(b => { b.lastChild.textContent = ' ' + t.allProjects; });
+  const tabAgents = document.querySelector('[data-tab="agents"]');
+  const tabTasks = document.querySelector('[data-tab="tasks"]');
+  const tabResume = document.querySelector('[data-tab="resume"]');
+  if (tabAgents) tabAgents.lastChild.textContent = ' ' + t.tabAgents;
+  if (tabTasks) tabTasks.lastChild.textContent = ' ' + t.tabTasks;
+  if (tabResume) tabResume.lastChild.textContent = ' ' + t.tabResume;
+  const tokensSpan = document.querySelector('#tbUsage span');
+  if (tokensSpan) tokensSpan.firstChild.textContent = t.tokens + ': ';
+  document.getElementById('langSelLabel').textContent = t.langLabel;
+}
 
 /* ══════════════ AUTH + BOOTSTRAP ══════════════ */
 async function bootstrap() {
@@ -616,7 +757,7 @@ function showProjectsView() {
         <div class="progress-track"><div class="progress-fill" style="width:${p.progress_pct || 0}%"></div></div>
         <span>${p.progress_pct || 0}%</span>
       </div>
-      <span class="pill ${p.is_paid ? 'paid' : 'unpaid'}">${p.is_paid ? '✓ مخلص' : '⚠ غير مخلص'}</span>
+      <span class="pill ${p.is_paid ? 'paid' : 'unpaid'}">${p.is_paid ? '<i class="fa-solid fa-check" aria-hidden="true"></i> مخلص' : '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> غير مخلص'}</span>
     </div>
   `).join('');
 }
@@ -718,7 +859,7 @@ function openPricingModal() {
       <h3 style="color:var(--gold);font-size:1rem">${escapeHtml(p.display_name)}</h3>
       <div style="font-size:1.6rem;font-weight:700;color:var(--tw)">${p.price_monthly > 0 ? '$' + p.price_monthly : 'مجاني'}${p.price_monthly > 0 ? '<small style="font-size:.8rem;color:var(--tm)">/شهر</small>' : ''}</div>
       <ul style="font-size:.78rem;color:var(--tg);line-height:1.9;list-style:none">
-        ${(p.features || []).map(f => `<li>✓ ${escapeHtml(f)}</li>`).join('')}
+        ${(p.features || []).map(f => `<li><i class="fa-solid fa-check" aria-hidden="true"></i> ${escapeHtml(f)}</li>`).join('')}
       </ul>
       ${p.plan_id === CURRENT_PLAN
         ? `<button class="modal-save-btn" disabled style="background:var(--b1);color:var(--tm)">الخطة الحالية</button>`
@@ -768,20 +909,20 @@ async function openWorkspace(projectId) {
         <h2>${escapeHtml(p.name)}</h2>
         <div class="meta">
           <span class="pill stage-${p.stage}">${stageLabel(p.stage)}</span>
-          <span class="pill ${p.is_paid ? 'paid' : 'unpaid'}">${p.is_paid ? '✓ مخلص' : '⚠ غير مخلص'}</span>
+          <span class="pill ${p.is_paid ? 'paid' : 'unpaid'}">${p.is_paid ? '<i class="fa-solid fa-check" aria-hidden="true"></i> مخلص' : '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> غير مخلص'}</span>
           <span class="cat">${escapeHtml(p.category || '')}</span>
         </div>
       </div>
       <div class="ws-actions">
-        <button onclick="showProjectsView()">← كل المشاريع</button>
+        <button onclick="showProjectsView()"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> كل المشاريع</button>
         <button class="danger" onclick="archiveProject('${p.id}')">أرشفة</button>
       </div>
     </div>
 
     <div class="ws-tabs">
-      <div class="ws-tab on" data-tab="agents" onclick="switchWsTab('agents')">🤖 الوكلاء</div>
-      <div class="ws-tab" data-tab="tasks" onclick="switchWsTab('tasks')">✅ المهام</div>
-      <div class="ws-tab" data-tab="resume" onclick="switchWsTab('resume')">📄 السيرة/الملخص</div>
+      <div class="ws-tab on" data-tab="agents" onclick="switchWsTab('agents')"><i class="fa-solid fa-robot" aria-hidden="true"></i> الوكلاء</div>
+      <div class="ws-tab" data-tab="tasks" onclick="switchWsTab('tasks')"><i class="fa-solid fa-list-check" aria-hidden="true"></i> المهام</div>
+      <div class="ws-tab" data-tab="resume" onclick="switchWsTab('resume')"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> السيرة/الملخص</div>
       <div class="ws-tab" data-tab="info" onclick="switchWsTab('info')">ℹ️ معلومات المشروع</div>
     </div>
 
@@ -800,11 +941,11 @@ async function openWorkspace(projectId) {
       <div class="task-add-row">
         <input type="text" id="taskTitleInput" placeholder="عنوان المهمة الجديدة...">
         <select id="taskRoleInput">
-          <option value="planner">Planner</option>
-          <option value="coder">Coder</option>
-          <option value="tasker">Tasker</option>
-          <option value="tester">Tester</option>
-          <option value="info">Info</option>
+          <option value="planner">Architect</option>
+          <option value="coder">Forge</option>
+          <option value="tasker">Orchestrator</option>
+          <option value="tester">Inspector</option>
+          <option value="info">Nexus</option>
         </select>
         <button class="new-proj-btn" onclick="addTask()">+ إضافة</button>
       </div>
@@ -812,7 +953,7 @@ async function openWorkspace(projectId) {
     </div>
 
     <div class="ws-panel" id="panelResume">
-      <button class="new-proj-btn" style="margin-bottom:14px" onclick="generateResume()">✦ توليد ملخص جديد (Info Agent)</button>
+      <button class="new-proj-btn" style="margin-bottom:14px" onclick="generateResume()"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> توليد ملخص جديد (Nexus)</button>
       <div id="resumeList"></div>
     </div>
 
@@ -824,7 +965,7 @@ async function openWorkspace(projectId) {
         <div class="info-box"><label>Stack</label><div class="val">${(p.stack||[]).join('، ') || '—'}</div></div>
         <div class="info-box"><label>الأدوات</label><div class="val">${(p.tools||[]).join('، ') || '—'}</div></div>
         <div class="info-box"><label>الوكلاء المفعّلين</label><div class="val">${enabledAgents.map(r => ROLE_LABEL[r]).join('، ')}</div></div>
-        <div class="info-box"><label>حالة الدفع</label><div class="val">${p.is_paid ? '✓ مخلص' : '⚠ غير مخلص'}</div></div>
+        <div class="info-box"><label>حالة الدفع</label><div class="val">${p.is_paid ? '<i class="fa-solid fa-check" style="color:var(--green)" aria-hidden="true"></i> مخلص' : '<i class="fa-solid fa-triangle-exclamation" style="color:var(--red)" aria-hidden="true"></i> غير مخلص'}</div></div>
       </div>
     </div>
   `;
@@ -847,8 +988,9 @@ function renderRoleBar(enabledAgents) {
   bar.innerHTML = allRoles.map(r => {
     const enabled = enabledAgents.includes(r);
     return `<button class="role-btn ${r === CURRENT_ROLE ? 'on' : ''} ${enabled ? '' : 'locked'}"
-      ${enabled ? `onclick="switchRole('${r}')"` : 'disabled title="غير مفعّل فهاد المشروع"'}>
-      ${ROLE_ICON[r]} ${ROLE_LABEL[r]}${enabled ? '' : ' 🔒'}
+      ${enabled ? `onclick="switchRole('${r}')"` : 'disabled title="غير مفعّل فهاد المشروع"'}
+      title="${escapeHtml(ROLE_DESC[r])}">
+      ${ROLE_ICON[r]} ${ROLE_LABEL[r]}${enabled ? '' : ' <i class="fa-solid fa-lock" aria-hidden="true"></i>'}
     </button>`;
   }).join('');
 }
@@ -872,7 +1014,7 @@ async function loadAgentMessages() {
   if (error) { msgsEl.innerHTML = `<div style="color:var(--red);font-size:.8rem">تعذر تحميل المحادثة: ${escapeHtml(error.message)}</div>`; return; }
   CHAT_HISTORY = (data || []).map(m => ({ role: m.role, content: m.content }));
   if (!data || !data.length) {
-    msgsEl.innerHTML = `<div style="color:var(--tm);font-size:.82rem;text-align:center;padding:30px 0">ابدأ محادثة مع وكيل ${ROLE_LABEL[CURRENT_ROLE]} 👋</div>`;
+    msgsEl.innerHTML = `<div style="color:var(--tm);font-size:.82rem;text-align:center;padding:30px 0">ابدأ محادثة مع وكيل ${ROLE_LABEL[CURRENT_ROLE]} <i class="fa-regular fa-hand" aria-hidden="true"></i></div>`;
     return;
   }
   msgsEl.innerHTML = data.map(m => `<div class="a-msg ${m.role}">${escapeHtml(m.content)}</div>`).join('');
@@ -920,12 +1062,12 @@ async function sendAgentMessage() {
 
     if (!res.ok) {
       if (data?.error === 'quota_exceeded') {
-        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)">⚠ استهلكتي كل التوكنات الشهرية ديال خطتك. رقّي الخطة باش تكمل.</div>`);
+        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> استهلكتي كل التوكنات الشهرية ديال خطتك. رقّي الخطة باش تكمل.</div>`);
         openPricingModal();
       } else if (data?.error === 'agent_role_not_enabled_for_plan') {
-        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)">⚠ هاد الوكيل ماشي مفعّل فهاد المشروع/الخطة.</div>`);
+        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> هاد الوكيل ماشي مفعّل فهاد المشروع/الخطة.</div>`);
       } else {
-        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)">⚠ وقع خطأ: ${escapeHtml(data?.error || res.status)}</div>`);
+        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> وقع خطأ: ${escapeHtml(data?.error || res.status)}</div>`);
       }
       return;
     }
@@ -936,7 +1078,7 @@ async function sendAgentMessage() {
     msgsEl.scrollTop = msgsEl.scrollHeight;
     await refreshUsage();
   } catch (e) {
-    msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)">⚠ خطأ فالشبكة: ${escapeHtml(e.message)}</div>`);
+    msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> خطأ فالشبكة: ${escapeHtml(e.message)}</div>`);
   } finally {
     btn.disabled = false;
     btn.textContent = 'إرسال';
@@ -958,7 +1100,7 @@ async function loadTasks() {
       <input type="checkbox" ${t.status === 'done' ? 'checked' : ''} onchange="toggleTask('${t.id}', this.checked)">
       <span class="t-title">${escapeHtml(t.title)}</span>
       <span class="t-role">${ROLE_LABEL[t.agent_role] || t.agent_role}</span>
-      <button class="t-del" onclick="deleteTask('${t.id}')">✕</button>
+      <button class="t-del" onclick="deleteTask('${t.id}')"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
     </div>
   `).join('');
 }

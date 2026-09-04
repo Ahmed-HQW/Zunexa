@@ -8,14 +8,12 @@
   <url>
     <loc>https://zunexa.vercel.app/</loc>
     <lastmod>2026-08-11</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://zunexa.vercel.app/"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://zunexa.vercel.app/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://zunexa.vercel.app/"/>
     <image:image>
       <image:loc>https://zunexa.vercel.app/icon-512.png</image:loc>
-      <image:title>Zunexa AI — الصفحة الرئيسية</image:title>
+      <image:title>Zunexa AI — المنصة الذكية المتكاملة</image:title>
     </image:image>
   </url>
 
@@ -31,6 +29,18 @@
   </url>
 
   <url>
+    <loc>https://zunexa.vercel.app/ai-landing.html</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://zunexa.vercel.app/icon-512.png</image:loc>
+      <image:title>Zunexa Archon AI — مساعد ذكاء اصطناعي مجاني</image:title>
+      <image:caption>مساعد ذكاء اصطناعي مغربي مجاني، يجاوب بالعربية والدارجة والفرنسية والإنجليزية</image:caption>
+    </image:image>
+  </url>
+
+  <url>
     <loc>https://zunexa.vercel.app/about.html</loc>
     <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
@@ -38,9 +48,16 @@
   </url>
 
   <url>
-    <loc>https://zunexa.vercel.app/CONTACT.html</loc>
+    <loc>https://zunexa.vercel.app/contact.html</loc>
     <lastmod>2026-08-11</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://zunexa.vercel.app/apps.html</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
@@ -59,35 +76,25 @@
   </url>
 
   <url>
+    <loc>https://zunexa.vercel.app/affiliat.html</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://zunexa.vercel.app/pro_accounts.html</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
     <loc>https://zunexa.vercel.app/changelog.html</loc>
     <lastmod>2026-08-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
-
-  <!-- ══════════════ التطبيقات / الأدوات ══════════════ -->
-
-  <url>
-    <loc>https://zunexa.vercel.app/apps.html</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://zunexa.vercel.app/ai-landing.html</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://zunexa.vercel.app/icon-512.png</image:loc>
-      <image:title>Zunexa Archon AI — مساعد ذكاء اصطناعي مجاني</image:title>
-      <image:caption>مساعد ذكاء اصطناعي مغربي مجاني، يجاوب بالعربية والدارجة والفرنسية والإنجليزية</image:caption>
-    </image:image>
-  </url>
-  <!-- ملاحظة: ai.html الأصلية محذوفة من هنا عمداً لأنها الآن التطبيق
-       المحمي بتسجيل الدخول (خلف redirect)، وGooglebot لن يستطيع
-       فهرسة محتواها. صفحة ai-landing.html هي البديل العام القابل للفهرسة. -->
 
   <url>
     <loc>https://zunexa.vercel.app/info_3d.html</loc>
@@ -117,22 +124,6 @@
     <priority>0.6</priority>
   </url>
 
-  <!-- ══════════════ التسويق / الحسابات ══════════════ -->
-
-  <url>
-    <loc>https://zunexa.vercel.app/affiliat.html</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://zunexa.vercel.app/pro_accounts.html</loc>
-    <lastmod>2026-08-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
   <url>
     <loc>https://zunexa.vercel.app/feedback.html</loc>
     <lastmod>2026-08-11</lastmod>
@@ -140,10 +131,4 @@
     <priority>0.5</priority>
   </url>
 
-  <!-- ══════════════ صفحات خاصة/محمية بتسجيل الدخول ══════════════
-       ملاحظة: هاد الصفحات كتعاود توجه لـ index.html إلا ما كانش
-       session نشط، فـ Googlebot ما غاديش يقدر يفهرس محتواها.
-       يفضل تحطها فـ robots.txt (Disallow) أو تشيلها من هنا نهائياً
-       باش ما تضيعش "crawl budget" ديال الموقع.
-  ═══════════════════════════════════════════════════════════════ -->
 </urlset>

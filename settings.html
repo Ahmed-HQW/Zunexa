@@ -11,23 +11,9 @@
 -->
 <html lang="ar" dir="rtl">
 <head>
-	<script>
-  window.location.replace('/ex.html');
-</script>
   <script>
-    /* نفس منطق ai.html بالضبط: الوضع الداكن (Zalij) هو الافتراضي الرسمي،
-       يُطبَّق قبل أول رسم لتفادي وميض بين الوضعين. */
-    (function() {
-        try {
-            const savedTheme = localStorage.getItem('zunexa-theme');
-            if (savedTheme !== 'light') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                if (!savedTheme) localStorage.setItem('zunexa-theme', 'dark');
-            }
-        } catch (e) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
-    })()
+    /* الوضع الداكن (Zalij) هو الوحيد الآن — دائم، بلا وضع فاتح وبلا مبدّل. */
+    document.documentElement.setAttribute('data-theme', 'dark');
   </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -46,10 +32,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 /* ════════════════════════════════════════════════════════
-   THEME TRANSITION — نفس ai.html
+   THEME TRANSITION
 ════════════════════════════════════════════════════════ */
 html, body,
-.modal-box, .modal-wrap, .persona-card, .zx-select, .theme-toggle-btn {
+.modal-box, .modal-wrap, .persona-card, .zx-select {
   transition:
     background-color .45s cubic-bezier(.4,0,.2,1),
     border-color      .45s cubic-bezier(.4,0,.2,1),
@@ -58,56 +44,15 @@ html, body,
 }
 .billing-spinner { transition: none; }
 @media (prefers-reduced-motion: reduce) {
-  html, body, .modal-box, .modal-wrap, .persona-card, .zx-select, .theme-toggle-btn { transition: none; }
+  html, body, .modal-box, .modal-wrap, .persona-card, .zx-select { transition: none; }
 }
 
 /* ════════════════════════════════════════════════════════
-   DESIGN TOKENS — White Phone Mode (مطابقة لـ ai.html)
+   DESIGN TOKENS — Zalij Mode (Moroccan Noir & Gold)
+   Dark is the only mode — tokens live on :root directly,
+   matching ai.html (no [data-theme] gate, no light fallback).
 ════════════════════════════════════════════════════════ */
 :root {
-  --void:        #FFFFFF;
-  --deep:        #FFFFFF;
-  --card:        #F7F8FA;
-  --card2:       #F1F2F5;
-  --hover:       #EBEDF1;
-  --input-bg:    #FFFFFF;
-
-  --b1:          #E5E7EB;
-  --b2:          #D8DBE0;
-  --bg:          rgba(212,175,55,.10);
-  --bgh:         rgba(212,175,55,.28);
-  --bgp:         rgba(212,175,55,.05);
-
-  --gold:        #D4AF37;
-  --gold2:       #B8922E;
-  --gold3:       #8a7022;
-  --gdim:        #8a7022;
-  --gglow:       rgba(212,175,55,.14);
-  --gtrace:      rgba(212,175,55,.06);
-
-  --tw:          #111111;
-  --tg:          #6B7280;
-  --tm:          #9CA3AF;
-
-  --green:       #16A34A;
-  --red:         #DC2626;
-  --blue:        #2563EB;
-  --orange:      #D97706;
-
-  --tr: .2s cubic-bezier(.4,0,.2,1);
-  --r1: 6px;
-  --r2: 11px;
-  --r3: 17px;
-  --r4: 24px;
-
-  --sg: 0 0 0 1px rgba(212,175,55,.10) inset, 0 2px 14px rgba(212,175,55,.08);
-  --sg2: 0 2px 10px rgba(212,175,55,.18), 0 0 0 1px rgba(212,175,55,.10);
-}
-
-/* ════════════════════════════════════════════════════════
-   DESIGN TOKENS — Dark Zalij Mode
-════════════════════════════════════════════════════════ */
-[data-theme="dark"]{
   --void:        #0B0C0F;
   --deep:        #0B0C0F;
   --card:        #15171C;
@@ -137,10 +82,16 @@ html, body,
   --blue:        #3B82F6;
   --orange:      #F59E0B;
 
+  --tr: .2s cubic-bezier(.4,0,.2,1);
+  --r1: 6px;
+  --r2: 11px;
+  --r3: 17px;
+  --r4: 24px;
+
   --sg: 0 0 0 1px rgba(212,175,55,.14) inset, 0 2px 14px rgba(212,175,55,.10);
   --sg2: 0 2px 10px rgba(212,175,55,.24), 0 0 0 1px rgba(212,175,55,.14);
 }
-[data-theme="dark"] body{background:var(--void)}
+body{background:var(--void)}
 
 /* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -1195,7 +1146,10 @@ function setEffortUI(v) { zxEffort = v; localStorage.setItem('zx_effort', v); sc
 /* مسح كامل السجل والذاكرة المحلية (نفس مفاتيح ai.html) */
 function clearAll() {
   if (!confirm('متأكد؟ غادي يتمسح كل السجل والذاكرة المحلية ديال هاد المتصفح.')) return;
-  const keysToKeep = ['zunexa-theme', 'sb-xrldhfsytysznyyhwjlr-auth-token'];
+  // zx_deleted_chats is kept on purpose: it's the tombstone list of chats
+  // the user explicitly deleted. Wiping it here would let those chats
+  // reappear from the Supabase mirror on the next cross-device sync.
+  const keysToKeep = ['sb-xrldhfsytysznyyhwjlr-auth-token', 'zx_deleted_chats'];
   Object.keys(localStorage).forEach(k => {
     if (!keysToKeep.includes(k)) localStorage.removeItem(k);
   });
