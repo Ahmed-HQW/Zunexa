@@ -140,28 +140,48 @@ input[type="checkbox"], input[type="radio"] {
 [data-fit="row"].fit-1 button,
 [data-fit="row"].fit-1 .model-sel-btn,
 [data-fit="row"].fit-1 .mode-chip,
-[data-fit="row"].fit-1 .model-sel-item{ font-size:.92em !important; padding-left:.7em !important; padding-right:.7em !important }
+[data-fit="row"].fit-1 .model-sel-item,
+[data-fit="row"].fit-1 .lib-tab,
+[data-fit="row"].fit-1 .code-btn,
+[data-fit="row"].fit-1 .set-avatar-upload,
+[data-fit="row"].fit-1 .set-avatar-remove,
+[data-fit="row"].fit-1 .persona-act-btn{ font-size:.92em !important; padding-left:.7em !important; padding-right:.7em !important }
 [data-fit="row"].fit-1 svg{ width:.92em !important; height:.92em !important }
 
 [data-fit="row"].fit-2{ gap:.6em !important }
 [data-fit="row"].fit-2 button,
 [data-fit="row"].fit-2 .model-sel-btn,
 [data-fit="row"].fit-2 .mode-chip,
-[data-fit="row"].fit-2 .model-sel-item{ font-size:.84em !important; padding-left:.55em !important; padding-right:.55em !important }
+[data-fit="row"].fit-2 .model-sel-item,
+[data-fit="row"].fit-2 .lib-tab,
+[data-fit="row"].fit-2 .code-btn,
+[data-fit="row"].fit-2 .set-avatar-upload,
+[data-fit="row"].fit-2 .set-avatar-remove,
+[data-fit="row"].fit-2 .persona-act-btn{ font-size:.84em !important; padding-left:.55em !important; padding-right:.55em !important }
 [data-fit="row"].fit-2 svg{ width:.84em !important; height:.84em !important }
 
 [data-fit="row"].fit-3{ gap:.4em !important }
 [data-fit="row"].fit-3 button,
 [data-fit="row"].fit-3 .model-sel-btn,
 [data-fit="row"].fit-3 .mode-chip,
-[data-fit="row"].fit-3 .model-sel-item{ font-size:.76em !important; padding-left:.4em !important; padding-right:.4em !important }
+[data-fit="row"].fit-3 .model-sel-item,
+[data-fit="row"].fit-3 .lib-tab,
+[data-fit="row"].fit-3 .code-btn,
+[data-fit="row"].fit-3 .set-avatar-upload,
+[data-fit="row"].fit-3 .set-avatar-remove,
+[data-fit="row"].fit-3 .persona-act-btn{ font-size:.76em !important; padding-left:.4em !important; padding-right:.4em !important }
 [data-fit="row"].fit-3 svg{ width:.76em !important; height:.76em !important }
 
 [data-fit="row"].fit-4{ gap:.3em !important }
 [data-fit="row"].fit-4 button,
 [data-fit="row"].fit-4 .model-sel-btn,
 [data-fit="row"].fit-4 .mode-chip,
-[data-fit="row"].fit-4 .model-sel-item{ font-size:.68em !important; padding-left:.3em !important; padding-right:.3em !important }
+[data-fit="row"].fit-4 .model-sel-item,
+[data-fit="row"].fit-4 .lib-tab,
+[data-fit="row"].fit-4 .code-btn,
+[data-fit="row"].fit-4 .set-avatar-upload,
+[data-fit="row"].fit-4 .set-avatar-remove,
+[data-fit="row"].fit-4 .persona-act-btn{ font-size:.68em !important; padding-left:.3em !important; padding-right:.3em !important }
 [data-fit="row"].fit-4 svg{ width:.68em !important; height:.68em !important }
 
 [data-fit="row"].fit-wrap{ flex-wrap:wrap !important; overflow-x:visible !important }
@@ -684,6 +704,16 @@ img{max-width:100%;display:block}
   contain:layout style;
 }
 
+/* ════════════════════════════════════════════════════════
+   DESKTOP CONTAINER RULE — PC screens (1024px+)
+   Content column capped at 1200px and centered so text/messages
+   don't stretch edge-to-edge on wide monitors. Sidebar keeps its
+   own fixed width outside this container.
+════════════════════════════════════════════════════════ */
+@media (min-width:1024px){
+  .conv > *{max-width:1200px;margin-left:auto;margin-right:auto;width:100%}
+}
+
 /* ── Welcome ── */
 .welcome{
   flex:1;display:flex;flex-direction:column;
@@ -1005,16 +1035,31 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 .model-sel-btn svg{width:11px;height:11px;transition:transform .18s ease;flex-shrink:0}
 .model-sel.open .model-sel-btn svg{transform:rotate(180deg)}
 .model-sel-menu{
-  display:none;position:absolute;top:calc(100% + 6px);right:0;min-width:220px;z-index:60;
+  display:none;position:absolute;bottom:calc(100% + 6px);top:auto;right:0;min-width:220px;z-index:60;
   background:var(--card);border:1px solid var(--b1);border-radius:var(--r2);
-  box-shadow:0 10px 30px rgba(15,17,21,.12);padding:6px;
+  box-shadow:0 -10px 30px rgba(15,17,21,.12);padding:6px;
+  max-height:min(60vh,420px);overflow-y:auto;
 }
 .model-sel.open .model-sel-menu{display:block;animation:selMenuPop .28s cubic-bezier(.34,1.56,.64,1)}
 @keyframes selMenuPop{
-  0%{opacity:0;transform:translateY(10px) scale(.92)}
-  60%{opacity:1;transform:translateY(-2px) scale(1.02)}
+  0%{opacity:0;transform:translateY(-10px) scale(.92)}
+  60%{opacity:1;transform:translateY(2px) scale(1.02)}
   100%{opacity:1;transform:translateY(0) scale(1)}
 }
+/* #tbShortcuts sits in the TOPBAR (top of the page) — opening upward
+   or downward both risk clipping there, so its menu opens SIDEWAYS
+   (to the left, since the button itself is on the right in RTL)
+   instead. No other change to size, padding, or item styling. */
+#tbShortcuts .model-sel-menu{
+  bottom:auto;top:0;left:calc(100% + 6px);right:auto;
+  box-shadow:0 6px 24px rgba(15,17,21,.16);
+}
+@keyframes selMenuPopSide{
+  0%{opacity:0;transform:translateX(-10px) scale(.92)}
+  60%{opacity:1;transform:translateX(2px) scale(1.02)}
+  100%{opacity:1;transform:translateX(0) scale(1)}
+}
+#tbShortcuts.open .model-sel-menu{animation:selMenuPopSide .28s cubic-bezier(.34,1.56,.64,1)}
 .model-sel-item{
   display:flex;flex-direction:column;gap:1px;width:100%;padding:10px 10px;border-radius:9px;
   color:var(--tw);text-align:right;transition:all var(--tr);min-height:44px;
@@ -1349,12 +1394,17 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
 .set-row-txt{flex:1;min-width:0}
 .set-row-title{font-size:13px;color:var(--tw);font-weight:600}
 .set-row-desc{font-size:11px;color:var(--tg);margin-top:3px;line-height:1.6}
-.switch{position:relative;width:40px;height:22px;flex-shrink:0}
+/* Toggle switch — fixed capsule spec: 50x26 track, 20x20 knob,
+   3px inset on all sides (26-20)/2=3, travel = 50-20-3-3 = 24px. */
+.switch{position:relative;width:50px;height:26px;flex-shrink:0}
 .switch input{opacity:0;width:0;height:0;position:absolute}
-.slider{position:absolute;inset:0;background:var(--b2);border-radius:99px;cursor:pointer;transition:.2s}
-.slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:var(--tg);border-radius:50%;transition:.2s}
+.slider{position:absolute;inset:0;background:var(--b2);border-radius:26px;cursor:pointer;transition:background .2s ease}
+.slider::before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:var(--tg);border-radius:50%;transition:transform .2s ease,background .2s ease}
 .switch input:checked + .slider{background:var(--gdim)}
-.switch input:checked + .slider::before{background:var(--gold);transform:translateX(-18px)}
+.switch input:checked + .slider::before{background:var(--gold);transform:translateX(-24px)}
+.switch input:focus-visible + .slider{outline:2px solid var(--gold);outline-offset:2px}
+.slider:hover{filter:brightness(1.08)}
+.slider:active::before{filter:brightness(.94)}
 textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-height:1.5}
 </style>
 </head>
@@ -1654,7 +1704,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   <div class="modal-box wide">
     <button class="modal-x" onclick="closeLibrary()">✕</button>
     <div class="modal-title">🖼 الصور والملفات</div>
-    <div class="lib-tabs">
+    <div class="lib-tabs" data-fit="row">
       <button class="lib-tab on" id="libTabImages" onclick="switchLibTab('images')">الصور</button>
       <button class="lib-tab" id="libTabFiles" onclick="switchLibTab('files')">الملفات</button>
     </div>
@@ -1674,7 +1724,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   <div class="modal-box wide">
     <button class="modal-x" onclick="closeTasks()">✕</button>
     <div class="modal-title">🗓 التقويم والمهام</div>
-    <div class="lib-tabs">
+    <div class="lib-tabs" data-fit="row">
       <button class="lib-tab on" id="tasksTabList" onclick="switchTasksTab('list')">المهام</button>
       <button class="lib-tab" id="tasksTabCal" onclick="switchTasksTab('cal')">التقويم</button>
     </div>
@@ -1904,7 +1954,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <label class="field-label">الصورة الشخصية</label>
       <div class="set-avatar-row">
         <div class="set-avatar-preview" id="setAvatarPreview">Z</div>
-        <div class="set-avatar-btns">
+        <div class="set-avatar-btns" data-fit="row">
           <button class="set-avatar-upload" onclick="document.getElementById('avatarFileInput').click()">📷 رفع صورة</button>
           <button class="set-avatar-remove" onclick="removeAvatar()">🗑 إزالة الصورة</button>
         </div>
@@ -4532,7 +4582,7 @@ function buildCodeBlockHtml(lang, code) {
     <div class="code-block">
       <div class="code-bar">
         <span class="code-lang">${langLabel}</span>
-        <div class="code-bar-btns">
+        <div class="code-bar-btns" data-fit="row">
           ${previewBtn}
           <button class="code-btn" onclick="copyCodeBlock('${id}')">⧉ نسخ</button>
         </div>
@@ -7807,7 +7857,7 @@ function renderPersonaList() {
         <div class="persona-name">${esc(p.name)}${p.id === activeId ? ' <span class="persona-badge">· نشطة</span>' : ''}</div>
         <div class="persona-desc">${esc(p.desc || 'بدون وصف')}</div>
       </div>
-      <div class="persona-actions" onclick="event.stopPropagation()">
+      <div class="persona-actions" data-fit="row" onclick="event.stopPropagation()">
         ${!p.builtin ? `<button class="persona-act-btn" onclick="openPersonaEditor('${p.id}')" title="تعديل">✎</button>
         <button class="persona-act-btn del" onclick="deletePersona('${p.id}')" title="حذف">🗑</button>` : ''}
       </div>
@@ -8025,6 +8075,21 @@ function toggleWeb() {
       mo.observe(el, { childList: true, subtree: true, characterData: true });
     });
   });
+  // renderPersonaList() rebuilds #personaList from scratch, so any
+  // .persona-actions row it creates is missed by the observer above
+  // (which only watches rows present at DOMContentLoaded). Re-scan
+  // that one container specifically, instead of watching the whole
+  // document body.
+  const personaList = document.getElementById('personaList');
+  if (personaList) {
+    new MutationObserver(() => {
+      personaList.querySelectorAll('[data-fit="row"]').forEach(el => {
+        mo.observe(el, { childList: true, subtree: true, characterData: true });
+      });
+      clearTimeout(window.__fitRowsT);
+      window.__fitRowsT = setTimeout(fitAllRows, 60);
+    }).observe(personaList, { childList: true });
+  }
 })();
 </script>
 </body>
