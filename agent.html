@@ -1,10 +1,26 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-(function() {
-  const sessionKey = 'sb-xrldhfsytysznyyhwjlr-auth-token';
-  if (!localStorage.getItem(sessionKey)) window.location.replace('index.html');
+// تهيئة عميل Supabase مبكراً فـ <head> باش يكون جاهز لفحص الجلسة
+// الحقيقي تحت مباشرة، قبل ما نعمّرو أي حاجة أخرى فالصفحة.
+const ZX_SUPABASE_URL = 'https://xrldhfsytysznyyhwjlr.supabase.co';
+const ZX_SUPABASE_ANON_KEY = 'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F';
+const _SB = supabase.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY);
+</script>
+<script>
+// حارس الصفحة الحقيقي: تحقق فعلي من صلاحية الجلسة عبر Supabase
+// (auth.getSession()) بدل مجرد التحقق من وجود مفتاح فـ localStorage
+// (اللي كان يقبل توكن منتهي الصلاحية أو مُلفَّق). لا تُعرَض الصفحة
+// إطلاقاً قبل ما يرجع الجواب.
+(async function() {
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) window.location.replace('index.html');
+  } catch (e) {
+    window.location.replace('index.html');
+  }
 })();
 </script>
 <script>
@@ -30,10 +46,19 @@
 <link rel="icon" type="image/svg+xml" href="zunexa-logo.svg">
 <link rel="apple-touch-icon" href="zunexa-logo.svg">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<!-- Font Awesome — مُستضاف محلياً (نفس النطاق) بدل CDN خارجي، لأن
+     style-src فـ CSP كيحجب cdnjs.cloudflare.com. ملف all.min.css (100+
+     كيلوبايت) وملفات الخطوط webfonts/* خاصهم يكونو فـ نفس المستودع
+     تحت vendor/fontawesome/ — شوف تعليمة التنزيل تحت. -->
+<link rel="stylesheet" href="vendor/fontawesome/all.min.css">
+<style>
+/* ══════════════════════════════════════════════════
+   highlight.js — Atom One Dark theme (v11.9.0)
+   مُضمَّن هنا حرفياً بدل <link> خارجي لأن style-src فـ CSP
+   ديال هاد الموقع كيحجب cdnjs.cloudflare.com. */
+pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#282c34}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
+</style>
 <style>
 :root{
   --void:#FFFFFF;--card:#F7F8FA;--card2:#F1F2F5;--hover:#EBEDF1;--input-bg:#FFFFFF;
@@ -538,9 +563,9 @@ button{font-family:inherit;cursor:pointer}
 <div class="toast" id="toast"></div>
 
 <script>
-const ZX_SUPABASE_URL = 'https://xrldhfsytysznyyhwjlr.supabase.co';
-const ZX_SUPABASE_ANON_KEY = 'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F';
-const _SB = supabase.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY);
+// ملاحظة: ZX_SUPABASE_URL / ZX_SUPABASE_ANON_KEY / _SB أصبحت مُعرَّفة
+// مبكراً فـ <head> (لحارس الجلسة الحقيقي) وتُستعمل هنا كما هي، بدون
+// إعادة تعريف (تفادياً لخطأ "Identifier already declared").
 const EDGE_FUNCTIONS_BASE = ZX_SUPABASE_URL + '/functions/v1';
 
 let CURRENT_UID = null;

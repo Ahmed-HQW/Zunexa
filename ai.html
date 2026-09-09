@@ -26,6 +26,15 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Zunexa AI">
 <title>Zunexa — Zunexa AI</title>
+<meta name="description" content="Zunexa AI — مساعد ذكاء اصطناعي مغربي مجاني بالكامل، يفهم الدارجة والعربية الفصحى، بلا اشتراكات ولا بطاقة بنكية. اسأل، تعلّم، برمج، واكتب مع Zunexa.">
+<meta property="og:title" content="Zunexa AI — الذكاء الاصطناعي المغربي المجاني">
+<meta property="og:description" content="مساعد ذكي مجاني 100%، ناطق بالدارجة المغربية والعربية الفصحى. جرّبه الآن بدون تسجيل بطاقة بنكية.">
+<meta property="og:image" content="https://zunexa.vercel.app/og-image.png">
+<meta property="og:url" content="https://zunexa.vercel.app/ai">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://zunexa.vercel.app/ai">
+
 <link rel="icon" type="image/svg+xml" href="zunexa-logo.svg">
 <link rel="apple-touch-icon" href="zunexa-logo.svg">
 <!-- PWA: installable on Android / Windows / Linux (Chrome, Edge) and
@@ -52,139 +61,8 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="zunexa-touch.css">
 <style>
-/* ════════════════════════════════════════════════════════
-   MOBILE TOUCH LAYER — applies to every button/toggle on
-   the page (2026-09-04 pass). Three problems fixed globally
-   instead of per-component:
-   1) Touch targets < 44x44px on phones.
-   2) The gray tap-highlight flash + accidental text selection
-      when a button/toggle is tapped repeatedly on mobile.
-   3) `:hover` effects that only make sense with a mouse now
-      also fire an immediate `:active` state on touch, and
-      `:hover` itself is scoped to hover-capable pointers so it
-      doesn't "stick" after a tap on touchscreens.
-════════════════════════════════════════════════════════ */
-button,
-.btn, [class*="-btn"], [class$="btn"],
-.mode-chip, .model-sel-item, .persona-act-btn,
-.toggle, [role="switch"], [role="button"],
-input[type="checkbox"], input[type="radio"] {
-  -webkit-tap-highlight-color: transparent;
-  tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  touch-action: manipulation;
-}
-
-/* Guaranteed ≥44x44 hit area on phones/tablets, even for icon-only
-   buttons that are visually smaller — via an invisible ::after overlay
-   so the visible shape/size of the control never changes. */
-@media (max-width: 1024px) {
-  button, .btn, [class*="-btn"], [class$="btn"],
-  .mode-chip, .model-sel-item, .persona-act-btn,
-  .toggle, [role="switch"], [role="button"] {
-    position: relative;
-  }
-  button::after, .btn::after, [class*="-btn"]::after, [class$="btn"]::after,
-  .mode-chip::after, .model-sel-item::after, .persona-act-btn::after,
-  .toggle::after, [role="switch"]::after, [role="button"]::after {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: max(100%, 44px);
-    height: max(100%, 44px);
-    pointer-events: none;
-  }
-}
-
-/* Hover only where a real hover device exists; touch gets an instant
-   :active response instead so nothing feels unresponsive on tap. */
-@media (hover: hover) and (pointer: fine) {
-  button:hover, .btn:hover, [class*="-btn"]:hover, [class$="btn"]:hover,
-  .mode-chip:hover, .model-sel-item:hover, .persona-act-btn:hover,
-  .toggle:hover, [role="switch"]:hover, [role="button"]:hover {
-    filter: brightness(1.06);
-  }
-}
-@media (hover: none), (pointer: coarse) {
-  button:active, .btn:active, [class*="-btn"]:active, [class$="btn"]:active,
-  .mode-chip:active, .model-sel-item:active, .persona-act-btn:active,
-  .toggle:active, [role="switch"]:active, [role="button"]:active {
-    filter: brightness(0.92);
-    transform: scale(0.97);
-  }
-}
-
-/* ════════════════════════════════════════════════════════
-   AUTO-FIT BUTTON ROWS (2026-09-04) — driven by fitButtonRows()
-   in <script> below. Any row marked [data-fit="row"] (mode-row,
-   tb-right, billing-toggle, set-tabs) must show ALL its
-   buttons/toggles fully — never clipped, never hidden behind a
-   horizontal scroll. The script steps a row through these
-   shrink tiers (real font-size/padding/gap reduction, not a
-   transform hack) until everything fits; if it still doesn't
-   fit at the smallest tier, wrapping is force-enabled as the
-   final guarantee that nothing gets cut off. */
-[data-fit="row"]{ overflow: visible !important; }
-/* Descendant selectors (not just direct children) so nested controls —
-   e.g. #effortSelBtn/#tbShortcutsBtn inside a .model-sel wrapper div
-   inside .tb-right — are actually reached. !important is required
-   because several buttons (#tbShortcutsBtn, #tempChatBtn) carry an
-   inline style="padding:..." which otherwise wins over any class rule
-   regardless of specificity — that's why the previous > * version had
-   no visible effect on them. */
-[data-fit="row"].fit-1{ gap:.85em !important }
-[data-fit="row"].fit-1 button,
-[data-fit="row"].fit-1 .model-sel-btn,
-[data-fit="row"].fit-1 .mode-chip,
-[data-fit="row"].fit-1 .model-sel-item,
-[data-fit="row"].fit-1 .lib-tab,
-[data-fit="row"].fit-1 .code-btn,
-[data-fit="row"].fit-1 .set-avatar-upload,
-[data-fit="row"].fit-1 .set-avatar-remove,
-[data-fit="row"].fit-1 .persona-act-btn{ font-size:.92em !important; padding-left:.7em !important; padding-right:.7em !important }
-[data-fit="row"].fit-1 svg{ width:.92em !important; height:.92em !important }
-
-[data-fit="row"].fit-2{ gap:.6em !important }
-[data-fit="row"].fit-2 button,
-[data-fit="row"].fit-2 .model-sel-btn,
-[data-fit="row"].fit-2 .mode-chip,
-[data-fit="row"].fit-2 .model-sel-item,
-[data-fit="row"].fit-2 .lib-tab,
-[data-fit="row"].fit-2 .code-btn,
-[data-fit="row"].fit-2 .set-avatar-upload,
-[data-fit="row"].fit-2 .set-avatar-remove,
-[data-fit="row"].fit-2 .persona-act-btn{ font-size:.84em !important; padding-left:.55em !important; padding-right:.55em !important }
-[data-fit="row"].fit-2 svg{ width:.84em !important; height:.84em !important }
-
-[data-fit="row"].fit-3{ gap:.4em !important }
-[data-fit="row"].fit-3 button,
-[data-fit="row"].fit-3 .model-sel-btn,
-[data-fit="row"].fit-3 .mode-chip,
-[data-fit="row"].fit-3 .model-sel-item,
-[data-fit="row"].fit-3 .lib-tab,
-[data-fit="row"].fit-3 .code-btn,
-[data-fit="row"].fit-3 .set-avatar-upload,
-[data-fit="row"].fit-3 .set-avatar-remove,
-[data-fit="row"].fit-3 .persona-act-btn{ font-size:.76em !important; padding-left:.4em !important; padding-right:.4em !important }
-[data-fit="row"].fit-3 svg{ width:.76em !important; height:.76em !important }
-
-[data-fit="row"].fit-4{ gap:.3em !important }
-[data-fit="row"].fit-4 button,
-[data-fit="row"].fit-4 .model-sel-btn,
-[data-fit="row"].fit-4 .mode-chip,
-[data-fit="row"].fit-4 .model-sel-item,
-[data-fit="row"].fit-4 .lib-tab,
-[data-fit="row"].fit-4 .code-btn,
-[data-fit="row"].fit-4 .set-avatar-upload,
-[data-fit="row"].fit-4 .set-avatar-remove,
-[data-fit="row"].fit-4 .persona-act-btn{ font-size:.68em !important; padding-left:.3em !important; padding-right:.3em !important }
-[data-fit="row"].fit-4 svg{ width:.68em !important; height:.68em !important }
-
-[data-fit="row"].fit-wrap{ flex-wrap:wrap !important; overflow-x:visible !important }
 /* ════════════════════════════════════════════════════════
    THEME TRANSITION — smooth light↔dark (Zalij) crossfade
    Applies to the elements that actually flip color on
@@ -1573,7 +1451,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 
 <!-- Conversation -->
   <div class="conv" id="conv">
-    <div class="welcome" id="welcome">
+    <div class="welcome" id="welcomeEmpty">
       <div class="wl-title">مرحباً في <span>Zunexa</span></div>
       <div class="wl-sub"></div>
     </div>
@@ -1675,6 +1553,31 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <button class="billing-btn btn-gold" style="flex:none" id="btnRedeem">تفعيل</button>
     </div>
     <div class="billing-status-msg" id="redeemStatus"></div>
+
+    <!-- ══════════════════════════════════════════════════
+         WHATSAPP PAYMENT CONFIRMATION
+         بديل/تكملة لنموذج "اطلب خطة": المستخدم كيختار الخطة، كيتولد
+         رقم طلب (UUID) وكيتسجل فـ payment_confirmations بحالة
+         'pending'، ثم كيتفتح واتساب برسالة معبّأة مسبقاً. الأدمن
+         كيأكد الدفع يدوياً من admin.html اللي كيستدعي Edge Function
+         confirm-payment (security definer، نفس منطق redeem_plan_code).
+    ══════════════════════════════════════════════════ -->
+    <div class="billing-section-title">دفعتي؟ أكّد الدفع عبر واتساب</div>
+    <div class="billing-form-grid">
+      <div class="billing-field">
+        <label>الخطة</label>
+        <select id="waPlan">
+          <option value="pro">Pro</option>
+          <option value="max">Max</option>
+          <option value="standard">Standard (فريق)</option>
+          <option value="premium">Premium (فريق)</option>
+        </select>
+      </div>
+    </div>
+    <button class="billing-btn" style="width:100%;background:#25D366;color:#fff" id="btnWhatsAppConfirm">
+      🟢 أكّد الدفع عبر واتساب
+    </button>
+    <div class="billing-status-msg" id="waConfirmStatus"></div>
 
     <div class="billing-section-title">ما لقيتيش الخطة اللي بغيتي؟ اطلب واحدة</div>
     <div class="billing-form-grid">
@@ -2166,10 +2069,15 @@ function saveThreadMsg(role, text, src, score, imgUrl, audioUrl) {
 function loadThread(chatId) {
   try { return JSON.parse(localStorage.getItem('zx_thread_' + chatId) || '[]'); } catch(e){ return []; }
 }
+function hideWelcomeScreens() {
+  const w1 = document.getElementById('welcomeEmpty');
+  if (w1) w1.remove();
+  const w2 = document.getElementById('welcomeChat');
+  if (w2) w2.remove();
+}
 function replayThread(chatId) {
   const conv = document.getElementById('conv');
-  const w = document.getElementById('welcome');
-  if (w) w.remove();
+  hideWelcomeScreens();
   conv.innerHTML = '';
   const msgs = loadThread(chatId);
   msgs.forEach(m => addMsg(m.text, m.role, m.src, m.score, m.imgUrl, true, m.audioUrl));
@@ -3157,8 +3065,8 @@ async function ensureWebLLM() {
 
 /* ════════════════════════════════════════════════════════════
    archonBrain — cloud call, restored to go through Zunexa's own
-   Supabase Edge Functions (ai-openrouter / ai-gemini / ai-groq /
-   ai-deepseek) instead of the free keyless Pollinations endpoint.
+   Supabase Edge Functions (ai-openrouter / ai-gemini / ai-groq)
+   instead of the free keyless Pollinations endpoint.
 
    Why an Edge Function and not a direct fetch to OpenRouter/Gemini/
    Groq/DeepSeek from the browser: those providers' real API keys
@@ -3173,7 +3081,7 @@ async function ensureWebLLM() {
 
    Providers, mapped to their Edge Function name and how to pull the
    reply text back out of that provider's response shape:
-     - openrouter / groq / deepseek → OpenAI-compatible:
+     - openrouter / groq → OpenAI-compatible:
          data.choices[0].message.content
      - gemini → Google's own shape:
          data.candidates[0].content.parts[0].text
@@ -3183,8 +3091,7 @@ const EDGE_FUNCTIONS_BASE = ZX_SUPABASE_URL + '/functions/v1';
 const PROVIDER_FN = {
   openrouter: 'ai-openrouter',
   gemini:     'ai-gemini',
-  groq:       'ai-groq',
-  deepseek:   'ai-deepseek'
+  groq:       'ai-groq'
 };
 
 // Default upstream model per provider when the smart-router
@@ -3192,8 +3099,7 @@ const PROVIDER_FN = {
 const PROVIDER_DEFAULT_MODEL = {
   openrouter: 'openai/gpt-4o-mini',
   gemini:     'gemini-1.5-flash',
-  groq:       'llama-3.3-70b-versatile',
-  deepseek:   'deepseek-chat'
+  groq:       'llama-3.3-70b-versatile'
 };
 
 function extractReplyText(provider, data) {
@@ -3203,7 +3109,7 @@ function extractReplyText(provider, data) {
     const txt = cand && cand.content && cand.content.parts && cand.content.parts.map(p => p.text || '').join('');
     return txt ? txt.trim() : null;
   }
-  // openrouter / groq / deepseek — OpenAI-compatible shape
+  // openrouter / groq — OpenAI-compatible shape
   const txt = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
   return txt ? txt.trim() : null;
 }
@@ -3544,104 +3450,6 @@ function getActivePersona() {
 
 
 
-/* ════════════════════════════════════════════════════════════
-   RAG LAYER — Semantic Search via Supabase pgvector
-   ════════════════════════════════════════════════════════════
-   Pipeline:
-     السؤال → embedding (HuggingFace free API) → pgvector cosine
-     search في Supabase → أقرب 5 فقرات → سياق للـ Brain
-
-   لماذا هذا أفضل من الـ KB المحلي؟
-   - لا تحتاج كتابة keywords يدوياً — أي نص يصبح قابلاً للبحث
-   - يفهم المعنى لا الكلمات (semantic not lexical)
-   - يعمل مع العربية والفرنسية والإنجليزية بنفس الدقة
-   - قاعدة المعرفة تكبر بدون لمس الكود
-
-   الـ KB المحلي (zunexa_qa_final.json) يبقى كطبقة أولى سريعة
-   offline — الـ RAG يُثري الإجابة إذا كان الاتصال متاحاً.
-════════════════════════════════════════════════════════════ */
-
-// HuggingFace model — all-MiniLM-L6-v2 (384d، مجاني، يدعم العربية)
-const RAG_EMBED_URL = 'https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2';
-const RAG_HF_TOKEN  = localStorage.getItem('zx_hf_token') || '';  // اختياري
-
-// Cache الـ embeddings في الذاكرة لتجنب استدعاء HF مرتين لنفس السؤال
-const _ragEmbedCache = new Map();
-
-// هل الـ RAG مُفعَّل؟ (يُفعَّل تلقائياً إذا وُجدت إدخالات في Supabase)
-let _ragEnabled = null;  // null = لم يُفحص بعد, true/false بعد الفحص
-
-async function ragCheckEnabled() {
-  if (_ragEnabled !== null) return _ragEnabled;
-  try {
-    const { count } = await _SB
-      .from('zunexa_knowledge')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_active', true);
-    _ragEnabled = (count || 0) > 0;
-    if (_ragEnabled) console.log(`Zunexa RAG: ${count} إدخال في Supabase — RAG مُفعَّل ✅`);
-    else console.log('Zunexa RAG: الجدول فارغ — شغّل zunexa_embed.py أولاً');
-  } catch {
-    _ragEnabled = false;
-  }
-  return _ragEnabled;
-}
-
-async function ragGetEmbedding(text) {
-  const key = text.slice(0, 120);
-  if (_ragEmbedCache.has(key)) return _ragEmbedCache.get(key);
-
-  const headers = { 'Content-Type': 'application/json' };
-  if (RAG_HF_TOKEN) headers['Authorization'] = `Bearer ${RAG_HF_TOKEN}`;
-
-  const res = await fetch(RAG_EMBED_URL, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      inputs: text.slice(0, 500),
-      options: { wait_for_model: true }
-    })
-  });
-  if (!res.ok) throw new Error(`HF embed error ${res.status}`);
-  let vec = await res.json();
-  // HF يرجع أحياناً nested array
-  if (Array.isArray(vec[0])) vec = vec[0];
-  _ragEmbedCache.set(key, vec);
-  return vec;
-}
-
-async function ragSearch(userQ, matchCount = 5) {
-  // 1. توليد الـ embedding
-  const embedding = await ragGetEmbedding(userQ);
-
-  // 2. بحث دلالي في Supabase بـ pgvector
-  const { data, error } = await _SB?.rpc('match_zunexa_knowledge', {
-    query_embedding: embedding,
-    match_threshold: 0.45,  // حد أدنى للتشابه (0-1، كلما زاد كلما كان أدق)
-    match_count:     matchCount,
-    filter_category: null   // ابحث في كل الفئات
-  });
-
-  if (error || !data || !data.length) return null;
-
-  // 3. زيادة وزن أفضل نتيجة (best-effort، لا يوقف التدفق إذا فشل)
-  if (data[0]?.id) {
-    _SB?.rpc('increment_knowledge_weight', { knowledge_id: data[0].id }).catch(() => {});
-  }
-
-  // 4. بناء الـ context للـ Brain من أقرب النتائج
-  const context = data
-    .map((d, i) => `[${i+1}] ${d.title}\n${d.content}`)
-    .join('\n\n---\n\n');
-
-  return {
-    context,
-    topResult: data[0],
-    similarity: data[0]?.similarity || 0,
-    count: data.length
-  };
-}
-
 // Effort → how hard Zunexa tries: local-only vs. local+brain, context depth, token budget.
 //
 // FREE_TIER_TOKEN_CAP: this app currently has no paid-tier gating
@@ -3887,23 +3695,10 @@ async function answer(userQ) {
     return { ...local, text: local.text + '\n\n_⚠ تم الوصول للحد الأقصى من الطلبات لهذا الجهاز حالياً — حاول بعد قليل._' };
   }
 
-  // ── RAG: بحث دلالي في Supabase ────────────────────────────
-  thinkStep('rag');
-  let ragContext = '';
-  try {
-    const ragActive = await ragCheckEnabled();
-    if (ragActive) {
-      const ragResult = await ragSearch(userQ, 5);
-      if (ragResult && ragResult.similarity > 0.45) {
-        ragContext = ragResult.context;
-        console.log(`RAG: ${ragResult.count} نتيجة، أعلى تشابه: ${ragResult.similarity.toFixed(3)}`);
-      }
-    }
-  } catch (e) {
-    // الـ RAG اختياري — إذا فشل يكمل بالـ KB المحلي فقط
-    console.warn('RAG: تخطّي (', e.message, ')');
-  }
-  thinkDone('rag');
+  // ملاحظة: طبقة RAG (بحث دلالي عبر embeddings من HuggingFace) أُزيلت
+  // نهائياً لأنها كانت تعتمد على نقطة نهاية غير متاحة وتسبب أخطاء في
+  // الإنتاج. الإجابة تعتمد الآن على الـ KB المحلي + الـ Brain مباشرة.
+  const ragContext = '';
 
   // ── بناء الـ prompt مع السياقين معاً ──────────────────────
   thinkStep('brain');
@@ -4329,8 +4124,7 @@ async function send() {
   inp.value = ''; resize(inp);
 
   // Hide welcome
-  const w = document.getElementById('welcome');
-  if (w) w.remove();
+  hideWelcomeScreens();
 
   addMsg(q, 'user');
 
@@ -4838,7 +4632,7 @@ function newChat() {
   }
   const conv = document.getElementById('conv');
   conv.innerHTML = `
-    <div class="welcome" id="welcome">
+    <div class="welcome" id="welcomeChat">
       <div class="wl-eyebrow">Zunexa Premium · Zunexa AI </div>
       <div class="gold-hr"></div>
       <div class="wl-title">مرحباً في <span>Zunexa</span></div>
@@ -5281,6 +5075,68 @@ document.getElementById('btnRedeem').onclick = async () => {
   }
 };
 
+/* ---------- WhatsApp Payment Confirmation ---------- */
+// ⚠️ بدّل الرقم هذا برقم واتساب Zunexa الحقيقي (بصيغة دولية بدون + أو 00،
+// مثال للمغرب: 2126XXXXXXXX).
+const ZUNEXA_WHATSAPP_NUMBER = '212600000000';
+
+function planLabelAndPrice(planId) {
+  const all = [...PLANS_INDIVIDUAL, ...PLANS_TEAM];
+  const p = all.find(x => x.id === planId);
+  if (!p) return { name: planId, price: 0 };
+  const price = billingCycle === 'monthly' ? p.monthly : p.yearly;
+  return { name: p.name, price };
+}
+
+document.getElementById('btnWhatsAppConfirm').onclick = async () => {
+  const plan = document.getElementById('waPlan').value;
+  const statusEl = document.getElementById('waConfirmStatus');
+  statusEl.classList.remove('show', 'ok', 'err');
+
+  const { data: { session } } = await _SB?.auth.getSession();
+  if (!session) {
+    statusEl.textContent = 'خاصك تدخل لحسابك أولاً باش تأكد الدفع.';
+    statusEl.classList.add('err', 'show');
+    return;
+  }
+
+  const btn = document.getElementById('btnWhatsAppConfirm');
+  btn.disabled = true;
+  const originalLabel = btn.textContent;
+  btn.innerHTML = '<span class="billing-spinner"></span>';
+
+  try {
+    const { name, price } = planLabelAndPrice(plan);
+    const orderRef = (crypto.randomUUID ? crypto.randomUUID() :
+      'zx-' + Date.now() + '-' + Math.random().toString(16).slice(2));
+
+    // نسجّل الطلب فـ Supabase بحالة 'pending' قبل ما نفتحو واتساب —
+    // هكاك الأدمن يقدر يلقاه فـ admin.html حتى إذا المستخدم ما كملش
+    // إرسال الرسالة.
+    const { error } = await _SB?.from('payment_confirmations').insert({
+      user_id: session.user.id,
+      plan,
+      amount: price,
+      whatsapp_order_ref: orderRef,
+      status: 'pending',
+    });
+    if (error) throw error;
+
+    const msg = `مرحباً، بغيت نأكد دفع اشتراكي فـ Zunexa.\nرقم الطلب: ${orderRef}\nالخطة: ${name}\nالمبلغ: $${price}\nالإيميل: ${session.user.email || ''}`;
+    const waUrl = `https://wa.me/${ZUNEXA_WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(waUrl, '_blank');
+
+    statusEl.textContent = `تم تسجيل طلبك (${orderRef}) — كمّل الرسالة فواتساب وغادي نأكدو الدفع فأقرب وقت.`;
+    statusEl.classList.add('ok', 'show');
+  } catch (err) {
+    statusEl.textContent = 'وقع خطأ: ' + err.message;
+    statusEl.classList.add('err', 'show');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
+};
+
 /* ---------- Request Plan ---------- */
 document.getElementById('btnRequestPlan').onclick = async () => {
   const name    = document.getElementById('reqName').value.trim();
@@ -5671,14 +5527,6 @@ async function pushAppSettings() {
     console.warn('pushAppSettings: skipped (best-effort — column may not be set up yet)', e);
   }
 }
-
-/* ── Optional free-tier API keys (user-pasted, localStorage-only) ── */
-/* مفاتيح API الاختيارية — تُقرأ هنا مباشرة عند استعمال أدوات مثل
-   /صورة_hf أو الترجمة عبر DeepL. واجهة إدخال/حفظ هاذ المفاتيح
-   (loadApiKeysIntoUI القديمة) انتقلت إلى settings.html، لكنها تكتب
-   لنفس مفتاح localStorage['zx_api_keys'] فتبقى القراءة هنا صحيحة. */
-function getApiKeys() { try { return JSON.parse(localStorage.getItem('zx_api_keys') || '{}'); } catch(e){ return {}; } }
-function getApiKey(name) { return (getApiKeys()[name] || '').trim(); }
 
 /* loadAllPrefsIntoUI() (تعمير كل حقول المودال) انتقلت إلى
    settings.html — تطبيق التفضيلات الفعلي عند الإقلاع (applyPageLang،
@@ -6082,12 +5930,11 @@ async function toolImageGen(prompt) {
   return { text: `🎨 **صورة مولّدة بالذكاء الاصطناعي:**\n"${prompt}"\n\n_المصدر: Pollinations.ai (بدون مفتاح API)_`, src: 'tool', score: 0.9, imgUrl: url };
 }
 
-/* Alternate image engine via Hugging Face Inference API (needs the
-   user's own free HF token — Settings → مفاتيح API). Uses FLUX.1-schnell,
-   a fast open-source model, as a second option next to Pollinations. */
+/* Alternate image engine via Hugging Face was removed — it required a
+   user-pasted HF token and there is no UI in this app to collect one.
+   /صورة_hf now always points users to the free, keyless /صورة command. */
 async function toolImageGenHF(prompt) {
-  const key = getApiKey('hf');
-  if (!key) return { text: `⚠ /صورة_hf تحتاج Hugging Face Token مجاني — سجّل فـ huggingface.co/settings/tokens وحطو فالإعدادات ← مفاتيح API. فالوقت الحالي جرّب /صورة ().`, src: 'tool', score: 0.3 };
+  return { text: `⚠ أمر /صورة_hf غير متوفر حالياً — جرّب /صورة () بدلاً منه، وهو مجاني بالكامل وما كيحتاجش أي مفتاح API.`, src: 'tool', score: 0.3 };
   try {
     const res = await fetch('https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell', {
       method: 'POST',
@@ -6101,40 +5948,20 @@ async function toolImageGenHF(prompt) {
   } catch (e) { return { text: '⚠ تعذّر التوليد عبر Hugging Face — قد يكون النموذج كايحمّل (كولد ستارت)، عاود المحاولة بعد ثوانٍ.', src: 'tool', score: 0.1 }; }
 }
 
-/* DeepL — free tier, 500k chars/month, needs the user's own free key (Settings → مفاتيح API) */
+/* DeepL translation was removed — it required a user-pasted API key and
+   there is no UI in this app to collect one. */
 async function toolTranslate(targetLang, text) {
-  const key = getApiKey('deepl');
-  if (!key) {
-    return { text: `⚠ الترجمة عبر DeepL تحتاج مفتاح API مجاني — سجّل فـ deepl.com/pro-api وحط المفتاح فـ الإعدادات ← مفاتيح API.`, src: 'tool', score: 0.3 };
-  }
-  try {
-    const host = key.endsWith(':fx') ? 'api-free.deepl.com' : 'api.deepl.com';
-    const res = await fetch(`https://${host}/v2/translate`, {
-      method: 'POST',
-      headers: { 'Authorization': `DeepL-Auth-Key ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: [text], target_lang: targetLang })
-    });
-    const d = await res.json();
-    const out = d.translations && d.translations[0] && d.translations[0].text;
-    if (!out) throw new Error('no translation returned');
-    return { text: `🌍 **الترجمة (${targetLang}):**\n\n${out}\n\n_المصدر: DeepL API_`, src: 'tool', score: 0.9 };
-  } catch (e) { return { text: '⚠ تعذّرت الترجمة — تحقق من صحة مفتاح DeepL.', src: 'tool', score: 0.1 }; }
+  return { text: `⚠ الترجمة عبر DeepL غير متوفرة حالياً فهاد النسخة.`, src: 'tool', score: 0.3 };
 }
 
-/* Text-to-speech: VoiceRSS (natural voices, needs free key) with an
-   always-available fallback to the browser's built-in Web Speech API
-   (speechSynthesis) which needs ZERO key and works out of the box. */
+/* Text-to-speech via the browser's built-in Web Speech API
+   (speechSynthesis) — needs ZERO key and works out of the box.
+   (The optional VoiceRSS paid-key path was removed — no key management. */
 function toolTTS(text) {
-  const key = getApiKey('voicerss');
   const voice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
   const lang = voice.lang || 'ar-sa';
-  if (key) {
-    const url = `https://api.voicerss.org/?key=${encodeURIComponent(key)}&hl=${encodeURIComponent(lang)}&src=${encodeURIComponent(text)}&f=48khz_16bit_stereo`;
-    return { text: `🔊 **تحويل النص لصوت (VoiceRSS):**\n"${text.slice(0,120)}"`, src: 'tool', score: 0.9, audioUrl: url };
-  }
-  // Free fallback — plays immediately via the browser, no network call at all.
   speakBrowser(text, lang);
-  return { text: `🔊 **جاري القراءة الصوتية عبر متصفحك...**\n"${text.slice(0,120)}"\n\n_ملاحظة: لصوت طبيعي أكثر، ضيف مفتاح VoiceRSS مجاني من الإعدادات._`, src: 'tool', score: 0.9 };
+  return { text: `🔊 **جاري القراءة الصوتية عبر متصفحك...**\n"${text.slice(0,120)}"`, src: 'tool', score: 0.9 };
 }
 function speakBrowser(text, lang) {
   try {
@@ -6148,36 +5975,15 @@ function speakBrowser(text, lang) {
   } catch(e){}
 }
 
-/* Deep web search — layered:
-   1) Tavily or Serper.ai if the user pasted a free key (richer results)
-   2) DuckDuckGo Instant Answer API otherwise — genuinely free & keyless */
+/* Deep web search via DuckDuckGo Instant Answer API — genuinely free
+   and keyless. (The optional Tavily/Serper paid-key path was removed
+   along with the rest of the client-side API key management.) */
 async function toolDeepSearch(query) {
-  const tavilyKey = getApiKey('tavily');
-  const serperKey = getApiKey('serper');
   try {
-    if (tavilyKey) {
-      const d = await fetch('https://api.tavily.com/search', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ api_key: tavilyKey, query, max_results: 5 })
-      }).then(r => r.json());
-      const items = d.results || [];
-      if (!items.length) return { text: `⚠ لا نتائج لـ "${query}".`, src: 'tool', score: 0.3 };
-      return { text: `🔎 **نتائج البحث (Tavily) لـ "${query}":**\n\n` + items.map((r,i) => `${i+1}. **[${esc(r.title)}](${r.url})**\n   ${esc((r.content||'').slice(0,140))}`).join('\n\n'), src: 'tool', score: 0.9 };
-    }
-    if (serperKey) {
-      const d = await fetch('https://google.serper.dev/search', {
-        method: 'POST', headers: { 'X-API-KEY': serperKey, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ q: query })
-      }).then(r => r.json());
-      const items = (d.organic || []).slice(0,5);
-      if (!items.length) return { text: `⚠ لا نتائج لـ "${query}".`, src: 'tool', score: 0.3 };
-      return { text: `🔎 **نتائج البحث (Google عبر Serper) لـ "${query}":**\n\n` + items.map((r,i) => `${i+1}. **[${esc(r.title)}](${r.link})**\n   ${esc((r.snippet||'').slice(0,140))}`).join('\n\n'), src: 'tool', score: 0.9 };
-    }
-    // Keyless fallback — DuckDuckGo Instant Answer
     const d = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`).then(r => r.json());
     const abstract = d.AbstractText;
     const related = (d.RelatedTopics || []).filter(t => t.Text).slice(0,4);
-    if (!abstract && !related.length) return { text: `⚠ ما لقيتش نتيجة مباشرة لـ "${query}" — للبحث الأعمق ضيف مفتاح Tavily/Serper مجاني من الإعدادات.`, src: 'tool', score: 0.3 };
+    if (!abstract && !related.length) return { text: `⚠ ما لقيتش نتيجة مباشرة لـ "${query}".`, src: 'tool', score: 0.3 };
     let txt = `🔎 **بحث سريع (DuckDuckGo) عن "${query}":**\n\n`;
     if (abstract) txt += `${esc(abstract)}\n\n`;
     if (related.length) txt += related.map(t => `• ${esc(t.Text)}`).join('\n');
@@ -7759,7 +7565,6 @@ function initVoice() {
 
 function loadAllPrefsIntoUI() {
   loadProfileIntoUI();
-  loadApiKeysIntoUI();
   const font = localStorage.getItem('zx_font') || 'rajdhani';
   const motion = localStorage.getItem('zx_reduce_motion') === '1';
   const notif = localStorage.getItem('zx_notif_done') === '1';
@@ -7783,15 +7588,6 @@ function loadAllPrefsIntoUI() {
 
   setChatFont(font);
   document.documentElement.classList.toggle('zx-reduce-motion', motion);
-}
-
-function loadApiKeysIntoUI() {
-  const k = getApiKeys();
-  if (document.getElementById('keyHF'))       document.getElementById('keyHF').value = k.hf || '';
-  if (document.getElementById('keyDeepL'))    document.getElementById('keyDeepL').value = k.deepl || '';
-  if (document.getElementById('keyVoiceRSS')) document.getElementById('keyVoiceRSS').value = k.voicerss || '';
-  if (document.getElementById('keyTavily'))   document.getElementById('keyTavily').value = k.tavily || '';
-  if (document.getElementById('keySerper'))   document.getElementById('keySerper').value = k.serper || '';
 }
 
 function loadProfileIntoUI() {
@@ -7861,18 +7657,6 @@ function renderPersonaList() {
       </div>
     </div>
   `).join('');
-}
-
-function saveApiKeys(showToast) {
-  const keys = {
-    hf:      (document.getElementById('keyHF')||{}).value || '',
-    deepl:   (document.getElementById('keyDeepL')||{}).value || '',
-    voicerss:(document.getElementById('keyVoiceRSS')||{}).value || '',
-    tavily:  (document.getElementById('keyTavily')||{}).value || '',
-    serper:  (document.getElementById('keySerper')||{}).value || ''
-  };
-  localStorage.setItem('zx_api_keys', JSON.stringify(keys));
-  if (showToast) toast('✓ تم حفظ المفاتيح محلياً فالمتصفح');
 }
 
 function savePagePrefs() {
@@ -7972,123 +7756,7 @@ function toggleWeb() {
 }
 
 </script>
-<script>
-/* White ripple/glow feedback — purely additive UI polish, no app logic touched */
-(function(){
-  const RIPPLE_SEL = '.send-btn,.sb-upgrade,.sb-new,.mode-chip,.model-sel-btn,.modal-save,.off-btn,.lim-upgrade,.mini-ghost-btn,.code-btn,.attach-btn';
-  document.addEventListener('pointerdown', function(e){
-    const el = e.target.closest(RIPPLE_SEL);
-    if (!el || el.disabled) return;
-    const rect = el.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    const span = document.createElement('span');
-    span.className = 'zx-ripple';
-    span.style.width = span.style.height = size + 'px';
-    span.style.left = (e.clientX - rect.left - size / 2) + 'px';
-    span.style.top = (e.clientY - rect.top - size / 2) + 'px';
-    el.appendChild(span);
-    span.addEventListener('animationend', () => span.remove());
-  }, { passive: true });
-})();
-</script>
-<script>
-/* ════════════════════════════════════════════════════════
-   AUTO-FIT BUTTON ROWS (2026-09-04)
-   Every [data-fit="row"] container (.mode-row, .tb-right,
-   .billing-toggle, .set-tabs) must show ALL its buttons/toggles
-   fully on load and on every resize — nothing clipped, nothing
-   hidden behind a scrollbar. Steps the row down through
-   fit-1 → fit-2 → fit-3 → fit-4 (real font-size/padding/gap
-   shrink) until it stops overflowing; if it's still too tight
-   at the smallest tier, force-wraps as the final guarantee.
-════════════════════════════════════════════════════════ */
-(function () {
-  const TIERS = ['fit-1', 'fit-2', 'fit-3', 'fit-4'];
-
-  // The row itself never self-clips (flex-shrink:0, overflow:visible) —
-  // it just pushes wider than its PARENT (.topbar / .input-zone), so
-  // comparing the row's own scrollWidth vs clientWidth is always equal
-  // and never detects the real overflow. Instead: available space =
-  // parent's inner width minus every sibling that isn't this row.
-  function availableWidth(el) {
-    const parent = el.parentElement;
-    if (!parent) return Infinity;
-    const parentStyle = getComputedStyle(parent);
-    let w = parent.clientWidth
-          - parseFloat(parentStyle.paddingLeft || 0)
-          - parseFloat(parentStyle.paddingRight || 0);
-    Array.from(parent.children).forEach(sib => {
-      if (sib === el) return;
-      const cs = getComputedStyle(sib);
-      if (cs.display === 'none' || cs.position === 'absolute' || cs.position === 'fixed') return;
-      const rect = sib.getBoundingClientRect();
-      w -= rect.width
-         + parseFloat(cs.marginLeft || 0)
-         + parseFloat(cs.marginRight || 0);
-    });
-    return Math.max(0, w - 4); // small safety margin
-  }
-
-  function fits(el) {
-    return el.scrollWidth <= availableWidth(el) + 1;
-  }
-
-  function fitRow(el) {
-    el.classList.remove(...TIERS, 'fit-wrap');
-    if (fits(el)) return; // already all visible at full size
-
-    for (const tier of TIERS) {
-      el.classList.add(tier);
-      if (fits(el)) return;
-      el.classList.remove(tier);
-    }
-
-    // Still doesn't fit even at the smallest tier — guarantee every
-    // button/toggle stays fully visible by wrapping to more than one
-    // row instead of clipping/scrolling any of them out of sight.
-    el.classList.add('fit-4', 'fit-wrap');
-  }
-
-  function fitAllRows() {
-    document.querySelectorAll('[data-fit="row"]').forEach(fitRow);
-  }
-
-  window.fitButtonRows = fitAllRows; // exposed so menu-toggle code can re-fit on demand
-
-  window.addEventListener('load', fitAllRows);
-  window.addEventListener('resize', () => {
-    clearTimeout(window.__fitRowsT);
-    window.__fitRowsT = setTimeout(fitAllRows, 120);
-  });
-
-  // Re-fit whenever buttons/toggles are added or swapped inside a
-  // tracked row (e.g. model/effort selector rebuilding its label).
-  const mo = new MutationObserver(() => {
-    clearTimeout(window.__fitRowsT);
-    window.__fitRowsT = setTimeout(fitAllRows, 60);
-  });
-  document.addEventListener('DOMContentLoaded', () => {
-    fitAllRows();
-    document.querySelectorAll('[data-fit="row"]').forEach(el => {
-      mo.observe(el, { childList: true, subtree: true, characterData: true });
-    });
-  });
-  // renderPersonaList() rebuilds #personaList from scratch, so any
-  // .persona-actions row it creates is missed by the observer above
-  // (which only watches rows present at DOMContentLoaded). Re-scan
-  // that one container specifically, instead of watching the whole
-  // document body.
-  const personaList = document.getElementById('personaList');
-  if (personaList) {
-    new MutationObserver(() => {
-      personaList.querySelectorAll('[data-fit="row"]').forEach(el => {
-        mo.observe(el, { childList: true, subtree: true, characterData: true });
-      });
-      clearTimeout(window.__fitRowsT);
-      window.__fitRowsT = setTimeout(fitAllRows, 60);
-    }).observe(personaList, { childList: true });
-  }
-})();
-</script>
+<script defer src="zunexa-ripple.js"></script>
+<script defer src="zunexa-autofit.js"></script>
 </body>
 </html>

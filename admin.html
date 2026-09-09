@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zunexa — لوحة تأكيد الدفعات</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --bg:#0B0C0F; --card:#15171C; --gold:#D4AF37; --tx:#F4F4F4; --tg:#9A9DA6;
+    --ok:#2ecc71; --err:#e74c3c; --border:#2A2D34;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:-apple-system,Segoe UI,Tahoma,Arial,sans-serif;
+    background:var(--bg); color:var(--tx); padding:24px;
+  }
+  h1{color:var(--gold); font-size:20px; margin:0 0 4px}
+  p.sub{color:var(--tg); margin:0 0 24px; font-size:13px}
+  #gate{max-width:380px; margin:80px auto; text-align:center}
+  #gate input{width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid var(--border); background:#1B1E24; color:var(--tx)}
+  #gate button, .btn{
+    background:var(--gold); color:#1a1a1a; border:none; padding:10px 16px;
+    border-radius:8px; font-weight:700; cursor:pointer; font-size:14px;
+  }
+  #gate button:disabled, .btn:disabled{opacity:.5; cursor:not-allowed}
+  table{width:100%; border-collapse:collapse; background:var(--card); border-radius:10px; overflow:hidden}
+  th,td{padding:12px; text-align:right; border-bottom:1px solid var(--border); font-size:13px}
+  th{color:var(--tg); font-weight:600}
+  tr:last-child td{border-bottom:none}
+  .confirm-btn{background:#25D366; color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-weight:700}
+  .confirm-btn:disabled{opacity:.5; cursor:not-allowed}
+  .empty{color:var(--tg); text-align:center; padding:40px}
+  .msg{padding:10px 14px; border-radius:8px; margin-bottom:16px; font-size:13px; display:none}
+  .msg.ok{display:block; background:rgba(46,204,113,.15); color:var(--ok)}
+  .msg.err{display:block; background:rgba(231,76,60,.15); color:var(--err)}
+  code{background:#1B1E24; padding:2px 6px; border-radius:4px; font-size:12px}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1>🔒 لوحة الأدمن — Zunexa</h1>
+  <p class="sub">دخل بحساب الأدمن ديالك (نفس حساب Zunexa الرئيسي)</p>
+  <input type="email" id="loginEmail" placeholder="الإيميل"/>
+  <input type="password" id="loginPassword" placeholder="كلمة السر"/>
+  <button id="btnLogin" class="btn" style="width:100%">دخول</button>
+  <div id="loginMsg" class="msg"></div>
+</div>
+
+<div id="panel" style="display:none;max-width:900px;margin:0 auto">
+  <h1>💳 طلبات الدفع عبر واتساب — قيد الانتظار</h1>
+  <p class="sub">هاد الصفحة محمية بـ RLS حقيقية على مستوى قاعدة البيانات (role='admin' فـ profiles) — ماشي مجرد إخفاء فالواجهة.</p>
+  <div id="panelMsg" class="msg"></div>
+  <table id="tbl">
+    <thead>
+      <tr><th>رقم الطلب</th><th>المستخدم</th><th>الخطة</th><th>المبلغ</th><th>تاريخ الطلب</th><th></th></tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<!-- Supabase client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ⚠️ بدّل هاذوك القيم بنفس القيم المستعملة فـ ai.html (ZX_SUPABASE_URL
+// و anon key العمومي — ماشي service_role أبداً فالواجهة).
+const ZX_SUPABASE_URL      = 'https://xrldhfsytysznyyhwjlr.supabase.co';
+const ZX_SUPABASE_ANON_KEY = 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE';
+
+const _SB = supabase.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY);
+const EDGE_CONFIRM_URL = ZX_SUPABASE_URL + '/functions/v1/confirm-payment';
+
+const gate  = document.getElementById('gate');
+const panel = document.getElementById('panel');
+
+function showMsg(el, text, ok) {
+  el.textContent = text;
+  el.className = 'msg ' + (ok ? 'ok' : 'err');
+}
+
+async function checkAdminAndInit() {
+  const { data: { session } } = await _SB.auth.getSession();
+  if (!session) return false;
+
+  // نتحقق أن المستخدم أدمن فعلاً — لكن هاذ التحقق هنا فالواجهة هو
+  // فقط تحسين للتجربة (UX)، الحماية الحقيقية غير القابلة للالتفاف
+  // عليها هي RLS policy "admins manage all payment confirmations"
+  // على جدول payment_confirmations نفسه فـ Postgres: أي مستخدم
+  // ماشي أدمن، حتى لو وصل لهاد الصفحة، الـ SELECT ديالو غادي يرجع
+  // فارغ والـ RPC confirm_payment غادي يرفض الطلب بـ not_authorized.
+  const { data: profile } = await _SB.from('profiles').select('role').eq('id', session.user.id).single();
+  if (!profile || profile.role !== 'admin') {
+    showMsg(document.getElementById('loginMsg'), 'هاد الحساب ماشي أدمن.', false);
+    await _SB.auth.signOut();
+    return false;
+  }
+  gate.style.display = 'none';
+  panel.style.display = 'block';
+  await loadPending();
+  return true;
+}
+
+document.getElementById('btnLogin').onclick = async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn = document.getElementById('btnLogin');
+  btn.disabled = true;
+  try {
+    const { error } = await _SB.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    const ok = await checkAdminAndInit();
+    if (!ok && !document.getElementById('loginMsg').textContent) {
+      showMsg(document.getElementById('loginMsg'), 'تعذّر الدخول.', false);
+    }
+  } catch (e) {
+    showMsg(document.getElementById('loginMsg'), 'خطأ: ' + e.message, false);
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+async function loadPending() {
+  const tbody = document.getElementById('tbody');
+  // بفضل RLS: هاد الطلب كيرجع كل الصفوف إذا كان المستخدم أدمن، وكيرجع
+  // فارغ تلقائياً إذا ما كانش — بدون أي منطق إضافي هنا.
+  const { data, error } = await _SB
+    .from('payment_confirmations')
+    .select('id, user_id, plan, amount, whatsapp_order_ref, created_at, profiles:user_id(email)')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    showMsg(document.getElementById('panelMsg'), 'خطأ فجلب الطلبات: ' + error.message, false);
+    return;
+  }
+
+  if (!data || !data.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty">لا توجد طلبات فالانتظار حالياً 🎉</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = data.map(row => `
+    <tr data-ref="${row.whatsapp_order_ref}">
+      <td><code>${row.whatsapp_order_ref}</code></td>
+      <td>${(row.profiles && row.profiles.email) || row.user_id}</td>
+      <td>${row.plan}</td>
+      <td>$${row.amount}</td>
+      <td>${new Date(row.created_at).toLocaleString('ar')}</td>
+      <td><button class="confirm-btn" onclick="confirmPayment('${row.whatsapp_order_ref}', this)">✔ تأكيد</button></td>
+    </tr>
+  `).join('');
+}
+
+async function confirmPayment(orderRef, btnEl) {
+  btnEl.disabled = true;
+  btnEl.textContent = '...';
+  try {
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) throw new Error('انتهت الجلسة، عاود الدخول.');
+
+    const res = await fetch(EDGE_CONFIRM_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ order_ref: orderRef }),
+    });
+    const result = await res.json();
+    if (!result.success) throw new Error(result.error || 'فشل التأكيد');
+
+    showMsg(document.getElementById('panelMsg'), `تم تأكيد الطلب ${orderRef} وتفعيل خطة ${result.plan} ✅`, true);
+    document.querySelector(`tr[data-ref="${orderRef}"]`)?.remove();
+  } catch (e) {
+    showMsg(document.getElementById('panelMsg'), 'خطأ: ' + e.message, false);
+    btnEl.disabled = false;
+    btnEl.textContent = '✔ تأكيد';
+  }
+}
+
+checkAdminAndInit();
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+/* ════════════════════════════════════════════════════════
+   zunexa-touch.css
+   طبقة اللمس الموحّدة (Mobile Touch Layer) + نظام Auto-Fit
+   لصفوف الأزرار (fit-1 → fit-4). نُقلت هنا حرفياً من ai.html
+   بدون أي تغيير فالمنطق — فقط الموقع الفيزيائي تغيّر.
+   تحمّل عبر: <link rel="stylesheet" href="zunexa-touch.css">
+════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════
+   MOBILE TOUCH LAYER — applies to every button/toggle on
+   the page (2026-09-04 pass). Three problems fixed globally
+   instead of per-component:
+   1) Touch targets < 44x44px on phones.
+   2) The gray tap-highlight flash + accidental text selection
+      when a button/toggle is tapped repeatedly on mobile.
+   3) `:hover` effects that only make sense with a mouse now
+      also fire an immediate `:active` state on touch, and
+      `:hover` itself is scoped to hover-capable pointers so it
+      doesn't "stick" after a tap on touchscreens.
+════════════════════════════════════════════════════════ */
+button,
+.btn, [class*="-btn"], [class$="btn"],
+.mode-chip, .model-sel-item, .persona-act-btn,
+.toggle, [role="switch"], [role="button"],
+input[type="checkbox"], input[type="radio"] {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* Guaranteed ≥44x44 hit area on phones/tablets, even for icon-only
+   buttons that are visually smaller — via an invisible ::after overlay
+   so the visible shape/size of the control never changes. */
+@media (max-width: 1024px) {
+  button, .btn, [class*="-btn"], [class$="btn"],
+  .mode-chip, .model-sel-item, .persona-act-btn,
+  .toggle, [role="switch"], [role="button"] {
+    position: relative;
+  }
+  button::after, .btn::after, [class*="-btn"]::after, [class$="btn"]::after,
+  .mode-chip::after, .model-sel-item::after, .persona-act-btn::after,
+  .toggle::after, [role="switch"]::after, [role="button"]::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    pointer-events: none;
+  }
+}
+
+/* Hover only where a real hover device exists; touch gets an instant
+   :active response instead so nothing feels unresponsive on tap. */
+@media (hover: hover) and (pointer: fine) {
+  button:hover, .btn:hover, [class*="-btn"]:hover, [class$="btn"]:hover,
+  .mode-chip:hover, .model-sel-item:hover, .persona-act-btn:hover,
+  .toggle:hover, [role="switch"]:hover, [role="button"]:hover {
+    filter: brightness(1.06);
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  button:active, .btn:active, [class*="-btn"]:active, [class$="btn"]:active,
+  .mode-chip:active, .model-sel-item:active, .persona-act-btn:active,
+  .toggle:active, [role="switch"]:active, [role="button"]:active {
+    filter: brightness(0.92);
+    transform: scale(0.97);
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   AUTO-FIT BUTTON ROWS (2026-09-04) — driven by fitButtonRows()
+   in <script> below. Any row marked [data-fit="row"] (mode-row,
+   tb-right, billing-toggle, set-tabs) must show ALL its
+   buttons/toggles fully — never clipped, never hidden behind a
+   horizontal scroll. The script steps a row through these
+   shrink tiers (real font-size/padding/gap reduction, not a
+   transform hack) until everything fits; if it still doesn't
+   fit at the smallest tier, wrapping is force-enabled as the
+   final guarantee that nothing gets cut off. */
+[data-fit="row"]{ overflow: visible !important; }
+/* Descendant selectors (not just direct children) so nested controls —
+   e.g. #effortSelBtn/#tbShortcutsBtn inside a .model-sel wrapper div
+   inside .tb-right — are actually reached. !important is required
+   because several buttons (#tbShortcutsBtn, #tempChatBtn) carry an
+   inline style="padding:..." which otherwise wins over any class rule
+   regardless of specificity — that's why the previous > * version had
+   no visible effect on them. */
+[data-fit="row"].fit-1{ gap:.85em !important }
+[data-fit="row"].fit-1 button,
+[data-fit="row"].fit-1 .model-sel-btn,
+[data-fit="row"].fit-1 .mode-chip,
+[data-fit="row"].fit-1 .model-sel-item,
+[data-fit="row"].fit-1 .lib-tab,
+[data-fit="row"].fit-1 .code-btn,
+[data-fit="row"].fit-1 .set-avatar-upload,
+[data-fit="row"].fit-1 .set-avatar-remove,
+[data-fit="row"].fit-1 .persona-act-btn{ font-size:.92em !important; padding-left:.7em !important; padding-right:.7em !important }
+[data-fit="row"].fit-1 svg{ width:.92em !important; height:.92em !important }
+
+[data-fit="row"].fit-2{ gap:.6em !important }
+[data-fit="row"].fit-2 button,
+[data-fit="row"].fit-2 .model-sel-btn,
+[data-fit="row"].fit-2 .mode-chip,
+[data-fit="row"].fit-2 .model-sel-item,
+[data-fit="row"].fit-2 .lib-tab,
+[data-fit="row"].fit-2 .code-btn,
+[data-fit="row"].fit-2 .set-avatar-upload,
+[data-fit="row"].fit-2 .set-avatar-remove,
+[data-fit="row"].fit-2 .persona-act-btn{ font-size:.84em !important; padding-left:.55em !important; padding-right:.55em !important }
+[data-fit="row"].fit-2 svg{ width:.84em !important; height:.84em !important }
+
+[data-fit="row"].fit-3{ gap:.4em !important }
+[data-fit="row"].fit-3 button,
+[data-fit="row"].fit-3 .model-sel-btn,
+[data-fit="row"].fit-3 .mode-chip,
+[data-fit="row"].fit-3 .model-sel-item,
+[data-fit="row"].fit-3 .lib-tab,
+[data-fit="row"].fit-3 .code-btn,
+[data-fit="row"].fit-3 .set-avatar-upload,
+[data-fit="row"].fit-3 .set-avatar-remove,
+[data-fit="row"].fit-3 .persona-act-btn{ font-size:.76em !important; padding-left:.4em !important; padding-right:.4em !important }
+[data-fit="row"].fit-3 svg{ width:.76em !important; height:.76em !important }
+
+[data-fit="row"].fit-4{ gap:.3em !important }
+[data-fit="row"].fit-4 button,
+[data-fit="row"].fit-4 .model-sel-btn,
+[data-fit="row"].fit-4 .mode-chip,
+[data-fit="row"].fit-4 .model-sel-item,
+[data-fit="row"].fit-4 .lib-tab,
+[data-fit="row"].fit-4 .code-btn,
+[data-fit="row"].fit-4 .set-avatar-upload,
+[data-fit="row"].fit-4 .set-avatar-remove,
+[data-fit="row"].fit-4 .persona-act-btn{ font-size:.68em !important; padding-left:.3em !important; padding-right:.3em !important }
+[data-fit="row"].fit-4 svg{ width:.68em !important; height:.68em !important }
+
+[data-fit="row"].fit-wrap{ flex-wrap:wrap !important; overflow-x:visible !important }
