@@ -12,15 +12,6 @@
     { "source": "/app",       "destination": "/dashboard.html" },
     { "source": "/dashboard", "destination": "/dashboard.html" },
     { "source": "/home",      "destination": "/landing.html" },
-    { "source": "/owner_admin", "destination": "/owner_admin.html" },
-    { "source": "/CONTACT",     "destination": "/CONTACT.html" },
-    { "source": "/affiliat",    "destination": "/affiliat.html" }
-  ],
-
-  "redirects": [
-    { "source": "/admin",     "destination": "/owner_admin", "permanent": false },
-    { "source": "/contact",   "destination": "/CONTACT",     "permanent": true  },
-    { "source": "/affiliate", "destination": "/affiliat",    "permanent": true  }
   ],
 
   "headers": [
