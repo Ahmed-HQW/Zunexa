@@ -1,8 +1,0 @@
-ai_knowledge
-ai_learning
-ai_session_usage
-profiles
-shared_chats
-user_plans
-zunexa_knowledge
-zunexa_messages
