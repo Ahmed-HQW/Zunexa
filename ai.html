@@ -713,6 +713,9 @@ body[data-zunexa-mode="cli"] .msg.bot .bubble{
 .badge-web{color:var(--blue);background:rgba(37,99,235,.06);border:1px solid rgba(37,99,235,.2)}
 .badge-partial{color:var(--orange);background:rgba(217,119,6,.06);border:1px solid rgba(217,119,6,.2)}
 .badge-ai{color:var(--gold2);background:var(--card);border:1px solid var(--b1)}
+/* بادج وضع "Zunexa المغرب" — أحمر/أخضر علم المغرب، مختلف بصرياً وواضح عن
+   باقي البادجات (تعلَّم/ويب/جزئي) حسب التعليمة رقم 15. */
+.badge-morocco{color:#c1272d;background:rgba(193,39,45,.08);border:1px solid rgba(193,39,45,.3);font-weight:700}
 
 /* Confidence bar */
 .conf-bar{
@@ -1473,6 +1476,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
           <button class="model-sel-item" data-effort="balanced" onclick="setEffortUI('balanced');toggleEffortSel(false)"><b>⚖ متوازن</b></button>
           <button class="model-sel-item" data-effort="deep" onclick="setEffortUI('deep');toggleEffortSel(false)"><b>🔍 عميق</b></button>
           <button class="model-sel-item" data-effort="max" onclick="setEffortUI('max');toggleEffortSel(false)"><b>🚀 أقصى</b></button>
+          <button class="model-sel-item" data-effort="morocco" onclick="setEffortUI('morocco');toggleEffortSel(false)" title="أقصى effort إجباري — يبحث أولاً في قاعدة المعرفة الإدارية المغربية الرسمية (zx_morocco) قبل أي سقوط احتياطي"><b>🇲🇦 المغرب</b></button>
         </div>
       </div>
       <div class="mode-sep"></div>
@@ -1742,6 +1746,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         <option value="balanced">⚖ متوازن</option>
         <option value="deep">🔍 عميق</option>
         <option value="max">🚀 أقصى</option>
+        <option value="morocco">🇲🇦 المغرب</option>
       </select>
       <label class="field-label">خط المحادثة</label>
       <select class="field-input" id="setFontSel" onchange="setChatFont(this.value)">
@@ -3464,7 +3469,13 @@ const EFFORT_CFG = {
   quick:    { useBrain: false, ctxTurns: 0,  maxTokens: Math.min(350,  FREE_TIER_TOKEN_CAP) },
   balanced: { useBrain: 'weak', ctxTurns: 4, maxTokens: Math.min(650,  FREE_TIER_TOKEN_CAP) },
   deep:     { useBrain: true,  ctxTurns: 8,  maxTokens: Math.min(1200, FREE_TIER_TOKEN_CAP) },
-  max:      { useBrain: true,  ctxTurns: 12, maxTokens: Math.min(2000, FREE_TIER_TOKEN_CAP) }
+  max:      { useBrain: true,  ctxTurns: 12, maxTokens: Math.min(2000, FREE_TIER_TOKEN_CAP) },
+  // وضع "Zunexa المغرب" — إجباري بأقصى effort دائماً (نفس سقف maxTokens/ctxTurns
+  // لوضع max)، لكن بمنطق إجابة مختلف كلياً مُطبَّق داخل answer(): البحث أولاً
+  // وحصرياً في جدول Supabase الرسمي zx_morocco (انظر zxMoroccoSearch)، ولا
+  // يُسمح بالسقوط الاحتياطي (fallback) نحو archonBrain إلا إذا لم توجد نتيجة
+  // مطابقة كافية هناك — مع تنبيه واضح غير صامت للمستخدم في تلك الحالة.
+  morocco:  { useBrain: true,  ctxTurns: 12, maxTokens: Math.min(2000, FREE_TIER_TOKEN_CAP) }
 };
 
 /* Follow-up detector — the root cause of "can't continue/understand
@@ -3652,7 +3663,60 @@ function thinkEnd() {
   }
 }
 
+/* zxMoroccoSearch(userQ) — البحث الحصري داخل جدول zx_morocco الرسمي عبر
+   دالة Postgres "zx_morocco_search" (RPC، انظر MOROCCO_SETUP.sql). هذه هي
+   الخطوة الإجبارية الأولى والوحيدة المسموح بها كمصدر أساسي في وضع "المغرب"
+   قبل أي سقوط احتياطي نحو archonBrain — لا يجوز استدعاء أي نموذج ذكاء
+   اصطناعي خارجي قبل تنفيذ هذا البحث والتحقق من نتيجته.
+   تُرجع: { hit: true, row } عند وجود نتيجة موثوقة كافية، أو { hit: false }
+   إن لم توجد نتيجة (أو حدث خطأ في الاتصال بقاعدة البيانات) — في الحالتين
+   الأخيرتين يجب على answer() السقوط الاحتياطي مع تنبيه صريح غير صامت. */
+async function zxMoroccoSearch(userQ) {
+  try {
+    const cleanQ = String(userQ || '').trim();
+    if (!cleanQ) return { hit: false };
+    const { data, error } = await _SB.rpc('zx_morocco_search', { search_term: cleanQ });
+    if (error) {
+      console.warn('[Zunexa المغرب] فشل استدعاء zx_morocco_search RPC:', error.message);
+      return { hit: false };
+    }
+    if (!Array.isArray(data) || data.length === 0) return { hit: false };
+    // أعلى نتيجة فقط (الدالة نفسها مرتّبة تنازلياً حسب التشابه/الحداثة).
+    const top = data[0];
+    if (!top || !top.answer || !top.question) return { hit: false };
+    return { hit: true, row: top };
+  } catch (e) {
+    console.warn('[Zunexa المغرب] خطأ غير متوقع أثناء البحث في zx_morocco:', e.message);
+    return { hit: false };
+  }
+}
+
 async function answer(userQ) {
+  // وضع "Zunexa المغرب" — إجباري 100%: البحث أولاً وحصرياً في zx_morocco قبل
+  // أي شيء آخر (حتى قبل answerLocal/KB العام)، لأن هذا وضع مخصص للإجابات
+  // الإدارية الرسمية المغربية فقط، وليس امتداداً لقاعدة معرفة Zunexa العامة.
+  if (zxEffort === 'morocco') {
+    thinkStep('morocco-official-kb');
+    const moroccoResult = await zxMoroccoSearch(userQ);
+    thinkDone('morocco-official-kb');
+    if (moroccoResult.hit) {
+      const row = moroccoResult.row;
+      await logMsg(userQ, row.answer, 'morocco_official', 0.95);
+      return {
+        text: row.answer,
+        src: 'morocco_official',
+        score: 0.95,
+        moroccoSource: row.source || '',
+        moroccoCategory: row.category || ''
+      };
+    }
+    // لا نتيجة موثوقة في zx_morocco — السقوط الاحتياطي إجباري ومُعلَن للمستخدم
+    // بوضوح (غير صامت أبداً)، ثم نكمل بباقي منطق answer() العادي (KB عام +
+    // archonBrain) بنفس تهيئة أقصى effort.
+    thinkAddStep('morocco-fallback', '⚠ لا توجد إجابة رسمية موثّقة محلياً — الانتقال للنموذج العام');
+  }
+
+
   // item 28 — isFollowUp is checked BEFORE the lite/local-only early exit,
   // not after, so lite mode at least tells the user why the answer might
   // look disconnected instead of silently ignoring the last turn.
@@ -3789,7 +3853,11 @@ async function answer(userQ) {
   thinkDone('brain');
   if (!brainTxt) return local;
 
-  const src = ragContext ? 'rag+brain' : 'ai-brain';
+  // item 14 — في وضع "المغرب"، أي إجابة تصل لهذه النقطة هي بالضرورة سقوط
+  // احتياطي (zx_morocco لم يُعطِ نتيجة كافية أعلاه)، فيجب أن تحمل src خاصاً
+  // بذلك حتى تُعرض للمستخدم بتنبيه صريح "غير موثّقة من مصدر رسمي محلي" بدل
+  // بادج الذكاء الاصطناعي العادي.
+  const src = (zxEffort === 'morocco') ? 'morocco_fallback' : (ragContext ? 'rag+brain' : 'ai-brain');
   await logMsg(userQ, brainTxt, src, Math.max(local.score, 0.5));
   autoLearn(userQ, brainTxt, local.score); // fire-and-forget, never blocks the reply
   return { text: brainTxt, src, score: Math.max(local.score, 0.5) };
@@ -4178,7 +4246,7 @@ async function send() {
     }
     removeTyping();
     if (!res || !res.text) res = { text: '⚠ خطأ في المعالجة. حاول مرة أخرى.', src: 'error', score: 0 };
-    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl, true);
+    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl, true, res.moroccoSource);
 
     // Update context
     ctx.push({ role:'user', text:q });
@@ -4212,7 +4280,7 @@ async function send() {
 /* ════════════════════════════════════════════════════════════
    DOM HELPERS
 ════════════════════════════════════════════════════════════ */
-function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate) {
+function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate, moroccoSource) {
   const conv = document.getElementById('conv');
   const div  = document.createElement('div');
   div.className = 'msg ' + role;
@@ -4234,6 +4302,15 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate) {
     notice.textContent = src === 'partial'
       ? '⚡ إجابة جزئية — مُركَّبة من أقرب المعلومات، ليست مؤكدة 100%'
       : '❔ ما عندي جواب مؤكد على هاد السؤال — تم تسجيله للتعلّم';
+    body.appendChild(notice);
+  }
+
+  // item 14 — تنبيه إجباري وغير صامت عند السقوط الاحتياطي في وضع "المغرب"
+  // (لم توجد نتيجة كافية في zx_morocco فتم الانتقال للنموذج العام).
+  if (role === 'bot' && src === 'morocco_fallback') {
+    const notice = document.createElement('div');
+    notice.style.cssText = 'font-size:12px;color:#c1272d;margin-bottom:6px;font-weight:700';
+    notice.textContent = '⚠ هذه الإجابة غير موثّقة من مصدر رسمي محلي — لم توجد نتيجة مطابقة كافية في قاعدة المعرفة الإدارية المغربية، وتم الانتقال للنموذج العام.';
     body.appendChild(notice);
   }
 
@@ -4280,6 +4357,21 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate) {
       meta.innerHTML += `<span class="meta-badge badge-web">🛠 أداة مباشرة</span>`;
     } else if (src === 'system') {
       meta.innerHTML += `<span class="meta-badge badge-partial">⚙ رسالة نظام</span>`;
+    } else if (src === 'morocco_official') {
+      meta.innerHTML += `<span class="meta-badge badge-morocco">🇲🇦 مصدر رسمي موثّق</span>`;
+    } else if (src === 'morocco_fallback') {
+      meta.innerHTML += `<span class="meta-badge badge-partial">⚠ غير موثّقة من مصدر رسمي محلي</span>`;
+    }
+
+    // عرض رابط/نص المصدر الرسمي أسفل الإجابة عند توفره (وضع "المغرب" فقط)
+    if (src === 'morocco_official' && moroccoSource) {
+      const srcLine = document.createElement('div');
+      srcLine.style.cssText = 'font-size:11px;color:var(--muted,#8a8a8a);margin-top:6px;word-break:break-all';
+      const isUrl = /^https?:\/\//i.test(moroccoSource);
+      srcLine.innerHTML = isUrl
+        ? `المصدر: <a href="${esc(moroccoSource)}" target="_blank" rel="noopener noreferrer" style="color:var(--gold2)">${esc(moroccoSource)}</a>`
+        : `المصدر: ${esc(moroccoSource)}`;
+      body.appendChild(srcLine);
     }
 
     // Confidence bar
@@ -5330,7 +5422,7 @@ document.addEventListener('click', (e) => {
 });
 function setEffortUI(v, silent) {
   setEffort(v);
-  const names = {quick:'⚡ سريع', balanced:'⚖ متوازن', deep:'🔍 عميق', max:'🚀 أقصى'};
+  const names = {quick:'⚡ سريع', balanced:'⚖ متوازن', deep:'🔍 عميق', max:'🚀 أقصى', morocco:'🇲🇦 المغرب'};
   document.querySelectorAll('#effortSelMenu .model-sel-item').forEach(b => b.classList.toggle('on', b.dataset.effort === v));
   const label = document.getElementById('effortSelLabel');
   if (label) label.textContent = names[v] || '⚡ سريع';
@@ -5416,7 +5508,7 @@ function applyPageLang(lang) {
 
   const effortLabel = document.getElementById('effortSelLabel');
   if (effortLabel) {
-    const map = { quick: t.effQuick, balanced: t.effBal, deep: t.effDeep, max: t.effMax };
+    const map = { quick: t.effQuick, balanced: t.effBal, deep: t.effDeep, max: t.effMax, morocco: '🇲🇦 المغرب' };
     effortLabel.textContent = map[zxEffort] || t.effQuick;
   }
 
