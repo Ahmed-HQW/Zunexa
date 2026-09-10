@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zunexa — Dark Gold Interface</title>
+  
+  <style>
+    /* 1. المتغيرات والألوان (Void & Gold) */
+    :root {
+      --void:        #0B0C0F;
+      --deep:        #0B0C0F;
+      --card:        #15171C;
+      --card2:       #1B1E24;
+      --hover:       #22252C;
+      --input-bg:    #15171C;
+
+      --b1:          #262A32;
+      --b2:          #33373F;
+      --bg:          rgba(212,175,55,.12);
+      --bgh:         rgba(212,175,55,.30);
+      --bgp:         rgba(212,175,55,.07);
+
+      --gold:        #D4AF37;
+      --gold2:       #E4C158;
+      --gold3:       #B8922E;
+      --gdim:        #B8922E;
+      --gglow:       rgba(212,175,55,.18);
+      --gtrace:      rgba(212,175,55,.09);
+
+      --tw:          #F2F3F5;
+      --tg:          #9AA0AC;
+      --tm:          #6B7280;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--void);
+      color: var(--tw);
+      min-height: 100vh;
+      padding-bottom: 50px;
+    }
+
+    /* 2. الهيكل والواجهة (UI Layout) */
+    .navbar {
+      background-color: rgba(11, 12, 15, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--b1);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--tw);
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    /* 3. البطاقات (Cards) */
+    .ui-card {
+      background-color: var(--card);
+      border: 1px solid var(--b1);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .ui-card:hover {
+      background-color: var(--hover);
+      border-color: var(--gold3);
+      box-shadow: 0 8px 25px var(--gglow);
+      transform: translateY(-2px);
+    }
+
+    /* 4. عناصر الإدخال والأزرار */
+    .ui-input {
+      width: 100%;
+      background-color: var(--input-bg);
+      color: var(--tw);
+      border: 1px solid var(--b1);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+      font-size: 1rem;
+      transition: all 0.25s ease;
+    }
+
+    .ui-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 10px var(--gglow);
+    }
+
+    .ui-btn {
+      background: linear-gradient(135deg, var(--gold2), var(--gold));
+      color: var(--void);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px var(--gglow);
+    }
+
+    .ui-btn:hover {
+      background: linear-gradient(135deg, var(--gold), var(--gold3));
+      box-shadow: 0 6px 20px var(--bgh);
+      transform: translateY(-1px);
+    }
+
+    /* 5. التحركات والتأثيرات (Animations) */
+    @keyframes textGoldShimmer {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .text-gold-shimmer {
+      background: linear-gradient(90deg, var(--gold), var(--gold2), var(--tw), var(--gold));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textGoldShimmer 4s linear infinite;
+    }
+
+    @keyframes goldPulse {
+      0% { box-shadow: 0 0 5px var(--gglow); }
+      50% { box-shadow: 0 0 20px var(--bgh); }
+      100% { box-shadow: 0 0 5px var(--gglow); }
+    }
+
+    .animate-glow {
+      animation: goldPulse 2.5s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- شريط الملاحة -->
+  <nav class="navbar">
+    <a href="#" class="logo">⚡ Zunexa <span class="text-gold-shimmer">AI</span></a>
+    <a href="https://zunexa.vercel.app" class="ui-btn" style="width: auto; padding: 8px 16px; text-decoration: none; display: inline-block;">تسجيل الدخول</a>
+  </nav>
+
+  <div class="container">
+    <!-- عنوان متوهج -->
+    <h1 class="text-gold-shimmer" style="font-size: 2.2rem; margin-bottom: 20px; text-align: center;">
+      مرحباً بك في Zunexa AI Engine
+    </h1>
+
+    <!-- بطاقة مع ألوان الخروج والتأثيرات -->
+    <div class="ui-card animate-glow">
+      <h2 style="color: var(--gold); margin-bottom: 10px;">تفعيل الحساب (Plan Activation)</h2>
+      <p style="color: var(--tg); font-size: 0.95rem; margin-bottom: 15px;">
+        أدخل البريد الإلكتروني وكود التفعيل للحصول على الصلاحيات الكاملة.
+      </p>
+
+      <label style="color: var(--tw); font-size: 0.9rem;">البريد الإلكتروني</label>
+      <input type="email" class="ui-input" placeholder="name@example.com"/>
+
+      <label style="color: var(--tw); font-size: 0.9rem;">كود التفعيل (Plan Code)</label>
+      <input type="text" class="ui-input" placeholder="EX: ZUNEXA-PRO-2026"/>
+
+      <button class="ui-btn">تفعيل الآن ←</button>
+    </div>
+
+    <!-- بطاقة مميزات إضافية -->
+    <div class="ui-card">
+      <h3 style="color: var(--tw); margin-bottom: 8px;">حالة النظام</h3>
+      <p style="color: var(--tm); font-size: 0.9rem;">
+        المنصة تعمل بالخلفية الداكنة <span style="color: var(--gold);">#0B0C0F</span> والتأثيرات الذهبية المخصصة.
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>
