@@ -208,6 +208,7 @@ img{max-width:100%;display:block}
 .shell{
   position:relative;z-index:99;
   display:flex;width:100%;height:100vh;height:100dvh;
+  height:calc(var(--vvh, 100dvh));
 }
 
 /* ── OVERLAY (mobile) ── */
@@ -4590,6 +4591,40 @@ function resize(el) {
   const cc = document.getElementById('charCount');
   if (cc) cc.textContent = l ? l : '';
 }
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE KEYBOARD FIX — keeps the input bar riding above the
+   on-screen keyboard instead of getting hidden underneath it.
+   Uses the visualViewport API (real keyboard height on mobile
+   Safari/Chrome) to shrink .shell to the visible area, so the
+   input-zone (a normal flex child, not fixed) stays on-screen.
+   ─────────────────────────────────────────────────────────────*/
+(function initKeyboardFix() {
+  const setVVH = () => {
+    const h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+    document.documentElement.style.setProperty('--vvh', h + 'px');
+  };
+  setVVH();
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', setVVH);
+    window.visualViewport.addEventListener('scroll', setVVH);
+  } else {
+    window.addEventListener('resize', setVVH);
+  }
+  const inp = document.getElementById('aiInput');
+  if (inp) {
+    inp.addEventListener('focus', () => {
+      // Give the keyboard time to open/animate, then re-measure and
+      // make sure the input + latest message are actually visible.
+      setTimeout(() => {
+        setVVH();
+        inp.scrollIntoView({ block: 'end', behavior: 'smooth' });
+        const conv = document.getElementById('conv');
+        if (conv) conv.scrollTop = conv.scrollHeight;
+      }, 300);
+    });
+  }
+})();
 
 let _toastTimer = null;
 function toast(msg) {
