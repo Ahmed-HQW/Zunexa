@@ -619,8 +619,11 @@ img{max-width:100%;display:block}
 
 .wl-eyebrow{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--gdim);font-weight:700}
 .gold-hr{width:48px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto}
-.wl-title{font-family:'Cinzel',serif;font-size:24px;font-weight:600;color:var(--tw);letter-spacing:.03em}
+.wl-title{font-family:'Cinzel',serif;font-size:24px;font-weight:600;color:var(--tw);letter-spacing:.03em;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
 .wl-title span{color:var(--gold)}
+.wl-logo{width:28px;height:28px;flex:0 0 auto;display:inline-block}
+.wl-logo svg{width:100%;height:100%;display:block}
+@media (max-width:480px){ .wl-logo{width:22px;height:22px} .wl-title{font-size:19px;gap:8px} }
 .wl-sub{font-size:13px;color:var(--tg);line-height:1.8;max-width:400px}
 
 /* ── KB Status bar ── */
@@ -1455,7 +1458,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
 <!-- Conversation -->
   <div class="conv" id="conv">
     <div class="welcome" id="welcomeEmpty">
-      <div class="wl-title">مرحباً في <span>Zunexa</span></div>
+      <div class="wl-title"><span class="wl-logo" aria-hidden="true"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="zxGoldGrad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E4C158"/><stop offset="55%" stop-color="#D4AF37"/><stop offset="100%" stop-color="#8a7022"/></linearGradient></defs><circle cx="50" cy="50" r="48" fill="#0B0C0F"/><circle cx="50" cy="50" r="48" fill="none" stroke="url(#zxGoldGrad1)" stroke-width="2"/><path d="M50 8 L58 34 L86 34 L63 50 L71 76 L50 60 L29 76 L37 50 L14 34 L42 34 Z" fill="none" stroke="url(#zxGoldGrad1)" stroke-width="1.4" opacity="0.55"/><text x="50" y="66" font-family="Cinzel, serif" font-size="46" font-weight="700" text-anchor="middle" fill="url(#zxGoldGrad1)">Z</text></svg></span><span id="wlGreetText"></span></div>
       <div class="wl-sub"></div>
     </div>
   </div>
@@ -4725,9 +4728,10 @@ function newChat() {
   const conv = document.getElementById('conv');
   conv.innerHTML = `
     <div class="welcome" id="welcomeChat">
-      <div class="wl-title">مرحباً في <span>Zunexa</span></div>
+      <div class="wl-title"><span class="wl-logo" aria-hidden="true"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="zxGoldGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E4C158"/><stop offset="55%" stop-color="#D4AF37"/><stop offset="100%" stop-color="#8a7022"/></linearGradient></defs><circle cx="50" cy="50" r="48" fill="#0B0C0F"/><circle cx="50" cy="50" r="48" fill="none" stroke="url(#zxGoldGrad2)" stroke-width="2"/><path d="M50 8 L58 34 L86 34 L63 50 L71 76 L50 60 L29 76 L37 50 L14 34 L42 34 Z" fill="none" stroke="url(#zxGoldGrad2)" stroke-width="1.4" opacity="0.55"/><text x="50" y="66" font-family="Cinzel, serif" font-size="46" font-weight="700" text-anchor="middle" fill="url(#zxGoldGrad2)">Z</text></svg></span><span id="wlGreetText"></span></div>
     </div>`;
   closeSidebar();
+  zxUpdateGreeting();
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -5485,13 +5489,84 @@ function zxUpdatePlaceholder(lang) {
   inp.placeholder = ZX_PLACEHOLDERS[lang] || ZX_PLACEHOLDERS.en;
 }
 
+/* ── Personalized time-of-day welcome greeting ──────────────────
+   40+ real, distinct greeting titles per language, built by
+   combining a time-of-day opener with several closing phrases,
+   personalized with the user's real name (call_name > first_name
+   > cached display name). Falls back to a name-less phrasing when
+   no name is known yet. */
+const ZX_GREET_OPENERS = {
+  ary: { morning:'صباح الخير', afternoon:'مسا الخير', evening:'مسا النور', night:'مازال ساهر' },
+  ar:  { morning:'صباح الخير', afternoon:'طاب مساؤك', evening:'مساء النور', night:'لا زلت مستيقظاً' },
+  fr:  { morning:'Bonjour', afternoon:'Bon après-midi', evening:'Bonsoir', night:'Encore debout' },
+  en:  { morning:'Good morning', afternoon:'Good afternoon', evening:'Good evening', night:'Up late' },
+  es:  { morning:'Buenos días', afternoon:'Buenas tardes', evening:'Buenas noches', night:'Sigues despierto' },
+  de:  { morning:'Guten Morgen', afternoon:'Guten Tag', evening:'Guten Abend', night:'Noch wach' },
+  it:  { morning:'Buongiorno', afternoon:'Buon pomeriggio', evening:'Buonasera', night:'Ancora sveglio' },
+  pt:  { morning:'Bom dia', afternoon:'Boa tarde', evening:'Boa noite', night:'Ainda acordado' },
+  ru:  { morning:'Доброе утро', afternoon:'Добрый день', evening:'Добрый вечер', night:'Ещё не спишь' },
+  zh:  { morning:'早上好', afternoon:'下午好', evening:'晚上好', night:'还没睡' },
+  tr:  { morning:'Günaydın', afternoon:'İyi günler', evening:'İyi akşamlar', night:'Hâlâ uyanık mısın' },
+  hi:  { morning:'सुप्रभात', afternoon:'शुभ दोपहर', evening:'शुभ संध्या', night:'अभी तक जाग रहे हो' }
+};
+const ZX_GREET_CLOSERS = {
+  ary: ['{n}؟','واش نتا {n}؟','كيداير {n}؟','بغيتي تخدم على شي حاجة {n}؟','فاش رانا اليوم {n}؟','مستعد {n}؟','شنو نديرو اليوم {n}؟','كيف الحال {n}؟','واخا نبداو {n}؟','راك هنا {n}؟','زوين {n}؟'],
+  ar:  ['{n}؟','كيف حالك اليوم {n}؟','بم أساعدك {n}؟','ما الذي يشغل بالك {n}؟','مستعد لبدء يومك {n}؟','هل من جديد {n}؟','لنبدأ العمل {n}؟','ماذا نصنع اليوم {n}؟','أهلاً بعودتك {n}؟','كل شيء بخير {n}؟','في خدمتك {n}؟'],
+  fr:  ['{n} ?','comment vas-tu, {n} ?','sur quoi travaillons-nous, {n} ?','prêt à commencer, {n} ?','du nouveau, {n} ?','on s\'y met, {n} ?','que fait-on aujourd\'hui, {n} ?','content de te revoir, {n} ?','tout va bien, {n} ?','une idée en tête, {n} ?','on avance, {n} ?'],
+  en:  ['{n}?','how are you, {n}?','what are we working on, {n}?','ready to dive in, {n}?','what\'s on your mind, {n}?','shall we get started, {n}?','good to see you, {n}?','what\'s the plan today, {n}?','anything new, {n}?','let\'s pick up where we left off, {n}?','feeling productive, {n}?'],
+  es:  ['{n}?','¿cómo estás, {n}?','¿en qué trabajamos, {n}?','¿listo para empezar, {n}?','¿qué tienes en mente, {n}?','¿comenzamos, {n}?','¿qué hacemos hoy, {n}?','me alegra verte, {n}?','¿todo bien, {n}?','¿alguna idea, {n}?','sigamos, {n}?'],
+  de:  ['{n}?','wie geht es dir, {n}?','woran arbeiten wir, {n}?','bereit loszulegen, {n}?','was hast du vor, {n}?','fangen wir an, {n}?','was machen wir heute, {n}?','schön dich zu sehen, {n}?','alles gut, {n}?','eine Idee im Kopf, {n}?','machen wir weiter, {n}?'],
+  it:  ['{n}?','come stai, {n}?','su cosa lavoriamo, {n}?','pronto a iniziare, {n}?','cosa hai in mente, {n}?','cominciamo, {n}?','cosa facciamo oggi, {n}?','che piacere rivederti, {n}?','tutto bene, {n}?','qualche idea, {n}?','andiamo avanti, {n}?'],
+  pt:  ['{n}?','como você está, {n}?','no que vamos trabalhar, {n}?','pronto para começar, {n}?','o que você tem em mente, {n}?','vamos começar, {n}?','o que fazemos hoje, {n}?','que bom te ver, {n}?','tudo bem, {n}?','alguma ideia, {n}?','vamos continuar, {n}?'],
+  ru:  ['{n}?','как дела, {n}?','над чем работаем, {n}?','готовы начать, {n}?','что у тебя на уме, {n}?','приступим, {n}?','что делаем сегодня, {n}?','рад тебя видеть, {n}?','всё хорошо, {n}?','есть идея, {n}?','продолжим, {n}?'],
+  zh:  ['{n}？','最近怎么样，{n}？','我们今天做点什么，{n}？','准备好开始了吗，{n}？','你在想什么，{n}？','我们开始吧，{n}？','今天有什么计划，{n}？','很高兴见到你，{n}？','一切都好吗，{n}？','有什么想法吗，{n}？','继续吧，{n}？'],
+  tr:  ['{n}?','nasılsın, {n}?','bugün ne üzerinde çalışıyoruz, {n}?','başlamaya hazır mısın, {n}?','aklında ne var, {n}?','başlayalım mı, {n}?','bugün ne yapıyoruz, {n}?','seni görmek güzel, {n}?','her şey yolunda mı, {n}?','bir fikrin var mı, {n}?','devam edelim mi, {n}?'],
+  hi:  ['{n}?','कैसे हो, {n}?','आज हम किस पर काम करें, {n}?','शुरू करने के लिए तैयार हो, {n}?','मन में क्या है, {n}?','चलो शुरू करें, {n}?','आज क्या करें, {n}?','तुम्हें देखकर अच्छा लगा, {n}?','सब ठीक है, {n}?','कोई विचार है, {n}?','चलिए आगे बढ़ते हैं, {n}?']
+};
+const ZX_GREET_NO_NAME = {
+  ary:'أهلاً بيك في Zunexa', ar:'أهلاً بك في Zunexa', fr:'Bienvenue sur Zunexa', en:'Welcome to Zunexa',
+  es:'Bienvenido a Zunexa', de:'Willkommen bei Zunexa', it:'Benvenuto su Zunexa', pt:'Bem-vindo à Zunexa',
+  ru:'Добро пожаловать в Zunexa', zh:'欢迎使用 Zunexa', tr:'Zunexa\'ya hoş geldin', hi:'Zunexa में आपका स्वागत है'
+};
+function zxGetUserFirstName() {
+  try {
+    const prof = JSON.parse(localStorage.getItem('zx_profile') || '{}');
+    const call = (prof.call || '').trim();
+    if (call) return call;
+    const full = (prof.full || '').trim();
+    if (full) return full.split(' ')[0];
+    const cached = (localStorage.getItem('zx_name_cache') || '').trim();
+    if (cached && cached !== 'Zunexa User') return cached.split(' ')[0];
+  } catch (e) {}
+  return '';
+}
+function zxTimeBucket() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return 'morning';
+  if (h >= 12 && h < 17) return 'afternoon';
+  if (h >= 17 && h < 22) return 'evening';
+  return 'night';
+}
+function zxRenderGreeting(lang) {
+  const opener = (ZX_GREET_OPENERS[lang] || ZX_GREET_OPENERS.en)[zxTimeBucket()];
+  const closers = ZX_GREET_CLOSERS[lang] || ZX_GREET_CLOSERS.en;
+  const name = zxGetUserFirstName();
+  if (!name) return ZX_GREET_NO_NAME[lang] || ZX_GREET_NO_NAME.en;
+  const idx = Math.floor(Date.now() / (1000 * 60 * 60 * 6)) % closers.length; // rotates every ~6h
+  return `${opener}, ${closers[idx].replace('{n}', name)}`;
+}
+function zxUpdateGreeting() {
+  const lang = localStorage.getItem('zx_page_lang') || 'ary';
+  const text = zxRenderGreeting(lang);
+  document.querySelectorAll('#wlGreetText').forEach(el => { el.textContent = text; });
+}
+
 function applyPageLang(lang) {
   const t = ZX_I18N[lang] || ZX_I18N.ary;
   const isRTL = (lang === 'ar' || lang === 'ary');
   document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
 
-  const wlTitleSpan = document.querySelector('.wl-title');
-  if (wlTitleSpan) wlTitleSpan.childNodes[0].textContent = t.welcome + ' ';
+  zxUpdateGreeting();
   zxUpdatePlaceholder(lang);
   const newChatBtn = document.querySelector('.sb-new');
   if (newChatBtn) newChatBtn.textContent = t.newChat;
@@ -7782,6 +7857,7 @@ async function saveProfileSettings() {
   const work = document.getElementById('setWork').value.trim();
   const inst = document.getElementById('setInstructions').value.trim();
   localStorage.setItem('zx_profile', JSON.stringify({ full, call, work, inst }));
+  zxUpdateGreeting();
   try {
     const { data: { session } } = await _SB.auth.getSession();
     if (session) {
