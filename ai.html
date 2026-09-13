@@ -4310,15 +4310,6 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate, mor
     body.appendChild(notice);
   }
 
-  // item 14 — تنبيه إجباري وغير صامت عند السقوط الاحتياطي في وضع "المغرب"
-  // (لم توجد نتيجة كافية في zx_morocco فتم الانتقال للنموذج العام).
-  if (role === 'bot' && src === 'morocco_fallback') {
-    const notice = document.createElement('div');
-    notice.style.cssText = 'font-size:12px;color:#c1272d;margin-bottom:6px;font-weight:700';
-    notice.textContent = '⚠ هذه الإجابة غير موثّقة من مصدر رسمي محلي — لم توجد نتيجة مطابقة كافية في قاعدة المعرفة الإدارية المغربية، وتم الانتقال للنموذج العام.';
-    body.appendChild(notice);
-  }
-
   const bub = document.createElement('div');
   bub.className = 'bubble';
   const shouldAnimate = animate && role === 'bot' && typeof text === 'string' && text.length > 0;
@@ -4364,8 +4355,6 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate, mor
       meta.innerHTML += `<span class="meta-badge badge-partial">⚙ رسالة نظام</span>`;
     } else if (src === 'morocco_official') {
       meta.innerHTML += `<span class="meta-badge badge-morocco">🇲🇦 مصدر رسمي موثّق</span>`;
-    } else if (src === 'morocco_fallback') {
-      meta.innerHTML += `<span class="meta-badge badge-partial">⚠ غير موثّقة من مصدر رسمي محلي</span>`;
     }
 
     // عرض رابط/نص المصدر الرسمي أسفل الإجابة عند توفره (وضع "المغرب" فقط)
