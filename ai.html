@@ -3676,32 +3676,45 @@ async function zxMoroccoSearch(userQ) {
   }
 }
 
-async function answer(userQ) {
-  // وضع "Zunexa المغرب" — إجباري 100%: البحث أولاً وحصرياً في zx_morocco قبل
-  // أي شيء آخر (حتى قبل answerLocal/KB العام)، لأن هذا وضع مخصص للإجابات
-  // الإدارية الرسمية المغربية فقط، وليس امتداداً لقاعدة معرفة Zunexa العامة.
-  if (zxEffort === 'morocco') {
-    thinkStep('morocco-official-kb');
-    const moroccoResult = await zxMoroccoSearch(userQ);
-    thinkDone('morocco-official-kb');
-    if (moroccoResult.hit) {
-      const row = moroccoResult.row;
-      await logMsg(userQ, row.answer, 'morocco_official', 0.95);
-      return {
-        text: row.answer,
-        src: 'morocco_official',
-        score: 0.95,
-        moroccoSource: row.source || '',
-        moroccoCategory: row.category || ''
-      };
-    }
-    // لا نتيجة موثوقة في zx_morocco — السقوط الاحتياطي إجباري ومُعلَن للمستخدم
-    // بوضوح (غير صامت أبداً)، ثم نكمل بباقي منطق answer() العادي (KB عام +
-    // archonBrain) بنفس تهيئة أقصى effort.
-    thinkAddStep('morocco-fallback', '⚠ لا توجد إجابة رسمية موثّقة محلياً — الانتقال للنموذج العام');
+/* answerMorocco(userQ) — دالة مستقلة بذاتها لوضع "Zunexa المغرب" فقط. لا
+   تتقاطع مع منطق باقي النماذج (Pro/Max/Code) إطلاقاً — كل ما يخص هذا الوضع
+   موجود هنا: البحث الحصري في zx_morocco أولاً، ثم عند الحاجة فقط السقوط
+   الاحتياطي (fallback) عبر استدعاء answerStandard() (نفس الدالة التي
+   تستعملها باقي النماذج) مع تعليم النتيجة بـ src خاص بالسقوط الاحتياطي
+   حتى تظهر بتنبيه واضح غير صامت للمستخدم. */
+async function answerMorocco(userQ) {
+  thinkStep('morocco-official-kb');
+  const moroccoResult = await zxMoroccoSearch(userQ);
+  thinkDone('morocco-official-kb');
+
+  if (moroccoResult.hit) {
+    const row = moroccoResult.row;
+    await logMsg(userQ, row.answer, 'morocco_official', 0.95);
+    return {
+      text: row.answer,
+      src: 'morocco_official',
+      score: 0.95,
+      moroccoSource: row.source || '',
+      moroccoCategory: row.category || ''
+    };
   }
 
+  // لا نتيجة موثوقة في zx_morocco — السقوط الاحتياطي إجباري ومُعلَن للمستخدم
+  // بوضوح (غير صامت أبداً)، عبر نفس دالة الإجابة العادية (answerStandard)
+  // بنفس تهيئة أقصى effort، ثم نُعيد تعليم src للنتيجة بأنها سقوط احتياطي.
+  thinkAddStep('morocco-fallback', '⚠ لا توجد إجابة رسمية موثّقة محلياً — الانتقال للنموذج العام');
+  const fallback = await answerStandard(userQ);
+  const fallbackSrc = (fallback.src === 'ai-brain' || fallback.src === 'rag+brain')
+    ? 'morocco_fallback'
+    : fallback.src;
+  return { ...fallback, src: fallbackSrc };
+}
 
+/* answerStandard(userQ) — دالة الإجابة العادية المستقلة لكل نماذج Zunexa
+   غير وضع "المغرب" (Pro / Max / Code / Lite): بحث محلي (KB) + عند الحاجة
+   archonBrain. هذه هي نفس الدالة التي يستدعيها answerMorocco() كسقوط
+   احتياطي، حتى لا يتكرر نفس المنطق في مكانين. */
+async function answerStandard(userQ) {
   // item 28 — isFollowUp is checked BEFORE the lite/local-only early exit,
   // not after, so lite mode at least tells the user why the answer might
   // look disconnected instead of silently ignoring the last turn.
@@ -3838,15 +3851,22 @@ async function answer(userQ) {
   thinkDone('brain');
   if (!brainTxt) return local;
 
-  // item 14 — في وضع "المغرب"، أي إجابة تصل لهذه النقطة هي بالضرورة سقوط
-  // احتياطي (zx_morocco لم يُعطِ نتيجة كافية أعلاه)، فيجب أن تحمل src خاصاً
-  // بذلك حتى تُعرض للمستخدم بتنبيه صريح "غير موثّقة من مصدر رسمي محلي" بدل
-  // بادج الذكاء الاصطناعي العادي.
-  const src = (zxEffort === 'morocco') ? 'morocco_fallback' : (ragContext ? 'rag+brain' : 'ai-brain');
+  const src = ragContext ? 'rag+brain' : 'ai-brain';
   await logMsg(userQ, brainTxt, src, Math.max(local.score, 0.5));
   autoLearn(userQ, brainTxt, local.score); // fire-and-forget, never blocks the reply
   return { text: brainTxt, src, score: Math.max(local.score, 0.5) };
 }
+
+/* answer(userQ) — نقطة الدخول الوحيدة التي يستدعيها بقية الكود (نفس الاسم
+   والتوقيع السابقين، لا كسر لأي نقطة تكامل). دورها الوحيد الآن هو التوجيه:
+   وضع "المغرب" يذهب لدالته المستقلة answerMorocco()، وكل باقي النماذج
+   تذهب لـ answerStandard() الخاصة بها — كل نموذج بمنطقه في دالته، بلا أي
+   تداخل بين الاثنين. */
+async function answer(userQ) {
+  if (zxEffort === 'morocco') return answerMorocco(userQ);
+  return answerStandard(userQ);
+}
+
 
 
 const CONNECTORS = [
