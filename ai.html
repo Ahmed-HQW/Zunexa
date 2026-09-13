@@ -1392,11 +1392,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <div class="sb-uplan"  id="uPlan">—</div>
       <div class="sb-uemail" id="uEmail">—</div>
     </div>
-    <button type="button" class="user-icon-button user-download-button" aria-label="الحصول على التطبيق" aria-expanded="false" aria-haspopup="dialog" onclick="openDownloadsMenu()" title="تحميل التطبيق">
-      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" class="iconify download-icon" width="18" height="18" viewBox="0 0 1024 1024" name="Download">
-        <path d="M512 126.976a36.864 36.864 0 0 1 36.864 36.864v347.91424l119.11168-119.11168a36.864 36.864 0 1 1 52.14208 52.14208l-182.0672 182.02624a36.864 36.864 0 0 1-52.10112 0l-182.0672-182.02624a36.864 36.864 0 0 1 52.14208-52.14208l119.11168 119.11168V163.84a36.864 36.864 0 0 1 36.864-36.864zM184.32 564.71552a36.864 36.864 0 0 1 36.864 36.864v145.65376a35.96288 35.96288 0 0 0 35.96288 35.96288h509.70624a35.96288 35.96288 0 0 0 35.96288-35.96288v-145.65376a36.864 36.864 0 0 1 73.728 0v145.65376a109.69088 109.69088 0 0 1-109.69088 109.69088H257.14688A109.69088 109.69088 0 0 1 147.456 747.23328v-145.65376a36.864 36.864 0 0 1 36.864-36.864z" fill="currentColor"></path>
-      </svg>
-    </button>
   </div>
 
   <!-- Billing -->
@@ -1469,21 +1464,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
   <!-- Input -->
   <div class="input-zone">
     <div class="mode-row" data-fit="row">
-      <div class="model-sel" id="effortSel">
-        <button class="model-sel-btn" id="effortSelBtn" onclick="toggleEffortSel()">
-          <span id="effortSelLabel">⚡ سريع</span>
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5.5 7.5L10 12l4.5-4.5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="sel-menu-backdrop" onclick="toggleEffortSel(false)"></div>
-        <div class="model-sel-menu" id="effortSelMenu">
-          <button class="model-sel-item" data-effort="quick" onclick="setEffortUI('quick');toggleEffortSel(false)" title="بحث محلي فقط، بدون AI توليدي"><b>⚡ سريع</b></button>
-          <button class="model-sel-item" data-effort="balanced" onclick="setEffortUI('balanced');toggleEffortSel(false)"><b>⚖ متوازن</b></button>
-          <button class="model-sel-item" data-effort="deep" onclick="setEffortUI('deep');toggleEffortSel(false)"><b>🔍 عميق</b></button>
-          <button class="model-sel-item" data-effort="max" onclick="setEffortUI('max');toggleEffortSel(false)"><b>🚀 أقصى</b></button>
-          <button class="model-sel-item" data-effort="morocco" onclick="setEffortUI('morocco');toggleEffortSel(false)" title="أقصى effort إجباري — يبحث أولاً في قاعدة المعرفة الإدارية المغربية الرسمية (zx_morocco) قبل أي سقوط احتياطي"><b>🇲🇦 المغرب</b></button>
-        </div>
-      </div>
-      <div class="mode-sep"></div>
       <div class="model-sel" id="modelSel">
         <button class="model-sel-btn" id="modelSelBtn" onclick="toggleModelSel()">
           <span id="modelSelLabel">Zunexa Pro</span>
@@ -1491,9 +1471,10 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
         </button>
         <div class="sel-menu-backdrop" onclick="toggleModelSel(false)"></div>
         <div class="model-sel-menu" id="modelSelMenu">
-          <button class="model-sel-item" data-model="lite" onclick="setModelUI('lite');toggleModelSel(false)"><b>Zunexa Lite</b><span>محلي فقط، بدون ذكاء انترنت</span></button>
-          <button class="model-sel-item" data-model="pro" onclick="setModelUI('pro');toggleModelSel(false)"><b>Zunexa Pro</b><span>محلي + Zunexa Brain</span></button>
+          <button class="model-sel-item" data-model="pro" onclick="setModelUI('pro');toggleModelSel(false)"><b>Zunexa Pro</b></button>
           <button class="model-sel-item" data-model="max" onclick="setModelUI('max');toggleModelSel(false)"><b>Zunexa Max</b><span>أقصى سياق</span></button>
+          <button class="model-sel-item" data-model="morocco" onclick="setEffortUI('morocco');toggleModelSel(false)" title="أقصى effort إجباري — يبحث أولاً في قاعدة المعرفة الإدارية المغربية الرسمية (zx_morocco) قبل أي سقوط احتياطي"><b>🇲🇦 المغرب</b></button>
+          <button class="model-sel-item" data-model="code" onclick="setModelUI('code');setArchonMode('code');toggleModelSel(false)"><b>Zunexa Code</b><span>وضع الكود فقط</span></button>
         </div>
       </div>
     </div>
@@ -5400,7 +5381,7 @@ function setModel(v) {
   zxModel = v; localStorage.setItem('zx_model', v);
   const tag = document.querySelector('.model-tag');
   const lang = localStorage.getItem('zx_page_lang') || 'ary';
-  const descKey = { lite: 'modelLite', pro: 'modelPro', max: 'modelMax' }[v];
+  const descKey = { lite: 'modelLite', pro: 'modelPro', max: 'modelMax', morocco: null, code: null }[v];
   const t = ZX_I18N[lang] || ZX_I18N.ary;
   if (tag) tag.textContent = (descKey && t[descKey]) || 'Zunexa AI Engine';
   schedulePushAppSettings();
@@ -5414,7 +5395,7 @@ function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); sche
    setEffortSel2) so both surfaces always agree. ── */
 function setModelUI(v, silent) {
   setModel(v);
-  const names = {lite:'Zunexa Lite', pro:'Zunexa Pro', max:'Zunexa Max'};
+  const names = {lite:'Zunexa Lite', pro:'Zunexa Pro', max:'Zunexa Max', morocco:'🇲🇦 المغرب', code:'Zunexa Code'};
   document.querySelectorAll('#modelSelMenu .model-sel-item').forEach(b => b.classList.toggle('on', b.dataset.model === v));
   const label = document.getElementById('modelSelLabel');
   if (label) label.textContent = names[v] || 'Zunexa Pro';
@@ -5465,6 +5446,12 @@ function setEffortUI(v, silent) {
   if (label) label.textContent = names[v] || '⚡ سريع';
   const sel2 = document.getElementById('setEffortSel2');
   if (sel2) sel2.value = v;
+  // "🇲🇦 المغرب" is also exposed as a shortcut item inside modelSelMenu
+  // (see modelSelBtn) — keep that surface's label/on-state in sync too.
+  const modelLabel = document.getElementById('modelSelLabel');
+  document.querySelectorAll('#modelSelMenu .model-sel-item').forEach(b => b.classList.toggle('on', b.dataset.model === 'morocco' && v === 'morocco'));
+  if (v === 'morocco' && modelLabel) modelLabel.textContent = '🇲🇦 المغرب';
+  if (!silent) toast('✓ ' + (names[v] || v));
 }
 function toggleEffortSel(force) {
   const el = document.getElementById('effortSel');
