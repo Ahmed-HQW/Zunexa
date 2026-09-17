@@ -70,14 +70,14 @@
       // circuit the loop before we reach the real session key.
       if (!(k && k.indexOf('sb-') === 0 && k.indexOf('-auth-token') !== -1)) continue;
       var raw = localStorage.getItem(k);
-      if (!raw) break;
+      if (!raw) continue;
       var parsed = JSON.parse(raw);
       var expiresAt = parsed && (parsed.expires_at || (parsed.session && parsed.session.expires_at));
       var hasToken = parsed && (parsed.access_token || (parsed.session && parsed.session.access_token));
       if (hasToken && (!expiresAt || expiresAt * 1000 > Date.now())){
         window.location.replace('ai.html');
+        break;
       }
-      break;
     }
   }catch(e){ /* fall through to normal page load / getSession() check below */ }
 })();
