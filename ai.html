@@ -42,10 +42,26 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<!-- PERFORMANCE (2026-09-17): preconnect to the CDN host used by the
+     on-demand libraries below (pdf.js/jszip/highlight.js/jsQR/mammoth/
+     xlsx all live on cdnjs.cloudflare.com) so that when one is actually
+     needed (file attach, code block, QR scan) the DNS+TLS handshake is
+     already warm and only the script fetch itself is on the critical
+     path. Harmless if the browser never ends up needing any of them —
+     a preconnect that's never used just idles and times out quietly. -->
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<!-- PERFORMANCE FIX (2026-09-17): pdf.js, jszip, highlight.js, jsQR,
+     mammoth and xlsx were all previously loaded here as render-blocking
+     script tags in <head> — none of them are needed to show the first
+     screen; they're only used on-demand (file attach, QR scan, code
+     highlighting in a bot reply). On the Snapdragon 4xx-class /
+     weak-3G devices this app targets, blocking first paint on ~1-2MB of
+     combined JS the user may never even trigger (many chats have no
+     attachment and no code block) was a real, avoidable performance
+     cost. Removed from here — see zxLoadScript()/zxEnsureLib() below,
+     called on-demand at each library's actual use site instead. -->
 <!-- Syntax highlighting for code blocks in chat replies -->
 <!-- highlight.js atom-one-dark theme, inlined (2026-09-04): the external
      <link> was blocked by the site's CSP (style-src only allows 'self',
@@ -56,11 +72,6 @@
 <style>
 pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#282c34}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<!-- QR code reading (from uploaded/attached images) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="zunexa-touch.css">
 <style>
 /* ════════════════════════════════════════════════════════
@@ -600,6 +611,25 @@ img{max-width:100%;display:block}
   text-align:center;gap:16px;padding:32px 20px;
   animation:fadeUp .5s ease;
 }
+/* Suggestion chips on the empty welcome screen — added 2026-09-17
+   (see CHANGELOG "UX/retention" entry). Tapping one fills the input
+   and sends immediately via the existing go(text) helper, same as a
+   history item. Respects zx-reduce-motion automatically (covered by
+   the existing `.zx-reduce-motion *` rule) and RTL (wraps naturally
+   in the document's own dir="rtl", no directional CSS needed). */
+.wl-suggestions{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:8px;
+  max-width:460px;margin-top:4px;
+}
+.wl-sugg-chip{
+  font-family:'Rajdhani',sans-serif;font-size:12.5px;font-weight:600;
+  color:var(--tw);background:var(--card);border:1px solid var(--b1);
+  border-radius:999px;padding:8px 14px;cursor:pointer;
+  transition:background-color var(--tr),border-color var(--tr),transform var(--tr);
+}
+.wl-sugg-chip:hover{background:var(--hover);border-color:var(--gold3)}
+.wl-sugg-chip:active{transform:scale(.96)}
+.wl-sugg-chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 /* Logo mark — sized responsively via sm:/md:/lg: equivalent breakpoints
    (640 / 768 / 1024) instead of a single fixed size + JS. No rotating
    ring: the ✦ ring/spin gimmick was removed, the SVG mark stands alone. */
@@ -1456,6 +1486,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     <div class="welcome" id="welcomeEmpty">
       <div class="wl-title"><span class="wl-logo" aria-hidden="true"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="zxGoldGrad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E4C158"/><stop offset="55%" stop-color="#D4AF37"/><stop offset="100%" stop-color="#8a7022"/></linearGradient></defs><circle cx="50" cy="50" r="48" fill="#0B0C0F"/><circle cx="50" cy="50" r="48" fill="none" stroke="url(#zxGoldGrad1)" stroke-width="2"/><path d="M50 8 L58 34 L86 34 L63 50 L71 76 L50 60 L29 76 L37 50 L14 34 L42 34 Z" fill="none" stroke="url(#zxGoldGrad1)" stroke-width="1.4" opacity="0.55"/><text x="50" y="66" font-family="Cinzel, serif" font-size="46" font-weight="700" text-anchor="middle" fill="url(#zxGoldGrad1)">Z</text></svg></span><span id="wlGreetText"></span></div>
       <div class="wl-sub"></div>
+      <div class="wl-suggestions"></div>
     </div>
   </div>
   <!-- Toast -->
@@ -1926,15 +1957,89 @@ function zxWaitForGlobal(name, timeoutMs) {
     })();
   });
 }
+
+/**
+ * On-demand <script> loader with in-flight de-duplication. Added
+ * 2026-09-17 (see CHANGELOG "Performance" entry): pdf.js, jszip,
+ * highlight.js, jsQR, mammoth and xlsx used to be hardcoded <script>
+ * tags in <head>, blocking first paint on every visit even though none
+ * of them are needed until the user actually attaches a file, sees a
+ * code block, or scans a QR image. Each is now fetched only the first
+ * time its feature is actually used. Calling this twice for the same
+ * URL while the first load is still in flight returns the same
+ * promise instead of injecting a second <script> tag.
+ * @param {string} src - absolute script URL
+ * @returns {Promise<void>} resolves once the script has executed
+ */
+const _zxLoadedScripts = {};
+function zxLoadScript(src) {
+  if (_zxLoadedScripts[src]) return _zxLoadedScripts[src];
+  _zxLoadedScripts[src] = new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = () => resolve();
+    s.onerror = () => { delete _zxLoadedScripts[src]; reject(new Error('تعذّر تحميل: ' + src)); };
+    document.head.appendChild(s);
+  });
+  return _zxLoadedScripts[src];
+}
+
+/**
+ * Ensures a CDN-provided global (e.g. `pdfjsLib`, `JSZip`, `hljs`,
+ * `jsQR`, `mammoth`, `XLSX`) is loaded and ready, loading its script
+ * on-demand the first time it's needed. Throws (with an Arabic,
+ * toast-friendly message) if the CDN fetch fails, so every call site
+ * can catch it and show a real error instead of a silent crash.
+ * @param {string} globalName - the window global the script defines
+ * @param {string} src - absolute script URL to load if not present
+ * @returns {Promise<any>} the resolved global
+ */
+async function zxEnsureLib(globalName, src) {
+  if (typeof window[globalName] !== 'undefined' && window[globalName]) return window[globalName];
+  try {
+    await zxLoadScript(src);
+  } catch (e) {
+    throw new Error('تعذّر تحميل مكتبة مطلوبة لهذه الميزة — تحقق من الاتصال بالإنترنت');
+  }
+  if (typeof window[globalName] === 'undefined' || !window[globalName]) {
+    throw new Error('تعذّر تحميل مكتبة مطلوبة لهذه الميزة — تحقق من الاتصال بالإنترنت');
+  }
+  return window[globalName];
+}
 let _SB = (typeof supabase !== 'undefined' && supabase && typeof supabase.createClient === 'function')
   ? supabase.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY)
   : null;
+/**
+ * Resolves once _SB is a real client, or null if the Supabase SDK
+ * never attached within the timeout. Added 2026-09-17 (see CHANGELOG):
+ * the previous comment here claimed "_SB?." at call sites was enough
+ * protection against the CDN-load race, but that's only true for the
+ * property access itself — `await _SB?.auth.getSession()` still
+ * evaluates to `await undefined` when _SB is null, and every call site
+ * that destructures the result (`const { data: { session } } = ...`)
+ * throws a TypeError on that undefined, not a caught "contained" error.
+ * On a slow connection this silently logged real, already-authenticated
+ * users out (the top-level auth-check IIFE below caught that TypeError
+ * and redirected to index.html). Callers should `await zxSB()` instead
+ * of reading `_SB` directly wherever they need the client to be ready.
+ * @returns {Promise<Object|null>}
+ */
+function zxSB() {
+  if (_SB) return Promise.resolve(_SB);
+  return zxWaitForGlobal('supabase', 8000).then(sb => {
+    if (sb && !_SB) {
+      try { _SB = sb.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY); }
+      catch (e) { console.error('[Zunexa] فشل إنشاء Supabase client:', e.message); }
+    }
+    return _SB;
+  });
+}
 if (!_SB) {
   // Supabase SDK not attached yet — wait for it, then build the real
-  // client. Anything that runs before this resolves and reads a
-  // still-null `_SB` should already be guarding for null (see the
-  // `_SB?.` optional-chaining pattern used at call sites), so no call
-  // site needs to change.
+  // client. This background attempt races with any zxSB() call a
+  // handler makes later; whichever resolves _SB first wins, and zxSB()
+  // itself is idempotent (checks `_SB` before re-waiting), so running
+  // both is harmless.
   zxWaitForGlobal('supabase', 8000).then(sb => {
     if (sb && !_SB) {
       try { _SB = sb.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY); }
@@ -1945,6 +2050,19 @@ if (!_SB) {
 
 (async () => {
   try {
+    // Wait for the real client before touching .auth at all — see
+    // zxSB() above for why `_SB?.` alone doesn't protect this block.
+    const sb = await zxSB();
+    if (!sb) {
+      // SDK never loaded within the timeout (CDN down/blocked). Don't
+      // bounce a possibly-legitimate session to the login page over an
+      // infra hiccup — let the rest of the app run in its own
+      // null-_SB-guarded degraded mode instead of forcing a redirect
+      // loop for every visitor on a bad connection.
+      console.error('[Zunexa] Supabase SDK لم يتحمّل — تعذّر التحقق من الجلسة.');
+      return;
+    }
+
     // 1. أولاً نعالج OAuth token إذا رجع في URL
     const hash = window.location.hash;
 
@@ -1955,7 +2073,7 @@ if (!_SB) {
       const refresh_token = params.get('refresh_token');
 
       if (access_token && refresh_token) {
-        const { error } = await _SB?.auth.setSession({
+        const { error } = await sb.auth.setSession({
           access_token,
           refresh_token
         });
@@ -1979,7 +2097,7 @@ if (!_SB) {
     const {
       data: { session },
       error
-    } = await _SB?.auth.getSession();
+    } = await sb.auth.getSession();
 
     if (error || !session) {
       window.location.replace('index.html');
@@ -3660,7 +3778,9 @@ async function zxMoroccoSearch(userQ) {
   try {
     const cleanQ = String(userQ || '').trim();
     if (!cleanQ) return { hit: false };
-    const { data, error } = await _SB.rpc('zx_morocco_search', { search_term: cleanQ });
+    const sb = await zxSB();
+    if (!sb) { console.warn('[Zunexa المغرب] Supabase غير متاح — تعذّر البحث.'); return { hit: false }; }
+    const { data, error } = await sb.rpc('zx_morocco_search', { search_term: cleanQ });
     if (error) {
       console.warn('[Zunexa المغرب] فشل استدعاء zx_morocco_search RPC:', error.message);
       return { hit: false };
@@ -4316,14 +4436,14 @@ function addMsg(text, role, src, score, imgUrl, skipSave, audioUrl, animate, mor
   if (!shouldAnimate) { bub.innerHTML = fmt(text); highlightCodeIn(bub); }
   if (imgUrl) {
     const img = document.createElement('img');
-    img.src = imgUrl;
+    img.src = zxSafeUrl(imgUrl);
     img.loading = 'lazy';
     img.style.cssText = 'max-width:100%;border-radius:12px;margin-top:10px;border:1px solid var(--b1);display:block';
     bub.appendChild(img);
   }
   if (audioUrl) {
     const audio = document.createElement('audio');
-    audio.src = audioUrl;
+    audio.src = zxSafeUrl(audioUrl);
     audio.controls = true;
     audio.style.cssText = 'width:100%;margin-top:10px';
     bub.appendChild(audio);
@@ -4430,11 +4550,16 @@ function typewriteBubble(bub, fullText, conv) {
 }
 
 /* ── Syntax highlighting hook — best-effort, never breaks the chat
-   if highlight.js failed to load (CDN down, blocked, etc). ── */
-function highlightCodeIn(container) {
+   if highlight.js fails to load (CDN down, blocked, etc).
+   PERFORMANCE (2026-09-17): hljs is no longer preloaded in <head> — it's
+   fetched here on-demand, and only when `container` actually contains
+   at least one code block, so chats with no code never pay for it. ── */
+async function highlightCodeIn(container) {
   try {
-    if (typeof hljs === 'undefined') return;
-    container.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+    const blocks = container.querySelectorAll('pre code');
+    if (!blocks.length) return;
+    const hl = await zxEnsureLib('hljs', 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js');
+    blocks.forEach(el => hl.highlightElement(el));
   } catch (e) { /* best-effort */ }
 }
 
@@ -4722,6 +4847,20 @@ function deleteChat(idx) {
 
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+/**
+ * Allowlist gate for any user- or storage-derived href/src (file library,
+ * synced chat image URLs, etc.). Only http(s), blob: and same-origin
+ * root-relative paths pass through; anything else (javascript:, data: on
+ * an <a>, vbscript:, etc.) collapses to '#' so it can never execute on
+ * click. Added 2026-09-17 — see CHANGELOG.
+ * @param {*} u - candidate URL, any type (defensively coerced to string)
+ * @returns {string} a safe href/src value
+ */
+function zxSafeUrl(u) {
+  const s = (u == null) ? '' : String(u);
+  return /^(https?:|blob:|\/)/i.test(s) ? s : '#';
+}
+
 function reloadQ(idx) {
   const item = hist[idx];
   if (!item) return;
@@ -4754,9 +4893,11 @@ function newChat() {
   conv.innerHTML = `
     <div class="welcome" id="welcomeChat">
       <div class="wl-title"><span class="wl-logo" aria-hidden="true"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="zxGoldGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#E4C158"/><stop offset="55%" stop-color="#D4AF37"/><stop offset="100%" stop-color="#8a7022"/></linearGradient></defs><circle cx="50" cy="50" r="48" fill="#0B0C0F"/><circle cx="50" cy="50" r="48" fill="none" stroke="url(#zxGoldGrad2)" stroke-width="2"/><path d="M50 8 L58 34 L86 34 L63 50 L71 76 L50 60 L29 76 L37 50 L14 34 L42 34 Z" fill="none" stroke="url(#zxGoldGrad2)" stroke-width="1.4" opacity="0.55"/><text x="50" y="66" font-family="Cinzel, serif" font-size="46" font-weight="700" text-anchor="middle" fill="url(#zxGoldGrad2)">Z</text></svg></span><span id="wlGreetText"></span></div>
+      <div class="wl-suggestions"></div>
     </div>`;
   closeSidebar();
   zxUpdateGreeting();
+  renderWelcomeSuggestions();
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -5030,7 +5171,7 @@ function renderLibImages() {
   const imgs = getAllImages();
   const el = document.getElementById('libImages');
   el.innerHTML = imgs.length
-    ? imgs.map(i => `<a href="${i.url}" target="_blank"><img src="${i.url}" loading="lazy"></a>`).join('')
+    ? imgs.map(i => `<a href="${esc(zxSafeUrl(i.url))}" target="_blank" rel="noopener noreferrer"><img src="${esc(zxSafeUrl(i.url))}" loading="lazy"></a>`).join('')
     : '<div class="lib-empty">لا توجد صور بعد</div>';
 }
 function renderLibFiles() {
@@ -5038,7 +5179,7 @@ function renderLibFiles() {
   try { lib = JSON.parse(localStorage.getItem('zx_file_lib') || '[]'); } catch(e){}
   const el = document.getElementById('libFiles');
   el.innerHTML = lib.length
-    ? lib.map(f => `<a class="lib-file-row" href="${f.url}" target="_blank">📄 <span>${esc(f.name)}</span></a>`).join('')
+    ? lib.map(f => `<a class="lib-file-row" href="${esc(zxSafeUrl(f.url))}" target="_blank" rel="noopener noreferrer">📄 <span>${esc(f.name)}</span></a>`).join('')
     : '<div class="lib-empty">لا توجد ملفات مرفوعة بعد</div>';
 }
 
@@ -5520,6 +5661,32 @@ function zxUpdatePlaceholder(lang) {
   inp.placeholder = ZX_PLACEHOLDERS[lang] || ZX_PLACEHOLDERS.en;
 }
 
+/* ── Empty-state suggestion chips ────────────────────────────────
+   Added 2026-09-17 (Pass D — see CHANGELOG "UX/retention" entry).
+   A brand-new visitor landing on an empty chat with just a logo and
+   greeting had no cue for what Zunexa can actually do — a real
+   first-run drop-off risk with zero marketing budget to compensate
+   via onboarding elsewhere. These four short, Darija-first prompts
+   cover the product's core use cases (general Q&A, code help, the
+   Morocco-official-sources mode, file analysis) and tapping one
+   fills the input and sends immediately via the existing go(text).
+   Falls back to Arabic (ar) for any UI language without its own
+   ZX_SUGGESTIONS entry, matching the ZX_PLACEHOLDERS fallback
+   pattern above. */
+const ZX_SUGGESTIONS = {
+  ary: ['كيفاش نبدا نتعلّم البرمجة؟', 'لخّص ليا هاد الموضوع', '🇲🇦 شنو هي وثائق الحالة المدنية؟', 'شرح ليا هاد الكود'],
+  ar:  ['كيف أتعلم البرمجة من الصفر؟', 'لخّص لي هذا الموضوع', '🇲🇦 ما هي وثائق الحالة المدنية؟', 'اشرح لي هذا الكود'],
+  fr:  ['Comment apprendre à coder ?', 'Résume-moi ce sujet', '🇲🇦 Quels documents pour l\'état civil ?', 'Explique-moi ce code'],
+  en:  ['How do I start learning to code?', 'Summarize this topic for me', '🇲🇦 What documents do I need for civil status?', 'Explain this code to me'],
+};
+function renderWelcomeSuggestions() {
+  const lang = localStorage.getItem('zx_page_lang') || 'ary';
+  const list = ZX_SUGGESTIONS[lang] || ZX_SUGGESTIONS.ar;
+  document.querySelectorAll('.wl-suggestions').forEach(el => {
+    el.innerHTML = list.map(s => `<button type="button" class="wl-sugg-chip" onclick="go('${esc(s).replace(/'/g, '&#39;')}')">${esc(s)}</button>`).join('');
+  });
+}
+
 /* ── Personalized time-of-day welcome greeting ──────────────────
    40+ real, distinct greeting titles per language, built by
    combining a time-of-day opener with several closing phrases,
@@ -5598,6 +5765,7 @@ function applyPageLang(lang) {
   document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
 
   zxUpdateGreeting();
+  renderWelcomeSuggestions();
   zxUpdatePlaceholder(lang);
   const newChatBtn = document.querySelector('.sb-new');
   if (newChatBtn) newChatBtn.textContent = t.newChat;
@@ -5773,6 +5941,7 @@ async function onFilePicked(e) {
       toast('ℹ الملف الصوتي تم إرفاقه كمرجع فقط — تحويل الصوت لنص غير مفعّل حالياً (يحتاج خدمة خارجية)');
     } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
       const buf = await file.arrayBuffer();
+      const pdfjsLib = await zxEnsureLib('pdfjsLib', 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
       let text = '';
@@ -5791,13 +5960,15 @@ async function onFilePicked(e) {
       // will produce garbled binary text — that's a real, honest
       // limitation, not a silent failure.
       const buf = await file.arrayBuffer();
-      const result = await mammoth.extractRawText({ arrayBuffer: buf });
+      const mammothLib = await zxEnsureLib('mammoth', 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
+      const result = await mammothLib.extractRawText({ arrayBuffer: buf });
       attachedFile = { name: file.name, kind: 'text', textContent: result.value.trim(), dataUrl: '' };
     } else if (file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls')) {
       // SheetJS reads every sheet and renders each as a compact CSV
       // block labeled with its sheet name, so the AI sees real row/
       // column structure instead of a flat character dump.
       const buf = await file.arrayBuffer();
+      const XLSX = await zxEnsureLib('XLSX', 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
       const wb = XLSX.read(buf, { type: 'array' });
       let combined = '';
       let charBudget = 12000;
@@ -5815,6 +5986,7 @@ async function onFilePicked(e) {
       // by name. Binary files (images, icons, etc.) are just listed by
       // name — their bytes aren't useful as text context anyway.
       const TEXT_EXT = /\.(html?|js|py|json|md|css|txt|xml|ya?ml|sh|csv)$/i;
+      const JSZip = await zxEnsureLib('JSZip', 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
       const zip = await JSZip.loadAsync(file);
       const entries = Object.values(zip.files).filter(f => !f.dir);
       let combined = '';
@@ -5887,13 +6059,15 @@ function readAsDataURL(file) {
 
 /* ── QR code reading ────────────────────────────────────────────
    Best-effort: decodes any QR code inside an attached image using
-   jsQR (client-side, no server round-trip). If found, shows the
-   decoded text as a chip the user can tap to insert into the
-   message box — never auto-sends anything on its own. Silently
-   does nothing if jsQR failed to load or no QR code is present. */
-function scanAttachedImageForQR(dataUrl) {
+   jsQR (client-side, no server round-trip, loaded on-demand — see
+   zxEnsureLib). If found, shows the decoded text as a chip the user
+   can tap to insert into the message box — never auto-sends anything
+   on its own. Silently does nothing if jsQR fails to load or no QR
+   code is present. */
+async function scanAttachedImageForQR(dataUrl) {
   try {
-    if (typeof jsQR === 'undefined' || !dataUrl) return;
+    if (!dataUrl) return;
+    const jsQR = await zxEnsureLib('jsQR', 'https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js');
     const img = new Image();
     img.onload = () => {
       try {
@@ -7816,7 +7990,12 @@ function openPersonaEditor(id) {
 }
 
 async function openSettings() {
-  const { data: { session } } = await _SB.auth.getSession();
+  const sb = await zxSB();
+  let session = null;
+  if (sb) {
+    try { ({ data: { session } } = await sb.auth.getSession()); }
+    catch (e) { console.error('[Zunexa] openSettings: تعذّر التحقق من الجلسة:', e.message); }
+  }
   const loggedInBox = document.getElementById('settLoggedInInfo');
   const guestBox     = document.getElementById('settGuestInfo');
   if (session) {

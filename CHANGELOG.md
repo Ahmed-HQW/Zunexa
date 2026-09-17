@@ -3,6 +3,139 @@
 All notable changes to the Zunexa front-end are documented in this file, merged from
 `CHANGELOG.md` and `changelog-ai-html.md`. Sorted newest first.
 
+## [Unreleased] — 2026-09-17 (Pass D — UX/retention)
+
+### ✨ Added
+- **Suggestion chips on the empty welcome screen** — HTML markup at `#welcomeEmpty` (~line 1467) and `newChat()` (~line 4886); new CSS `.wl-suggestions`/`.wl-sugg-chip` (~line 608, next to the existing `.welcome` rules); new `ZX_SUGGESTIONS` i18n table + `renderWelcomeSuggestions()` (~line 5682, next to `ZX_PLACEHOLDERS`); wired into `applyPageLang()` (~line 5762) and `newChat()`.
+  Problem: a brand-new visitor's very first screen was the logo, a greeting, and an empty input box — no cue at all for what Zunexa actually does. For a solo founder with zero marketing budget, that empty first screen is a real, avoidable drop-off point: users who don't already know what to ask are the ones most likely to bounce immediately.
+  Fix: added four short, tappable suggestion chips under the greeting — one for general Q&A ("كيفاش نبدا نتعلّم البرمجة؟"), one for summarization, one that surfaces the 🇲🇦 Morocco-official-sources mode specifically (a differentiator worth surfacing early), and one for code explanation. Tapping a chip fills the input and sends immediately via the existing `go(text)` helper — the same mechanism history items already use, so no new send path was introduced. Chips are styled with the existing design tokens (`--card`, `--b1`, `--gold3`, `--tr`) rather than new hardcoded colors, sit inside the existing `.welcome{animation:fadeUp}` block so they fade in with it, and automatically respect `zx-reduce-motion` (covered by the file's existing blanket `.zx-reduce-motion *{transition-duration:.001s!important}` rule — no new exception needed) and RTL (the chips wrap in a plain `flex-wrap` row inside the document's own `dir="rtl"`, no directional CSS required). Text is provided for `ary`/`ar`/`fr`/`en`, falling back to `ar` for any other UI language — matching the exact fallback pattern already used by `ZX_PLACEHOLDERS`.
+  Verify: open the app with no chat history (or click "محادثة جديدة") — four chips should appear under the greeting; tapping one should immediately send that message. Switch UI language in Settings and reopen a new chat — chip text should update to match (falling back to Arabic for languages without their own entry).
+
+### 🧭 Assumptions
+- Picked 4 chips covering the product's most distinct capabilities (general chat, summarization, the Morocco-official mode, code) rather than more generic ones, since a solo founder's highest-leverage first-run move is showing users something Zunexa can do that a generic chatbot can't — assumption logged here since no one was available to confirm the exact four prompts.
+- Only added translations for the 4 UI languages I judged most likely to cover the current user base (`ary`, `ar`, `fr`, `en`) rather than all 12 languages in `ZX_I18N` — the `ar` fallback means no language shows blank/broken chips, but the other 8 (`es`,`de`,`it`,`pt`,`ru`,`zh`,`tr`,`hi`) will show Arabic-fallback chips instead of chips in their own language until translated. Flagged as a follow-up rather than guessing translations I can't verify are natural-sounding in those languages.
+- Did not add a "regenerate suggestions" or dynamic/contextual suggestion logic (e.g. based on `hist`) — kept it to a fixed, curated set for this pass, since dynamic suggestions would need their own design/testing pass.
+
+### ⏭️ Deferred
+- Translated suggestion chips for the remaining 8 `ZX_I18N` languages.
+- The rest of Pass D's checklist from the mission brief: haptic/visual completion feedback beyond what already exists, a Zalij-motif progress indicator, a share/viral affordance, and progressive disclosure of the model selector — none of these were attempted in this pass; this pass focused specifically on the empty-state drop-off point as the single highest-leverage UX gap found.
+- Pass E (hygiene — consistent `zx` naming audit, dead code removal, full JSDoc coverage, consistent Darija error toasts) — still entirely unattempted.
+
+### 🔍 Loop Report
+- Passes run so far: Pass A (XSS/URL sinks, complete for that sub-scope), Pass B (Supabase-init race, complete for that sub-scope), Pass C (render-blocking library loads, complete for that sub-scope), Pass D (empty-state suggestion chips only — complete for that specific sub-scope, not the rest of Pass D's checklist).
+- Findings this session: 1 UX addition (4 new chips, i18n table, 1 new render function, ~15 lines of new CSS), 0 regressions found in re-reading the diff.
+- Final cycle findings: not applicable — full A→F cycle across the entire file still not run; each pass so far has covered one specific, verified sub-scope rather than its full checklist.
+
+## [Unreleased] — 2026-09-17 (Pass C — performance)
+
+### ⚡ Performance
+- **Lazy-loaded pdf.js, jszip, highlight.js, jsQR, mammoth and xlsx instead of blocking first paint** — `<head>` (was lines 47/48/59/61/62/63), plus `zxEnsureLib()`/`zxLoadScript()` added near `zxWaitForGlobal()` (~line 1916), and their six call sites: `highlightCodeIn()` (~4534), `onFilePicked()`'s PDF/.docx/.xlsx/.zip branches (~5893–5941), `scanAttachedImageForQR()` (~6018).
+  Problem: all six libraries were hardcoded `<script src="https://cdnjs...">` tags in `<head>`, parsed and executed before first paint, even though every one of them is only needed on-demand (a code block appearing in a bot reply, a file attach, or a QR scan) — a chat with no attachment and no code block, which is common, paid the full combined download+parse+execute cost of all six libraries for zero benefit.
+  Impact: on the Snapdragon 4xx-class Android devices and weak 3G/4G connections this app explicitly targets, this meant a slower time-to-first-paint and time-to-interactive on every single visit, regardless of whether the visitor ever touched a file-attach or code-highlighting feature.
+  Fix: removed all six `<script src=...>` tags from `<head>`. Added `zxLoadScript(src)` (injects a `<script>` tag on demand, de-duplicates concurrent calls to the same URL) and `zxEnsureLib(globalName, src)` (returns the already-loaded global if present, else loads it and throws a clear Arabic error if the CDN fetch fails) near the existing `zxWaitForGlobal()` helper. Each library is now fetched only the first time its feature is actually used: `highlightCodeIn()` only fetches `hljs` when the message actually contains a `<pre><code>` block; `onFilePicked()` fetches `pdfjsLib`/`mammoth`/`XLSX`/`JSZip` only for the matching file type; `scanAttachedImageForQR()` fetches `jsQR` only when an image is attached. Also added `<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>` in `<head>` so that when one of these does load, the DNS+TLS handshake is already warm.
+  Before/after (estimate — exact figures depend on CDN response at deploy time, not measured against a live network in this pass): combined size of the six libraries is roughly 1–1.5MB of unminified-equivalent JS parse/execute work removed from the critical rendering path on every visit; a typical chat session with no file attach and no code block now loads and executes **zero** of these six scripts at all, versus all six unconditionally before.
+  Verify: open DevTools → Network tab, hard-reload `ai.html` — you should no longer see `pdf.min.js`, `jszip.min.js`, `highlight.min.js`, `jsQR.min.js`, `mammoth.browser.min.js`, or `xlsx.full.min.js` in the initial page-load waterfall. Then attach a `.pdf` — `pdf.min.js` (and `pdf.worker.min.js`) should now appear in the Network tab at that moment, not before. Same check for `.docx`→mammoth, `.xlsx`→xlsx, `.zip`→jszip, an image attach→jsQR, and a bot reply containing a code block→highlight.js.
+
+### 🧭 Assumptions
+- Kept `pdf.worker.min.js` as a separate, still-lazy fetch triggered by `pdfjsLib.GlobalWorkerOptions.workerSrc` — that's pdf.js's own internal lazy-load of its worker thread and was already effectively on-demand before this change; not modified further.
+- Did not attempt to self-host any of these six libraries or move them to a bundler/build step — the mission brief is explicit that this project has no build pipeline, and self-hosting would need its own versioning/update process this pass didn't have room to design.
+- `highlightCodeIn()` and `scanAttachedImageForQR()` were already called fire-and-forget (no `await`) at both call sites before this change, so converting them to `async` functions that internally `await zxEnsureLib(...)` required no change at their call sites — verified by re-checking both callers.
+- Did not add a loading/spinner indicator while a lazy library fetches on a slow connection (e.g. while `pdf.min.js` downloads after a PDF attach) — the existing `toast('⏳ جاري قراءة الملف...')` already shown at the top of `onFilePicked()` covers this from the user's perspective (the toast appears immediately; the extra library-load latency now happens invisibly inside that same "reading the file" period rather than during the initial page load), so no separate UI change was made.
+
+### ⏭️ Deferred
+- No before/after Lighthouse or WebPageTest measurement was run against the live deployed site in this pass — the estimate above is based on the libraries' known approximate published sizes, not a live network trace. A real measurement should be taken after deploy.
+- The rest of Pass C's checklist: render-blocking CSS, DOM batching/reflow-in-a-loop audit across the ~150 functions, debounce/throttle review beyond what already exists (`fitButtonRows()` resize debounce was already in place from an earlier pass), and the service-worker cache-versioning / `skipWaiting`/`clients.claim` requirement from the mission brief — `service-worker.js` itself was not opened or audited in this pass (it's a sibling file, not part of `ai.html`).
+- Pass D (UX/retention) and Pass E (hygiene) — still entirely unattempted.
+
+### 🔍 Loop Report
+- Passes run so far: Pass A (XSS/URL sinks, complete for that sub-scope), Pass B (Supabase-init race, complete for that specific sub-scope), Pass C (render-blocking library loads, complete for that specific sub-scope — service-worker caching not yet covered).
+- Findings this session: 1 performance fix spanning 6 libraries, 8 call sites, 2 new helper functions, 1 new preconnect hint.
+- Final cycle findings: not applicable — full A→F cycle across the entire file still not run.
+
+## [Unreleased] — 2026-09-17 (Pass B — correctness)
+
+### 🐛 Fixed
+- **[HIGH] Supabase CDN-load race could silently log out real users** — top-level auth-check IIFE @ ~line 1971 (was ~1946), `openSettings()` @ ~line 7870, `zxMoroccoSearch()` @ ~line 3697.
+  Problem: a prior fix (comment still in the file, dated earlier) introduced `zxWaitForGlobal()` to poll for the Supabase SDK attaching from its CDN `<script>` tag, and claimed that using `_SB?.` (optional chaining) at every call site was sufficient protection against the SDK not being ready yet. That claim was incomplete: `_SB?.auth.getSession()` does avoid throwing on the property access, but the expression still evaluates to `await undefined` when `_SB` is null — and every call site that destructures the result, e.g. `const { data: { session } } = await _SB?.auth.getSession()`, throws a `TypeError` on that `undefined` regardless of the `?.`. The top-level auth-check IIFE wraps this in try/catch, so on any connection slow enough that the CDN script hadn't attached yet by the time this *synchronous, no-`await`-before-it* IIFE ran, the catch block fired and redirected an already-logged-in user straight back to `index.html` — a silent, network-timing-dependent logout with no error shown to the user. `openSettings()` had no try/catch at all around the equivalent bare `_SB.auth.getSession()`, so under the same race it just threw and the settings modal silently failed to open.
+  Impact: on the weak 3G/4G Android connections this app explicitly targets, genuine logged-in users could be intermittently bounced to the login screen, and the Settings modal could intermittently fail to open — both with zero visible error, exactly the "kolshi wa9ef bla khata dahra" class of bug this codebase's own comments describe elsewhere.
+  Fix: added `zxSB()` — an async helper that returns the resolved client (or `null` after the same 8s timeout) instead of the raw possibly-null `_SB` variable — and switched the three call sites above to `await zxSB()` before touching `.auth`/`.rpc`, so nothing destructures an `undefined` auth result anymore. On a genuine SDK failure (CDN blocked/down within the timeout), the auth IIFE now logs a console error and leaves the user on the page in degraded mode instead of forcing a redirect loop; `openSettings()` and `zxMoroccoSearch()` degrade to guest-view / `{ hit: false }` respectively, same as before, but via an intentional check instead of a caught crash.
+  Verify: in devtools, throttle network to "Slow 3G" (or block `cdn.jsdelivr.net` via the Network tab's request blocking) and reload while logged in — you should stay on `ai.html` (possibly with a brief delay) instead of being bounced to `index.html`; opening Settings under the same throttling should no longer silently fail.
+
+### 🧭 Assumptions
+- Did not touch the remaining ~35 call sites still using `_SB?.` directly (e.g. `sendMsg`, `redeemCode`, `uploadAvatar`, etc.) in this pass — each one either (a) already runs long after the top-level auth IIFE has resolved `_SB` in practice, since they're only reachable via user interaction after the page has loaded, or (b) is already wrapped in a function-level try/catch that degrades safely even if the destructure throws (confirmed for `zxMoroccoSearch`, `saveProfileSettings`; not yet individually re-verified for the rest). Flagged as a follow-up: the theoretically correct fix is to migrate every `_SB?.` read to `await zxSB()`, but doing that across 35+ sites in this pass risked exactly the kind of broad, hard-to-verify diff the "zero regressions" rule warns against. Prioritized the three sites with a demonstrated, concrete failure mode (silent logout, silent settings-modal failure) instead.
+- Left `saveProfileSettings()`'s bare `_SB.` calls unchanged — confirmed its existing try/catch already degrades correctly (local-only save + user-facing toast) even if `_SB` is null, so migrating it to `zxSB()` would be a style improvement, not a bug fix.
+
+### ⏭️ Deferred
+- Systematic migration of the remaining `_SB?.`/`_SB.` call sites to `zxSB()` for defense-in-depth (see Assumptions above).
+- The rest of Pass B's checklist: unhandled promise rejections outside the auth path, crash behavior on malformed/huge/null inputs across the rest of the ~150 functions in the file, lying comments elsewhere, other race conditions. Only the Supabase-init race was investigated this pass, since it was the one explicitly flagged as high-risk in the mission brief and turned out to be a real, unresolved bug.
+- Pass C (performance), Pass D (UX), Pass E (hygiene) — still entirely unattempted.
+
+### 🔍 Loop Report
+- Passes run: Pass A (XSS/URL sinks, complete for that sub-scope) + Pass B (Supabase-init race, complete for that specific sub-scope only)
+- Findings this session: 1 high-impact bug found and fixed (silent auth-race logout/settings failure), touching 3 call sites + 1 new helper function.
+- Final cycle findings: not applicable — full A→F cycle still not run.
+
+## [Unreleased] — 2026-09-17 (Pass A continued)
+
+### 🔒 Security
+- **[MEDIUM] Unsanitized `imgUrl`/`audioUrl` from AI backend responses** — `addMsg()` @ ~line 4288.
+  Problem: `res.imgUrl`/`res.audioUrl` (returned by the `ai-gemini`/`ai-groq`/`ai-openrouter` Edge Functions) were assigned straight to `img.src`/`audio.src` with no scheme check — the same gap as the file-library fix above, but on the live bot-message render path instead of the library view.
+  Impact: a compromised or misbehaving Edge Function / upstream AI provider response could supply a `javascript:` URL that executes when the browser attempts to load it as a media source (browsers generally block `javascript:` on `<img>`/`<audio>` `src` today, but this was unenforced app-side and shouldn't rely on browser behavior alone).
+  Fix: both now go through the same `zxSafeUrl()` allowlist added in the previous entry. No `esc()` needed here since these are DOM property assignments (`img.src = ...`), not string-concatenated HTML, so there's no attribute-breakout vector — only the scheme was the risk.
+  Verify: temporarily have a test reply set `res.imgUrl = 'javascript:alert(1)'` before calling `addMsg`; the rendered `<img>` should get `src="#"` instead.
+
+### 🔍 Audit notes — remaining `innerHTML` sites, traced and cleared
+Every other `innerHTML`/`src`/`href` site left over from the previous entry's deferred list was traced to its data source this pass. Findings:
+- Lines 2071, 2452, 4520, 4545, 4555, 4768, 4901, 5021/5022, 5957 — static strings or unconditional clears (`= ''`), no interpolation. Safe.
+- Line 3594 (`thinkStart`) — text comes from the static internal `THINK_LIB` object, not user/AI input. Safe.
+- Lines 4339–4380 (`meta.innerHTML` badges/confidence bar in `addMsg`) — all values are either hardcoded Arabic strings keyed by a fixed `src` enum, or `pct`/`color` computed from a `Math.round()` of a numeric score. No free-text interpolation. Safe.
+- Lines 4643/4655 (`renderHist`) — chat titles go through `esc()`. Safe.
+- Lines 4906 (`renderTasksList`), 5034 (`showCalDay`) — task titles go through `escapeHtml()`; the only unescaped interpolation is `t.id` inside an inline `onclick="...('${t.id}')"`, but `t.id` is always either a locally-generated `'local_' + Date.now()` string or a Postgres-assigned id from `zx_tasks.id` returned by `.select()` — never free user text, so there's no realistic quote-breakout path today. Left as-is rather than churn the diff, but flagging: if `zx_tasks.id` is ever changed to a user-editable/text primary key, this becomes exploitable and should get the same `esc()` treatment as titles.
+- Lines 5102–5117 (`renderPlans`) — built entirely from the hardcoded `PLANS_TEAM`/individual-plans arrays in source. Safe.
+- Line 5860 (file-attach chip preview) — `attachedFile.dataUrl` is a same-device `FileReader.readAsDataURL()` output on a file the user just picked; it's a well-formed `data:` URI that can't contain an unescaped `"`, and the only party who could tamper with it is the user attacking their own browser session. Not a meaningful risk. Safe as-is.
+- Line 5935 (`showQRResultChip`) — decoded QR text already goes through `esc()`. Safe.
+- Line 7857 (`renderPersonaList`) — persona name/description already go through `esc()`. Safe.
+
+### 🧭 Assumptions
+- Treated "browser blocks `javascript:` on img/audio src today" as not a sufficient control on its own (browser behavior isn't a contract Zunexa's code can rely on), so fixed it explicitly rather than leaving it as a theoretical non-issue.
+- Did not touch the `t.id` inline-onclick pattern in the task/calendar views since tracing confirmed it's not currently attacker-reachable — changing it now would be pure churn against the "zero regressions" rule for no present security benefit. Documented as a watch-item instead.
+
+### ⏭️ Deferred (still not done — needs dedicated follow-up passes)
+- Pass A is now complete for `innerHTML`/`src`/`href` sinks specifically, but **not** for the rest of Pass A's scope: auth-bypass paths, the client-side-only gates the checklist calls out, prompt-injection surfaces, and whether any secrets leak client-side. None of those were audited in this session.
+- Pass B (correctness — crash paths on malformed input, the async Supabase SDK CDN load race, unhandled promise rejections), Pass C (performance — pdf.js/jszip lazy-loading, service-worker cache-version bump), Pass D (UX/retention), Pass E (hygiene/JSDoc coverage) — still entirely unattempted.
+
+### 🔍 Loop Report
+- Passes run: Pass A (XSS/URL-injection sinks only) — complete for this sub-scope across all `innerHTML`/`src`/`href` sites identified in the file.
+- Functions audited (this sub-scope): ~15 rendering functions covering every `innerHTML`/`img.src`/`audio.src`/`href` write site in the file.
+- Findings this session: 1 fixed (imgUrl/audioUrl), 0 additional vulnerable sites found among the rest — all traced and cleared with reasoning above.
+- Pass A other sub-scopes (auth bypass, prompt injection, secret leakage) and Passes B–F: not run.
+- Final cycle findings: still not applicable — a full A→F cycle has not been run, so "0 findings" cannot be claimed for the file as a whole, only for the XSS/URL-injection sub-scope of Pass A.
+
+## [Unreleased] — 2026-09-17
+
+### 🔒 Security
+- **[MEDIUM] Unsanitized, unrestricted URLs in the file/image library** — `renderLibImages()` @ ~line 5046, `renderLibFiles()` @ ~line 5054.
+  Problem: `i.url` / `f.url` — sourced from synced chat-thread `imgUrl` fields and from `zx_file_lib` in `localStorage` (populated from Supabase Storage upload responses) — were interpolated directly into `href`/`src` with no HTML-escaping and no scheme check.
+  Impact: if a stored URL value were ever anything other than a real file URL (a synced record edited via devtools, a compromised/buggy backend response, or a Storage response the client doesn't fully control), a `javascript:`-scheme value would execute on click, and the raw string could also break out of the attribute into new HTML if it contained a quote.
+  Fix: added `zxSafeUrl()` (allowlists `https?:`, `blob:`, and root-relative `/` paths only, else returns `#`) and applied it together with the existing `esc()` at both interpolation sites. Also added the missing `rel="noopener noreferrer"` to both `target="_blank"` links (previously only the Morocco-source citation link at ~line 4366 had it), closing the reverse-tabnabbing gap on the other two.
+  Verify: in the browser console, `addToFileLibrary('x','javascript:alert(1)','file')` then open the Library → Files tab; the link should render with `href="#"` instead of executing anything on click.
+
+### 🧭 Assumptions
+- Fixed the two vulnerable sites with an exact, minimal, verifiable diff rather than rewriting the full ~8000-line file in one pass. A whole-file rewrite claiming to have audited and fixed every function in this response would not be a trustworthy claim — I have not verified the other ~30 `innerHTML` sites, the auth/session logic, the Edge Function call sites, or the service-worker cache versioning in this pass, and I'm not going to represent that I have.
+- Left the other 41 `target="_blank"` instance (already had `rel`) untouched — only the two missing it were changed.
+
+### ⏭️ Deferred (not done in this pass — needs a dedicated follow-up)
+- Full line-by-line Pass A (security) across the remaining ~30 `innerHTML` sites listed below, each needs individual data-flow tracing to confirm whether its inputs are attacker-reachable:
+  lines ~2071, 2448, 2452, 3594, 4316, 4339, 4365, 4422, 4520, 4545, 4555, 4643, 4655, 4768, 4901, 4906, 5021–5034, 5102–5109, 5177/5239/5292 (spinner — likely safe, static string), 5858, 5935, 5957, 7857.
+- Pass B (correctness — crash paths, lying comments, the Supabase SDK CDN race), Pass C (performance — pdf.js/jszip lazy-load, service-worker cache-version bump), Pass D (UX/retention), Pass E (hygiene/JSDoc) — none of these were attempted in this pass.
+- Reason for deferral: this is genuinely a multi-hour, multi-session audit of an 8,000-line production file; doing it honestly (tracing every call site, not guessing) doesn't fit in one response without either truncating output or fabricating a "0 findings" result I can't actually back.
+
+### 🔍 Loop Report
+- Passes run: partial Pass A only (2 of an estimated 30+ `innerHTML` sites individually verified and fixed)
+- Functions audited: 2 / ~150+ (rough function count in file)
+- Findings per pass: A:2 (both fixed) B:not run C:not run D:not run E:not run F:not run
+- Final cycle findings: not applicable — no full cycle was run, so "0 findings" cannot be honestly claimed
+
 ## [Unreleased] - 2026-09-08
 
 ### Fixed
