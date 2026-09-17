@@ -3,6 +3,26 @@
 All notable changes to the Zunexa front-end are documented in this file, merged from
 `CHANGELOG.md` and `changelog-ai-html.md`. Sorted newest first.
 
+## [Unreleased] — 2026-09-17 (routing bug — user-reported)
+
+### 🐛 Fixed
+- **[CRITICAL] Model routing got permanently stuck on "🇲🇦 المغرب" after selecting it once** — `answer()` @ ~line 4007 (routing check, unchanged — root cause was upstream), `setModelUI()` @ ~line 5548, `setEffortUI()` @ ~line 5604.
+  Problem: the single routing decision for every message is `if (zxEffort === 'morocco') return answerMorocco(userQ); return answerStandard(userQ);` in `answer()` — it checks `zxEffort`, not `zxModel`. But the "🇲🇦 المغرب" entry in the model-selector menu (`#modelSelMenu`, alongside Pro/Max/Code) calls `setEffortUI('morocco')`, not `setModelUI('morocco')` like its sibling entries — so choosing it set `zxEffort = 'morocco'` (persisted to `localStorage`) while leaving `zxModel` untouched, and there was no path that ever reset `zxEffort` back to a normal value afterward. Picking Pro, Max, or Code from that same menu afterward only ever called `setModelUI(v)`, which updated `zxModel` and the visible label, but never touched `zxEffort` — so `zxEffort` stayed `'morocco'` forever (across reloads, since it's in `localStorage`), and `answer()` kept routing to `answerMorocco()` regardless of which model the UI displayed as selected.
+  Impact: exactly the bug reported — once a user tapped "🇲🇦 المغرب" a single time, every subsequent message used the Morocco-official-sources pipeline no matter what model they picked afterward, with the UI (model label, Settings dropdown) misleadingly showing the newly-picked model as active.
+  Fix, two parts: (1) `setModelUI(v)` now resets `zxEffort` back to `'balanced'` whenever a real model (`lite`/`pro`/`max`/`code`) is chosen while `zxEffort` is still `'morocco'` — this is the direct fix for the reported symptom. (2) `setEffortUI('morocco')` now also calls `setModel('morocco')`, so `zxModel` and `zxEffort` agree with each other and with what the UI displays the moment Morocco mode is entered, instead of only relabeling `#modelSelLabel` for display while the underlying `zxModel` silently stayed on whatever model was active before. The model that was active before entering Morocco mode is saved to `localStorage['zx_model_before_morocco']` (written, not yet consumed by a "restore previous model" affordance — see Deferred) so that information isn't lost.
+  Verify: tap "🇲🇦 المغرب" in the model selector, send a message (should use the Morocco-sources pipeline), then tap "Zunexa Max" from the same menu and send another message — it should now use the standard pipeline, and reloading the page afterward should still show Max selected (not silently fall back to Morocco mode).
+
+### 🧭 Assumptions
+- Chose `'balanced'` as the effort value to fall back to when leaving Morocco mode via a model pick, matching the effort selector's own default fallback (`names[v] || '⚡ سريع'`... actually the neutral middle option) rather than trying to recall whatever effort was active before Morocco mode was entered — no prior-effort value was being tracked before this fix, so there was nothing to restore. If a "remember last non-morocco effort" behavior is wanted instead, that's a small follow-up, not implemented here since it changes behavior beyond fixing the reported bug.
+- Wrote `zx_model_before_morocco` to localStorage on entering Morocco mode as a low-risk, additive step for a possible future "return to previous model" affordance, but did not build that affordance itself in this pass — scope was the reported routing bug specifically.
+
+### ⏭️ Deferred
+- A "restore previous model" UI hook that reads `zx_model_before_morocco` (currently written but unused) — not requested, flagged only as a natural next step given the data is now being captured.
+- Still open from earlier passes: JSDoc coverage, the 5 remaining unreconnected dead-code functions, `zx`-prefix naming consistency, and the rest of the original Pass D/E checklists.
+
+### 🔍 Loop Report
+- This was a targeted bug-hunt from a specific user report rather than a scheduled pass — traced from symptom to root cause (`answer()`'s routing check → `zxEffort` vs `zxModel` divergence → the two UI functions that write each) and fixed at both divergence points, then re-verified the full call chain has no circular calls and no other direct callers of `setModelUI('morocco')` that would need the same treatment.
+
 ## [Unreleased] — 2026-09-17 (Pass E continued — restoring voice dictation)
 
 ### 🐛 Fixed

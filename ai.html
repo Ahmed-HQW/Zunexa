@@ -5547,6 +5547,17 @@ function setEffort(v) { zxEffort = v; localStorage.setItem('zx_effort', v); sche
    setEffortSel2) so both surfaces always agree. ── */
 function setModelUI(v, silent) {
   setModel(v);
+  // Bug fix (2026-09-17): choosing "🇲🇦 المغرب" from this same menu calls
+  // setEffortUI('morocco') instead of setModelUI(), which sets zxEffort
+  // to 'morocco' but leaves zxModel untouched. Since answer() routes
+  // purely on `if (zxEffort === 'morocco')` — checked before zxModel is
+  // even read — choosing Pro/Max/Code afterward here only ever changed
+  // zxModel, so zxEffort stayed stuck on 'morocco' and every message
+  // kept going through answerMorocco() regardless of the model the user
+  // had just picked. Any real model choice made here must therefore
+  // also clear a lingering 'morocco' effort, so the routing in answer()
+  // actually reflects what the user selected.
+  if (zxEffort === 'morocco') setEffort('balanced');
   const names = {lite:'Zunexa Lite', pro:'Zunexa Pro', max:'Zunexa Max', morocco:'🇲🇦 المغرب', code:'Zunexa Code'};
   document.querySelectorAll('#modelSelMenu .model-sel-item').forEach(b => b.classList.toggle('on', b.dataset.model === v));
   const label = document.getElementById('modelSelLabel');
@@ -5598,11 +5609,30 @@ function setEffortUI(v, silent) {
   if (label) label.textContent = names[v] || '⚡ سريع';
   const sel2 = document.getElementById('setEffortSel2');
   if (sel2) sel2.value = v;
-  // "🇲🇦 المغرب" is also exposed as a shortcut item inside modelSelMenu
-  // (see modelSelBtn) — keep that surface's label/on-state in sync too.
+  // Bug fix (2026-09-17): entering morocco mode from here used to only
+  // relabel #modelSelLabel to "🇲🇦 المغرب" for display, while the
+  // underlying zxModel (read by setModel()/schedulePushAppSettings()
+  // and shown in Settings' model dropdown) stayed on whatever model was
+  // active before — e.g. 'pro'. That meant the model-menu label, the
+  // Settings dropdown, and the actual zxModel value could each show a
+  // different answer for "which model is selected", and switching back
+  // to a real model afterward (via setModelUI, see the fix noted there)
+  // was the only thing that ever reconciled it. Since 'morocco' is a
+  // real, selectable entry in #modelSelMenu (data-model="morocco"),
+  // zxModel should actually equal 'morocco' while this mode is active,
+  // and the previous model should be restored on the way in — not
+  // silently orphaned in localStorage — so leaving morocco mode via a
+  // fresh page load or via Settings' model dropdown still shows the
+  // right thing.
+  if (v === 'morocco' && zxModel !== 'morocco') {
+    localStorage.setItem('zx_model_before_morocco', zxModel);
+  }
   const modelLabel = document.getElementById('modelSelLabel');
   document.querySelectorAll('#modelSelMenu .model-sel-item').forEach(b => b.classList.toggle('on', b.dataset.model === 'morocco' && v === 'morocco'));
-  if (v === 'morocco' && modelLabel) modelLabel.textContent = '🇲🇦 المغرب';
+  if (v === 'morocco') {
+    setModel('morocco');
+    if (modelLabel) modelLabel.textContent = '🇲🇦 المغرب';
+  }
   if (!silent) toast('✓ ' + (names[v] || v));
 }
 function toggleEffortSel(force) {
