@@ -2466,6 +2466,49 @@ async function pullCloudHistory() {
 /* ════════════════════════════════════════════════════════════
    SUPABASE — Load User
 ════════════════════════════════════════════════════════════ */
+// ── Geo (best-effort, never blocks anything) ──────────────────────
+// Reuses the 'zx_geo' cache index.html writes (see its <head> script).
+// If the visitor landed straight on ai.html (no prior index.html visit
+// this session/day), the cache may be empty — do one lightweight fetch
+// as a fallback so ai.html isn't dependent on index.html having run
+// first. Country is written to `profiles.country` only when a logged-in
+// user's row doesn't already have one — a missing column or write
+// failure is swallowed silently, same pattern as the rest of loadUser.
+function zxGetCachedGeo(){
+  try {
+    const cached = JSON.parse(localStorage.getItem('zx_geo') || 'null');
+    if (cached && cached.data) return cached.data;
+  } catch(e) {}
+  return null;
+}
+
+async function zxEnsureGeo(){
+  const cached = zxGetCachedGeo();
+  if (cached) return cached;
+  try {
+    const r = await fetch('https://ipapi.co/json/');
+    if (!r.ok) return null;
+    const j = await r.json();
+    if (!j || j.error) return null;
+    const geo = {
+      country: j.country_name || null,
+      countryCode: j.country_code || null,
+      city: j.city || null,
+      currency: j.currency || null,
+      languages: j.languages || null
+    };
+    try { localStorage.setItem('zx_geo', JSON.stringify({ ts: Date.now(), data: geo })); } catch(e){}
+    return geo;
+  } catch(e) { return null; } // offline / blocked — geo is optional
+}
+
+async function zxSaveGeoToProfile(uid, geo, existingCountry){
+  if (!geo || !geo.country || existingCountry) return; // don't overwrite a set value
+  try {
+    await _SB.from('profiles').update({ country: geo.country }).eq('id', uid);
+  } catch (e) { /* column may not exist yet — non-fatal, purely best-effort */ }
+}
+
 async function loadUser() {
   // Real auth session — replaces the old localStorage.getItem('zx_uid')
   // pattern, which let anyone declare themselves any user id with zero
@@ -2491,11 +2534,16 @@ async function loadUser() {
     // Guest/Free" symptom. Reading the real columns fixes it for good.
     const { data, error } = await _SB
       .from('profiles')
-      .select('username, first_name, email, avatar_url, app_settings')
+      .select('username, first_name, email, avatar_url, app_settings, country')
       .eq('id', uid)
       .maybeSingle();
     if (error) throw error;
     const u = data || {};
+
+    // Fire-and-forget: don't await, don't let a slow/failed geo lookup
+    // delay the rest of loadUser(). Fills profiles.country once, only
+    // if it's not already set.
+    zxEnsureGeo().then(geo => zxSaveGeoToProfile(uid, geo, u.country)).catch(()=>{});
 
     // Cross-device settings sync — see pushAppSettings()/pullCloudHistory()
     // below. Best-effort: app_settings just comes back undefined if the
