@@ -124,9 +124,62 @@
          first render for crawlers. -->
     <script src="zunexa-seo-keywords.js" defer></script>
 
-    <!-- Geo detection — see js/auth-geo.js for full explanation.
-         Deferred: non-critical, must never block paint. -->
-    <script src="js/auth-geo.js" defer></script>
+    <!-- Geo detection (IP-based, best-effort, non-blocking). Inlined
+         (not an external file) so it always loads regardless of hosting/
+         CSP/MIME config — see comment inside for full explanation. -->
+    <script>
+/* ── Geo detection (IP-based, best-effort, non-blocking) ──────────
+   Detects visitor country/currency once per day and caches it in
+   localStorage under 'zx_geo'. Runs async — never blocks paint or
+   the instant-session-redirect script in index.html's <head>. Any
+   page (index.html or ai.html) can read window.ZX_GEO once it's
+   set, or listen for the 'zx:geo-ready' event if it fires after
+   they check. Failure (offline, ad-blocker, API down) just leaves
+   ZX_GEO null — every caller must treat that as "no geo info",
+   not an error.
+
+   Loaded with <script defer> — safe because nothing here depends
+   on the DOM, and nothing else depends on it running before
+   DOMContentLoaded.
+────────────────────────────────────────────────────────────────── */
+(function(){
+  var CACHE_KEY = 'zx_geo';
+  var CACHE_MS = 24 * 60 * 60 * 1000; // 24h — country rarely changes mid-session
+  window.ZX_GEO = null;
+
+  function setGeo(geo){
+    window.ZX_GEO = geo;
+    try { document.dispatchEvent(new CustomEvent('zx:geo-ready', { detail: geo })); } catch(e){}
+  }
+
+  try {
+    var cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (cached && cached.ts && (Date.now() - cached.ts < CACHE_MS)) {
+      setGeo(cached.data);
+      return;
+    }
+  } catch(e) { /* corrupted cache — fall through to a fresh fetch */ }
+
+  // ipapi.co free tier: no key needed, ~30k req/month/IP is plenty
+  // for a client-side per-visitor lookup. Swallow all errors — geo
+  // is a progressive enhancement, never a requirement to use the app.
+  fetch('https://ipapi.co/json/')
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(j){
+      if (!j || j.error) return;
+      var geo = {
+        country: j.country_name || null,
+        countryCode: j.country_code || null,
+        city: j.city || null,
+        currency: j.currency || null,
+        languages: j.languages || null
+      };
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: geo })); } catch(e){}
+      setGeo(geo);
+    })
+    .catch(function(){ /* offline / blocked — silently no-op */ });
+})();
+    </script>
 
     <!-- Favicon & Fonts -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23080808'/><rect x='1' y='1' width='30' height='30' rx='7' fill='none' stroke='%23D4AF37' stroke-width='.8' opacity='.6'/><text x='16' y='21' text-anchor='middle' font-size='17' font-family='Georgia,serif' fill='%23D4AF37' font-weight='bold'>Z</text></svg>">
@@ -135,7 +188,101 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4535074348324032"
          crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="css/auth.css"/>
+    <style>
+/* ══════════════════════════════════════════════════════
+   ZUNEXA — Auth page styles
+   Extracted verbatim from index.html's inline <style> block.
+   No visual changes — pure file split.
+════════════════════════════════════════════════════════ */
+
+:root{--bg-void:#080808;--bg-card:#141414;--bg-input:#111111;--border:#242424;--border-gold:rgba(212,175,55,.35);--gold:#D4AF37;--gold-bright:#f0cc55;--gold-dim:#8a7022;--text-white:#f5f5f0;--text-grey:#9a9a8a;--text-muted:#555548;--green:#3ddc84;--red:#ff4d6d;--blue:#5b8dee;--purple:#a78bfa;--radius-sm:6px;--radius-md:12px;--radius-lg:20px;--trans:.22s cubic-bezier(.4,0,.2,1);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--text-white);display:flex;align-items:center;justify-content:center;min-height:100vh;font-size:15px;position:relative;}
+.bg-layer{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 15% 20%,rgba(212,175,55,.04) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 85% 80%,rgba(212,175,55,.03) 0%,transparent 60%),var(--bg-void);}
+.zalij-bg-pattern{position:fixed;inset:0;z-index:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='none' stroke='%23D4AF3709' stroke-width='.8'%3E%3Cpolygon points='40,3 76,22 76,58 40,77 4,58 4,22'/%3E%3Cpolygon points='40,14 65,28 65,52 40,66 15,52 15,28'/%3E%3Ccircle cx='40' cy='40' r='10'/%3E%3C/g%3E%3C/svg%3E");opacity:.6;}
+.auth-shell{position:relative;z-index:10;width:100%;max-width:420px;padding:16px;}
+.auth-logo{text-align:center;margin-bottom:28px;}
+.logo-hex{width:60px;height:60px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border-radius:16px;display:inline-grid;place-items:center;font-size:30px;margin-bottom:12px;box-shadow:0 0 40px rgba(212,175,55,.3),0 8px 32px rgba(0,0,0,.5);animation:pulseLogo 3s ease-in-out infinite;}
+@keyframes pulseLogo{0%,100%{box-shadow:0 0 40px rgba(212,175,55,.3),0 8px 32px rgba(0,0,0,.5)}50%{box-shadow:0 0 60px rgba(212,175,55,.5),0 8px 32px rgba(0,0,0,.5)}}
+.logo-name{font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--gold);letter-spacing:.06em;display:block;line-height:1;}
+.logo-tagline{font-size:11px;color:var(--text-muted);letter-spacing:.14em;text-transform:uppercase;margin-top:4px;display:block;}
+.auth-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:30px;box-shadow:0 24px 80px rgba(0,0,0,.6),0 1px 0 rgba(212,175,55,.08) inset;position:relative;overflow:hidden;}
+.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.auth-tabs{display:flex;gap:0;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;margin-bottom:22px;}
+.tab-btn{flex:1;padding:10px;background:none;border:none;color:var(--text-muted);font-size:13px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;cursor:pointer;transition:all var(--trans);}
+.tab-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#000;box-shadow:0 2px 12px rgba(212,175,55,.3);}
+.form-field{margin-bottom:16px;}
+.form-field label{display:block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px;}
+.field-wrap{position:relative;}
+.field-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text-muted);pointer-events:none;}
+.field-icon-end{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--text-muted);pointer-events:auto;opacity:.7;transition:opacity .15s ease;user-select:none;cursor:pointer;background:none;border:none;}
+.field-icon-end:hover{opacity:1;color:var(--gold);}
+.field-wrap input{width:100%;padding:12px 40px 12px 40px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:15px;font-family:'Rajdhani',sans-serif;outline:none;transition:border-color var(--trans),box-shadow var(--trans);}
+.field-wrap input:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px rgba(212,175,55,.12);}
+.field-wrap input::placeholder{color:var(--text-muted);}
+.field-wrap input:invalid:not(:placeholder-shown){border-color:rgba(255,77,109,.4);}
+.code-field{background:var(--bg-input);border:1px solid var(--border-gold);border-radius:var(--radius-sm);padding:11px 14px 11px 40px;width:100%;font-size:14px;font-family:'Courier New',monospace;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;outline:none;transition:all var(--trans);}
+.code-field:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.15);}
+.code-field::placeholder{color:var(--text-muted);font-family:'Rajdhani',sans-serif;letter-spacing:normal;text-transform:none;}
+.plan-preview{margin-top:8px;padding:8px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px;min-height:36px;}
+.plan-preview.hidden{display:none}
+.plan-preview.ok{background:rgba(61,220,132,.08);border:1px solid rgba(61,220,132,.25);color:var(--green)}
+.plan-preview.bad{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);color:#ff4d6d}
+.free-notice{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(61,220,132,.06);border:1px solid rgba(61,220,132,.2);border-radius:var(--radius-sm);font-size:12px;color:var(--text-grey);margin-bottom:18px;}
+.free-notice .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+.btn-auth{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold) 0%,#b8922e 100%);border:none;border-radius:var(--radius-sm);color:#000;font-size:14px;font-weight:700;font-family:'Cinzel',serif;letter-spacing:.08em;cursor:pointer;transition:all var(--trans);box-shadow:0 4px 24px rgba(212,175,55,.35);display:flex;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;margin-top:6px;}
+.btn-auth:hover:not(:disabled){background:linear-gradient(135deg,var(--gold-bright) 0%,var(--gold) 100%);box-shadow:0 6px 32px rgba(212,175,55,.5);transform:translateY(-1px);}
+.btn-auth:active:not(:disabled){transform:translateY(0)}
+.btn-auth:disabled{cursor:not-allowed;opacity:.55;transform:none;}
+.btn-auth.locked{background:linear-gradient(135deg,#555,#333);box-shadow:none;color:var(--text-grey);}
+.btn-auth .spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,.2);border-top-color:#000;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+.btn-auth.loading .spinner{display:block}
+.btn-auth.loading .btn-label{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.auth-footer-link{text-align:center;margin-top:18px;font-size:13px;color:var(--text-muted);}
+.auth-footer-link a{color:var(--gold);cursor:pointer}
+.auth-footer-link a:hover{color:var(--gold-bright)}
+.toggle-link{display:block;text-align:right;font-size:12px;color:var(--text-muted);margin:-8px 0 14px;cursor:pointer;}
+.toggle-link:hover{color:var(--gold);}
+.success-screen{display:none;text-align:center;padding:20px 0;}
+.success-icon{width:68px;height:68px;background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.3);border-radius:50%;display:inline-grid;place-items:center;font-size:30px;margin-bottom:16px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.success-title{font-family:'Cinzel',serif;font-size:19px;font-weight:700;color:var(--text-white);margin-bottom:6px}
+.success-sub{font-size:13px;color:var(--text-grey);margin-bottom:8px;line-height:1.5;}
+.success-plan-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:20px;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.shake{animation:shake .4s ease}
+.toast{position:fixed;bottom:24px;right:24px;left:auto;z-index:9999;background:var(--bg-card);border:1px solid var(--border-gold);border-radius:var(--radius-md);padding:12px 18px;font-size:13px;color:var(--text-white);display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;transform:translateX(40px);transition:all .3s ease;pointer-events:none;max-width:calc(100vw - 32px);}
+.toast.show{opacity:1;transform:translateX(0)}
+.err-box{background:rgba(255,77,109,.07);border:1px solid rgba(255,77,109,.25);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:#ff8096;display:none;align-items:center;gap:8px;margin-bottom:14px;line-height:1.4;}
+.err-box.show{display:flex;}
+.oauth-divider{display:flex;align-items:center;gap:10px;margin:18px 0 14px;color:var(--text-muted);font-size:10px;letter-spacing:.14em;text-transform:uppercase;}
+.oauth-divider::before,.oauth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.oauth-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.btn-oauth{padding:13px 6px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-white);font-size:13px;font-weight:600;font-family:'Rajdhani',sans-serif;letter-spacing:.04em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all var(--trans);}
+.btn-oauth:hover:not(:disabled){border-color:var(--gold);background:rgba(212,175,55,.06);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+.btn-oauth-primary{border-color:var(--border-gold);background:rgba(212,175,55,.04);}
+.btn-oauth:disabled{opacity:.5;pointer-events:none;cursor:not-allowed;}
+.btn-oauth svg{width:18px;height:18px;flex-shrink:0;}
+#zx-pwd-strength{margin-top:8px;display:none;flex-direction:column;gap:4px;}
+#zx-pwd-strength.visible{display:flex;}
+.pwd-bar-wrap{height:3px;background:#1a1a1a;border-radius:99px;overflow:hidden;}
+.pwd-bar-fill{height:100%;width:0%;border-radius:99px;transition:width .35s ease,background .35s ease;}
+.pwd-rules{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;}
+.pwd-rule{font-size:10px;color:#3a3a30;display:flex;align-items:center;gap:5px;transition:color .2s;}
+.pwd-rule.ok{color:var(--green);}
+.pwd-rule.bad{color:var(--red);}
+.pwd-rule::before{content:'○';}
+.pwd-rule.ok::before{content:'●';}
+.pwd-rule.bad::before{content:'✕';}
+.pwd-label{font-size:10px;color:var(--text-muted);letter-spacing:.08em;}
+.progress-wrap{width:100%;height:3px;background:var(--border);border-radius:99px;overflow:hidden;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));width:0%;transition:width 2.2s ease;border-radius:99px;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#0e0e0e}::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:99px}
+@media(max-width:520px){.auth-card{padding:22px 16px}.auth-shell{padding:12px}}
+    </style>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <!-- Google Identity Services — powers One Tap / Auto-Select sign-in -->
@@ -293,16 +440,501 @@
   <span id="toast-msg">Done!</span>
 </div>
 
-<!-- Load order matters:
-     1) auth-supabase.js  — defines _SB, PLAN_DISPLAY, handleSignIn/Up/OAuth
-     2) auth-ui.js         — defines showToast/showErr/etc and calls _SB on
-                              DOMContentLoaded; also attaches the password-
-                              strength listener to #su-password, which must
-                              already exist in the DOM (it does — this tag
-                              sits at the end of <body>).
-     Neither file uses `defer`, since each depends on running in this exact
-     order relative to the other and to the inline HTML above it. -->
-<script src="js/auth-supabase.js"></script>
-<script src="js/auth-ui.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════
+   ZUNEXA AUTH — Supabase client + server-communication logic
+   © Zunexa — All rights reserved
+
+   Security notes (read before deploying):
+   - The Supabase key below is the public "publishable"/anon key. It is
+     DESIGNED to be visible in client-side code — that is not a leak.
+     Real protection comes from Supabase Row Level Security (RLS)
+     policies on every table, which must be verified server-side; no
+     static HTML/JS file can enforce that on its own.
+   - The 10s lockout in auth-ui.js is a client-side UX guard against
+     casual brute forcing from a single browser tab. It slows down one
+     script kiddie with one tab open — it is trivially bypassed by
+     disabling JS or calling the API directly, so it is NOT a
+     substitute for server-side rate limiting. Confirm in Supabase →
+     Authentication → Rate Limits (and enable leaked-password
+     protection) — this file cannot configure that for you.
+   - Plan/tokens/role are never trusted from the client: they are only
+     ever set via the redeem_plan_code RPC and DB triggers/policies.
+
+   Rotation note: this is the ONLY file that should ever reference the
+   Supabase URL/anon key directly. If you rotate the key, this is the
+   one place to change it.
+
+   Load order requirement: must load AFTER the supabase-js CDN script
+   and BEFORE auth-ui.js (which calls _SB.auth.* on DOMContentLoaded).
+════════════════════════════════════════════════════════ */
+
+const _SB = supabase.createClient(
+  'https://xrldhfsytysznyyhwjlr.supabase.co',
+  'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F'
+);
+
+// Use the current origin so OAuth + email-confirm redirects work
+// identically on localhost, preview deployments, and production —
+// no hardcoded domain to break in any environment.
+const ZX_ORIGIN = window.location.origin;
+
+/* ════════════════════════════════════════════════════════════
+   GOOGLE ONE TAP / AUTO-SELECT
+   ─────────────────────────────────────────────────────────────
+   ⚠ REPLACE ME: this is a placeholder Client ID and will NOT work
+   until you swap it for a real OAuth 2.0 Web Client ID from
+   https://console.cloud.google.com/apis/credentials (the "Web
+   application" type, with this site's origin(s) added under
+   "Authorized JavaScript origins" — One Tap requires that, not a
+   redirect URI). You also need the "Google" provider switched on
+   in Supabase → Authentication → Providers, using that same
+   Client ID/secret, so signInWithIdToken() below can verify it.
+
+   How it works: GSI silently shows the "Continue as <name>" bubble
+   for anyone with an active Google session in their browser/device.
+   On tap, Google hands back a signed id_token; we pass that straight
+   to Supabase (signInWithIdToken), which verifies it server-side and
+   creates the session — no email/password typing, no redirect round
+   trip like the classic OAuth button above.
+════════════════════════════════════════════════════════════ */
+const ZX_GOOGLE_CLIENT_ID = 'REPLACE_WITH_YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com';
+
+async function handleGoogleOneTap(response) {
+  if (!response || !response.credential) return;
+  try {
+    const { error } = await _SB.auth.signInWithIdToken({
+      provider: 'google',
+      token: response.credential,
+    });
+    if (error) throw error;
+    window.location.replace('ai.html');
+  } catch (e) {
+    console.warn('Google One Tap sign-in failed, falling back to the Google button', e);
+    // Fail open: One Tap not configured yet (bad client ID, provider
+    // off in Supabase, etc.) should never block sign-in entirely —
+    // the classic "Google" OAuth button above still works normally.
+  }
+}
+
+function initGoogleOneTap() {
+  try {
+    if (ZX_GOOGLE_CLIENT_ID.indexOf('REPLACE_WITH_YOUR') === 0) {
+      console.warn('Google One Tap: placeholder Client ID still in place — skipping prompt until a real one is set.');
+      return;
+    }
+    if (!(window.google && window.google.accounts && window.google.accounts.id)) return;
+    // Don't prompt someone who's already mid-session or already signed in.
+    _SB.auth.getSession().then(({ data }) => {
+      if (data && data.session) return;
+      window.google.accounts.id.initialize({
+        client_id: ZX_GOOGLE_CLIENT_ID,
+        callback: handleGoogleOneTap,
+        auto_select: true,   // one tap for a returning user with one Google account
+        cancel_on_tap_outside: false,
+      });
+      window.google.accounts.id.prompt(); // shows the One Tap bubble if eligible
+    });
+  } catch (e) {
+    console.warn('Google One Tap: init skipped (best-effort)', e);
+  }
+}
+// GSI's script tag is async; wait for it before initializing.
+if (window.google && window.google.accounts) {
+  initGoogleOneTap();
+} else {
+  window.addEventListener('load', initGoogleOneTap);
+}
+
+// ── Plan display labels (cosmetic only — the actual plan/tokens/role
+//    are resolved server-side via the redeem_plan_code RPC) ──
+const PLAN_DISPLAY = {
+  Free:   { label:'○ Free Plan',   color:'#888'    },
+  Plus:   { label:'⭐ Plus Plan',   color:'#5b8dee' },
+  Pro:    { label:'✦ Pro Plan',    color:'#D4AF37' },
+  Senior: { label:'◆ Senior Plan', color:'#a78bfa' },
+};
+const FREE_PLAN = PLAN_DISPLAY.Free;
+
+// ── Redeem a plan code via secure server-side RPC (only with an active session) ──
+async function redeemPlanCodeIfAny(codeVal){
+  if (!codeVal || !codeVal.trim()) return null;
+  try {
+    const { data, error } = await _SB.rpc('redeem_plan_code', { p_code: codeVal.trim().toUpperCase() });
+    if (error) {
+      const messages = {
+        invalid_code: 'Invalid code',
+        code_inactive: 'This code is not active',
+        code_expired: 'This code has expired',
+        code_exhausted: 'This code has been fully redeemed',
+        already_redeemed: 'You already redeemed a code',
+      };
+      showToast('✕', messages[error.message] || 'Could not activate code');
+      return null;
+    }
+    return data; // { plan, tokens_bonus }
+  } catch (e) { return null; }
+}
+
+// ── Sign In ──
+async function handleSignIn(){
+  hideErr();
+
+  const waitMs = lockRemainingMs();
+  if (waitMs) { showErr(`Too many attempts. Try again in ${Math.ceil(waitMs/1000)}s.`); return; }
+
+  const email = document.getElementById('si-username').value.trim();
+  const password = document.getElementById('si-password').value;
+  const codeVal = document.getElementById('si-code').value.trim();
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { shakeField('si-username'); showToast('✕','Enter a valid email'); return; }
+  if (!password) { shakeField('si-password'); showToast('✕','Enter your password'); return; }
+
+  const btn = document.getElementById('si-submit');
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  const { data, error } = await _SB.auth.signInWithPassword({ email, password });
+
+  btn.classList.remove('loading');
+
+  if (error) {
+    btn.disabled = false;
+    startLockout();
+    shakeField('si-password');
+    const msg = /email not confirmed/i.test(error.message)
+      ? 'Please confirm your email first — check your inbox (and spam folder) for the activation link.'
+      : /invalid login credentials/i.test(error.message)
+      ? 'Incorrect email or password.'
+      : 'Sign in failed — please try again.';
+    showErr(msg);
+    showToast('✕','Sign in failed');
+    return;
+  }
+
+  localStorage.setItem('zunexa_last_email', email);
+  localStorage.setItem('zunexa_remember', '1');
+  let redeemed = null;
+  if (codeVal && data.user) redeemed = await redeemPlanCodeIfAny(codeVal);
+  const plan = redeemed ? (PLAN_DISPLAY[redeemed.plan] || FREE_PLAN) : FREE_PLAN;
+  showSuccess(email, plan);
+  // Sign-in is the hot path — go straight to ai.html, no artificial delay.
+  window.location.replace('ai.html');
+}
+
+// ── Sign Up ──
+async function handleSignUp(){
+  hideErr();
+  const fname = document.getElementById('su-fname').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const password = document.getElementById('su-password').value;
+  const codeWrap = document.getElementById('su-code-wrap');
+  const codeVal = (codeWrap && codeWrap.style.display !== 'none')
+    ? (document.getElementById('su-code').value || '').trim()
+    : '';
+
+  if (!fname) { shakeField('su-fname'); showToast('✕','Enter your name'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { shakeField('su-email'); showToast('✕','Valid email required'); return; }
+  if (password.length < 8) { shakeField('su-password'); showToast('✕','Min 8 characters'); return; }
+
+  // Auto-generate a username from the email — no separate field to fill
+  // in or validate; can be changed later in Settings.
+  const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g,'_').slice(0,16)
+    + Math.floor(100 + Math.random()*900);
+
+  const btn = document.getElementById('su-submit');
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  const { data, error } = await _SB.auth.signUp({
+    email, password,
+    options: { data: { username, first_name: fname } }
+  });
+
+  btn.classList.remove('loading');
+  btn.disabled = false;
+
+  if (error) {
+    const msg = /already registered/i.test(error.message)
+      ? 'This email is already registered — try signing in instead.'
+      : 'Could not create account — please try again.';
+    showErr(msg);
+    showToast('✕', msg);
+    return;
+  }
+
+  // Only write to `profiles` when we actually have a session — with
+  // email confirmation ON, data.session is null here and RLS will
+  // reject the insert (no auth.uid() yet). That used to throw an
+  // unhandled rejection and could strand the user on a blank/stuck
+  // screen instead of showing "check your email". Guard it, and
+  // never let a profile-write hiccup block the redirect to ai.html.
+  if (data.user && data.session) {
+    try {
+      await _SB.from('profiles').upsert({
+        id: data.user.id,
+        username,
+        first_name: fname,
+        email,
+        current_theme: 'zalij-dark',
+      });
+    } catch (e) { /* non-fatal — ai.html can self-heal the profile row on load */ }
+  }
+
+  let plan = FREE_PLAN;
+  if (data.session) {
+    if (codeVal) {
+      const redeemed = await redeemPlanCodeIfAny(codeVal);
+      if (redeemed) plan = PLAN_DISPLAY[redeemed.plan] || FREE_PLAN;
+    }
+    localStorage.setItem('zunexa_last_email', email);
+    showSuccess(fname, plan);
+    setTimeout(() => window.location.replace('ai.html'), 900);
+  } else {
+    // Email confirmation required — redeem the code on first ai
+    // load instead (no session yet to call the RPC with).
+    if (codeVal) localStorage.setItem('zx_pending_plan_code', codeVal);
+    showEmailConfirmation(fname, email);
+  }
+}
+
+// ── OAuth (Google / GitHub) ──
+async function handleOAuth(provider){
+  document.querySelectorAll('.btn-oauth, .btn-auth').forEach(b => { b.disabled = true; });
+  // Redirect straight to ai.html on success — skip the sign-in page,
+  // Supabase's own hash-token handler on ai.html/index.html finishes the job.
+  const { error } = await _SB.auth.signInWithOAuth({
+    provider,
+    options: { redirectTo: ZX_ORIGIN + '/ai.html' }
+  });
+  if (error) {
+    document.querySelectorAll('.btn-oauth, .btn-auth').forEach(b => { b.disabled = false; });
+    const msg = /unsupported provider|provider is not enabled/i.test(error.message)
+      ? `${provider} sign-in isn't set up yet — use email instead, or enable it in Supabase → Auth → Providers.`
+      : `${provider} sign-in failed — please try again.`;
+    showToast('✕', msg);
+  }
+}
+
+// ── Fix localhost redirect after email confirm — intercepts the
+//    Supabase token from the URL hash on any page it lands on ──
+(async () => {
+  const hash = window.location.hash;
+  if (hash.includes('access_token')) {
+    const params = new URLSearchParams(hash.replace('#','?'));
+    const access = params.get('access_token');
+    const refresh = params.get('refresh_token');
+    if (access && refresh) {
+      await _SB.auth.setSession({ access_token: access, refresh_token: refresh });
+      window.location.replace(ZX_ORIGIN + '/ai.html');
+    }
+  }
+})();
+
+/* ══════════════════════════════════════════════════════
+   ZUNEXA AUTH — UI helpers (toast, shake, password strength,
+   tab switching, success/confirmation screens)
+
+   Load order requirement: must load AFTER auth-supabase.js
+   (uses _SB, PLAN_DISPLAY, FREE_PLAN, redeemPlanCodeIfAny) and
+   AFTER the DOM (form markup) exists in the page.
+════════════════════════════════════════════════════════ */
+
+// ── 10-second post-failure lockout (client-side UX guard — see
+//    auth-supabase.js header comment for why this is not real
+//    rate limiting) ──
+const LOCKOUT_MS = 10000;
+const LOCKOUT_KEY = 'zx_signin_lock_until';
+
+function lockRemainingMs(){
+  const until = parseInt(sessionStorage.getItem(LOCKOUT_KEY) || '0', 10);
+  const rem = until - Date.now();
+  return rem > 0 ? rem : 0;
+}
+
+let _lockTimer = null;
+function applyLockoutUI(remainingMs){
+  const btn = document.getElementById('si-submit');
+  const label = btn.querySelector('.btn-label');
+  btn.disabled = true;
+  btn.classList.add('locked');
+  clearInterval(_lockTimer);
+  let remaining = Math.ceil(remainingMs / 1000);
+  label.textContent = `Wait ${remaining}s…`;
+  _lockTimer = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(_lockTimer);
+      sessionStorage.removeItem(LOCKOUT_KEY);
+      btn.disabled = false;
+      btn.classList.remove('locked');
+      label.textContent = '✦  Enter Zunexa';
+    } else {
+      label.textContent = `Wait ${remaining}s…`;
+    }
+  }, 1000);
+}
+function startLockout(){
+  sessionStorage.setItem(LOCKOUT_KEY, String(Date.now() + LOCKOUT_MS));
+  applyLockoutUI(LOCKOUT_MS);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const rem = lockRemainingMs();
+  if (rem > 0) applyLockoutUI(rem);
+
+  const savedEmail = localStorage.getItem('zunexa_last_email');
+  if (savedEmail) {
+    document.getElementById('si-username').value = savedEmail;
+    // Returning user with a saved email: jump straight to the password
+    // field so sign-in is a single click/tap away.
+    document.getElementById('si-password').focus();
+  } else {
+    document.getElementById('si-username').focus();
+  }
+
+  _SB.auth.getSession().then(({ data: { session } }) => {
+    if (session) window.location.replace('ai.html');
+  });
+});
+
+// ── Tab switch ──
+function switchTab(tab){
+  document.getElementById('form-signin').style.display = tab === 'signin' ? 'block' : 'none';
+  document.getElementById('form-signup').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('success-screen').style.display = 'none';
+  document.querySelector('.auth-tabs').style.display = 'flex';
+  document.getElementById('tab-signin').classList.toggle('active', tab === 'signin');
+  document.getElementById('tab-signin').setAttribute('aria-selected', tab === 'signin');
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+  document.getElementById('tab-signup').setAttribute('aria-selected', tab === 'signup');
+  hideErr();
+}
+
+// ── Optional plan code field ──
+function togglePlanCode(prefix){
+  const wrap = document.getElementById(prefix + '-code-wrap');
+  const toggle = document.getElementById(prefix + '-code-toggle');
+  if (!wrap) return;
+  const show = wrap.style.display === 'none';
+  wrap.style.display = show ? '' : 'none';
+  if (toggle) toggle.textContent = show ? '← Hide plan code' : 'Have a plan code? →';
+}
+
+// ── Plan code format check (cosmetic only — real validation is server-side) ──
+function detectPlan(val, prefix){
+  const code = val.trim().toUpperCase();
+  const previewEl = document.getElementById(prefix + '-plan-preview');
+  if (!previewEl) return;
+  if (!code) { previewEl.className = 'plan-preview hidden'; return; }
+  if (/^ZX-[A-Z0-9-]{3,20}$/.test(code)) {
+    previewEl.className = 'plan-preview ok';
+    previewEl.innerHTML = '<span>✓</span><span>Looks valid — verified after account creation</span>';
+  } else {
+    previewEl.className = 'plan-preview bad';
+    previewEl.innerHTML = '<span>✕</span><span>Format should look like ZX-PLUS-XXXX</span>';
+  }
+}
+
+// ── Error / toast / shake UI ──
+function showErr(msg){ const b=document.getElementById('errBox'); const m=document.getElementById('errMsg'); if(b&&m){ m.textContent=msg; b.classList.add('show'); } }
+function hideErr(){ const b=document.getElementById('errBox'); if(b) b.classList.remove('show'); }
+function shakeField(id){ const el=document.getElementById(id); if(!el) return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); el.style.borderColor='var(--red)'; setTimeout(()=>{ el.style.borderColor=''; el.classList.remove('shake'); },600); }
+let _toastTimer;
+function showToast(icon,msg){ const t=document.getElementById('toast'); document.getElementById('toast-icon').textContent=icon; document.getElementById('toast-msg').textContent=msg; t.classList.add('show'); clearTimeout(_toastTimer); _toastTimer=setTimeout(()=>t.classList.remove('show'),3000); }
+function togglePwdVisibility(inputId, iconEl){
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  const show = el.type === 'password';
+  el.type = show ? 'text' : 'password';
+  el.setAttribute('aria-label', show ? 'Password (visible)' : 'Password');
+  if (iconEl) iconEl.style.opacity = show ? '1' : '.7';
+}
+
+// ── Password strength meter ──
+document.getElementById('su-password').addEventListener('input', function(){
+  const v = this.value;
+  const rules = [
+    { id:'r-len', ok: v.length >= 8 },
+    { id:'r-upp', ok: /[A-Z]/.test(v) },
+    { id:'r-num', ok: /[0-9]/.test(v) },
+    { id:'r-sym', ok: /[^a-zA-Z0-9]/.test(v) },
+  ];
+  const score = rules.filter(r => r.ok).length;
+  const bar = document.getElementById('pwd-bar');
+  const label = document.getElementById('pwd-label');
+  const colors = ['', '#ff4d6d', '#f59e0b', '#3ddc84', '#D4AF37'];
+  const labels = ['', 'Weak', 'Fair', 'Strong', 'Perfect ✦'];
+  if (bar) { bar.style.width = (score/4*100) + '%'; bar.style.background = colors[score] || '#888'; }
+  if (label) { label.textContent = v.length ? (labels[score] || '') : '— Enter password'; label.style.color = colors[score] || 'var(--text-muted)'; }
+  rules.forEach(r => {
+    const el = document.getElementById(r.id);
+    if (el) { el.classList.toggle('ok', r.ok); el.classList.toggle('bad', v.length > 0 && !r.ok); }
+  });
+  const wrap = document.getElementById('zx-pwd-strength');
+  if (wrap) wrap.classList.toggle('visible', v.length > 0);
+});
+
+// ── Email confirmation screen ──
+let _pendingConfirmEmail = null;
+let _resendCooldown = 0;
+
+function showEmailConfirmation(name, email){
+  ['form-signin','form-signup'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+  document.querySelector('.auth-tabs').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+
+  document.getElementById('success-icon').textContent = '✉';
+  document.getElementById('success-title').textContent = 'Almost there!';
+  document.getElementById('success-name').innerHTML =
+    `Hi ${escapeHtml(name)} 👋<br><span style="color:var(--text-muted);font-size:13px;font-weight:400">We sent an activation link to<br><b style="color:var(--gold)">${escapeHtml(email)}</b></span>`;
+  document.getElementById('success-plan-badge').style.display = 'none';
+  document.getElementById('redirect-msg').textContent = 'Open your email and click the activation link to sign in ✦';
+  document.getElementById('progress-wrap').style.display = 'none';
+
+  _pendingConfirmEmail = email;
+  document.getElementById('resend-wrap').style.display = 'block';
+}
+
+async function resendConfirmation(){
+  if (!_pendingConfirmEmail) return;
+  if (Date.now() < _resendCooldown) { showToast('⏳', `Wait ${Math.ceil((_resendCooldown-Date.now())/1000)}s before resending`); return; }
+  const { error } = await _SB.auth.resend({ type:'signup', email:_pendingConfirmEmail });
+  if (error) { showToast('✕','Could not resend — please try again shortly.'); return; }
+  _resendCooldown = Date.now() + 30000;
+  showToast('✉','Confirmation email sent again — check your inbox/spam.');
+}
+
+// ── Success screen ──
+function showSuccess(name, plan){
+  ['form-signin','form-signup'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+  document.querySelector('.auth-tabs').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+
+  document.getElementById('success-icon').textContent = '✓';
+  document.getElementById('success-title').textContent = 'Welcome to Zunexa!';
+  document.getElementById('redirect-msg').textContent = 'Redirecting to ai...';
+
+  const progressWrap = document.getElementById('progress-wrap');
+  progressWrap.style.display = '';
+  const progressBar = document.getElementById('progress-bar');
+  progressBar.style.transition = 'width .9s ease';
+  progressBar.style.width = '0%';
+
+  document.getElementById('success-name').textContent = `Hi, ${name} 👋`;
+  const badge = document.getElementById('success-plan-badge');
+  badge.style.display = '';
+  badge.textContent = plan.label;
+  badge.style.cssText = `background:${plan.color}22;border:1px solid ${plan.color}55;color:${plan.color};display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;font-size:13px;font-weight:700;margin-bottom:20px;`;
+  progressBar.style.transition = 'width .9s ease';
+  requestAnimationFrame(() => { progressBar.style.width = '100%'; });
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
 </body>
 </html>
