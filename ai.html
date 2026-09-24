@@ -2483,24 +2483,71 @@ function zxGetCachedGeo(){
   return null;
 }
 
+// Small MENA-first currency map — used when the geo source has no currency.
+const ZX_CCY = { MA:'MAD', DZ:'DZD', TN:'TND', EG:'EGP', SA:'SAR', AE:'AED', QA:'QAR', KW:'KWD',
+  BH:'BHD', OM:'OMR', JO:'JOD', LB:'LBP', IQ:'IQD', LY:'LYD', FR:'EUR', ES:'EUR', DE:'EUR',
+  IT:'EUR', BE:'EUR', NL:'EUR', PT:'EUR', US:'USD', GB:'GBP', CA:'CAD', TR:'TRY' };
+
+function zxCountryName(code){
+  try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) || null; }
+  catch(e){ return null; }
+}
+
+// Geo lookup chain — NO ipapi.co (it sends no CORS header from zunexa.vercel.app,
+// and its 429 rate-limit responses never carry CORS headers either).
+//   1) /api/geo   → same-origin Vercel function, reads x-vercel-ip-* headers (no CORS, no 3rd party)
+//   2) ipwho.is   → free, sends Access-Control-Allow-Origin: *
+// A failure is cached for 6h so the console isn't spammed on every page load.
 async function zxEnsureGeo(){
   const cached = zxGetCachedGeo();
   if (cached) return cached;
   try {
-    const r = await fetch('https://ipapi.co/json/');
-    if (!r.ok) return null;
-    const j = await r.json();
-    if (!j || j.error) return null;
-    const geo = {
-      country: j.country_name || null,
-      countryCode: j.country_code || null,
-      city: j.city || null,
-      currency: j.currency || null,
-      languages: j.languages || null
-    };
+    const f = JSON.parse(localStorage.getItem('zx_geo_fail') || '0');
+    if (f && Date.now() - f < 6 * 3600 * 1000) return null;
+  } catch(e) {}
+
+  const save = geo => {
     try { localStorage.setItem('zx_geo', JSON.stringify({ ts: Date.now(), data: geo })); } catch(e){}
     return geo;
-  } catch(e) { return null; } // offline / blocked — geo is optional
+  };
+  const lang = (navigator.language || '').split('-')[0] || null;
+
+  // 1) same-origin function
+  try {
+    const r = await fetch('/api/geo', { cache: 'no-store' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j && j.countryCode) {
+        return save({
+          country: zxCountryName(j.countryCode) || j.countryCode,
+          countryCode: j.countryCode,
+          city: j.city || null,
+          currency: ZX_CCY[j.countryCode] || null,
+          languages: lang
+        });
+      }
+    }
+  } catch(e) {}
+
+  // 2) CORS-friendly public fallback
+  try {
+    const r = await fetch('https://ipwho.is/?fields=success,country,country_code,city,currency');
+    if (r.ok) {
+      const j = await r.json();
+      if (j && j.success !== false && j.country_code) {
+        return save({
+          country: j.country || zxCountryName(j.country_code),
+          countryCode: j.country_code,
+          city: j.city || null,
+          currency: (j.currency && j.currency.code) || ZX_CCY[j.country_code] || null,
+          languages: lang
+        });
+      }
+    }
+  } catch(e) {}
+
+  try { localStorage.setItem('zx_geo_fail', JSON.stringify(Date.now())); } catch(e){}
+  return null; // geo is optional — never block the app
 }
 
 async function zxSaveGeoToProfile(uid, geo, existingCountry){
