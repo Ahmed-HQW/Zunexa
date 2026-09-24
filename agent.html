@@ -47,11 +47,11 @@ const _SB = supabase.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY);
 <link rel="apple-touch-icon" href="zunexa-logo.svg">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<!-- Font Awesome — مُستضاف محلياً (نفس النطاق) بدل CDN خارجي، لأن
-     style-src فـ CSP كيحجب cdnjs.cloudflare.com. ملف all.min.css (100+
-     كيلوبايت) وملفات الخطوط webfonts/* خاصهم يكونو فـ نفس المستودع
-     تحت vendor/fontawesome/ — شوف تعليمة التنزيل تحت. -->
-<link rel="stylesheet" href="vendor/fontawesome/all.min.css">
+<!-- الأيقونات: SVG مضمّنة (sprite) داخل هاد الملف — ما كاين حتى خط خارجي
+     ولا ملف CSS خارجي، وبالتالي:
+       • ما كاين 404 على ملفات الخطوط (الأيقونات ماشي خط، هي رسوم SVG)
+       • ما كاين تعارض مع CSP (style-src / font-src) ولا تبعية على CDN
+       • الأيقونات كتاخد لون النص (currentColor) وتخدم مع dark/light تلقائياً -->
 <style>
 /* ══════════════════════════════════════════════════
    highlight.js — Atom One Dark theme (v11.9.0)
@@ -336,6 +336,66 @@ button{font-family:inherit;cursor:pointer}
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
 
+
+/* ═══════════════ ICON SYSTEM (inline SVG sprite) ═══════════════ */
+.zi{
+  width:1.1em;height:1.1em;flex-shrink:0;display:inline-block;vertical-align:-.17em;
+  color:inherit;overflow:visible;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1),color .2s,filter .25s;
+  transform-origin:center;
+}
+.zi.flag{width:1.35em;height:1.35em;vertical-align:-.3em;border-radius:4px}
+.zi-lg{width:1.5em;height:1.5em}
+.zi-xl{width:1em;height:1em}
+button .zi,a .zi{margin-inline-end:.05em}
+
+/* ── Hover micro-interactions ── */
+.tb-back:hover .zi{animation:zi-nudge-fwd .55s ease infinite alternate}
+.lang-sel-btn:hover .zi-globe-h,.lang-sel-btn:focus-visible .zi-globe-h{animation:zi-spin 2.4s linear infinite}
+.rail-item:hover .zi,.bn-item:hover .zi{transform:translateY(-2px) scale(1.14);color:var(--gold)}
+.rail-item.on .ico .zi,.bn-item.on .bn-ico .zi{filter:drop-shadow(0 0 5px var(--gglow))}
+.bn-item:active .zi{transform:scale(.88)}
+.modal-close:hover .zi{transform:rotate(90deg) scale(1.1);color:var(--red)}
+.t-del:hover .zi{transform:scale(1.18) rotate(-8deg);color:var(--red)}
+.ws-tab:hover .zi{transform:translateY(-2px) scale(1.12)}
+.ws-tab.on .zi{color:var(--gold)}
+.role-btn:not(.locked):hover .zi{transform:scale(1.2) rotate(-6deg)}
+.role-btn.on .zi{animation:zi-pop .5s cubic-bezier(.34,1.56,.64,1)}
+.new-proj-btn:hover .zi-plus,.cta:hover .zi-plus,.bn-item:hover .zi-plus{transform:rotate(90deg) scale(1.15)}
+.new-proj-btn:hover .zi-wand{animation:zi-wiggle .6s ease}
+.ws-actions button:hover .zi-arrow-left{transform:translateX(-4px)}
+.lang-sel-menu button:hover .zi.flag{transform:scale(1.15) rotate(-4deg)}
+
+/* ── Always-on, very subtle ambient motion ── */
+.empty-state .glyph .zi{width:1em;height:1em;animation:zi-float 3.6s ease-in-out infinite}
+.role-btn.locked .zi-lock{animation:zi-lock-shake 4s ease-in-out infinite}
+.pill .zi{width:1.25em;height:1.25em;vertical-align:-.28em}
+.pill.unpaid .zi-warning{animation:zi-pulse 2s ease-in-out infinite}
+.pill.paid .zi-check,.toast .zi-check{animation:zi-draw .5s ease-out both}
+.a-msg .zi-warning,.toast .zi-warning{animation:zi-pulse 1.6s ease-in-out infinite}
+.toast.show .zi{animation:zi-pop .45s cubic-bezier(.34,1.56,.64,1)}
+.zi-wave{transform-origin:70% 75%;animation:zi-wave 2.2s ease-in-out infinite}
+.empty-hint .zi-wave{width:1.25em;height:1.25em;vertical-align:-.3em}
+
+/* ── Keyframes ── */
+@keyframes zi-spin{to{transform:rotate(360deg)}}
+@keyframes zi-pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.25)}100%{transform:scale(1);opacity:1}}
+@keyframes zi-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.18);opacity:.75}}
+@keyframes zi-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes zi-wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-14deg)}75%{transform:rotate(14deg)}}
+@keyframes zi-nudge-fwd{from{transform:translateX(0)}to{transform:translateX(4px)}}
+@keyframes zi-lock-shake{0%,86%,100%{transform:rotate(0)}89%{transform:rotate(-12deg)}92%{transform:rotate(12deg)}95%{transform:rotate(-8deg)}98%{transform:rotate(6deg)}}
+@keyframes zi-wave{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(14deg)}20%{transform:rotate(-8deg)}30%{transform:rotate(14deg)}40%{transform:rotate(-4deg)}50%{transform:rotate(10deg)}}
+@keyframes zi-draw{from{opacity:0;transform:scale(.3) rotate(-25deg)}to{opacity:1;transform:none}}
+[dir="rtl"] .tb-back:hover .zi{animation-name:zi-nudge-rtl}
+@keyframes zi-nudge-rtl{from{transform:translateX(0)}to{transform:translateX(-4px)}}
+[dir="rtl"] .ws-actions button:hover .zi-arrow-left{transform:translateX(4px)}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion:reduce){
+  .zi,.zi *{animation:none!important;transition:none!important}
+}
+
 .spinner{width:16px;height:16px;border:2px solid rgba(0,0,0,.2);border-top-color:#0B0C0F;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -418,9 +478,43 @@ button{font-family:inherit;cursor:pointer}
 </style>
 </head>
 <body>
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+<defs>
+<symbol id="zi-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+<symbol id="zi-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></symbol>
+<symbol id="zi-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4"/><path d="M12 2.8c2.6 2.4 4 5.7 4 9.2s-1.4 6.8-4 9.2c-2.6-2.4-4-5.7-4-9.2s1.4-6.8 4-9.2Z"/></symbol>
+<symbol id="zi-folder-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v1H7.2a2 2 0 0 0-1.9 1.4L3 18V8Z"/><path d="M3 18l2.3-6.6A2 2 0 0 1 7.2 10H22l-2.4 7.4A2 2 0 0 1 17.7 19H5a2 2 0 0 1-2-1Z"/></symbol>
+<symbol id="zi-credit-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/><path d="M6.5 15h3"/></symbol>
+<symbol id="zi-archive" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4.5" rx="1.2"/><path d="M5 8.5V19a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5"/><path d="M10 12.5h4"/></symbol>
+<symbol id="zi-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+<symbol id="zi-comments" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h8A2.5 2.5 0 0 1 17 5.5v5a2.5 2.5 0 0 1-2.5 2.5H10l-3.5 3v-3A2.5 2.5 0 0 1 4 10.5Z"/><path d="M20 9.5A2.5 2.5 0 0 1 22 12v4.5a2.5 2.5 0 0 1-2.5 2.5H19v2.5L16 19h-4a2.5 2.5 0 0 1-2-1"/></symbol>
+<symbol id="zi-xmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></symbol>
+<symbol id="zi-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+<symbol id="zi-warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.6 19.5a1 1 0 0 0 .87 1.5h17.06a1 1 0 0 0 .87-1.5L12 3.5Z"/><path d="M12 10v4.5"/><path d="M12 17.6v.1"/></symbol>
+<symbol id="zi-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><path d="M12 7.6v.1"/></symbol>
+<symbol id="zi-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="zi-robot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 4v4"/><circle cx="12" cy="3.6" r="1"/><circle cx="9" cy="13" r="1.1"/><circle cx="15" cy="13" r="1.1"/><path d="M9.5 16.2h5"/></symbol>
+<symbol id="zi-list-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 6.5 1.6 1.6 2.9-3"/><path d="m3.5 12.5 1.6 1.6 2.9-3"/><path d="m3.5 18.5 1.6 1.6 2.9-3"/><path d="M11.5 7h9"/><path d="M11.5 13h9"/><path d="M11.5 19h9"/></symbol>
+<symbol id="zi-file-lines" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7.5A2.5 2.5 0 0 0 5 5.5v13A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V8Z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/></symbol>
+<symbol id="zi-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 6.5 3 3"/><path d="M4 20 16 8l0 0"/><path d="m3.5 20.5 12-12 2 2-12 12Z"/><path d="M19 3v3"/><path d="M17.5 4.5h3"/><path d="M6 3v2"/><path d="M5 4h2"/></symbol>
+<symbol id="zi-database" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v6.5c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8V5.5"/><path d="M4.5 12v6.5c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8V12"/></symbol>
+<symbol id="zi-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5Z"/></symbol>
+<symbol id="zi-diagram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="5" rx="1.2"/><rect x="3" y="16" width="6" height="5" rx="1.2"/><rect x="15" y="16" width="6" height="5" rx="1.2"/><path d="M12 8v4"/><path d="M6 16v-4h12v4"/></symbol>
+<symbol id="zi-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m8 8-4.5 4L8 16"/><path d="m16 8 4.5 4L16 16"/><path d="m13.5 5-3 14"/></symbol>
+<symbol id="zi-test" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3h5"/><path d="M10.5 3v6L5 18.5A2 2 0 0 0 6.7 21.5h10.6a2 2 0 0 0 1.7-3L13.5 9V3"/><path d="m9 15.5 2 2 4-4"/></symbol>
+<symbol id="zi-wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12.5V6.8a1.4 1.4 0 0 1 2.8 0V11"/><path d="M9.8 11V4.9a1.4 1.4 0 0 1 2.8 0V11"/><path d="M12.6 11V6a1.4 1.4 0 0 1 2.8 0v6"/><path d="M15.4 12V8.6a1.4 1.4 0 0 1 2.8 0V15a6 6 0 0 1-6 6h-.7a6 6 0 0 1-4.6-2.1L3.8 15.8a1.4 1.4 0 0 1 2.1-1.8L7 15"/></symbol>
+<symbol id="zi-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.5 1.5M17.2 17.2l1.5 1.5M5.3 18.7l1.5-1.5M17.2 6.8l1.5-1.5"/></symbol>
+<symbol id="zi-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="zi-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 3 10.5 14"/><path d="M21.5 3 15 21l-4.5-7L3.5 9.5Z"/></symbol>
+<symbol id="zi-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4.5h6V7"/><path d="M6.2 7l.9 12.2A1.8 1.8 0 0 0 8.9 21h6.2a1.8 1.8 0 0 0 1.8-1.8L17.8 7"/><path d="M10 11v6M14 11v6"/></symbol>
+<symbol id="zi-flag-ma" viewBox="0 0 24 24"><rect x="2" y="4.5" width="20" height="15" rx="2.6" fill="#C1272D" stroke="none"/><path d="m12 8.4 1.1 3.3h3.4l-2.8 2 1.1 3.3-2.8-2-2.8 2 1.1-3.3-2.8-2h3.4Z" fill="none" stroke="#006233" stroke-width="1.2" stroke-linejoin="round"/></symbol>
+<symbol id="zi-flag-sa" viewBox="0 0 24 24"><rect x="2" y="4.5" width="20" height="15" rx="2.6" fill="#006C35" stroke="none"/><path d="M6.5 10.2c1.4-1.3 3-1.3 4.3 0 1.3 1.3 2.9 1.3 4.3 0 .9-.8 1.7-1 2.4-.9" fill="none" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><path d="M7 15h10" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><path d="M15.6 14.1 17.4 15l-1.8.9" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="zi-flag-gb" viewBox="0 0 24 24"><rect x="2" y="4.5" width="20" height="15" rx="2.6" fill="#1F3A93" stroke="none"/><path d="m2.6 5.4 18.8 13.2M21.4 5.4 2.6 18.6" stroke="#fff" stroke-width="2.2"/><path d="m2.6 5.4 18.8 13.2M21.4 5.4 2.6 18.6" stroke="#C8102E" stroke-width=".9"/><path d="M12 4.5v15M2 12h20" stroke="#fff" stroke-width="4"/><path d="M12 4.5v15M2 12h20" stroke="#C8102E" stroke-width="2.2"/></symbol>
+<symbol id="zi-flag-fr" viewBox="0 0 24 24"><rect x="2" y="4.5" width="20" height="15" rx="2.6" fill="#fff" stroke="none"/><path d="M2 7.1a2.6 2.6 0 0 1 2.6-2.6H8.7v15H4.6A2.6 2.6 0 0 1 2 16.9Z" fill="#0055A4" stroke="none"/><path d="M15.3 4.5h4.1A2.6 2.6 0 0 1 22 7.1v9.8a2.6 2.6 0 0 1-2.6 2.6h-4.1Z" fill="#EF4135" stroke="none"/><rect x="2" y="4.5" width="20" height="15" rx="2.6" fill="none" stroke="rgba(128,128,128,.35)" stroke-width=".8"/></symbol>
+</defs></svg>
 
 <div class="topbar">
-  <a href="ai.html" class="tb-back"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i> رجوع</a>
+  <a href="ai.html" class="tb-back"><svg class="zi zi-arrow-right" aria-hidden="true" focusable="false"><use href="#zi-arrow-right"/></svg> رجوع</a>
   <div class="tb-title">
     <div class="mark"><img src="zunexa-logo.svg" alt="Zunexa"></div>
     <div>
@@ -434,14 +528,14 @@ button{font-family:inherit;cursor:pointer}
   </div>
   <div class="lang-sel" id="langSel">
     <button class="lang-sel-btn" onclick="toggleLangSel()" aria-haspopup="listbox" aria-expanded="false" title="اللغة / Language">
-      <i class="fa-solid fa-globe" aria-hidden="true"></i>
+      <svg class="zi zi-globe zi-globe-h" aria-hidden="true" focusable="false"><use href="#zi-globe"/></svg>
       <span id="langSelLabel">عربي</span>
     </button>
     <div class="lang-sel-menu" id="langSelMenu" role="listbox">
-      <button role="option" onclick="setPageLang('ary')">🇲🇦 الدارجة</button>
-      <button role="option" onclick="setPageLang('ar')">🇸🇦 العربية</button>
-      <button role="option" onclick="setPageLang('en')">🇬🇧 English</button>
-      <button role="option" onclick="setPageLang('fr')">🇫🇷 Français</button>
+      <button role="option" onclick="setPageLang('ary')"><svg class="zi flag" aria-hidden="true" focusable="false"><use href="#zi-flag-ma"/></svg> الدارجة</button>
+      <button role="option" onclick="setPageLang('ar')"><svg class="zi flag" aria-hidden="true" focusable="false"><use href="#zi-flag-sa"/></svg> العربية</button>
+      <button role="option" onclick="setPageLang('en')"><svg class="zi flag" aria-hidden="true" focusable="false"><use href="#zi-flag-gb"/></svg> English</button>
+      <button role="option" onclick="setPageLang('fr')"><svg class="zi flag" aria-hidden="true" focusable="false"><use href="#zi-flag-fr"/></svg> Français</button>
     </div>
   </div>
 </div>
@@ -449,8 +543,8 @@ button{font-family:inherit;cursor:pointer}
 <div class="shell">
   <aside class="rail">
     <div class="rail-label">القائمة</div>
-    <div class="rail-item on" id="railProjects" onclick="showProjectsView()"><span class="ico"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></span> المشاريع</div>
-    <div class="rail-item" onclick="openPricingModal()"><span class="ico"><i class="fa-solid fa-credit-card" aria-hidden="true"></i></span> الخطط والأسعار</div>
+    <div class="rail-item on" id="railProjects" onclick="showProjectsView()"><span class="ico"><svg class="zi zi-folder-open" aria-hidden="true" focusable="false"><use href="#zi-folder-open"/></svg></span> المشاريع</div>
+    <div class="rail-item" onclick="openPricingModal()"><span class="ico"><svg class="zi zi-credit-card" aria-hidden="true" focusable="false"><use href="#zi-credit-card"/></svg></span> الخطط والأسعار</div>
     <div class="rail-plan" id="railPlan">
       <div class="pname" id="railPlanName">—</div>
       <div class="pline" id="railPlanLine">جاري التحميل...</div>
@@ -460,10 +554,10 @@ button{font-family:inherit;cursor:pointer}
 
   <main class="main" id="mainArea">
     <div class="empty-state" id="emptyState" style="display:none">
-      <div class="glyph"><i class="fa-solid fa-box-archive" aria-hidden="true"></i></div>
+      <div class="glyph"><svg class="zi zi-archive" aria-hidden="true" focusable="false"><use href="#zi-archive"/></svg></div>
       <h2>مرحباً بيك فـ وكيل إدارة المشاريع</h2>
       <p>مازال ما عندكش أي مشروع. أنشئ أول مشروع باش تبدا تخدم مع الوكلاء: Coder، Planner، Tasker، Tester، و Info.</p>
-      <button class="cta" onclick="openNewProjectModal()">+ إنشاء مشروع جديد</button>
+      <button class="cta" onclick="openNewProjectModal()"><svg class="zi zi-plus" aria-hidden="true" focusable="false"><use href="#zi-plus"/></svg> إنشاء مشروع جديد</button>
     </div>
 
     <div id="projectsView" style="display:none">
@@ -472,7 +566,7 @@ button{font-family:inherit;cursor:pointer}
           <h2>مشاريعك</h2>
           <div class="sub" id="projCountLabel">—</div>
         </div>
-        <button class="new-proj-btn" onclick="openNewProjectModal()">+ مشروع جديد</button>
+        <button class="new-proj-btn" onclick="openNewProjectModal()"><svg class="zi zi-plus" aria-hidden="true" focusable="false"><use href="#zi-plus"/></svg> مشروع جديد</button>
       </div>
       <div class="proj-grid" id="projGrid"></div>
     </div>
@@ -482,16 +576,16 @@ button{font-family:inherit;cursor:pointer}
 </div>
 
 <nav class="bottom-nav">
-  <a class="bn-item on" id="bnProjects" onclick="showProjectsView()"><span class="bn-ico"><i class="fa-solid fa-folder-open" aria-hidden="true"></i></span>المشاريع</a>
-  <a class="bn-item" onclick="openNewProjectModal()"><span class="bn-ico"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>جديد</a>
-  <a class="bn-item" id="bnPricing" onclick="openPricingModal()"><span class="bn-ico"><i class="fa-solid fa-credit-card" aria-hidden="true"></i></span>الخطط</a>
-  <a class="bn-item" onclick="window.location.href='ai.html'"><span class="bn-ico"><i class="fa-solid fa-comments" aria-hidden="true"></i></span>الشات</a>
+  <a class="bn-item on" id="bnProjects" onclick="showProjectsView()"><span class="bn-ico"><svg class="zi zi-folder-open" aria-hidden="true" focusable="false"><use href="#zi-folder-open"/></svg></span>المشاريع</a>
+  <a class="bn-item" onclick="openNewProjectModal()"><span class="bn-ico"><svg class="zi zi-plus" aria-hidden="true" focusable="false"><use href="#zi-plus"/></svg></span>جديد</a>
+  <a class="bn-item" id="bnPricing" onclick="openPricingModal()"><span class="bn-ico"><svg class="zi zi-credit-card" aria-hidden="true" focusable="false"><use href="#zi-credit-card"/></svg></span>الخطط</a>
+  <a class="bn-item" onclick="window.location.href='ai.html'"><span class="bn-ico"><svg class="zi zi-comments" aria-hidden="true" focusable="false"><use href="#zi-comments"/></svg></span>الشات</a>
 </nav>
 
 <!-- New Project Modal -->
 <div class="modal-wrap" id="newProjModal">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeNewProjectModal()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+    <button class="modal-close" onclick="closeNewProjectModal()"><svg class="zi zi-xmark" aria-hidden="true" focusable="false"><use href="#zi-xmark"/></svg></button>
     <h2>مشروع جديد</h2>
     <div class="field">
       <label>اسم المشروع *</label>
@@ -554,7 +648,7 @@ button{font-family:inherit;cursor:pointer}
 <!-- Pricing Modal -->
 <div class="modal-wrap" id="pricingModal">
   <div class="modal-box" style="max-width:820px">
-    <button class="modal-close" onclick="closePricingModal()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+    <button class="modal-close" onclick="closePricingModal()"><svg class="zi zi-xmark" aria-hidden="true" focusable="false"><use href="#zi-xmark"/></svg></button>
     <h2>الخطط والأسعار</h2>
     <div id="pricingCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px"></div>
   </div>
@@ -576,20 +670,30 @@ let CURRENT_PROJECT = null;
 let CURRENT_ROLE = 'planner';
 let CHAT_HISTORY = [];
 
-const ZX_EMOJI_ICON_MAP = { '✓': 'fa-solid fa-check', '⚠': 'fa-solid fa-triangle-exclamation', '✕': 'fa-solid fa-xmark' };
-function toast(msg) {
+const ZX_TOAST_ICON_MAP = { 'ok': 'check', 'warn': 'warning', 'err': 'xmark' };
+/* toast(msg, type?)  type: 'ok' | 'warn' | 'err'  — أيقونة SVG بدل الرموز/الإيموجي.
+   للتوافق مع الاستدعاءات القديمة، أول حرف رمزي كيتحوّل تلقائياً لنوع. */
+function toast(msg, type) {
   const t = document.getElementById('toast');
-  const firstChar = [...msg][0];
-  const iconClass = ZX_EMOJI_ICON_MAP[firstChar];
-  if (iconClass) {
-    const rest = [...msg].slice(1).join('').trim();
-    t.innerHTML = `<i class="${iconClass}" aria-hidden="true" style="margin-inline-end:6px"></i>${escapeHtml(rest)}`;
+  const LEGACY = { '\u2713': 'ok', '\u26A0': 'warn', '\u2715': 'err' };
+  const first = [...msg][0];
+  if (!type && LEGACY[first]) { type = LEGACY[first]; msg = [...msg].slice(1).join('').trim(); }
+  const name = ZX_TOAST_ICON_MAP[type];
+  if (name) {
+    t.innerHTML = `<svg class="zi zi-${name}" aria-hidden="true" focusable="false" style="margin-inline-end:8px"><use href="#zi-${name}"/></svg>` + escapeHtml(msg);
   } else {
     t.textContent = msg;
   }
+  t.classList.remove('show'); void t.offsetWidth;   // إعادة تشغيل الأنيميشن
   t.classList.add('show');
   clearTimeout(t._h);
   t._h = setTimeout(() => t.classList.remove('show'), 2600);
+}
+/* يرجّع زر الإرسال لحالته الطبيعية (أيقونة + نص) بعد ما كان فيه spinner.
+   كنستعملو هاد الدالة بدل btn.textContent باش الأيقونة ما تضيعش. */
+function setBtnIdle(btn, label, iconName) {
+  btn.disabled = false;
+  btn.innerHTML = (iconName ? `<svg class="zi zi-${iconName}" aria-hidden="true" focusable="false"><use href="#zi-${iconName}"/></svg> ` : '') + `<span class="lbl">${label}</span>`;
 }
 function escapeHtml(s) {
   return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -612,11 +716,11 @@ const ROLE_DESC = {
   tester:  'الفحص، الجودة، وتتبع الأخطاء والتصحيح',
 };
 const ROLE_ICON = {
-  info:    '<i class="fa-solid fa-database" aria-hidden="true"></i>',
-  planner: '<i class="fa-solid fa-drafting-compass" aria-hidden="true"></i>',
-  tasker:  '<i class="fa-solid fa-diagram-project" aria-hidden="true"></i>',
-  coder:   '<i class="fa-solid fa-code" aria-hidden="true"></i>',
-  tester:  '<i class="fa-solid fa-vial-circle-check" aria-hidden="true"></i>',
+  info:    '<svg class="zi zi-database" aria-hidden="true" focusable="false"><use href="#zi-database"/></svg>',
+  planner: '<svg class="zi zi-compass" aria-hidden="true" focusable="false"><use href="#zi-compass"/></svg>',
+  tasker:  '<svg class="zi zi-diagram" aria-hidden="true" focusable="false"><use href="#zi-diagram"/></svg>',
+  coder:   '<svg class="zi zi-code" aria-hidden="true" focusable="false"><use href="#zi-code"/></svg>',
+  tester:  '<svg class="zi zi-test" aria-hidden="true" focusable="false"><use href="#zi-test"/></svg>',
 };
 
 /* ══════════════ ACCESSIBILITY — page language toggle ══════════════
@@ -782,7 +886,7 @@ function showProjectsView() {
         <div class="progress-track"><div class="progress-fill" style="width:${p.progress_pct || 0}%"></div></div>
         <span>${p.progress_pct || 0}%</span>
       </div>
-      <span class="pill ${p.is_paid ? 'paid' : 'unpaid'}">${p.is_paid ? '<i class="fa-solid fa-check" aria-hidden="true"></i> مخلص' : '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> غير مخلص'}</span>
+      <span class="pill ${p.is_paid ? 'paid' : 'unpaid'}">${p.is_paid ? '<svg class="zi zi-check" aria-hidden="true" focusable="false"><use href="#zi-check"/></svg> مخلص' : '<svg class="zi zi-warning" aria-hidden="true" focusable="false"><use href="#zi-warning"/></svg> غير مخلص'}</span>
     </div>
   `).join('');
 }
@@ -856,8 +960,7 @@ async function createProject() {
     agents_enabled: agents,
   }).select().single();
 
-  btn.disabled = false;
-  btn.textContent = 'إنشاء المشروع';
+  setBtnIdle(btn, 'إنشاء المشروع', 'check');
 
   if (error) {
     if (error.message.includes('agent_project_limit_reached')) {
@@ -869,7 +972,7 @@ async function createProject() {
     return;
   }
 
-  toast('✓ تم إنشاء المشروع');
+  toast('تم إنشاء المشروع', 'ok');
   closeNewProjectModal();
   await loadProjects();
   openWorkspace(data.id);
@@ -884,7 +987,7 @@ function openPricingModal() {
       <h3 style="color:var(--gold);font-size:1rem">${escapeHtml(p.display_name)}</h3>
       <div style="font-size:1.6rem;font-weight:700;color:var(--tw)">${p.price_monthly > 0 ? '$' + p.price_monthly : 'مجاني'}${p.price_monthly > 0 ? '<small style="font-size:.8rem;color:var(--tm)">/شهر</small>' : ''}</div>
       <ul style="font-size:.78rem;color:var(--tg);line-height:1.9;list-style:none">
-        ${(p.features || []).map(f => `<li><i class="fa-solid fa-check" aria-hidden="true"></i> ${escapeHtml(f)}</li>`).join('')}
+        ${(p.features || []).map(f => `<li><svg class="zi zi-check" aria-hidden="true" focusable="false"><use href="#zi-check"/></svg> ${escapeHtml(f)}</li>`).join('')}
       </ul>
       ${p.plan_id === CURRENT_PLAN
         ? `<button class="modal-save-btn" disabled style="background:var(--b1);color:var(--tm)">الخطة الحالية</button>`
@@ -906,7 +1009,7 @@ async function requestPlanUpgrade(planId) {
       requested_plan: planId,
       message: `طلب ترقية لخطة Project Intelligence Agent: ${planId}`,
     });
-    toast('✓ تم إرسال طلب الترقية، غادي نتواصلو معاك قريباً.');
+    toast('تم إرسال طلب الترقية، غادي نتواصلو معاك قريباً.', 'ok');
     closePricingModal();
   } catch (e) {
     toast('وقع خطأ: ' + e.message);
@@ -934,21 +1037,21 @@ async function openWorkspace(projectId) {
         <h2>${escapeHtml(p.name)}</h2>
         <div class="meta">
           <span class="pill stage-${p.stage}">${stageLabel(p.stage)}</span>
-          <span class="pill ${p.is_paid ? 'paid' : 'unpaid'}">${p.is_paid ? '<i class="fa-solid fa-check" aria-hidden="true"></i> مخلص' : '<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> غير مخلص'}</span>
+          <span class="pill ${p.is_paid ? 'paid' : 'unpaid'}">${p.is_paid ? '<svg class="zi zi-check" aria-hidden="true" focusable="false"><use href="#zi-check"/></svg> مخلص' : '<svg class="zi zi-warning" aria-hidden="true" focusable="false"><use href="#zi-warning"/></svg> غير مخلص'}</span>
           <span class="cat">${escapeHtml(p.category || '')}</span>
         </div>
       </div>
       <div class="ws-actions">
-        <button onclick="showProjectsView()"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> كل المشاريع</button>
+        <button onclick="showProjectsView()"><svg class="zi zi-arrow-left" aria-hidden="true" focusable="false"><use href="#zi-arrow-left"/></svg> كل المشاريع</button>
         <button class="danger" onclick="archiveProject('${p.id}')">أرشفة</button>
       </div>
     </div>
 
     <div class="ws-tabs">
-      <div class="ws-tab on" data-tab="agents" onclick="switchWsTab('agents')"><i class="fa-solid fa-robot" aria-hidden="true"></i> الوكلاء</div>
-      <div class="ws-tab" data-tab="tasks" onclick="switchWsTab('tasks')"><i class="fa-solid fa-list-check" aria-hidden="true"></i> المهام</div>
-      <div class="ws-tab" data-tab="resume" onclick="switchWsTab('resume')"><i class="fa-solid fa-file-lines" aria-hidden="true"></i> السيرة/الملخص</div>
-      <div class="ws-tab" data-tab="info" onclick="switchWsTab('info')">ℹ️ معلومات المشروع</div>
+      <div class="ws-tab on" data-tab="agents" onclick="switchWsTab('agents')"><svg class="zi zi-robot" aria-hidden="true" focusable="false"><use href="#zi-robot"/></svg> الوكلاء</div>
+      <div class="ws-tab" data-tab="tasks" onclick="switchWsTab('tasks')"><svg class="zi zi-list-check" aria-hidden="true" focusable="false"><use href="#zi-list-check"/></svg> المهام</div>
+      <div class="ws-tab" data-tab="resume" onclick="switchWsTab('resume')"><svg class="zi zi-file-lines" aria-hidden="true" focusable="false"><use href="#zi-file-lines"/></svg> السيرة/الملخص</div>
+      <div class="ws-tab" data-tab="info" onclick="switchWsTab('info')"><svg class="zi zi-info" aria-hidden="true" focusable="false"><use href="#zi-info"/></svg> معلومات المشروع</div>
     </div>
 
     <div class="ws-panel on" id="panelAgents">
@@ -957,7 +1060,7 @@ async function openWorkspace(projectId) {
         <div class="agent-msgs" id="agentMsgs"></div>
         <div class="agent-input-row">
           <textarea id="agentInput" placeholder="اكتب رسالتك للوكيل..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAgentMessage();}"></textarea>
-          <button class="agent-send" id="agentSendBtn" onclick="sendAgentMessage()">إرسال</button>
+          <button class="agent-send" id="agentSendBtn" onclick="sendAgentMessage()"><svg class="zi zi-send" aria-hidden="true" focusable="false"><use href="#zi-send"/></svg> <span class="lbl">إرسال</span></button>
         </div>
       </div>
     </div>
@@ -978,7 +1081,7 @@ async function openWorkspace(projectId) {
     </div>
 
     <div class="ws-panel" id="panelResume">
-      <button class="new-proj-btn" style="margin-bottom:14px" onclick="generateResume()"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> توليد ملخص جديد (Nexus)</button>
+      <button class="new-proj-btn" style="margin-bottom:14px" onclick="generateResume()"><svg class="zi zi-wand" aria-hidden="true" focusable="false"><use href="#zi-wand"/></svg> توليد ملخص جديد (Nexus)</button>
       <div id="resumeList"></div>
     </div>
 
@@ -990,7 +1093,7 @@ async function openWorkspace(projectId) {
         <div class="info-box"><label>Stack</label><div class="val">${(p.stack||[]).join('، ') || '—'}</div></div>
         <div class="info-box"><label>الأدوات</label><div class="val">${(p.tools||[]).join('، ') || '—'}</div></div>
         <div class="info-box"><label>الوكلاء المفعّلين</label><div class="val">${enabledAgents.map(r => ROLE_LABEL[r]).join('، ')}</div></div>
-        <div class="info-box"><label>حالة الدفع</label><div class="val">${p.is_paid ? '<i class="fa-solid fa-check" style="color:var(--green)" aria-hidden="true"></i> مخلص' : '<i class="fa-solid fa-triangle-exclamation" style="color:var(--red)" aria-hidden="true"></i> غير مخلص'}</div></div>
+        <div class="info-box"><label>حالة الدفع</label><div class="val">${p.is_paid ? '<svg class="zi zi-check" aria-hidden="true" focusable="false" style="color:var(--green)"><use href="#zi-check"/></svg> مخلص' : '<svg class="zi zi-warning" aria-hidden="true" focusable="false" style="color:var(--red)"><use href="#zi-warning"/></svg> غير مخلص'}</div></div>
       </div>
     </div>
   `;
@@ -1015,7 +1118,7 @@ function renderRoleBar(enabledAgents) {
     return `<button class="role-btn ${r === CURRENT_ROLE ? 'on' : ''} ${enabled ? '' : 'locked'}"
       ${enabled ? `onclick="switchRole('${r}')"` : 'disabled title="غير مفعّل فهاد المشروع"'}
       title="${escapeHtml(ROLE_DESC[r])}">
-      ${ROLE_ICON[r]} ${ROLE_LABEL[r]}${enabled ? '' : ' <i class="fa-solid fa-lock" aria-hidden="true"></i>'}
+      ${ROLE_ICON[r]} ${ROLE_LABEL[r]}${enabled ? '' : ' <svg class="zi zi-lock" aria-hidden="true" focusable="false"><use href="#zi-lock"/></svg>'}
     </button>`;
   }).join('');
 }
@@ -1039,7 +1142,7 @@ async function loadAgentMessages() {
   if (error) { msgsEl.innerHTML = `<div style="color:var(--red);font-size:.8rem">تعذر تحميل المحادثة: ${escapeHtml(error.message)}</div>`; return; }
   CHAT_HISTORY = (data || []).map(m => ({ role: m.role, content: m.content }));
   if (!data || !data.length) {
-    msgsEl.innerHTML = `<div style="color:var(--tm);font-size:.82rem;text-align:center;padding:30px 0">ابدأ محادثة مع وكيل ${ROLE_LABEL[CURRENT_ROLE]} <i class="fa-regular fa-hand" aria-hidden="true"></i></div>`;
+    msgsEl.innerHTML = `<div class="empty-hint" style="color:var(--tm);font-size:.82rem;text-align:center;padding:30px 0">ابدأ محادثة مع وكيل ${ROLE_LABEL[CURRENT_ROLE]} <svg class="zi zi-wave" aria-hidden="true" focusable="false"><use href="#zi-wave"/></svg></div>`;
     return;
   }
   msgsEl.innerHTML = data.map(m => `<div class="a-msg ${m.role}">${escapeHtml(m.content)}</div>`).join('');
@@ -1066,7 +1169,7 @@ async function sendAgentMessage() {
   btn.innerHTML = '<span class="spinner"></span>';
 
   const { data: { session } } = await _SB.auth.getSession();
-  if (!session) { toast('خاصك تدخل لحسابك.'); btn.disabled = false; btn.textContent = 'إرسال'; return; }
+  if (!session) { toast('خاصك تدخل لحسابك.'); setBtnIdle(btn, 'إرسال', 'send'); return; }
 
   try {
     const res = await fetch(`${EDGE_FUNCTIONS_BASE}/agent-planner`, {
@@ -1087,12 +1190,12 @@ async function sendAgentMessage() {
 
     if (!res.ok) {
       if (data?.error === 'quota_exceeded') {
-        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> استهلكتي كل التوكنات الشهرية ديال خطتك. رقّي الخطة باش تكمل.</div>`);
+        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><svg class="zi zi-warning" aria-hidden="true" focusable="false"><use href="#zi-warning"/></svg> استهلكتي كل التوكنات الشهرية ديال خطتك. رقّي الخطة باش تكمل.</div>`);
         openPricingModal();
       } else if (data?.error === 'agent_role_not_enabled_for_plan') {
-        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> هاد الوكيل ماشي مفعّل فهاد المشروع/الخطة.</div>`);
+        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><svg class="zi zi-warning" aria-hidden="true" focusable="false"><use href="#zi-warning"/></svg> هاد الوكيل ماشي مفعّل فهاد المشروع/الخطة.</div>`);
       } else {
-        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> وقع خطأ: ${escapeHtml(data?.error || res.status)}</div>`);
+        msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><svg class="zi zi-warning" aria-hidden="true" focusable="false"><use href="#zi-warning"/></svg> وقع خطأ: ${escapeHtml(data?.error || res.status)}</div>`);
       }
       return;
     }
@@ -1103,10 +1206,9 @@ async function sendAgentMessage() {
     msgsEl.scrollTop = msgsEl.scrollHeight;
     await refreshUsage();
   } catch (e) {
-    msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> خطأ فالشبكة: ${escapeHtml(e.message)}</div>`);
+    msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><svg class="zi zi-warning" aria-hidden="true" focusable="false"><use href="#zi-warning"/></svg> خطأ فالشبكة: ${escapeHtml(e.message)}</div>`);
   } finally {
-    btn.disabled = false;
-    btn.textContent = 'إرسال';
+    setBtnIdle(btn, 'إرسال', 'send');
   }
 }
 
@@ -1125,7 +1227,7 @@ async function loadTasks() {
       <input type="checkbox" ${t.status === 'done' ? 'checked' : ''} onchange="toggleTask('${t.id}', this.checked)">
       <span class="t-title">${escapeHtml(t.title)}</span>
       <span class="t-role">${ROLE_LABEL[t.agent_role] || t.agent_role}</span>
-      <button class="t-del" onclick="deleteTask('${t.id}')"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      <button class="t-del" onclick="deleteTask('${t.id}')"><svg class="zi zi-xmark" aria-hidden="true" focusable="false"><use href="#zi-xmark"/></svg></button>
     </div>
   `).join('');
 }
@@ -1197,7 +1299,7 @@ async function generateResume() {
   await _SB.from('agent_resumes').insert({
     project_id: CURRENT_PROJECT.id, user_id: CURRENT_UID, summary: data.text, version: (count || 0) + 1,
   });
-  toast('✓ تم توليد الملخص');
+  toast('تم توليد الملخص', 'ok');
   await loadResumes();
   await refreshUsage();
 }
@@ -1205,7 +1307,7 @@ async function generateResume() {
 async function archiveProject(id) {
   if (!confirm('متأكد بغيتي تأرشف هاد المشروع؟')) return;
   await _SB.from('agent_projects').update({ stage: 'archived' }).eq('id', id);
-  toast('✓ تمت الأرشفة');
+  toast('تمت الأرشفة', 'ok');
   await loadProjects();
 }
 
