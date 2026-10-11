@@ -274,6 +274,7 @@ footer{padding:52px 0 32px;border-top:1px solid var(--b1)}
 .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
 .reveal.in{opacity:1;transform:none}
 </style>
+<link rel="stylesheet" href="zunexa-download-center.css">
 </head>
 <body>
 
@@ -288,6 +289,7 @@ footer{padding:52px 0 32px;border-top:1px solid var(--b1)}
       <a href="#features">المزايا</a>
       <a href="#workflow">كيفاش كيخدم</a>
       <a href="#pricing">الأسعار</a>
+      <a href="#download">التحميل</a>
       <a href="#faq">الأسئلة</a>
     </div>
     <div class="nav-cta">
@@ -580,6 +582,12 @@ footer{padding:52px 0 32px;border-top:1px solid var(--b1)}
   </section>
 
   <!-- ═══════ FINAL CTA ═══════ -->
+  <section id="download" aria-label="تحميل التطبيق">
+    <div class="wrap">
+      <div data-zunexa-download data-zdc-page="landing"></div>
+    </div>
+  </section>
+
   <section class="final-cta">
     <div class="wrap">
       <h2 class="reveal">وقت تخلي الوكلاء يخدمو معاك</h2>
@@ -607,6 +615,7 @@ footer{padding:52px 0 32px;border-top:1px solid var(--b1)}
         <a href="#agents">الوكلاء</a>
         <a href="#features">المزايا</a>
         <a href="#pricing">الأسعار</a>
+        <a href="#download">التحميل</a>
       </div>
       <div class="foot-col">
         <h5>الحساب</h5>
@@ -647,5 +656,6 @@ const io = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 </script>
+<script src="zunexa-download-center.js" defer></script>
 </body>
 </html>

@@ -46,7 +46,9 @@ const _SB = supabase.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY);
 <link rel="icon" type="image/svg+xml" href="zunexa-logo.svg">
 <link rel="apple-touch-icon" href="zunexa-logo.svg">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="zunexa-download-center.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="zunexa-download-center.js" defer></script>
 <!-- الأيقونات: SVG مضمّنة (sprite) داخل هاد الملف — ما كاين حتى خط خارجي
      ولا ملف CSS خارجي، وبالتالي:
        • ما كاين 404 على ملفات الخطوط (الأيقونات ماشي خط، هي رسوم SVG)
@@ -522,6 +524,9 @@ button .zi,a .zi{margin-inline-end:.05em}
       <small>Project Intelligence Agent</small>
     </div>
   </div>
+  <button type="button" class="tb-back tb-download" id="downloadAppBtn" onclick="if(window.ZunexaDownloadCenter)ZunexaDownloadCenter.openDialog({page:'agent'})" aria-label="تحميل تطبيق Zunexa" title="تحميل التطبيق">
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="currentColor"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>
+  </button>
   <div class="tb-usage" id="tbUsage">
     <span>التوكنات: <b id="tokLabel">—</b></span>
     <div class="usage-bar"><i id="tokBar" style="width:0%"></i></div>

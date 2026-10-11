@@ -285,8 +285,10 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="zunexa-download-center.js" defer></script>
     <!-- Google Identity Services — powers One Tap / Auto-Select sign-in -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="zunexa-download-center.css">
 </head>
 <body>
 <div class="bg-layer"></div>
@@ -432,6 +434,10 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
       </div>
     </div>
 
+  </div>
+
+  <div class="zdc-slot" style="width:100%;max-width:440px;margin-top:18px">
+    <div data-zunexa-download data-zdc-compact data-zdc-page="index"></div>
   </div>
 </div>
 

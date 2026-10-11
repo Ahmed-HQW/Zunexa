@@ -52,6 +52,7 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="zunexa-download-center.js" defer></script>
 <!-- PERFORMANCE FIX (2026-09-17): pdf.js, jszip, highlight.js, jsQR,
      mammoth and xlsx were all previously loaded here as render-blocking
      script tags in <head> — none of them are needed to show the first
@@ -73,6 +74,7 @@
 pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5px}.hljs{color:#abb2bf;background:#282c34}.hljs-comment,.hljs-quote{color:#5c6370;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#c678dd}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#e06c75}.hljs-literal{color:#56b6c2}.hljs-addition,.hljs-attribute,.hljs-meta .hljs-string,.hljs-regexp,.hljs-string{color:#98c379}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#d19a66}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#61aeee}.hljs-built_in,.hljs-class .hljs-title,.hljs-title.class_{color:#e6c07b}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}
 </style>
 <link rel="stylesheet" href="zunexa-touch.css">
+<link rel="stylesheet" href="zunexa-download-center.css">
 <style>
 /* ════════════════════════════════════════════════════════
    THEME TRANSITION — smooth light↔dark (Zalij) crossfade
@@ -1422,6 +1424,9 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <div class="sb-uplan"  id="uPlan">—</div>
       <div class="sb-uemail" id="uEmail">—</div>
     </div>
+    <button type="button" class="user-icon-button" id="downloadAppBtn" onclick="openDownloadsMenu()" aria-label="تحميل تطبيق Zunexa" title="تحميل التطبيق">
+      <svg class="download-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>
+    </button>
   </div>
 
   <!-- Billing -->
@@ -2283,39 +2288,15 @@ function detectZxPlatform() {
   return 'unknown';
 }
 
-const ZX_DOWNLOAD_MAP = {
-  android: { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_signed.apk',            label: 'تطبيق Android (APK)' },
-  linux:   { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_0.1.0_amd64.AppImage',    label: 'تطبيق Linux (AppImage)' },
-  debian:  { url: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/zunexa_0.1.0_amd64.deb', label: 'تطبيق Debian (DEB)' },
-  windows: { url: 'app/windows/zunexa.exe',                   label: 'تطبيق Windows (EXE)' },
-};
-
-// Linux .deb alternative (Debian/Ubuntu-family) — offered alongside the
-// AppImage default above, since a distro can't be told apart from the
-// user agent alone.
-const ZX_LINUX_DEB_URL = 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/linux/zunexa_0.1.0_amd64.deb';
-
+/* Download Center (zunexa-download-center.js): stable GitHub Releases URLs,
+   consent-gated analytics, install guides. Replaces the old hard-coded
+   Hugging Face map. Unsupported platforms (iOS/macOS/Windows) get a clear
+   message there; the PWA install stays available via installPWA(). */
 function openDownloadsMenu() {
-  const platform = detectZxPlatform();
-  const target = ZX_DOWNLOAD_MAP[platform];
-
-  if (target) {
-    // Direct download to the device — matched to the detected OS.
-    const a = document.createElement('a');
-    a.href = target.url;
-    a.download = '';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    toast('⬇ جاري تحميل ' + target.label);
-    return;
-  }
-
-  // iOS / Mac / unknown: no native binary — offer the PWA install instead.
-  if (platform === 'ios') {
-    toast('📲 من Safari: زر مشاركة ⬆ ثم "إضافة إلى الشاشة الرئيسية"');
+  if (window.ZunexaDownloadCenter) {
+    window.ZunexaDownloadCenter.openDialog({ page: 'ai', webAppUrl: null });
   } else {
-    installPWA();
+    toast('تعذّر تحميل مركز التحميل — أعد تحميل الصفحة');
   }
 }
 
