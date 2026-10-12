@@ -30,16 +30,16 @@
   /* ------------------------------------------------------------------ *
    * Configuration (override with window.ZUNEXA_DL_CONFIG before load)
    * ------------------------------------------------------------------ */
-  var REPO_RELEASE = 'https://github.com/Ahmed-HQW/Zunexa/releases/tag/wiwi/';
+  var HF_BASE = 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/resolve/main/';
+  var HF_SUFFIX = '?download=true';
   var CFG = {
     product: 'zunexa-ai',
     version: '0.1.0',
     // Publishable (anon) key: public by design, protected by RLS + RPC checks.
     supabaseUrl: 'https://xrldhfsytysznyyhwjlr.supabase.co',
     supabaseKey: 'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F',
-    releasePage: 'https://github.com/Ahmed-HQW/Zunexa/releases/tag/wiwi',
-    releaseApi: 'https://api.github.com/repos/Ahmed-HQW/Zunexa/releases/tag/wiwi',
-    releasePrefix: 'https://github.com/Ahmed-HQW/Zunexa/releases/tag/wiwi',
+    releasePage: 'https://huggingface.co/datasets/ahmed12dev/app_zunexa/tree/main',
+    releaseApi: 'https://huggingface.co/api/datasets/ahmed12dev/app_zunexa/tree/main',
     webAppUrl: 'ai.html',
     consentKey: 'zunexa_dl_consent_v1',
     sessionKey: 'zunexa_dl_session_v1',
@@ -51,14 +51,14 @@
     }
   }
 
-  // Stable GitHub Releases URLs (never expiring signed asset URLs).
+  // Stable Hugging Face dataset URLs (resolve/main, no expiring signatures).
   var ARTIFACTS = {
     appimage: { id: 'appimage', platform: 'linux', format: 'AppImage', arch: 'x86_64 / AMD64',
-                file: 'zunexa_0.1.0_amd64.AppImage', url: REPO_RELEASE + 'zunexa_0.1.0_amd64.AppImage' },
+                file: 'zunexa_0.1.0_amd64.AppImage', url: HF_BASE + 'zunexa_0.1.0_amd64.AppImage' + HF_SUFFIX },
     deb:      { id: 'deb', platform: 'linux', format: '.deb', arch: 'AMD64',
-                file: 'zunexa_0.1.0_amd64.deb', url: REPO_RELEASE + 'zunexa_0.1.0_amd64.deb' },
+                file: 'zunexa_0.1.0_amd64.deb', url: HF_BASE + 'zunexa_0.1.0_amd64.deb' + HF_SUFFIX },
     apk:      { id: 'apk', platform: 'android', format: 'APK', arch: null,
-                file: 'zunexa_signed.apk', url: REPO_RELEASE + 'zunexa_signed.apk' }
+                file: 'zunexa_signed.apk', url: HF_BASE + 'zunexa_signed.apk' + HF_SUFFIX }
   };
   var ARTIFACT_IDS = ['appimage', 'deb', 'apk'];
 
@@ -241,7 +241,10 @@
       del: 'Delete my download records',
       delDone: 'Your download records were deleted.',
       delFail: 'Could not delete your records. Try again later.',
-      close: 'Close'
+      close: 'Close',
+      winLabel: 'Zunexa AI for Windows', winStatus: 'In development', winBtn: 'In development mode',
+      winNote: 'The Windows app is in development mode and is not available to download yet. You can keep using the web app meanwhile.',
+      metaStatus: 'Status'
     },
     ar: {
       title: 'حمّل تطبيق Zunexa AI',
@@ -287,7 +290,10 @@
       del: 'احذف سجلات التحميل الخاصة بي',
       delDone: 'تم حذف سجلات التحميل الخاصة بك.',
       delFail: 'تعذّر حذف السجلات. حاول لاحقاً.',
-      close: 'إغلاق'
+      close: 'إغلاق',
+      winLabel: 'Zunexa AI لنظام Windows', winStatus: 'قيد التطوير', winBtn: 'قيد التطوير',
+      winNote: 'تطبيق Windows قيد التطوير حالياً وغير متاح للتحميل بعد. يمكنك متابعة استعمال تطبيق الويب في الوقت الحالي.',
+      metaStatus: 'الحالة'
     }
   };
   function pickLang(opt) {
@@ -383,7 +389,7 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Release verification (GitHub Releases API, cached, optional)
+   * Release verification (Hugging Face tree API, cached, optional)
    * ------------------------------------------------------------------ */
   var release = { promise: null, assets: null, ok: false };
   function verifyRelease() {
@@ -396,14 +402,13 @@
       } catch (e) {}
     }
     if (typeof global.fetch !== 'function') return (release.promise = Promise.resolve(release));
-    release.promise = withTimeout(global.fetch(CFG.releaseApi, { headers: { 'Accept': 'application/vnd.github+json' } }), 6000)
+    release.promise = withTimeout(global.fetch(CFG.releaseApi, { headers: { 'Accept': 'application/json' } }), 6000)
       .then(function (r) { if (!r.ok) throw new Error('status ' + r.status); return r.json(); })
       .then(function (j) {
         var map = {};
-        (j.assets || []).forEach(function (a) {
-          if (a && typeof a.name === 'string' && typeof a.browser_download_url === 'string' &&
-              a.browser_download_url.indexOf(CFG.releasePrefix) === 0) {
-            map[a.name] = { url: a.browser_download_url, size: Number(a.size) || 0 };
+        (Array.isArray(j) ? j : []).forEach(function (f) {
+          if (f && f.type === 'file' && typeof f.path === 'string' && f.path.indexOf('/') === -1) {
+            map[f.path] = { url: HF_BASE + encodeURIComponent(f.path) + HF_SUFFIX, size: Number(f.size) || 0 };
           }
         });
         release.assets = map; release.ok = true;
@@ -490,6 +495,9 @@
     inst.grid = el('ul', { 'class': 'zdc-grid' });
     ARTIFACT_IDS.forEach(function (id) { inst.cards[id] = buildCard(inst, id, uid); inst.grid.appendChild(inst.cards[id].li); });
 
+    inst.winCard = buildWindowsCard(inst);
+    inst.grid.appendChild(inst.winCard);
+
     var body = el('div', { 'class': 'zdc-body' }, [
       head, inst.hintEl, inst.noticeEl, inst.grid,
       el('p', { 'class': 'zdc-safe', text: t.safe }),
@@ -551,6 +559,17 @@
     return { li: li, badge: badge, link: link, status: status, sizeRow: sizeRow, sizeDd: sizeDd, available: true, guide: guide, label: label };
   }
 
+  // Windows: announced only. No link, no data-artifact => never tracked as a download.
+  function buildWindowsCard(inst) {
+    var t = inst.t;
+    var btn = el('button', { 'class': 'zdc-btn zdc-btn--soon', type: 'button', disabled: true, 'aria-disabled': 'true', text: t.winBtn });
+    return el('li', { 'class': 'zdc-card is-quiet zdc-card--soon' }, [
+      el('div', { 'class': 'zdc-card-top' }, [el('h3', { 'class': 'zdc-card-title', text: t.winLabel })]),
+      el('dl', { 'class': 'zdc-meta' }, [el('div', { 'class': 'zdc-meta-row' }, [el('dt', { text: t.metaStatus }), el('dd', { text: t.winStatus })])]),
+      el('div', { 'class': 'zdc-actions' }, [btn])
+    ]);
+  }
+
   function codeBlock(inst, cmd) {
     var t = inst.t;
     var code = el('code', { text: cmd });
@@ -579,12 +598,13 @@
       deleteMyRecords().then(function () { statusEl.textContent = t.delDone; }, function () { statusEl.textContent = t.delFail; });
     });
     inst.delBtn = delBtn;
-    currentUserId().then(function (id) { if (id) delBtn.hidden = false; });
+    var actions = el('p', { 'class': 'zdc-priv-actions', hidden: true }, [delBtn, statusEl]);
+    currentUserId().then(function (id) { if (id) { delBtn.hidden = false; actions.hidden = false; } });
     return el('section', { 'class': 'zdc-privacy', 'aria-labelledby': uid + '-priv' }, [
       el('h3', { 'class': 'zdc-priv-title', id: uid + '-priv', text: t.privTitle }),
       el('label', { 'class': 'zdc-consent', 'for': uid + '-consent' }, [cb, el('span', { text: t.consent })]),
       el('p', { 'class': 'zdc-priv-note', text: t.privNote }),
-      el('p', { 'class': 'zdc-priv-actions' }, [delBtn, statusEl])
+      actions
     ]);
   }
 
@@ -608,6 +628,7 @@
     var t = inst.t, p = inst.platform, rec = inst.recommended;
     var order = rec.concat(ARTIFACT_IDS.filter(function (i) { return rec.indexOf(i) === -1; }));
     order.forEach(function (id) { inst.grid.appendChild(inst.cards[id].li); });
+    inst.grid.appendChild(inst.winCard);
     ARTIFACT_IDS.forEach(function (id) {
       var c = inst.cards[id], isRec = rec.indexOf(id) !== -1;
       c.li.classList.toggle('is-recommended', isRec);
@@ -624,7 +645,7 @@
 
     if (native) inst.noticeEl.hidden = true;
     else {
-      inst.noticeText.textContent = p.category === 'unknown' ? t.hintUnknown : t.unsupported(os);
+      inst.noticeText.textContent = p.category === 'unknown' ? t.hintUnknown : (p.category === 'windows' ? t.winNote : t.unsupported(os));
       inst.noticeEl.hidden = false;
       if (p.category === 'unknown') inst.hintEl.textContent = '';
     }
