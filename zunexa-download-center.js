@@ -30,16 +30,16 @@
   /* ------------------------------------------------------------------ *
    * Configuration (override with window.ZUNEXA_DL_CONFIG before load)
    * ------------------------------------------------------------------ */
-  var REPO_RELEASE = 'https://github.com/Ahmed-HQW/Zunexa/releases/download/v0.1.0/';
+  var REPO_RELEASE = 'https://github.com/Ahmed-HQW/Zunexa/releases/tag/wiwi/';
   var CFG = {
     product: 'zunexa-ai',
     version: '0.1.0',
     // Publishable (anon) key: public by design, protected by RLS + RPC checks.
     supabaseUrl: 'https://xrldhfsytysznyyhwjlr.supabase.co',
     supabaseKey: 'sb_publishable_qtZyzLSPVYjH0yB0BJY8yg_2r2ct35F',
-    releasePage: 'https://github.com/Ahmed-HQW/Zunexa/releases/tag/v0.1.0',
-    releaseApi: 'https://api.github.com/repos/Ahmed-HQW/Zunexa/releases/tags/v0.1.0',
-    releasePrefix: 'https://github.com/Ahmed-HQW/Zunexa/releases/download/',
+    releasePage: 'https://github.com/Ahmed-HQW/Zunexa/releases/tag/wiwi',
+    releaseApi: 'https://api.github.com/repos/Ahmed-HQW/Zunexa/releases/tag/wiwi',
+    releasePrefix: 'https://github.com/Ahmed-HQW/Zunexa/releases/tag/wiwi',
     webAppUrl: 'ai.html',
     consentKey: 'zunexa_dl_consent_v1',
     sessionKey: 'zunexa_dl_session_v1',
