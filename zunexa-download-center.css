@@ -146,7 +146,7 @@
   background: #0A0B0D; border: 1px solid var(--zdc-line); border-radius: 10px; direction: ltr; text-align: left;
 }
 .zdc .zdc-code code {
-  flex: 1; min-width: 0; overflow-x: auto; white-space: pre; padding-block: 8px;
+  flex: 1; min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; padding-block: 8px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .82rem; color: var(--zdc-focus);
   background: none; border: 0;
 }
@@ -208,3 +208,11 @@ html.zdc-lock { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .zdc *, .zdc-dialog * { transition: none !important; animation: none !important; }
 }
+
+/* Windows: announced, not downloadable */
+.zdc .zdc-btn--soon, .zdc .zdc-btn--soon:hover { background: transparent; color: var(--zdc-dim); border: 1px dashed var(--zdc-copper); cursor: not-allowed; }
+.zdc .zdc-card--soon { border-style: dashed; }
+
+/* file name gets its own line so it never breaks mid-word */
+.zdc .zdc-meta-row:has(.zdc-file) { flex-direction: column; align-items: flex-start; gap: 2px; }
+.zdc .zdc-meta dd.zdc-file { text-align: start; direction: ltr; overflow-wrap: anywhere; }
