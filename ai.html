@@ -5875,6 +5875,10 @@ function zxBuildChipsHtml(chips) {
 }
 
 /* ── Local cache ──────────────────────────────────────────────────── */
+function zxCacheIsFresh(ts) {
+  const ageMs = Date.now() - (Number(ts) || 0);
+  return Number.isFinite(ageMs) && ageMs <= ZX_CHIPS_CACHE_TTL;
+}
 function zxReadChipsCache() {
   try {
     const raw = localStorage.getItem(ZX_CHIPS_CACHE_KEY);
@@ -5882,7 +5886,8 @@ function zxReadChipsCache() {
     const obj = JSON.parse(raw);
     const chips = zxSanitizeChips(obj && obj.chips);
     if (!chips.length) return null;
-    return { chips, ts: Number(obj.ts) || 0 };
+    const ts = Number(obj.ts) || 0;
+    return { chips, ts, stale: !zxCacheIsFresh(ts) };
   } catch (e) {
     return null; // corrupt JSON / storage blocked → behave as no cache
   }
@@ -5910,7 +5915,11 @@ function zxFallbackChips() {
 function zxGetChipsForRender() {
   if (zxChipsLive && zxChipsLive.length) return zxChipsLive.slice(0, ZX_CHIPS_LIMIT);
   const cached = zxReadChipsCache();
-  if (cached) return cached.chips.slice(0, ZX_CHIPS_LIMIT);
+  if (cached) {
+    // Keep stale data visible instantly, but make the TTL explicit so
+    // loadQuickChips() can decide whether a revalidation round-trip is needed.
+    return cached.chips.slice(0, ZX_CHIPS_LIMIT);
+  }
   return zxFallbackChips().slice(0, ZX_CHIPS_LIMIT);
 }
 
@@ -5969,6 +5978,12 @@ async function loadQuickChips() {
   renderWelcomeSuggestions();                 // instant paint: no flicker, never empty
 
   if (zxChipsInflight) return zxChipsInflight; // collapse duplicate concurrent calls
+
+  const cached = zxReadChipsCache();
+  if (cached && !cached.stale) {
+    zxChipsLive = cached.chips;
+    return Promise.resolve(cached.chips);
+  }
 
   zxChipsInflight = (async () => {
     try {
