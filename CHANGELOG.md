@@ -3,6 +3,37 @@
 All notable changes to the Zunexa front-end are documented in this file, merged from
 `CHANGELOG.md` and `changelog-ai-html.md`. Sorted newest first.
 
+## [Unreleased] — 2026-10-21 (Zunexa repair pass: agent_tasks 403, QA/fallback audit, greeting templates)
+
+### 🐛 Fixed
+- **`agent_tasks` REST 403 (production)** — root cause: the table had RLS policies defined correctly (`auth.uid() = user_id` on SELECT/INSERT/UPDATE/DELETE) but was **missing the underlying Postgres `GRANT`** for the `authenticated` role entirely (confirmed via `information_schema.role_table_grants`: only `postgres` and `service_role` had any privileges). PostgREST was returning 403 "permission denied for table agent_tasks" before RLS was ever evaluated. `agent_projects` had the correct grants for comparison.
+  Fix (migration `grant_authenticated_agent_tasks`, applied directly to production): `GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.agent_tasks TO authenticated;`. `anon` intentionally NOT granted — tasks stay authenticated-only, matching the table's existing RLS design.
+  Verify: re-queried `information_schema.role_table_grants` after applying — `authenticated` now shows SELECT/INSERT/UPDATE/DELETE.
+
+- **`agent_tasks` query performance** — the reported failing request (`select=*&project_id=eq.<uuid>&order=created_at.desc`) had no composite index to serve it; only single-column indexes on `project_id` and `status` existed. Added `idx_agent_tasks_project_created` on `(project_id, created_at DESC)`, mirroring the existing `idx_agent_messages_project` pattern on the sibling table.
+
+### 🔍 Root cause identified, fix requires explicit confirmation (NOT applied)
+- **`agent-planner` CORS failure** — this is **not a CORS configuration bug**. `supabase functions list` confirms only `ai-openrouter`, `ai-gemini`, `ai-groq`, `ai-deepseek` are deployed; **`agent-planner` does not exist** as a deployed Edge Function, and no source for it was found among the provided files. `agent.html` calls `POST {EDGE_FUNCTIONS_BASE}/agent-planner` from two call sites (`sendAgentMessage()`, `generateResume()`) expecting `{project_id, agent_role, message, history}` → `{text}`, with the error contract `{error:'quota_exceeded'}` / `{error:'agent_role_not_enabled_for_plan'}`. A request to a non-existent function returns 404 with no CORS headers, which browsers report as a CORS failure — matching the exact symptom reported.
+  Not fixed yet: building this function means choosing an upstream AI provider and writing real business logic (quota check against `agent_plan_limits`/`agent_usage`, ownership/role checks against `agent_projects`, persistence to `agent_messages`) that is not specified anywhere in the provided files. Per the engineering rules ("do not replace working code with fabricated implementations," "do not add functionality not requested"), this needs an explicit decision from the project owner before being written and deployed, rather than being invented.
+
+### 🧹 Dead code removed
+- **`archon-brain-ext.js` (standalone file) — stale `zunexa_multi_llm_config.json` fetch removed.** This file is not loaded by any `<script src>` in `ai.html` or `agent.html` (the only `<script src="zunexa-brain-ext.js">` reference found is example text inside a documentation comment). `ai.html` instead carries its own inlined copy of the same extension, whose `ZUNEXA_CONFIG` had already been converted to an explicit no-op on 2026-09-04 after `zunexa_multi_llm_config.json` was disconnected. This standalone source file still had the original live `fetch('zunexa_multi_llm_config.json', …)`, `pickModel()` and `getFallbackChain()` logic branching on it. Replaced with the same no-op shape already shipped and verified in `ai.html`, so a future re-sync from this file can't reintroduce the stale fetch. `pickModel`/`getFallbackChain`/`load`/`get` signatures preserved; the two internal call sites (`ZUNEXA_CONFIG.load(...)`, `ZUNEXA_CONFIG.pickModel(...)`) needed no changes.
+  Verify: `node --check archon-brain-ext.js` passes.
+
+### ✅ Verified already clean (no action needed)
+- **`zunexa_qa_final.json` QA/fallback system** — audited across `ai.html`, `agent.html`, `archon-brain-ext.js`. The file itself does not exist in the provided tree. `loadKB()` in `ai.html` loads exclusively from the reviewed/approved Supabase `ai_knowledge` table (`is_active = true`); the local-JSON branch is hardcoded to `local = []` with no fetch. No remaining `fetch()`/`import` of `zunexa_qa_final.json`, `zunexa_qa.json`, `zunexa_qa_merged.json`, or `zunexa_qa_ai.json` exists; only historical comments reference the old filenames. This matches the "Expected behavior after removal" requirement already in place — no fabricated/canned fallback answers are substituted when a genuine AI request fails.
+
+### ➕ Added
+- **`greetings_templates.json`** — new dedicated template file for greeting/thanks/farewell/wellbeing-check intents across English, Modern Standard Arabic, Moroccan Darija (`ary`), French and Spanish (20 entries: 5 languages × 4 intents). Schema: `intent`, `lang`, `match` (recognized phrase variants), `templates` (with `{user_name}`), `templates_no_name` (used when no display name is available — never shows the literal placeholder). Gratitude (`thanks`) is its own intent, separate from `greeting`, so "gracias"/"merci"/"شكراً" are not misclassified. Matching is specified to apply to the full normalized message, not a substring match, to avoid classifying ordinary questions as greetings.
+  **Not yet wired into `ai.html`/`agent.html`** — integration (where in the message pipeline to check this file before falling through to the real AI provider) was not done this pass; see "Remaining" below.
+  Verify: `python3 -c "import json; json.load(open('greetings_templates.json', encoding='utf-8'))"` — valid UTF-8 JSON, no duplicate (lang, phrase) pairs.
+
+### ⏭️ Remaining / blocked
+- `greetings_templates.json` is created but **not integrated** into `ai.html`'s message pipeline yet — needs a decision on exactly where in `answer()`/`answerStandard()` to intercept (before KB search, before the AI call) and confirmation this doesn't change the existing `detectCat()`/content-filter order.
+- `agent-planner` Edge Function: genuinely missing, not merely misconfigured. Needs: (a) confirmation of which upstream AI provider to proxy to (`groq`/`gemini`/`openrouter`/`deepseek` are the ones with working keys today), (b) confirmation that it should persist to `agent_messages` server-side (inferred from `agent.html` never inserting there itself), before writing and deploying it.
+- Full repository QA/fallback sweep was limited to the files provided this session (`agent.html`, `ai.html`, `archon-brain-ext.js`, `CHANGELOG.md`, `CHANGELOG_entry.md`, the 4 Edge Function source files). `service-worker.js` and `vercel.json`, named explicitly in the mission brief, were not provided and were not audited.
+- 8 tables (`agent_knowledge`, `agent_logs`, `agent_memory`, `app_analytics_admins`, `app_download_rate_limits`, `redeem_codes`, `social_posts`, `user_interests`) have RLS enabled with zero policies (service_role-only access). Flagged for awareness in the previous pass; not changed — out of the scope that was explicitly reported.
+
 ## [Unreleased] — 2026-09-19 (Dynamic personalized quick chips)
 
 ### ✨ Added

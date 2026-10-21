@@ -1423,70 +1423,18 @@
      enabled) من الملف.
   ═══════════════════════════════════════════════════════════════════ */
   const ZUNEXA_CONFIG = (function () {
-    let _configPromise = null;
-
-    function load(url) {
-      if (_configPromise) return _configPromise;
-      _configPromise = fetch(url || 'zunexa_multi_llm_config.json', { cache: 'no-store' })
-        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-        .catch(e => {
-          console.warn('[ZunexaExt.Config] فشل تحميل zunexa_multi_llm_config.json:', e.message);
-          return null;
-        });
-      return _configPromise;
-    }
-
-    let _lastResolved = null;
-    function loadAndCache(url) {
-      return load(url).then(cfg => { _lastResolved = cfg; return cfg; });
-    }
-
-    // كتختار model_id مناسب لقرار zunexaDecide() معيّن، بمنطق يوازي
-    // routing_rules فالملف (بلا eval).
-    function pickModel(decision, cfg) {
-      cfg = cfg || _lastResolved;
-      if (!cfg || !Array.isArray(cfg.models)) return null;
-
-      const route = decision && decision.route;
-      const meta  = (decision && decision.meta) || {};
-
-      // قواعد 1-2: هاد الـ routes ما كتحتاجش LLM أصلاً
-      if (route === 'lite_instant' || route === 'cache' || route === 'math' || route === 'date') {
-        return null;
-      }
-
-      const enabledModels = cfg.models.filter(m => m.enabled !== false);
-      const byId = id => enabledModels.find(m => m.id === id);
-      const byRole = role => enabledModels.find(m => m.role === role);
-
-      // قاعدة 3: وضع الكود → نموذج الكود المتخصص
-      if (meta.codingMode) {
-        const coding = byRole('coding_specialist');
-        if (coding) return coding;
-      }
-
-      // قاعدة 5: تصنيف سريع → النموذج السريع
-      if (meta.intent === 'quick_classification') {
-        const fast = byRole('fast_fallback');
-        if (fast) return fast;
-      }
-
-      // قاعدة 4 + الافتراضي: النموذج الأساسي حسب defaults.primary_model
-      const defaultId = cfg.defaults && cfg.defaults.primary_model;
-      return (defaultId && byId(defaultId)) || byRole('primary_general') || enabledModels[0] || null;
-    }
-
-    // سلسلة fallback مرتبة (model objects) حسب fallback_chain فالملف
-    function getFallbackChain(cfg, key) {
-      cfg = cfg || _lastResolved;
-      if (!cfg || !cfg.fallback_chain) return [];
-      const ids = cfg.fallback_chain[key] || [];
-      return ids
-        .map(id => (cfg.models || []).find(m => m.id === id))
-        .filter(m => m && m.enabled !== false);
-    }
-
-    return { load: loadAndCache, get: () => _lastResolved, pickModel, getFallbackChain };
+    // zunexa_multi_llm_config.json disconnected 2026-09-04 — it was always
+    // an empty {} placeholder, so pickModel()/getFallbackChain() always fell
+    // through to null/[]. This standalone source file still had the live
+    // fetch() for it (the inline copy in ai.html was already fixed to this
+    // same no-op; this brings the standalone file in line with it so a
+    // future re-sync from this file doesn't reintroduce the stale fetch).
+    // Kept as explicit no-ops instead of dead branching logic, so any
+    // future caller sees exactly what's live: single default model, no
+    // fallback chain, no per-role routing, until a real config is wired in.
+    function pickModel() { return null; }
+    function getFallbackChain() { return []; }
+    return { load: () => Promise.resolve(null), get: () => null, pickModel, getFallbackChain };
   })();
 
   /* ═══════════════════════════════════════════════════════════════════

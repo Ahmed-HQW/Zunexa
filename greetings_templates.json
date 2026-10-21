@@ -1,0 +1,282 @@
+{
+  "_schema": {
+    "version": "1.0.0",
+    "placeholder": "{user_name}",
+    "fields": {
+      "intent": "greeting | farewell | thanks | wellbeing_check",
+      "lang": "BCP-47-ish code: en, ar, ary (Moroccan Darija), fr, es",
+      "match": "lowercased/trimmed phrases and variants this entry recognizes",
+      "templates": "one or more response templates; pick one at random or round-robin",
+      "templates_no_name": "used when no {user_name} is available — never show the literal placeholder or invent a name"
+    },
+    "matching_notes": "Matching must be applied to a normalized, trimmed, lowercased, punctuation-stripped copy of the user's message, and only when that normalized message IS one of the match variants (or differs by trivial repeated letters/diacritics) — not merely contains one as a substring — to avoid classifying normal questions as greetings."
+  },
+  "entries": [
+    {
+      "intent": "greeting",
+      "lang": "en",
+      "match": ["hello", "hi", "hey", "yo", "hiya", "heya", "hi there", "hello there", "good morning", "good afternoon", "good evening", "morning", "evening"],
+      "templates": [
+        "Hello, {user_name}! How are you?",
+        "Hey {user_name}! Good to see you — how can I help?",
+        "Hi {user_name}! What can I do for you today?"
+      ],
+      "templates_no_name": [
+        "Hello! How are you?",
+        "Hey there! How can I help?",
+        "Hi! What can I do for you today?"
+      ]
+    },
+    {
+      "intent": "wellbeing_check",
+      "lang": "en",
+      "match": ["how are you", "how are you doing", "how's it going", "hows it going", "how are things", "whats up", "what's up", "wassup", "sup"],
+      "templates": [
+        "I'm doing great, thanks for asking, {user_name}! How about you?",
+        "All good here, {user_name}! How are you doing?"
+      ],
+      "templates_no_name": [
+        "I'm doing great, thanks for asking! How about you?",
+        "All good here! How are you doing?"
+      ]
+    },
+    {
+      "intent": "thanks",
+      "lang": "en",
+      "match": ["thanks", "thank you", "thx", "ty", "thanks a lot", "thank you so much", "much appreciated", "appreciate it"],
+      "templates": [
+        "You're welcome, {user_name}! Happy to help.",
+        "Anytime, {user_name}!"
+      ],
+      "templates_no_name": [
+        "You're welcome! Happy to help.",
+        "Anytime!"
+      ]
+    },
+    {
+      "intent": "farewell",
+      "lang": "en",
+      "match": ["bye", "goodbye", "see you", "see ya", "take care", "later", "cya"],
+      "templates": [
+        "Goodbye, {user_name}! Take care.",
+        "See you later, {user_name}!"
+      ],
+      "templates_no_name": [
+        "Goodbye! Take care.",
+        "See you later!"
+      ]
+    },
+    {
+      "intent": "greeting",
+      "lang": "ar",
+      "match": ["السلام عليكم", "السلام عليكم ورحمة الله", "وعليكم السلام", "مرحبا", "مرحباً", "أهلا", "أهلاً", "أهلا وسهلا", "أهلاً وسهلاً", "صباح الخير", "مساء الخير"],
+      "templates": [
+        "وعليكم السلام {user_name}! كيف حالك؟",
+        "أهلاً {user_name}! كيف حالك؟",
+        "مرحباً بك {user_name}! كيف يمكنني مساعدتك؟"
+      ],
+      "templates_no_name": [
+        "وعليكم السلام! كيف حالك؟",
+        "أهلاً بك! كيف حالك؟",
+        "مرحباً! كيف يمكنني مساعدتك؟"
+      ]
+    },
+    {
+      "intent": "wellbeing_check",
+      "lang": "ar",
+      "match": ["كيف حالك", "كيف الحال", "شو أخبارك", "ايش أخبارك", "اخبارك ايه"],
+      "templates": [
+        "أنا بخير، شكراً لسؤالك {user_name}! وأنت كيف حالك؟",
+        "الحمد لله بخير {user_name}، كيف حالك أنت؟"
+      ],
+      "templates_no_name": [
+        "أنا بخير، شكراً لسؤالك! وأنت كيف حالك؟",
+        "الحمد لله بخير، كيف حالك أنت؟"
+      ]
+    },
+    {
+      "intent": "thanks",
+      "lang": "ar",
+      "match": ["شكرا", "شكراً", "شكرا جزيلا", "شكراً جزيلاً", "جزاك الله خيرا", "جزاك الله خيراً", "يعطيك العافية"],
+      "templates": [
+        "العفو {user_name}! سعيد بمساعدتك.",
+        "لا شكر على واجب {user_name}!"
+      ],
+      "templates_no_name": [
+        "العفو! سعيد بمساعدتك.",
+        "لا شكر على واجب!"
+      ]
+    },
+    {
+      "intent": "farewell",
+      "lang": "ar",
+      "match": ["مع السلامة", "إلى اللقاء", "الى اللقاء", "وداعا", "وداعاً", "نراك لاحقا"],
+      "templates": [
+        "مع السلامة {user_name}! إلى اللقاء.",
+        "إلى اللقاء {user_name}، اعتن بنفسك."
+      ],
+      "templates_no_name": [
+        "مع السلامة! إلى اللقاء.",
+        "إلى اللقاء، اعتن بنفسك."
+      ]
+    },
+    {
+      "intent": "greeting",
+      "lang": "ary",
+      "match": ["سلام", "سلام عليكم", "سلام عليكم ورحمة الله", "اهلين", "أهلين", "صباح النور", "صباح الخير", "مساء النور", "مساء الخير"],
+      "templates": [
+        "سلام {user_name}! كيداير؟",
+        "أهلين {user_name}! كيدايرة؟",
+        "سلام عليكم {user_name}! لاباس عليك؟"
+      ],
+      "templates_no_name": [
+        "سلام! كيداير؟",
+        "أهلين! كيدايرة؟",
+        "سلام عليكم! لاباس؟"
+      ]
+    },
+    {
+      "intent": "wellbeing_check",
+      "lang": "ary",
+      "match": ["كيداير", "كيداير راك", "كيدايرة", "كيدايرة راكي", "لاباس", "لاباس عليك", "لاباس عليكم", "واش لاباس", "اخبارك", "اش خبارك", "كي راك"],
+      "templates": [
+        "لاباس الحمد لله {user_name}! وراك لاباس؟",
+        "هاني مزيان الحمد لله {user_name}، وراك كيداير؟"
+      ],
+      "templates_no_name": [
+        "لاباس الحمد لله! وراك لاباس؟",
+        "هاني مزيان الحمد لله، وراك كيداير؟"
+      ]
+    },
+    {
+      "intent": "thanks",
+      "lang": "ary",
+      "match": ["شكرا", "شكرا بزاف", "الله يعطيك الصحة", "صافي شكرا", "تبارك الله عليك"],
+      "templates": [
+        "بلا جميل {user_name}! فرحان نعاونك.",
+        "ماشي مشكل {user_name}، أنا هنا نعاونك."
+      ],
+      "templates_no_name": [
+        "بلا جميل! فرحان نعاونك.",
+        "ماشي مشكل، أنا هنا نعاونك."
+      ]
+    },
+    {
+      "intent": "farewell",
+      "lang": "ary",
+      "match": ["بسلامة", "الله يسلمك", "نتلاقاو", "على الطريق السالامة", "تهلا"],
+      "templates": [
+        "بسلامة {user_name}! نتلاقاو.",
+        "الله يسلمك {user_name}، تهلا."
+      ],
+      "templates_no_name": [
+        "بسلامة! نتلاقاو.",
+        "الله يسلمك، تهلا."
+      ]
+    },
+    {
+      "intent": "greeting",
+      "lang": "fr",
+      "match": ["bonjour", "salut", "coucou", "bonsoir", "bonne journee", "bonne journée"],
+      "templates": [
+        "Salut {user_name} ! Comment ça va ?",
+        "Bonjour {user_name} ! Comment puis-je vous aider ?"
+      ],
+      "templates_no_name": [
+        "Salut ! Comment ça va ?",
+        "Bonjour ! Comment puis-je vous aider ?"
+      ]
+    },
+    {
+      "intent": "wellbeing_check",
+      "lang": "fr",
+      "match": ["ca va", "ça va", "comment ca va", "comment ça va", "comment allez vous", "comment allez-vous", "tu vas bien"],
+      "templates": [
+        "Ça va très bien, merci {user_name} ! Et toi ?",
+        "Tout va bien {user_name}, et vous ?"
+      ],
+      "templates_no_name": [
+        "Ça va très bien, merci ! Et toi ?",
+        "Tout va bien, et vous ?"
+      ]
+    },
+    {
+      "intent": "thanks",
+      "lang": "fr",
+      "match": ["merci", "merci beaucoup", "merci bien", "je vous remercie"],
+      "templates": [
+        "Avec plaisir, {user_name} !",
+        "De rien {user_name}, content de vous aider !"
+      ],
+      "templates_no_name": [
+        "Avec plaisir !",
+        "De rien, content de vous aider !"
+      ]
+    },
+    {
+      "intent": "farewell",
+      "lang": "fr",
+      "match": ["au revoir", "a bientot", "à bientôt", "salut a plus", "a plus"],
+      "templates": [
+        "Au revoir {user_name} ! À bientôt.",
+        "À bientôt {user_name}, prenez soin de vous."
+      ],
+      "templates_no_name": [
+        "Au revoir ! À bientôt.",
+        "À bientôt, prenez soin de vous."
+      ]
+    },
+    {
+      "intent": "greeting",
+      "lang": "es",
+      "match": ["hola", "buenos dias", "buenos días", "buenas tardes", "buenas noches", "que tal", "qué tal"],
+      "templates": [
+        "¡Hola, {user_name}! ¿Cómo estás?",
+        "¡Hola {user_name}! ¿En qué puedo ayudarte?"
+      ],
+      "templates_no_name": [
+        "¡Hola! ¿Cómo estás?",
+        "¡Hola! ¿En qué puedo ayudarte?"
+      ]
+    },
+    {
+      "intent": "wellbeing_check",
+      "lang": "es",
+      "match": ["como estas", "cómo estás", "como te encuentras", "cómo te encuentras", "todo bien"],
+      "templates": [
+        "¡Muy bien, gracias por preguntar {user_name}! ¿Y tú?",
+        "Todo bien por aquí {user_name}, ¿y tú cómo estás?"
+      ],
+      "templates_no_name": [
+        "¡Muy bien, gracias por preguntar! ¿Y tú?",
+        "Todo bien por aquí, ¿y tú cómo estás?"
+      ]
+    },
+    {
+      "intent": "thanks",
+      "lang": "es",
+      "match": ["gracias", "muchas gracias", "muchisimas gracias", "muchísimas gracias", "te lo agradezco"],
+      "templates": [
+        "¡De nada, {user_name}! Un placer ayudarte.",
+        "¡Con gusto {user_name}!"
+      ],
+      "templates_no_name": [
+        "¡De nada! Un placer ayudarte.",
+        "¡Con gusto!"
+      ]
+    },
+    {
+      "intent": "farewell",
+      "lang": "es",
+      "match": ["adios", "adiós", "hasta luego", "nos vemos", "hasta pronto"],
+      "templates": [
+        "¡Adiós {user_name}! Hasta luego.",
+        "¡Hasta pronto {user_name}, cuídate!"
+      ],
+      "templates_no_name": [
+        "¡Adiós! Hasta luego.",
+        "¡Hasta pronto, cuídate!"
+      ]
+    }
+  ]
+}
