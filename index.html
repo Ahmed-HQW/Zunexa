@@ -388,6 +388,12 @@ body{font-family:'Rajdhani',sans-serif;background:var(--bg-void);color:var(--tex
         </div>
       </div>
       <div class="form-field">
+        <label for="su-phone">Phone <span style="text-transform:none;font-weight:400;color:var(--text-muted)">(optional)</span></label>
+        <div class="field-wrap"><span class="field-icon" aria-hidden="true">☎</span>
+          <input type="tel" id="su-phone" placeholder="+212 6XX XXX XXX" autocomplete="tel" inputmode="tel" maxlength="24"/>
+        </div>
+      </div>
+      <div class="form-field">
         <label for="su-password">Password</label>
         <div class="field-wrap"><span class="field-icon" aria-hidden="true">🔒</span>
           <input type="password" id="su-password" placeholder="Min 8 characters" autocomplete="new-password" minlength="8" required/>
@@ -629,10 +635,30 @@ async function handleSignIn(){
 }
 
 // ── Sign Up ──
+// Phone format check — loose E.164-ish validation. Phone is OPTIONAL:
+// an empty field is always valid and simply stored as null.
+function isValidPhone(val){
+  if (!val) return true;
+  return /^\+?[0-9\s().-]{6,24}$/.test(val);
+}
+
+// Normalize a phone string for storage: keep a leading "+" if present,
+// strip everything else down to digits. Returns null for an empty input
+// so we never write an empty string into the `phone` column.
+function normalizePhone(val){
+  const trimmed = (val || '').trim();
+  if (!trimmed) return null;
+  const hasPlus = trimmed.charAt(0) === '+';
+  const digits = trimmed.replace(/[^0-9]/g, '');
+  if (!digits) return null;
+  return (hasPlus ? '+' : '') + digits;
+}
+
 async function handleSignUp(){
   hideErr();
   const fname = document.getElementById('su-fname').value.trim();
   const email = document.getElementById('su-email').value.trim();
+  const phoneRaw = document.getElementById('su-phone').value.trim();
   const password = document.getElementById('su-password').value;
   const codeWrap = document.getElementById('su-code-wrap');
   const codeVal = (codeWrap && codeWrap.style.display !== 'none')
@@ -641,20 +667,35 @@ async function handleSignUp(){
 
   if (!fname) { shakeField('su-fname'); showToast('✕','Enter your name'); return; }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { shakeField('su-email'); showToast('✕','Valid email required'); return; }
+  if (!isValidPhone(phoneRaw)) { shakeField('su-phone'); showToast('✕','Enter a valid phone number, or leave it empty'); return; }
   if (password.length < 8) { shakeField('su-password'); showToast('✕','Min 8 characters'); return; }
+
+  const phone = normalizePhone(phoneRaw);
 
   // Auto-generate a username from the email — no separate field to fill
   // in or validate; can be changed later in Settings.
   const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g,'_').slice(0,16)
     + Math.floor(100 + Math.random()*900);
 
+  // Best-effort country code from the non-blocking geo lookup in <head>.
+  // Never required: ZX_GEO can still be null if the lookup hasn't
+  // resolved yet, is offline, or was blocked — in all of those cases
+  // we simply write null and let the user set it later in Settings.
+  const country = (window.ZX_GEO && window.ZX_GEO.countryCode) || null;
+
   const btn = document.getElementById('su-submit');
   btn.disabled = true;
   btn.classList.add('loading');
 
+  // `phone` and `full_name` travel in the auth user_metadata too, not
+  // just in the `profiles` upsert below — so a server-side
+  // "new user" trigger/function (e.g. a handle_new_user() trigger, or
+  // the N8N onboarding webhook on profiles) has them available even in
+  // the email-confirmation path, where the client-side upsert below is
+  // skipped because there is no session yet to satisfy RLS.
   const { data, error } = await _SB.auth.signUp({
     email, password,
-    options: { data: { username, first_name: fname } }
+    options: { data: { username, first_name: fname, full_name: fname, phone } }
   });
 
   btn.classList.remove('loading');
@@ -663,6 +704,8 @@ async function handleSignUp(){
   if (error) {
     const msg = /already registered/i.test(error.message)
       ? 'This email is already registered — try signing in instead.'
+      : /phone/i.test(error.message)
+      ? 'This phone number is already in use on another account.'
       : 'Could not create account — please try again.';
     showErr(msg);
     showToast('✕', msg);
@@ -675,16 +718,34 @@ async function handleSignUp(){
   // unhandled rejection and could strand the user on a blank/stuck
   // screen instead of showing "check your email". Guard it, and
   // never let a profile-write hiccup block the redirect to ai.html.
+  //
+  // Every column the signup form actually knows is written here.
+  // `plan`, `tokens_balance`, `role`, `referral_code` and
+  // `referral_credits` are deliberately NOT included: those stay on
+  // their DB defaults ('Free' / 500 / 'user' / a generated uuid / 0)
+  // and are only ever changed server-side via the redeem_plan_code RPC
+  // or an admin action — never trusted from the client. See the
+  // Rotation/trust note at the top of this file.
   if (data.user && data.session) {
     try {
-      await _SB.from('profiles').upsert({
+      const { error: profileError } = await _SB.from('profiles').upsert({
         id: data.user.id,
         username,
         first_name: fname,
+        full_name: fname,
         email,
+        phone,
+        country,
         current_theme: 'zalij-dark',
+        theme: 'zalij',
       });
-    } catch (e) { /* non-fatal — ai.html can self-heal the profile row on load */ }
+      if (profileError) {
+        console.error('Zunexa: profile upsert failed after signup', profileError);
+      }
+    } catch (e) {
+      console.error('Zunexa: profile upsert threw after signup', e);
+      // non-fatal — ai.html can self-heal the profile row on load
+    }
   }
 
   let plan = FREE_PLAN;
@@ -700,6 +761,18 @@ async function handleSignUp(){
     // Email confirmation required — redeem the code on first ai
     // load instead (no session yet to call the RPC with).
     if (codeVal) localStorage.setItem('zx_pending_plan_code', codeVal);
+
+    // Same reasoning for the profile fields: no session yet means RLS
+    // blocks the `profiles` upsert above. Stash what we collected here
+    // so ai.html's self-heal step (the one already referenced in the
+    // comment above the upsert call) can finish writing them once the
+    // user confirms their email and actually gets a session.
+    try {
+      localStorage.setItem('zx_pending_profile', JSON.stringify({
+        username, first_name: fname, full_name: fname, email, phone, country,
+      }));
+    } catch (e) { /* localStorage unavailable — non-fatal, same self-heal fallback applies */ }
+
     showEmailConfirmation(fname, email);
   }
 }
