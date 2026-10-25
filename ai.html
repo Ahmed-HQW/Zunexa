@@ -1291,14 +1291,6 @@ button:active:not(:disabled),.mode-chip:active{transform:scale(.97)}
 .persona-act-btn:hover{border-color:var(--gold);color:var(--gold)}
 .persona-act-btn.del:hover{border-color:var(--red);color:var(--red)}
 .persona-editor{margin-top:14px;padding-top:14px;border-top:1px solid var(--b1)}
-.voice-btn{
-  width:34px;height:34px;border-radius:8px;flex-shrink:0;
-  border:1px solid var(--b1);color:var(--tg);font-size:14px;
-  display:grid;place-items:center;transition:all var(--tr);
-}
-.voice-btn:hover{border-color:var(--bg);color:var(--gold)}
-.voice-btn.recording{border-color:var(--red);color:var(--red);animation:rec-pulse .8s ease infinite}
-@keyframes rec-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,77,109,.3)}50%{box-shadow:0 0 0 6px rgba(255,77,109,.0)}}
 
 .set-tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--b1);margin-bottom:16px;padding-bottom:2px;scrollbar-width:thin}
 .set-tab{padding:7px 12px;font-size:11.5px;color:var(--tg);border-radius:7px 7px 0 0;cursor:pointer;white-space:nowrap;transition:all var(--tr)}
@@ -1518,7 +1510,6 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
     <div class="input-shell">
       <input type="file" id="fileInput" accept="image/*,audio/*,.pdf,.docx,.xlsx,.xls,.txt,.csv,.json,.md,.html,.htm,.js,.py,.sh,.css,.xml,.yml,.yaml,.zip" style="display:none" onchange="onFilePicked(event)">
       <button class="attach-btn" id="attachBtn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف / صورة / PDF">📎</button>
-      <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="إملاء صوتي">🎤</button>
       <textarea
         class="chat-input" id="aiInput" rows="1"
         placeholder="اسألني أي شيء عن Zunexa أو التقنيات..."
@@ -1849,7 +1840,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       </select>
       <label class="field-label">السرعة</label>
       <input class="field-input" type="range" id="setVoiceSpeed" min="0.6" max="1.6" step="0.1" value="1" oninput="saveVoicePrefs()">
-      <p style="font-size:11px;color:var(--tg);line-height:1.6">تُستعمل هذه الإعدادات في الإدخال الصوتي (🎤) وفي القراءة الصوتية للردود (🔊 بجانب كل رد) — عبر Web Speech API المدمجة في المتصفح، بدون أي مفتاح API.</p>
+      <p style="font-size:11px;color:var(--tg);line-height:1.6">تُستعمل هذه الإعدادات فـ القراءة الصوتية للردود (🔊 بجانب كل رد) — عبر Web Speech API المدمجة في المتصفح، بدون أي مفتاح API.</p>
     </div>
 
     <!-- NOTIFICATIONS -->
@@ -2151,8 +2142,7 @@ let IDF       = {};          // IDF cache
 let kbReady   = false;
 let busy      = false;
 let webOn     = false;
-let recording = false;
-let recog     = null;
+
 let ctx       = [];          // conversation context (last 6)
 let hist      = JSON.parse(localStorage.getItem('zx_hist_v3') || '[]');
 
@@ -2342,7 +2332,6 @@ async function init() {
   await loadKB();
   initParticles();
   initPWAInstall();
-  initVoice();
   applyPageLang(localStorage.getItem('zx_page_lang') || 'ary');
   loadQuickChips();
   setChatFont(localStorage.getItem('zx_font') || 'rajdhani');
@@ -4382,105 +4371,116 @@ function findExactKBMatch(userQ) {
 }
 
 async function send() {
+  // Root cause of duplicate submissions (fixed 2026-10-24): `busy` used
+  // to be set to true AFTER `await checkSessionLimit()` below. That left
+  // an async gap — between this function being called and that await
+  // resolving — during which a second (or third...) rapid Enter/click
+  // invocation would also read `busy` as still false and pass this same
+  // guard, each going on to add its own message and call answer().
+  // `busy` is now locked synchronously, in the same tick as the call,
+  // before any `await` runs — closing that window completely. Disabling
+  // sendBtn alone never fixed this: Enter doesn't go through the button
+  // at all (see onKey()), so a disabled button never blocked it.
   if (busy) return;
   const inp = document.getElementById('aiInput');
   if (!inp) return;
   const q = inp.value.trim();
   if (!q) return;
   if (!ZX_AI_RATE.check()) return;
-  if (!(await checkSessionLimit())) return;
 
   busy = true;
   const sendBtn = document.getElementById('sendBtn');
   if (sendBtn) sendBtn.disabled = true;
-  inp.value = ''; resize(inp);
-
-  // Hide welcome
-  hideWelcomeScreens();
-
-  addMsg(q, 'user');
-
-  if (!containsBlockedContent(q)) zxTrackMessageInterest(q);
-
-  if (containsBlockedContent(q)) {
-    const refusal = '🚫 ما نقدرش نجاوب على هاد النوع ديال الطلبات — عندي حدود واضحة بخصوص المحتوى الجنسي الصريح أو العنيف. اسألني على شي حاجة أخرى وأنا معاك.';
-    addMsg(refusal, 'bot', 'blocked', 0, null, false, null, true);
-    await logMsg(q, refusal, 'blocked', 0);
-    clearFile();
-    busy = false;
-    if (sendBtn) sendBtn.disabled = false;
-    inp.focus();
-    return;
-  }
-
-  // Exact-match cache — skip API entirely on a known question
-  const cached = findExactKBMatch(q);
-  if (cached) {
-    addMsg(cached.a, 'bot', cached.src || 'cache', cached.w || 1, null, false, null, true);
-    ctx.push({ role:'user', text:q });
-    ctx.push({ role:'bot',  text:cached.a });
-    if (ctx.length > 12) ctx = ctx.slice(-12);
-    if (!tempChatOn) {
-      const existing = hist.findIndex(h => h.chatId === currentChatId);
-      const wasPinned = existing !== -1 && hist[existing].pinned;
-      if (existing !== -1) hist.splice(existing, 1);
-      hist.unshift({ chatId: currentChatId, t: q.slice(0,50), ts: Date.now(), pinned: wasPinned || false });
-      if (hist.length > 40) hist.length = 40;
-      localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
-      renderHist();
-    }
-    clearFile();
-    busy = false;
-    if (sendBtn) sendBtn.disabled = false;
-    inp.focus();
-    return;
-  }
-
-  addTyping();
 
   try {
-    const tool = await routeQuickCommand(q);
-    let res;
-    if (tool) {
-      res = tool;
-    } else {
+    if (!(await checkSessionLimit())) return;
+
+    inp.value = ''; resize(inp);
+
+    // Hide welcome
+    hideWelcomeScreens();
+
+    addMsg(q, 'user');
+
+    if (!containsBlockedContent(q)) zxTrackMessageInterest(q);
+
+    if (containsBlockedContent(q)) {
+      const refusal = '🚫 ما نقدرش نجاوب على هاد النوع ديال الطلبات — عندي حدود واضحة بخصوص المحتوى الجنسي الصريح أو العنيف. اسألني على شي حاجة أخرى وأنا معاك.';
+      addMsg(refusal, 'bot', 'blocked', 0, null, false, null, true);
+      await logMsg(q, refusal, 'blocked', 0);
+      clearFile();
+      return;
+    }
+
+    // Exact-match cache — skip API entirely on a known question
+    const cached = findExactKBMatch(q);
+    if (cached) {
+      addMsg(cached.a, 'bot', cached.src || 'cache', cached.w || 1, null, false, null, true);
+      ctx.push({ role:'user', text:q });
+      ctx.push({ role:'bot',  text:cached.a });
+      if (ctx.length > 12) ctx = ctx.slice(-12);
+      if (!tempChatOn) {
+        const existing = hist.findIndex(h => h.chatId === currentChatId);
+        const wasPinned = existing !== -1 && hist[existing].pinned;
+        if (existing !== -1) hist.splice(existing, 1);
+        hist.unshift({ chatId: currentChatId, t: q.slice(0,50), ts: Date.now(), pinned: wasPinned || false });
+        if (hist.length > 40) hist.length = 40;
+        localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
+        renderHist();
+      }
+      clearFile();
+      return;
+    }
+
+    addTyping();
+
+    try {
+      const tool = await routeQuickCommand(q);
+      let res;
+      if (tool) {
+        res = tool;
+      } else {
+        removeTyping();
+        thinkStart(q);
+        res = await answer(q);
+        thinkEnd();
+        addTyping();
+      }
       removeTyping();
-      thinkStart(q);
-      res = await answer(q);
+      if (!res || !res.text) res = { text: '⚠ خطأ في المعالجة. حاول مرة أخرى.', src: 'error', score: 0 };
+      addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl, true, res.moroccoSource);
+
+      // Update context
+      ctx.push({ role:'user', text:q });
+      ctx.push({ role:'bot',  text:res.text });
+      if (ctx.length > 12) ctx = ctx.slice(-12);
+
+      // Save history — one entry per thread (chat_id), not per message
+      if (!tempChatOn) {
+        const existing = hist.findIndex(h => h.chatId === currentChatId);
+        const wasPinned = existing !== -1 && hist[existing].pinned;
+        if (existing !== -1) hist.splice(existing, 1);
+        hist.unshift({ chatId: currentChatId, t: q.slice(0,50), ts: Date.now(), pinned: wasPinned || false });
+        if (hist.length > 40) hist.length = 40;
+        localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
+        renderHist();
+      }
+      clearFile();
+
+    } catch(err) {
+      console.error('Zunexa send() error:', err);
       thinkEnd();
-      addTyping();
+      removeTyping();
+      addMsg('⚠ خطأ في المعالجة. حاول مرة أخرى.', 'bot', 'error', 0, null, false, null, true);
     }
-    removeTyping();
-    if (!res || !res.text) res = { text: '⚠ خطأ في المعالجة. حاول مرة أخرى.', src: 'error', score: 0 };
-    addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl, true, res.moroccoSource);
-
-    // Update context
-    ctx.push({ role:'user', text:q });
-    ctx.push({ role:'bot',  text:res.text });
-    if (ctx.length > 12) ctx = ctx.slice(-12);
-
-    // Save history — one entry per thread (chat_id), not per message
-    if (!tempChatOn) {
-      const existing = hist.findIndex(h => h.chatId === currentChatId);
-      const wasPinned = existing !== -1 && hist[existing].pinned;
-      if (existing !== -1) hist.splice(existing, 1);
-      hist.unshift({ chatId: currentChatId, t: q.slice(0,50), ts: Date.now(), pinned: wasPinned || false });
-      if (hist.length > 40) hist.length = 40;
-      localStorage.setItem('zx_hist_v3', JSON.stringify(hist));
-      renderHist();
-    }
-    clearFile();
-
-  } catch(err) {
-    console.error('Zunexa send() error:', err);
-    thinkEnd();
-    removeTyping();
-    addMsg('⚠ خطأ في المعالجة. حاول مرة أخرى.', 'bot', 'error', 0, null, false, null, true);
+  } finally {
+    // Always runs — on every return above, on a thrown error, and on
+    // normal completion — so the lock can never get stuck on and block
+    // a legitimate later submission of the same or different text.
+    busy = false;
+    if (sendBtn) sendBtn.disabled = false;
+    inp.focus();
   }
-
-  busy = false;
-  if (sendBtn) sendBtn.disabled = false;
-  inp.focus();
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -5290,9 +5290,9 @@ function goToSettings() {
 const PLANS_INDIVIDUAL = [
   { id: 'free', name: 'Free', monthly: 0, yearly: 0,
     features: ['استعمال محدود يومياً', 'نموذج أساسي واحد', 'دعم عبر المجتمع'] },
-  { id: 'pro', name: 'Pro', monthly: 15, yearly: 12, featured: true, tag: 'الأكثر طلباً',
+  { id: 'pro', name: 'Pro', monthly: 7, yearly: 6, featured: true, tag: 'الأكثر طلباً',
     features: ['استعمال موسّع', 'كل نماذج Zunexa', 'أولوية فالاستجابة', 'دعم عبر الإيميل'] },
-  { id: 'max', name: 'Max', monthly: 70, yearly: 56,
+  { id: 'max', name: 'Max', monthly: 35, yearly: 28,
     features: ['استعمال بلا حدود تقريباً', 'أعلى جودة نماذج', 'أولوية قصوى', 'دعم مخصص'] },
 ];
 const PLANS_TEAM = [
@@ -8266,43 +8266,6 @@ function deletePersona(id) {
   toast('🗑 تم حذف الشخصية');
 }
 
-function initVoice() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    document.getElementById('voiceBtn').style.display = 'none';
-    return;
-  }
-  recog = new SpeechRecognition();
-  // Bug fix: this used to always hardcode 'ar-MA' here, so a saved
-  // voice-language preference only ever changed the dropdown's look —
-  // dictation itself silently kept listening in Arabic (Morocco) until
-  // the user touched the settings dropdown again in that same session.
-  const savedVoice = JSON.parse(localStorage.getItem('zx_voice') || '{}');
-  recog.lang = savedVoice.lang || 'ar-MA';
-  recog.interimResults = false;
-  recog.continuous = false;
-  recog.maxAlternatives = 1;
-
-  recog.onresult = e => {
-    const t = e.results[0][0].transcript;
-    document.getElementById('aiInput').value = t;
-    resize(document.getElementById('aiInput'));
-    stopVoice();
-    send();
-  };
-  recog.onerror = (e) => {
-    stopVoice();
-    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-      toast('🎙 يرجى السماح بالوصول إلى الميكروفون من إعدادات المتصفح');
-    } else if (e.error === 'no-speech') {
-      toast('🎙 لم يُسمع أي صوت — حاول مرة أخرى');
-    } else if (e.error !== 'aborted') {
-      toast('🎙 تعذّر التعرف على الصوت');
-    }
-  };
-  recog.onend = () => stopVoice();
-}
-
 function loadAllPrefsIntoUI() {
   loadProfileIntoUI();
   const font = localStorage.getItem('zx_font') || 'rajdhani';
@@ -8466,34 +8429,6 @@ function setSTab(name) {
   document.getElementById('tab-' + name).classList.add('on');
   document.getElementById('pane-' + name).classList.add('on');
   if (name === 'personas') renderPersonaList();
-}
-
-function startVoice() {
-  recording = true;
-  document.getElementById('voiceBtn').classList.add('recording');
-  document.getElementById('voiceBtn').textContent = '⏹';
-}
-
-function stopVoice() {
-  recording = false;
-  document.getElementById('voiceBtn').classList.remove('recording');
-  document.getElementById('voiceBtn').textContent = '🎤';
-}
-
-function toggleVoice() {
-  if (!recog) { toast('🎙 التعرف على الصوت غير مدعوم في هذا المتصفح'); return; }
-  if (recording) {
-    recog.stop();
-    stopVoice();
-  } else {
-    try {
-      recog.start();
-      startVoice();
-    } catch (err) {
-      stopVoice();
-      toast('🎙 تعذّر بدء التسجيل — حاول من جديد');
-    }
-  }
 }
 
 function toggleWeb() {

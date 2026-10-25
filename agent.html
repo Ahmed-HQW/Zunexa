@@ -674,6 +674,15 @@ let PROJECTS = [];
 let CURRENT_PROJECT = null;
 let CURRENT_ROLE = 'planner';
 let CHAT_HISTORY = [];
+// In-flight guard for sendAgentMessage(). btn.disabled alone does not
+// stop a duplicate submission here: Enter on #agentInput calls
+// sendAgentMessage() directly via its own onkeydown handler, completely
+// bypassing the send button and its disabled state. Without this flag,
+// typing and sending a second message before the first request's reply
+// arrives fires a second concurrent POST to agent-planner — duplicate
+// agent_messages rows and a second agent_usage token deduction for what
+// the user experienced as one in-progress conversation.
+let AGENT_SENDING = false;
 
 const ZX_TOAST_ICON_MAP = { 'ok': 'check', 'warn': 'warning', 'err': 'xmark' };
 /* toast(msg, type?)  type: 'ok' | 'warn' | 'err'  — أيقونة SVG بدل الرموز/الإيموجي.
@@ -1155,6 +1164,12 @@ async function loadAgentMessages() {
 }
 
 async function sendAgentMessage() {
+  // Synchronous lock, checked and set before ANY DOM mutation or async
+  // work — closes both the click path (btn.disabled, below) and the
+  // Enter-key path (#agentInput's own onkeydown, which calls this
+  // function directly and is not gated by the button at all).
+  if (AGENT_SENDING) return;
+
   const input = document.getElementById('agentInput');
   const text = input.value.trim();
   if (!text || !CURRENT_PROJECT) return;
@@ -1162,27 +1177,35 @@ async function sendAgentMessage() {
   const enabledAgents = Array.isArray(CURRENT_PROJECT.agents_enabled) ? CURRENT_PROJECT.agents_enabled : JSON.parse(CURRENT_PROJECT.agents_enabled || '[]');
   if (!enabledAgents.includes(CURRENT_ROLE)) { toast('هاد الوكيل ماشي مفعّل فهاد المشروع.'); return; }
 
-  const msgsEl = document.getElementById('agentMsgs');
-  const empty = msgsEl.querySelector('div[style*="text-align:center"]');
-  if (empty) empty.remove();
-  msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg user">${escapeHtml(text)}</div>`);
-  msgsEl.scrollTop = msgsEl.scrollHeight;
-  input.value = '';
-
+  AGENT_SENDING = true;
   const btn = document.getElementById('agentSendBtn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>';
 
-  const { data: { session } } = await _SB.auth.getSession();
-  if (!session) { toast('خاصك تدخل لحسابك.'); setBtnIdle(btn, 'إرسال', 'send'); return; }
-
   try {
+    const msgsEl = document.getElementById('agentMsgs');
+    const empty = msgsEl.querySelector('div[style*="text-align:center"]');
+    if (empty) empty.remove();
+    msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg user">${escapeHtml(text)}</div>`);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+    input.value = '';
+
+    const { data: { session } } = await _SB.auth.getSession();
+    if (!session) { toast('خاصك تدخل لحسابك.'); return; }
+
     const res = await fetch(`${EDGE_FUNCTIONS_BASE}/agent-planner`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${session.access_token}`,
         'apikey': ZX_SUPABASE_ANON_KEY,
+        // Idempotency key — see the matching check added server-side in
+        // agent-planner/index.ts. A genuine retry of the exact same
+        // click/Enter (e.g. a flaky network causing the browser itself
+        // to resend) carries the same key and is deduplicated there; a
+        // new, intentionally-resent copy of the same text gets a fresh
+        // key per call and goes through normally.
+        'X-Idempotency-Key': (crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`),
       },
       body: JSON.stringify({
         project_id: CURRENT_PROJECT.id,
@@ -1211,8 +1234,10 @@ async function sendAgentMessage() {
     msgsEl.scrollTop = msgsEl.scrollHeight;
     await refreshUsage();
   } catch (e) {
+    const msgsEl = document.getElementById('agentMsgs');
     msgsEl.insertAdjacentHTML('beforeend', `<div class="a-msg assistant" style="border-color:var(--red);color:var(--red)"><svg class="zi zi-warning" aria-hidden="true" focusable="false"><use href="#zi-warning"/></svg> خطأ فالشبكة: ${escapeHtml(e.message)}</div>`);
   } finally {
+    AGENT_SENDING = false;
     setBtnIdle(btn, 'إرسال', 'send');
   }
 }
