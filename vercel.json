@@ -4,9 +4,9 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/", "destination": "/dashboard.html" },
-    { "source": "/app", "destination": "/dashboard.html" },
-    { "source": "/home", "destination": "/landing.html" }
+    { "source": "/", "destination": "/ai.html" },
+    { "source": "/app", "destination": "/ai.html" },
+    { "source": "/home", "destination": "/ai.html" }
   ],
   "headers": [
     {
