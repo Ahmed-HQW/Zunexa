@@ -42,3 +42,8 @@
 - Edge Functions (`agent-planner`, `ai-*`) do not yet check `blocked_devices` / `is_banned`; only RLS and the client do.
 - `ZX_GOOGLE_CLIENT_ID` in `index.html` is still the placeholder (unchanged).
 - No end-to-end test with a real signup (email + Google) was run.
+
+### update and fix 
+- -fix all this- **'vercel.json كيدير rewrite من / لـ dashboard.html، وهاد الملف ماكاينش فالـ repo.
+robots.txt كيمنع ai.html، وهو التطبيق الرئيسي.
+ai.html كيحمّل zunexa-time-tracker.js والملف الحقيقي سميتو Zunexa-Time-Tracker.js. على Vercel الحروف الكبيرة والصغيرة مهمين، يعني غادي يعطي 404.**
