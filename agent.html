@@ -17,8 +17,9 @@ const _SB = supabase.createClient(ZX_SUPABASE_URL, ZX_SUPABASE_ANON_KEY);
 (async function() {
   try {
     const { data: { session } } = await _SB.auth.getSession();
-    if (!session) window.location.replace('index.html');
+    if (!session) { try { sessionStorage.setItem('zx_bounce', String(Date.now())); } catch (e) {} window.location.replace('index.html'); }
   } catch (e) {
+    try { sessionStorage.setItem('zx_bounce', String(Date.now())); } catch (e2) {}
     window.location.replace('index.html');
   }
 })();
@@ -823,8 +824,22 @@ function setPageLangSilent(lang) {
 /* ══════════════ AUTH + BOOTSTRAP ══════════════ */
 async function bootstrap() {
   const { data: { session } } = await _SB.auth.getSession();
-  if (!session) { window.location.replace('index.html'); return; }
+  if (!session) { try { sessionStorage.setItem('zx_bounce', String(Date.now())); } catch (e) {} window.location.replace('index.html'); return; }
   CURRENT_UID = session.user.id;
+
+  // Ban / blocked-device check (device id is created by ai.html on first visit)
+  try {
+    const dv = localStorage.getItem('zx_device_id');
+    if (dv) {
+      const { data: reg } = await _SB.rpc('zx_register_device', { p_device_id: dv, p_user_agent: navigator.userAgent });
+      if (reg && (reg.banned || reg.device_blocked)) {
+        await _SB.auth.signOut();
+        try { sessionStorage.setItem('zx_bounce', String(Date.now())); } catch (e) {}
+        window.location.replace('index.html');
+        return;
+      }
+    }
+  } catch (e) {}
 
   const { data: limitsRows, error: limitsErr } = await _SB.from('agent_plan_limits').select('*').order('sort_order');
   if (limitsErr) { toast('تعذر تحميل الخطط: ' + limitsErr.message); return; }

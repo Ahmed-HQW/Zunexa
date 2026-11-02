@@ -2045,6 +2045,12 @@ if (!_SB) {
   });
 }
 
+/* Sets an anti-loop flag so index.html's instant-redirect script does not bounce
+   the user straight back here when the session is really dead. */
+function zxLeaveToLogin() {
+  try { sessionStorage.setItem('zx_bounce', String(Date.now())); } catch (e) {}
+  window.location.replace('index.html');
+}
 (async () => {
   try {
     // Wait for the real client before touching .auth at all — see
@@ -2077,7 +2083,7 @@ if (!_SB) {
 
         if (error) {
           console.error('OAuth session error:', error);
-          window.location.replace('index.html');
+          zxLeaveToLogin();
           return;
         }
 
@@ -2097,7 +2103,7 @@ if (!_SB) {
     } = await sb.auth.getSession();
 
     if (error || !session) {
-      window.location.replace('index.html');
+      zxLeaveToLogin();
       return;
     }
 
@@ -2105,7 +2111,7 @@ if (!_SB) {
 
   } catch (err) {
     console.error('Authentication verification failed:', err);
-    window.location.replace('index.html');
+    zxLeaveToLogin();
   }
 })();
 /* ── Storage bucket used for chat attachments (images/PDF/text files).
@@ -2523,8 +2529,28 @@ async function zxEnsureGeo(){
 async function zxSaveGeoToProfile(uid, geo, existingCountry){
   if (!geo || !geo.country || existingCountry) return; // don't overwrite a set value
   try {
-    await _SB.from('profiles').update({ country: geo.country }).eq('id', uid);
+    await _SB.from('profiles').update({ country: geo.country, country_code: geo.countryCode || null, city: geo.city || null }).eq('id', uid);
   } catch (e) { /* column may not exist yet — non-fatal, purely best-effort */ }
+}
+
+/* Registers this browser's device id on the account (user_devices + profiles.device_id)
+   and enforces bans / blocked devices. Enforcement is ALSO server-side (RLS), this is UX. */
+async function zxRegisterDevice() {
+  try {
+    const { data, error } = await _SB.rpc('zx_register_device', {
+      p_device_id: getDeviceId(),
+      p_user_agent: navigator.userAgent
+    });
+    if (error) throw error;
+    if (data && (data.banned || data.device_blocked)) {
+      try { await _SB.auth.signOut(); } catch (e) {}
+      try { sessionStorage.setItem('zx_bounce', String(Date.now())); } catch (e) {}
+      alert('⛔ هاد الحساب أو الجهاز محظور. إلا كان هادشي غلط تواصل معانا.');
+      window.location.replace('index.html');
+    }
+  } catch (e) {
+    console.warn('zxRegisterDevice skipped:', e && e.message ? e.message : e);
+  }
 }
 
 async function loadUser() {
@@ -2543,6 +2569,19 @@ async function loadUser() {
     }
     const uid = session.user.id;
 
+    // Device registration (ban / blocked-device check) — fire & forget.
+    zxRegisterDevice().catch(() => {});
+
+    // Plan code typed at signup while email confirmation was ON: index.html parks it
+    // here because there was no session yet to call the RPC with.
+    try {
+      const pc = localStorage.getItem('zx_pending_plan_code');
+      if (pc) {
+        localStorage.removeItem('zx_pending_plan_code');
+        await _SB.rpc('redeem_plan_code', { code_input: pc });
+      }
+    } catch (e) {}
+
     // FIX: this used to select ('name, email, plan, avatar_initial') —
     // columns that don't exist on `profiles` at all. index.html's real
     // signUp() only ever writes id/username/first_name/email
@@ -2552,7 +2591,7 @@ async function loadUser() {
     // Guest/Free" symptom. Reading the real columns fixes it for good.
     const { data, error } = await _SB
       .from('profiles')
-      .select('username, first_name, email, avatar_url, app_settings, country')
+      .select('username, first_name, email, avatar_url, app_settings, country, plan')
       .eq('id', uid)
       .maybeSingle();
     if (error) throw error;
@@ -2587,7 +2626,7 @@ async function loadUser() {
     // the redeem_plan_code RPC + handle_new_user_tokens trigger — not on
     // profiles at all. Best-effort read with a safe Free fallback so a
     // missing/renamed table never breaks the whole user card.
-    let planLabel = 'Free';
+    let planLabel = u.plan || 'Free';
     try {
       const { data: planRow } = await _SB
         .from('user_plans')
@@ -2677,7 +2716,7 @@ async function onAvatarPicked(ev) {
     document.querySelectorAll('.msg.user .msg-av').forEach(el => renderAvatarInto(el));
 
     if (session) {
-      try { await _SB?.from('profiles').update({ avatar_url: url }).eq('id', session.user.id); }
+      try { await _SB?.from('profiles').update({ avatar_url: url }).eq('id', session.user.id); await _SB?.rpc('zx_refresh_storage_usage'); }
       catch (e) { console.warn('avatar_url column missing? run ZUNEXA_DB_SETUP_AVATAR.sql', e); }
     }
     toast('✓ تم تحديث الصورة الشخصية');
@@ -4183,6 +4222,9 @@ async function logMsg(prompt, response, src, score) {
       file_name:    (attachedFile && attachedFile.name) || null,
       created_at:   new Date().toISOString()
     });
+    if (uid) {
+      try { await _SB?.rpc('zx_track_request', { p_tokens: Math.round(score * 100) }); } catch (e) {}
+    }
   } catch(e){}
 }
 
@@ -6285,6 +6327,10 @@ async function uploadFileToSupabase(file) {
     const { error } = await _SB?.storage.from(ZX_BUCKET).upload(path, file, { upsert: false });
     if (error) throw error;
     const { data } = _SB?.storage.from(ZX_BUCKET).getPublicUrl(path);
+    try {
+      const { data: { session: s2 } } = await _SB.auth.getSession();
+      if (s2) _SB.rpc('zx_refresh_storage_usage').then(() => {}, () => {});
+    } catch (e) {}
     return (data && data.publicUrl) || null;
   } catch (e) {
     console.warn('Zunexa: Supabase Storage upload skipped/failed', e);

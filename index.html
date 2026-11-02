@@ -69,21 +69,30 @@
     // or other <script src>.
     (function(){
       try{
-        var len = localStorage.length;
-        for (var i = 0; i < len; i++){
+        // Anti-loop: ai.html / agent.html set this flag right before bouncing a
+        // dead session back here. While it is fresh we must NOT redirect again.
+        var b = sessionStorage.getItem('zx_bounce');
+        if (b && Date.now() - parseInt(b, 10) < 15000) return;
+
+        for (var i = 0, n = localStorage.length; i < n; i++){
           var k = localStorage.key(i);
-          // Only stop scanning once we find an actual auth-token key —
-          // an unrelated 'sb-' key earlier in the list must not short-
-          // circuit the loop before we reach the real session key.
           if (!(k && k.indexOf('sb-') === 0 && k.indexOf('-auth-token') !== -1)) continue;
           var raw = localStorage.getItem(k);
           if (!raw) continue;
-          var parsed = JSON.parse(raw);
-          var expiresAt = parsed && (parsed.expires_at || (parsed.session && parsed.session.expires_at));
-          var hasToken = parsed && (parsed.access_token || (parsed.session && parsed.session.access_token));
-          if (hasToken && (!expiresAt || expiresAt * 1000 > Date.now())){
+          var p = JSON.parse(raw);
+          var sess = (p && p.session) ? p.session : p;
+          if (!sess) continue;
+          var exp = sess.expires_at;
+          // Go immediately if the access token is still alive, OR it expired but a
+          // refresh_token exists (supabase-js refreshes it silently on ai.html).
+          // The old check dropped expired-but-refreshable sessions onto the login
+          // page first (slow + flash) before getSession() finally redirected.
+          if ((sess.access_token && (!exp || exp * 1000 > Date.now())) || sess.refresh_token){
+            document.documentElement.style.visibility = 'hidden'; // no login-page flash
+            // safety net: if navigation never happens (offline), show the page again
+            setTimeout(function(){ document.documentElement.style.visibility = ''; }, 2500);
             window.location.replace('ai.html');
-            break;
+            return;
           }
         }
       }catch(e){ /* fall through to normal page load / getSession() check below */ }
@@ -572,7 +581,7 @@ const FREE_PLAN = PLAN_DISPLAY.Free;
 async function redeemPlanCodeIfAny(codeVal){
   if (!codeVal || !codeVal.trim()) return null;
   try {
-    const { data, error } = await _SB.rpc('redeem_plan_code', { p_code: codeVal.trim().toUpperCase() });
+    const { data, error } = await _SB.rpc('redeem_plan_code', { code_input: codeVal.trim().toUpperCase() });
     if (error) {
       const messages = {
         invalid_code: 'Invalid code',
@@ -584,7 +593,18 @@ async function redeemPlanCodeIfAny(codeVal){
       showToast('✕', messages[error.message] || 'Could not activate code');
       return null;
     }
-    return data; // { plan, tokens_bonus }
+    if (data && data.success === false) {
+      const m2 = {
+        code_not_found: 'Invalid code',
+        code_inactive: 'This code is not active',
+        code_expired: 'This code has expired',
+        code_exhausted: 'This code has been fully redeemed',
+        not_authenticated: 'Please sign in first',
+      };
+      showToast('✕', m2[data.error] || 'Could not activate code');
+      return null;
+    }
+    return data; // { success, plan, expires_at }
   } catch (e) { return null; }
 }
 
@@ -681,7 +701,8 @@ async function handleSignUp(){
   // Never required: ZX_GEO can still be null if the lookup hasn't
   // resolved yet, is offline, or was blocked — in all of those cases
   // we simply write null and let the user set it later in Settings.
-  const country = (window.ZX_GEO && window.ZX_GEO.countryCode) || null;
+  const country = (window.ZX_GEO && window.ZX_GEO.country) || null;
+  const countryCode = (window.ZX_GEO && window.ZX_GEO.countryCode) || null;
 
   const btn = document.getElementById('su-submit');
   btn.disabled = true;
@@ -695,7 +716,7 @@ async function handleSignUp(){
   // skipped because there is no session yet to satisfy RLS.
   const { data, error } = await _SB.auth.signUp({
     email, password,
-    options: { data: { username, first_name: fname, full_name: fname, phone } }
+    options: { data: { username, first_name: fname, full_name: fname, phone, country, country_code: countryCode } }
   });
 
   btn.classList.remove('loading');
@@ -712,41 +733,9 @@ async function handleSignUp(){
     return;
   }
 
-  // Only write to `profiles` when we actually have a session — with
-  // email confirmation ON, data.session is null here and RLS will
-  // reject the insert (no auth.uid() yet). That used to throw an
-  // unhandled rejection and could strand the user on a blank/stuck
-  // screen instead of showing "check your email". Guard it, and
-  // never let a profile-write hiccup block the redirect to ai.html.
-  //
-  // Every column the signup form actually knows is written here.
-  // `plan`, `tokens_balance`, `role`, `referral_code` and
-  // `referral_credits` are deliberately NOT included: those stay on
-  // their DB defaults ('Free' / 500 / 'user' / a generated uuid / 0)
-  // and are only ever changed server-side via the redeem_plan_code RPC
-  // or an admin action — never trusted from the client. See the
-  // Rotation/trust note at the top of this file.
-  if (data.user && data.session) {
-    try {
-      const { error: profileError } = await _SB.from('profiles').upsert({
-        id: data.user.id,
-        username,
-        first_name: fname,
-        full_name: fname,
-        email,
-        phone,
-        country,
-        current_theme: 'zalij-dark',
-        theme: 'zalij',
-      });
-      if (profileError) {
-        console.error('Zunexa: profile upsert failed after signup', profileError);
-      }
-    } catch (e) {
-      console.error('Zunexa: profile upsert threw after signup', e);
-      // non-fatal — ai.html can self-heal the profile row on load
-    }
-  }
+  // The `profiles` row is created SERVER-SIDE by the handle_new_user() trigger
+  // (see zunexa_profiles_v2.sql) from the user_metadata sent above, so it works
+  // with email confirmation ON and for Google/GitHub sign-ins. No client upsert.
 
   let plan = FREE_PLAN;
   if (data.session) {
@@ -761,17 +750,6 @@ async function handleSignUp(){
     // Email confirmation required — redeem the code on first ai
     // load instead (no session yet to call the RPC with).
     if (codeVal) localStorage.setItem('zx_pending_plan_code', codeVal);
-
-    // Same reasoning for the profile fields: no session yet means RLS
-    // blocks the `profiles` upsert above. Stash what we collected here
-    // so ai.html's self-heal step (the one already referenced in the
-    // comment above the upsert call) can finish writing them once the
-    // user confirms their email and actually gets a session.
-    try {
-      localStorage.setItem('zx_pending_profile', JSON.stringify({
-        username, first_name: fname, full_name: fname, email, phone, country,
-      }));
-    } catch (e) { /* localStorage unavailable — non-fatal, same self-heal fallback applies */ }
 
     showEmailConfirmation(fname, email);
   }
