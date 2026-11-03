@@ -52,6 +52,8 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="zunexa-plans.js"></script>
+<script src="zunexa-actions.js" defer></script>
 <script src="zunexa-download-center.js" defer></script>
 <!-- PERFORMANCE FIX (2026-09-17): pdf.js, jszip, highlight.js, jsQR,
      mammoth and xlsx were all previously loaded here as render-blocking
@@ -3629,7 +3631,7 @@ function archonModeSystemPrompt(userText) {
   if (persona && persona.prompt) {
     withMode += `\n\nتعليمات الشخصية النشطة "${persona.name}": ${persona.prompt}`;
   }
-  return withMode;
+  return withMode + (window.ZunexaActions ? ZunexaActions.promptAddendum() : '');
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -4490,7 +4492,10 @@ async function send() {
       }
       removeTyping();
       if (!res || !res.text) res = { text: '⚠ خطأ في المعالجة. حاول مرة أخرى.', src: 'error', score: 0 };
+      let zxActs = [];
+      if (window.ZunexaActions && res && res.src !== 'tool') { const zx = ZunexaActions.extract(res.text); res.text = zx.text; zxActs = zx.actions; if (!res.text && zxActs.length) res.text = '✓ جاهز — أكّد الإجراء تحت:'; }
       addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl, true, res.moroccoSource);
+      if (zxActs.length) ZunexaActions.renderCards(zxActs);
 
       // Update context
       ctx.push({ role:'user', text:q });
@@ -5329,20 +5334,8 @@ function goToSettings() {
    never from a client-side field — same security posture as the
    Settings modal fix above.
 ════════════════════════════════════════════════════════════ */
-const PLANS_INDIVIDUAL = [
-  { id: 'free', name: 'Free', monthly: 0, yearly: 0,
-    features: ['استعمال محدود يومياً', 'نموذج أساسي واحد', 'دعم عبر المجتمع'] },
-  { id: 'pro', name: 'Pro', monthly: 7, yearly: 6, featured: true, tag: 'الأكثر طلباً',
-    features: ['استعمال موسّع', 'كل نماذج Zunexa', 'أولوية فالاستجابة', 'دعم عبر الإيميل'] },
-  { id: 'max', name: 'Max', monthly: 35, yearly: 28,
-    features: ['استعمال بلا حدود تقريباً', 'أعلى جودة نماذج', 'أولوية قصوى', 'دعم مخصص'] },
-];
-const PLANS_TEAM = [
-  { id: 'standard', name: 'Standard', monthly: 15, yearly: 12,
-    features: ['من 5 إلى 150 مستخدم', 'لوحة تحكم للفريق', 'دعم عبر الإيميل'] },
-  { id: 'premium', name: 'Premium', monthly: 70, yearly: 56, featured: true, tag: 'مُوصى بها',
-    features: ['من 5 إلى 150 مستخدم', 'كل الميزات ديال Max لكل عضو', 'مدير حساب مخصص', 'SLA'] },
-];
+const PLANS_INDIVIDUAL = ZX_PLANS.individual;
+const PLANS_TEAM = ZX_PLANS.team;
 
 let billingCycle = 'monthly';
 
@@ -6778,6 +6771,7 @@ async function toolDeepSearch(query) {
   } catch (e) { return { text: '⚠ تعذّر البحث حالياً.', src: 'tool', score: 0.1 }; }
 }
 
+window.addEventListener('load', () => { try { if (window.ZunexaActions) ZunexaActions.refreshGoogleStatus(); } catch (e) {} });
 /* ── BOOT ── */
 init();
 
