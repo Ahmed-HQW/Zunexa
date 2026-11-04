@@ -1,3 +1,20 @@
+## [Unreleased] — 2026-11-04 (Unified Connectors + Settings Control Center)
+
+### ✨ Added
+- **`zunexa-connectors.js`** — `ZunexaConnectors.call(name,args)` / `.fetchAll(spec)` / `.register(name,label,fn)`: fetch موحّد بالتوازي (timeout 8s، `Promise.all` مع عزل الأخطاء، قياس الزمن) لـ `google_status`, `calendar`, `tasks` (Supabase `zx_tasks` مع fallback محلي), `geo`, `device_location`, `providers`. الإجراءات تمر عبر `ZunexaActions._registry` (validate ثم run) فلا تُكرَّر القواعد الأمنية. مُتاح أيضاً كـ `ZunexaActions.connectors`.
+- **`providers` connector** — preflight `OPTIONS` لكل Edge Function (`ai-openrouter/gemini/groq/deepseek`)؛ 404 = غير منشورة (يكشف مباشرة غياب `ai-deepseek` و`agent-planner`).
+- **`zunexa-control.js` + تبويب "التحكم" فـ `settings.html`** — فحص حي للـ Connectors، عرض/حذف/تصدير/استيراد كل مفاتيح `zx_*`، مزامنة لـ `profiles.app_settings`. مفاتيح `sb-*` و`zx_api_keys` مستثناة من العرض والتصدير والاستيراد.
+
+### 🐛 Fixed
+- `zunexa-Time-Tracker.js` → `zunexa-time-tracker.js` (ai.html كيحمّله بالحروف الصغيرة؛ Vercel حساس للحالة = 404).
+- `robots.txt`: إزالة أي `Disallow` لـ `ai.html` إن وُجد.
+- `vercel.json`: أي rewrite لوجهة غير موجودة يُحوَّل إلى `/ai.html`.
+
+### ⏭️ Remaining
+- `google-action` Edge Function و`google_integration.sql` لم تُفحص (غير مرفقة)؛ عقدها مستنتج من `zunexa-actions.js`.
+- لم يُنفَّذ فحص حي لمشروع Supabase `xrldhfsytysznyyhwjlr`؛ استعمل تبويب "التحكم" ← حالة الـ Connectors للتحقق.
+- `agent-planner` و`ai-deepseek` غير منشورتين (راجع إدخال 2026-10-21).
+
 ## [Unreleased] — 2026-10-31 (profiles NULLs root cause, profiles v2 migration, instant login redirect)
 
 ### 🐛 Fixed

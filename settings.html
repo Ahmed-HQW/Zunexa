@@ -32,6 +32,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="zunexa-plans.js"></script>
 <script src="zunexa-actions.js" defer></script>
+<script src="zunexa-connectors.js" defer></script>
+<script src="zunexa-control.js" defer></script>
 <style>
 /* ════════════════════════════════════════════════════════
    THEME TRANSITION
@@ -353,6 +355,7 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <div class="set-tab" onclick="setSTab('referral')" id="tab-referral">الإحالة</div>
       <div class="set-tab" onclick="setSTab('billing')" id="tab-billing">الخطط والفوترة</div>
       <div class="set-tab" onclick="setSTab('integrations')" id="tab-integrations">الربط</div>
+      <div class="set-tab" onclick="setSTab('control')" id="tab-control">التحكم</div>
       <div class="set-tab" onclick="setSTab('account')" id="tab-account">الحساب</div>
     </div>
 
@@ -570,6 +573,25 @@ textarea.field-input{resize:vertical;min-height:64px;font-family:inherit;line-he
       <p style="font-size:11px;color:var(--tg);line-height:1.7;margin-top:12px">Zunexa ما كيقراش إيميلاتك. كيقدر غير يبعت إيميل أو يزيد حدث/مهمة بعد ما تأكد كل إجراء. تقدر تقطع الربط فأي وقت.</p>
     </div>
 
+    <!-- CONTROL CENTER (zx-control-center) -->
+    <div class="set-pane" id="pane-control">
+      <div class="billing-section-title" style="margin-top:0">حالة الـ Connectors</div>
+      <div id="ccConnectors"></div>
+      <button class="modal-save" id="ccRun" style="background:transparent;border:1px solid var(--bg);color:var(--gold)">↻ إعادة الفحص</button>
+
+      <div class="billing-section-title">كل إعدادات zx_* <span id="ccCount" style="color:var(--tg);font-weight:400"></span></div>
+      <input class="field-input" id="ccFilter" placeholder="🔍 فلترة المفاتيح...">
+      <div id="ccKeys" style="max-height:320px;overflow-y:auto"></div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="mini-ghost-btn" id="ccExport">⬇ تصدير</button>
+        <label class="mini-ghost-btn" style="cursor:pointer">⬆ استيراد<input type="file" id="ccImport" accept="application/json" style="display:none"></label>
+        <button class="mini-ghost-btn" id="ccPush">☁ مزامنة للحساب</button>
+      </div>
+      <button class="modal-save" id="ccReset" style="margin-top:14px;background:transparent;border:1px solid var(--red);color:var(--red)">🗑 إعادة ضبط كل الإعدادات المحلية</button>
+      <p style="font-size:11px;color:var(--tg);line-height:1.7;margin-top:10px">مفاتيح الجلسة (sb-*) ومفاتيح API (zx_api_keys) لا تُعرض ولا تُصدَّر ولا تُستورد.</p>
+    </div>
+
     <!-- ACCOUNT -->
     <div class="set-pane" id="pane-account">
       <label class="field-label">الصورة الشخصية</label>
@@ -660,6 +682,7 @@ function setSTab(name) {
   if (name === 'referral') loadReferralPanel();
   if (name === 'billing') renderPlans();
   if (name === 'integrations') zxLoadIntegrations();
+  if (name === 'control' && window.zxControlOpen) window.zxControlOpen();
 }
 
 async function saveProfileSettings() {
@@ -1378,7 +1401,7 @@ async function initSettingsPage() {
     // فتح تبويب معيّن مباشرة عبر ?tab=xxx (مثلاً settings.html?tab=billing)
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
-    const validTabs = ['profile','personas','prefs','voice','notif','memory','tools','referral','billing','account','integrations'];
+    const validTabs = ['profile','personas','prefs','voice','notif','memory','tools','referral','billing','account','integrations','control'];
     if (tab && validTabs.includes(tab)) setSTab(tab);
 
   } catch (e) {
