@@ -522,10 +522,13 @@
 
     function looksLikeMath(text) {
       if (!text) return false;
-      const t = text.trim();
-      // نتجنب false positive بحال "3-2-1 go" أو تواريخ (2024-01-01)
+      const t = ZunexaTokenizer.normalizeDigits(String(text)).trim();
+      /* ZX_MATH_GUARD: الرسالة كلها يجب أن تكون تعبيراً رياضياً صرفاً */
+      if (t.length > 60 || /[\r\n]/.test(t)) return false;
+      if (!/^[\d\s.+\-*\/^%()×÷]+$/.test(t.replace(/(sqrt|جذر)/gi, ''))) return false;
+      if (!/\d\s*[+\-*\/^%×÷]\s*[\d(]/.test(t)) return false;
       if (/^\d{4}[-\/]\d{1,2}[-\/]\d{1,2}$/.test(t)) return false;
-      return MATH_DETECT_RE.test(t);
+      return true;
     }
 
     // Tokenizer خاص بالرياضيات — يفصل الأرقام، العمليات، الأقواس

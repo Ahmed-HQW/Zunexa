@@ -6587,8 +6587,14 @@ const TOOL_KEYWORDS = {
 // routeQuickCommand() unchanged. Only fires when tools are enabled
 // and a clear keyword hits — ambiguous text falls through to the
 // normal KB/Brain pipeline instead of forcing a tool call.
+const ZX_STOP_ARGS = /^(how|is|the|what|whats|are|a|an|to|of|in|today|now|كيفاش|واش|شنو|هل|ما|هو|هي|كيف|اليوم|دابا)$/i;
+function zxToolArgOk(rest) {
+  const w = (rest || '').trim().split(/\s+/).filter(Boolean);
+  return w.length >= 1 && w.length <= 3 && !w.some(x => ZX_STOP_ARGS.test(x));
+}
 function rewriteAsToolCommand(q) {
   /* ZX_TOOL_GUARD: الرسائل الطويلة/متعددة الأسطر ليست أوامر أدوات */
+  if (/^\s*\//.test(q)) return null; /* ZX_ARG_GUARD: أمر صريح — لا تحويل */
   if (/[\r\n]/.test(q) || q.length > 80 || q.trim().split(/\s+/).length > 10) return null;
   const l = q.toLowerCase();
   const kwMatch = (kw) => {
@@ -6604,12 +6610,12 @@ function rewriteAsToolCommand(q) {
     // strip the matched keyword out, keep the rest as the tool's argument
     const rest = q.replace(new RegExp(hit, 'i'), '').trim();
     switch (tool) {
-      case 'weather':   return rest ? `/طقس ${rest}` : null; // needs a city
-      case 'map':       return rest ? `/خريطة ${rest}` : null;
-      case 'git':       return rest ? `/جيت ${rest}` : null;
+      case 'weather':   return zxToolArgOk(rest) ? `/طقس ${rest}` : null;
+      case 'map':       return zxToolArgOk(rest) ? `/خريطة ${rest}` : null;
+      case 'git':       return zxToolArgOk(rest) ? `/جيت ${rest}` : null;
       case 'news':      return `/اخبار ${rest}`; // news works with empty query too
-      case 'image':     return rest ? `/صورة ${rest}` : null;
-      case 'search':    return rest ? `/بحث ${rest}` : null;
+      case 'image':     return zxToolArgOk(rest) ? `/صورة ${rest}` : null;
+      case 'search':    return zxToolArgOk(rest) ? `/بحث ${rest}` : null;
       // translate/tts need a language code or are lower-confidence —
       // left to the Zunexa Brain / KB pipeline rather than force-routed.
       default: return null;
@@ -7352,10 +7358,13 @@ try {
 
     function looksLikeMath(text) {
       if (!text) return false;
-      const t = text.trim();
-      // نتجنب false positive بحال "3-2-1 go" أو تواريخ (2024-01-01)
+      const t = ZunexaTokenizer.normalizeDigits(String(text)).trim();
+      /* ZX_MATH_GUARD: الرسالة كلها يجب أن تكون تعبيراً رياضياً صرفاً */
+      if (t.length > 60 || /[\r\n]/.test(t)) return false;
+      if (!/^[\d\s.+\-*\/^%()×÷]+$/.test(t.replace(/(sqrt|جذر)/gi, ''))) return false;
+      if (!/\d\s*[+\-*\/^%×÷]\s*[\d(]/.test(t)) return false;
       if (/^\d{4}[-\/]\d{1,2}[-\/]\d{1,2}$/.test(t)) return false;
-      return MATH_DETECT_RE.test(t);
+      return true;
     }
 
     // Tokenizer خاص بالرياضيات — يفصل الأرقام، العمليات، الأقواس

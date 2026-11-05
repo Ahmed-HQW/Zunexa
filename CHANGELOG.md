@@ -1,3 +1,9 @@
+## [Unreleased] — 2026-11-05 (math hijack + tool arg guard)
+
+### 🐛 Fixed
+- `MathEngine.looksLikeMath` كانت تلتقط `10:00+01:00` / `Test 1 : ...` فتحل `0 + 1` وتمنع وصول الرسالة للنموذج. الآن الرسالة كلها يجب أن تكون تعبيراً رياضياً صرفاً (`archon-brain-ext.js` + النسخة المضمّنة فـ `ai.html`).
+- `rewriteAsToolCommand`: الأوامر الصريحة `/map ...` لم تعد تُحوَّل (كانت تنتج `/خريطة / X`)، وحجة الأداة محدودة بـ1–3 كلمات بلا كلمات استفهام (كانت `how is the weather` → `/طقس how is the`).
+
 ## [Unreleased] — 2026-11-05 (tool routing hijack fix)
 
 ### 🐛 Fixed
