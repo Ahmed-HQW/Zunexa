@@ -6588,9 +6588,18 @@ const TOOL_KEYWORDS = {
 // and a clear keyword hits — ambiguous text falls through to the
 // normal KB/Brain pipeline instead of forcing a tool call.
 function rewriteAsToolCommand(q) {
+  /* ZX_TOOL_GUARD: الرسائل الطويلة/متعددة الأسطر ليست أوامر أدوات */
+  if (/[\r\n]/.test(q) || q.length > 80 || q.trim().split(/\s+/).length > 10) return null;
   const l = q.toLowerCase();
+  const kwMatch = (kw) => {
+    const k = kw.toLowerCase();
+    if (/^[a-z0-9' \-]+$/.test(k)) {
+      return new RegExp('(^|[^a-z0-9_])' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-z0-9_])').test(l);
+    }
+    return l.includes(k);
+  };
   for (const [tool, keywords] of Object.entries(TOOL_KEYWORDS)) {
-    const hit = keywords.find(kw => l.includes(kw.toLowerCase()));
+    const hit = keywords.find(kwMatch);
     if (!hit) continue;
     // strip the matched keyword out, keep the rest as the tool's argument
     const rest = q.replace(new RegExp(hit, 'i'), '').trim();

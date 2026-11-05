@@ -1,3 +1,8 @@
+## [Unreleased] — 2026-11-05 (tool routing hijack fix)
+
+### 🐛 Fixed
+- `ai.html` `rewriteAsToolCommand()`: كلمة مفتاحية داخل كلمة أخرى (`map` فـ `open_maps`) كانت تحوّل رسالة كاملة لأمر `/خريطة` فلا تصل للنموذج ("لم أجد ... على الخريطة"). الآن: تجاهل الرسائل متعددة الأسطر أو أطول من 80 حرفاً/10 كلمات، ومطابقة بحدود الكلمة للكلمات اللاتينية. الأوامر الصريحة `/map` لم تتأثر.
+
 ## [Unreleased] — 2026-11-04 (Unified Connectors + Settings Control Center)
 
 ### ✨ Added
