@@ -1,3 +1,19 @@
+## [Unreleased] — 2026-11-05 (action hallucination guard + Supabase audit)
+
+### 🐛 Fixed
+- `ZunexaActions.extract()` تقبل الآن ` ```zx-action ` و` ```zx_action ` و` ```json ` (إن احتوى `action` معروفاً). كتل json العادية غير المرتبطة بإجراء تبقى بالنص.
+- `ZunexaActions.guard()` + ربطها فـ `ai.html send()`: إذا طلب المستخدم إجراءً وادّعى النموذج التنفيذ بلا كتلة، يُضاف تحذير صريح بدل هلوسة صامتة.
+- `promptAddendum`: منع صريح لقول «تم» بلا كتلة zx-action.
+
+### 🔍 Supabase audit (project xrldhfsytysznyyhwjlr)
+- كل Edge Functions `ACTIVE`: ai-openrouter/gemini/groq/deepseek, agent-planner, google-action. (إدخال 2026-10-21 عن غياب `agent-planner` لم يعد صحيحاً.)
+- RPCs موجودة: zx_google_status, zx_morocco_search, get_personalized_quick_chips, track_user_category, merge_device_interests, zx_register_device, zx_track_request.
+- جدولا `zx_tasks` و`shared_chats` غير موجودين.
+
+### ⏭️ Remaining
+- تشغيل `supabase/zx_tasks.sql` فـ SQL Editor (لم يُطبَّق آلياً).
+- `shared_chats` يحتاج SQL ديال `ZUNEXA_DB_SETUP_SHARED_CHATS.sql` (غير مرفق).
+
 ## [Unreleased] — 2026-11-05 (math hijack + tool arg guard)
 
 ### 🐛 Fixed

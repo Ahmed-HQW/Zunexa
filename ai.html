@@ -4493,7 +4493,7 @@ async function send() {
       removeTyping();
       if (!res || !res.text) res = { text: '⚠ خطأ في المعالجة. حاول مرة أخرى.', src: 'error', score: 0 };
       let zxActs = [];
-      if (window.ZunexaActions && res && res.src !== 'tool') { const zx = ZunexaActions.extract(res.text); res.text = zx.text; zxActs = zx.actions; if (!res.text && zxActs.length) res.text = '✓ جاهز — أكّد الإجراء تحت:'; }
+      if (window.ZunexaActions && res && res.src !== 'tool') { const zx = ZunexaActions.extract(res.text); res.text = zx.text; zxActs = zx.actions; if (!zxActs.length && ZunexaActions.guard) { res.text += ZunexaActions.guard(q, res.text); } if (!res.text && zxActs.length) res.text = '✓ جاهز — أكّد الإجراء تحت:'; }
       addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl, true, res.moroccoSource);
       if (zxActs.length) ZunexaActions.renderCards(zxActs);
 
