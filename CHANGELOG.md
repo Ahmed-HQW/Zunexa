@@ -1,3 +1,20 @@
+## [Unreleased] — 2026-11-06 (Intent Router v2: deterministic actions)
+
+### ✨ Added
+- **`zunexa-intent.js`** — Router حتمي (بلا LLM/شبكة) يحوّل الطلبات الصريحة (منبه، حدث، مهمة، إيميل، خريطة، موقع، قراءة التقويم) مباشرة إلى بطاقة تأكيد؛ عربية/دارجة/فرنسية/إنجليزية، أرقام هندية، تواريخ نسبية (غداً، الجمعة، بعد 3 أيام، 12 novembre، 15/11)، مدد ومجالات (11:00–11:30)، تذكير، سؤال واحد عند الغموض ثم دمج الجواب (`handle()`، صلاحية 5 دقائق)، حد 3 إجراءات، حظر الحقن (تجاهل التعليمات + إجراء).
+- المنطقة الزمنية عبر `Intl` (منطقة الجهاز، وإلا Africa/Casablanca) بلا إزاحة مكتوبة فالكود.
+- `ai.html`: `zxIntentStep()` قبل `routeQuickCommand`؛ إن بدا الطلب أمراً ولم يُفهم → `zxStructuredFallback()`: نموذج بـ JSON فقط + إعادة محاولة واحدة + رسالة خطأ صريحة؛ المزوّد الاحتياطي الضعيف (Pollinations/WebLLM) لا يُعتمد لاستخراج الإجراءات.
+- `ZunexaActions.fromIntent()` — إعادة تحقق (validate) من مخرجات الـRouter قبل البطاقة.
+- `tools/zx-intent-test.js` — اختبارات حتمية (`node tools/zx-intent-test.js`، 125+ حالة).
+- إيقاف الـRouter عند الحاجة: `localStorage.zx_intent_off = "1"`.
+
+### 🗑 Removed
+- `tools/zx-intent-router-core.js` و`tools/zx-router-test.js` (مسودة Qwen: 15 اختباراً فاشلاً من 33، غير مربوطة بـ ai.html).
+
+### ⏭️ Remaining
+- لا إجراء `list_tasks`/قراءة إيميل: تذهب للنموذج العادي.
+- `zx_tasks` غير موجود فـ Supabase حتى يُشغَّل `supabase/zx_tasks.sql` (إدخال 2026-11-05).
+
 ## [Unreleased] — 2026-11-05 (action hallucination guard + Supabase audit)
 
 ### 🐛 Fixed

@@ -54,6 +54,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="zunexa-plans.js"></script>
 <script src="zunexa-actions.js" defer></script>
+<script src="zunexa-intent.js" defer></script>
 <script src="zunexa-download-center.js" defer></script>
 <!-- PERFORMANCE FIX (2026-09-17): pdf.js, jszip, highlight.js, jsQR,
      mammoth and xlsx were all previously loaded here as render-blocking
@@ -4414,6 +4415,49 @@ function findExactKBMatch(userQ) {
   return KB.find(item => item.q && norm(item.q) === key) || null;
 }
 
+/* ZX_INTENT_ROUTER v2 — Router حتمي للإجراءات (zunexa-intent.js) + مسار JSON منظَّم احتياطي.
+   الترتيب: Router حتمي -> (إن بدا الطلب أمراً ولم يُفهم) نموذج بـ JSON فقط مع إعادة محاولة واحدة -> دردشة عادية.
+   المزوّد الاحتياطي الضعيف (Pollinations/WebLLM) لا يُعتمد عليه لاستخراج الإجراءات. */
+const ZX_WEAK_RE = /مزوّد احتياطي مجاني|WebLLM/;
+async function zxStructuredFallback(q) {
+  const I = window.ZunexaIntent, A = window.ZunexaActions;
+  if (typeof archonBrain !== 'function') return null;
+  if (typeof archonBrainRateLimitOk === 'function' && !archonBrainRateLimitOk()) return null;
+  const sys = I.structuredPrompt({});
+  const ask = (extra) => {
+    const msgs = [{ role: 'system', content: sys }, { role: 'user', content: q }];
+    if (extra) msgs.push({ role: 'user', content: extra });
+    return archonBrain(msgs, { temperature: 0.1, maxTokens: 300 });
+  };
+  let txt = await ask(), obj = null, weak = false;
+  for (let i = 0; i < 2; i++) {
+    if (!txt) break;
+    if (ZX_WEAK_RE.test(txt)) weak = true;
+    obj = I.parseModelJson(txt);
+    if (obj) break;
+    if (i === 0) txt = await ask('رجّع JSON واحد فقط بالشكل المطلوب، بلا أي نص آخر.');
+  }
+  if (weak) return { text: '⚠ المزوّد الذكي غير متاح دابا والنموذج الاحتياطي ضعيف، ما نقدرش نفهم هاد الطلب بدقة. عاود بصيغة مباشرة مثل: «ضبط منبه على 07:30» أو «حدث "اجتماع" غداً 11:00».', actions: null };
+  if (!obj) return { text: '⚠ ما قدرتش نحوّل طلبك لإجراء صحيح (النموذج ما رجّعش JSON صالح). عاود بصيغة أوضح مثل: «ضبط منبه على 07:30».', actions: null };
+  if (obj.action === 'none') return null;
+  if (obj.action === 'ask') return { text: String(obj.question || 'عطيني تفاصيل أكثر على الطلب.').slice(0, 300), actions: null };
+  const b = A.fromIntent([{ action: obj.action, args: obj.args || {} }]);
+  if (!b.actions.length) return { text: '⚠ ' + (b.errors.join(' · ') || 'إجراء غير صالح') + ' — عاود الطلب بتفاصيل أوضح.', actions: null };
+  return { text: 'فهمت طلبك وجهّزت الإجراء — راجع التفاصيل وأكّد من البطاقة:', actions: b.actions };
+}
+async function zxIntentStep(q) {
+  const I = window.ZunexaIntent, A = window.ZunexaActions;
+  if (!I || !A || typeof A.fromIntent !== 'function') return null;
+  let selfEmail = null;
+  try { const { data: { session } } = await _SB?.auth.getSession(); selfEmail = (session && session.user && session.user.email) || null; } catch (e) {}
+  const r = I.handle(q, { selfEmail });
+  if (!r.matched) return r.hint === 'action-like' ? await zxStructuredFallback(q) : null;
+  if (r.kind === 'blocked' || r.kind === 'cancelled' || r.ambiguous) return { text: r.text || r.question, actions: null };
+  const b = A.fromIntent(r.actions);
+  if (!b.actions.length) return { text: '⚠ ' + (b.errors.join(' · ') || 'إجراء غير صالح'), actions: null };
+  return { text: r.text + (b.errors.length ? '\n\n⚠ ' + b.errors.join(' · ') : ''), actions: b.actions };
+}
+
 async function send() {
   // Root cause of duplicate submissions (fixed 2026-10-24): `busy` used
   // to be set to true AFTER `await checkSessionLimit()` below. That left
@@ -4479,7 +4523,9 @@ async function send() {
     addTyping();
 
     try {
-      const tool = await routeQuickCommand(q);
+      let zxIntentActs = null, tool = null;
+      try { const it = await zxIntentStep(q); if (it) { tool = { text: it.text, src: 'tool', score: 1 }; zxIntentActs = it.actions; } } catch (e) { console.warn('[Zunexa] intent router:', e); }
+      if (!tool) tool = await routeQuickCommand(q);
       let res;
       if (tool) {
         res = tool;
@@ -4493,6 +4539,7 @@ async function send() {
       removeTyping();
       if (!res || !res.text) res = { text: '⚠ خطأ في المعالجة. حاول مرة أخرى.', src: 'error', score: 0 };
       let zxActs = [];
+      if (zxIntentActs && zxIntentActs.length) zxActs = zxIntentActs;
       if (window.ZunexaActions && res && res.src !== 'tool') { const zx = ZunexaActions.extract(res.text); res.text = zx.text; zxActs = zx.actions; if (!zxActs.length && ZunexaActions.guard) { res.text += ZunexaActions.guard(q, res.text); } if (!res.text && zxActs.length) res.text = '✓ جاهز — أكّد الإجراء تحت:'; }
       addMsg(res.text, 'bot', res.src, res.score, res.imgUrl, false, res.audioUrl, true, res.moroccoSource);
       if (zxActs.length) ZunexaActions.renderCards(zxActs);
